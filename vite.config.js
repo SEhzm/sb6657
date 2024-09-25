@@ -13,7 +13,7 @@ import ElementPlus from 'unplugin-element-plus/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    base: "/sb6657/",
+
     plugins: [
         vue(),
         AutoImport({
@@ -61,9 +61,6 @@ export default defineConfig({
             }
         }
     },
-    // build: {
-    //     outDir: "docs"
-    // }
     // build: {
     //     chunkSizeWarningLimit: 1000, // 调整包的大小
     //     rollupOptions: {
