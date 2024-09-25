@@ -1,0 +1,33 @@
+{
+  "name": "vue",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.1.0",
+    "aplayer": "^1.10.1",
+    "axios": "^1.6.2",
+    "cors": "^2.8.5",
+    "element-plus": "^2.7.3",
+    "express": "^4.19.2",
+    "sass": "^1.69.5",
+    "typescript": "5.5.3",
+    "unplugin-element-plus": "^0.8.0",
+    "unplugin-icons": "^0.19.3",
+    "video.js": "^8.17.3",
+    "videojs-contrib-hls": "^5.15.0",
+    "vue": "^3.3.4",
+    "vue-clipboard2": "^0.3.3",
+    "vue-router": "^4.2.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.4.0",
+    "unplugin-auto-import": "^0.16.7",
+    "unplugin-vue-components": "^0.25.2",
+    "vite": "^4.4.11"
+  }
+}

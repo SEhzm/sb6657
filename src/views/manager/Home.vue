@@ -1,0 +1,381 @@
+<template xmlns="http://www.w3.org/1999/html">
+  <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657">
+  <div class="home">
+    <div class="card" style="line-height: 30px;margin-top: 10px;">
+      <div><b>
+          <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕</em></b>
+      </div>
+    </div>
+
+    <div class="card" style="line-height: 30px; margin-top:8px ;">
+      <p>你好 <br>
+        这是一个收集6657烂梗的网站: <span class="dgq63136">
+          <a href="https://sb6657.cn" style="color: red;">sb6657.cn
+          </a></span>尽情欣赏你们的烂梗吧。
+        <br>
+      </p>
+    </div>
+
+    <div class="card" style="line-height: 0px; margin-top: 8px;">
+      <div>
+        <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
+        <el-table v-if="randomlySelectedItem" :data="[randomlySelectedItem]" style="font-family: 微软雅黑; font-size: 20px;"
+          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }">
+          <el-table-column prop="barrage" label="弹幕"></el-table-column>
+          <el-table-column label="" align="center" width="85">
+            <template #default="scope">
+              <el-button type="primary" @click="copyText(scope.row)">复制</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div v-else>
+          <p>未选择随机项</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="line-height: 45px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
+      <div>
+        <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
+          --------搜索在这，🦐吗---------
+        </span>
+        <el-input v-model="searchQuery" placeholder="搜索弹幕..." style="font-size: 30px; margin-top: 30px;">
+        </el-input>
+        <el-table v-if="searchQuery" :data="filteredItems" stripe>
+          <el-table-column prop="barrage" label="弹幕"></el-table-column>
+          <el-table-column label="" align="center" width="85">
+            <template #default="scope">
+              <el-button type="primary" @click="copyText(scope.row)">复制</el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 8px; text-align: center;">
+
+      <div class="Addform">
+        <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
+          <el-form-item label="分栏" :label-width="100" prop="table">
+            <el-select v-model="data.table" placeholder="选择上传的分栏">
+              <el-option label="喷玩机器篇" value="machine_penWJQ" />
+              <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
+              <el-option label="喷选手篇" value="machine_penPlayer" />
+              <el-option label="+1" value="machine_p1" />
+              <el-option label="群魔乱舞篇" value="machine_QMLW" />
+              <el-option label="QUQU" value="machine_QUQU" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="弹幕内容" prop="barrage">
+            <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />
+          </el-form-item>
+          <el-button type="primary" @click="saveBarrage" style="font-size: 20px;">
+            投稿
+          </el-button>
+        </el-form>
+      </div>
+
+      <el-backtop :right="50" :bottom="50" />
+    </div>
+    <div class="card" style="line-height: 30px;margin-top: 10px;">
+      友情链接 <a href="https://dgq63136.icu">dgq63136.icu</a>
+
+    </div>
+    <div class="footer">
+      <a href="https://beian.miit.gov.cn/" target="_blank">基于腾讯云服务器搭建<a style="font-size: 11px">(离服务器到期还有{{ ServerDate
+          }}天)</a></a>
+      <!-- </a>&nbsp;&nbsp;&nbsp;&nbsp; 
+          Copyright
+        ©HZM 2024
+        桂ICP备2024022150号</a> &nbsp;
+      <img src="https://ywtb.mps.gov.cn/newhome/templates/Zwfw_Fwmh/img/main/foot-ga.png" alt="">
+      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=45040302000258"
+        target="_blank">桂公网安备45040302000258号</a> -->
+    </div>
+  </div>
+</template>
+
+
+<script setup>
+import { ref, reactive, computed, onMounted } from 'vue';
+import request from "@/utils/request";
+import { ElMessage, ElNotification } from 'element-plus';
+import autoExecPng from "@/assets/autoexec.vue";
+// 获取IP
+
+
+const autoexec = () => {
+  request.get("https://api.vvhan.com/api/visitor.info")
+    .then(res => {
+      const resData = res;
+      localStorage.setItem("ip", res.ip)
+      ElNotification({
+        icon: autoExecPng,
+        dangerouslyUseHTMLString: true,
+        title: '你好',
+        message:
+          "<p>欢迎来自<b>" +
+          resData.location +
+          "</b>的厕友<br/>" +
+          resData.system +
+          " " +
+          resData.browser +
+          " <br>IP: " +
+          resData.ip +
+          "</p>",
+        offset: 50,
+        duration: 10000
+      })
+    })
+}
+autoexec()
+const searchQuery = ref('');
+const randomlySelectedItem = ref(null);
+
+const targetDate = new Date('2041-06-07');
+const diudiugaokao = ref(0);
+
+const DaoJiShiDate = new Date('2024-10-23');
+const DaoJiShi = ref(0);
+
+const TxServerDate = new Date('2025-02-20');
+const ServerDate = ref(0);
+
+
+const rules = ({
+  table: [
+    { required: true, message: '请选择分栏', trigger: 'blur' },
+  ],
+  barrage: [
+    { required: true, message: '请输入弹幕', trigger: 'blur' },
+  ]
+})
+
+//提交
+const saveBarrage = () => {
+  if (data.table === '' || data.barrage === '') {
+    ElNotification.error("请选择分栏或输入弹幕");
+  } else {
+    request.post('/machine/addUnaudit', {
+      ip: localStorage.getItem('ip'),
+      table: data.table,
+      barrage: data.barrage
+    }).then(res => {
+      load()
+      data.dialogFormVisible = false;
+      data.barrage = '';
+      if (res.code === '200') {
+        ElNotification.success("投稿成功，待审核(一天内)");
+      } else {
+        ElNotification.error("请求失败");
+      }
+    })
+  }
+}
+
+
+const data = reactive({
+  tableData: [],
+  table: '',
+  barrage: '',
+})
+
+const load = () => {
+  request.get('/machine/allBarrage/Page', {})
+    .then(res => {
+      // console.log(res);
+      data.tableData = res.data || [];
+      // console.log(data.tableData)
+      getRandomItem();
+    })
+    .catch(err => {
+      console.error('加载数据失败:', err);
+    });
+};
+
+load();
+
+//在数组中随机弹幕
+const getRandomItem = () => {
+  if (data.tableData.length > 0) {
+    const randomIndex = Math.floor(Math.random() * data.tableData.length);
+    randomlySelectedItem.value = data.tableData[randomIndex];
+  }
+};
+
+// 过滤搜索结果
+const filteredItems = computed(() => {
+  return searchQuery.value
+    ? data.tableData.filter(item =>
+      item.barrage.toLowerCase().includes(searchQuery.value.toLowerCase())
+    )
+    : [];
+});
+
+
+const open2 = () => {
+  ElMessage({
+    message: '复制成功',
+    type: 'success',
+  })
+};
+
+const open4 = () => {
+  ElMessage.error('复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器')
+};
+
+const copyText = (row) => {
+  // console.log(row)
+  navigator.clipboard.writeText(row.barrage)
+    .then(() => {
+      // 复制成功，可以显示提示信息
+      open2();
+      console.log('内容已复制到剪贴板');
+      request.post('/machine/addCnt', {
+        ip: localStorage.getItem('ip'),
+        table: 'allbarrage',
+        id: row.id
+      })
+    })
+    .catch((err) => {
+      // 复制失败，可以显示错误信息
+      console.error('复制失败:', err);
+      open4()
+    });
+};
+
+
+const calculateCountdown = () => {
+  const now = new Date();
+  const diffTime1 = targetDate - now;
+  const diffTime2 = DaoJiShiDate - now;
+  const diffTime3 = TxServerDate - now;
+  diudiugaokao.value = Math.ceil(diffTime1 / (1000 * 60 * 60 * 24));
+  DaoJiShi.value = Math.ceil(diffTime2 / (1000 * 60 * 60 * 24));
+  ServerDate.value = Math.ceil(diffTime3 / (1000 * 60 * 60 * 24));
+};
+
+
+// 在组件挂载时计算倒计时
+onMounted(() => {
+  calculateCountdown();
+  // 设置一个定时器每天更新一次倒计时
+  setInterval(calculateCountdown, 1000 * 60 * 60 * 24);
+});
+
+</script>
+
+
+<style>
+.header-text {
+  margin-left: 25px;
+  font-size: 27px;
+  color: red;
+}
+
+
+
+.dog_head {
+  margin-top: -10px;
+  height: 70px;
+  position: absolute;
+}
+
+.biabiabia {
+  margin-top: -40px;
+  height: 85px;
+  position: absolute;
+  margin-left: 10px;
+}
+
+.good {
+  position: absolute;
+  margin-top: -144px;
+  height: 175px;
+  margin-left: 300px;
+}
+
+.dgq63136 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.Addform {
+  width: 700px;
+}
+
+.footer {
+  text-align: center;
+  font-size: 17px;
+  margin-left: -250px;
+}
+
+@media (min-width: 601px) {
+  .boom6657 {
+    position: fixed;
+    margin-top: 200px;
+    margin-left: 62%;
+    width: 530px;
+
+  }
+
+
+
+  .home {
+    width: 60vw;
+  }
+}
+
+@media (max-width: 600px) {
+  .boom6657 {
+    position: relative;
+    width: 192px;
+    height: 108px;
+    left: 25%;
+  }
+
+  .el-notification {
+    width: 60%;
+    height: auto;
+  }
+
+  .header-text {
+    margin-left: 25px;
+    font-size: 17px;
+    color: red;
+  }
+
+  .DGjvpai {
+    display: none;
+  }
+
+  .biabiabia {
+    margin-top: -40px;
+    height: 85px;
+    position: absolute;
+    margin-left: 10px;
+  }
+
+  .Addform {
+    width: 90vw;
+    padding: 0;
+  }
+
+  .good {
+    position: absolute;
+    margin-top: -53px;
+    height: 60px;
+    margin-left: 100px;
+  }
+
+  .dgq63136 {
+    font-size: 17px;
+    font-weight: bold;
+  }
+
+  .footer {
+    margin-left: 0px;
+    font-size: 14px;
+  }
+}
+</style>
