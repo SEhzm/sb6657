@@ -8,7 +8,7 @@ import '@/assets/css/global.css'
 
 const app = createApp(App)
 
-import StarrySky from '@/views/StarrySky.vue';
+import StarrySky from '@/views/StarrySky.vue'
 // import audioPlay from './components/audioPlayer.vue';
 // import videoPlay from './components/VideoPlayer.vue';
 
