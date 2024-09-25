@@ -61,9 +61,9 @@ export default defineConfig({
             }
         }
     },
-    build: {
-        outDir: "docs"
-    }
+    // build: {
+    //     outDir: "docs"
+    // }
     // build: {
     //     chunkSizeWarningLimit: 1000, // 调整包的大小
     //     rollupOptions: {
