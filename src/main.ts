@@ -4,11 +4,12 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import StarrySky from './views/StarrySky.vue'
 import '@/assets/css/global.css'
 
 const app = createApp(App)
 
-import StarrySky from '@/views/StarrySky.vue'
+
 
 app.use(router)
 app.use(ElementPlus, {
