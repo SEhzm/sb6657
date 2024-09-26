@@ -1,0 +1,1 @@
+import{r as e}from"./request-5572bcba.js";import{_ as a,q as o,t as s}from"./index-a3943ac6.js";o({});const r=()=>{e.get("https://www.doseeing.com/data/fan/40499214",{headers:{}}).then(t=>{console.log(t)}).catch(t=>{console.error("加载数据失败:",t)})};r();const n={};function c(t,p,d,i,f,_){return s(t.data.tableData)}const h=a(n,[["render",c]]);export{h as default};

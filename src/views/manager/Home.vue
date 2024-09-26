@@ -78,7 +78,7 @@
       <el-backtop :right="50" :bottom="50" />
     </div>
     <div class="card" style="line-height: 30px;margin-top: 10px;">
-      友情链接 <a href="https://dgq63136.icu">dgq63136.icu</a>
+      友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
 
     </div>
     <div class="footer">
@@ -236,7 +236,9 @@ const copyText = (row) => {
         table: 'allbarrage',
         id: row.id
       })
-    })
+    }).then(() => {
+        setTimeout(load, 50); // 50 毫秒后执行 load
+      })
     .catch((err) => {
       // 复制失败，可以显示错误信息
       console.error('复制失败:', err);

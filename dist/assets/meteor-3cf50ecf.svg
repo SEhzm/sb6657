@@ -1,0 +1,31 @@
+
+<svg width="98px" height="65px" viewBox="0 0 98 65" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 49.3 (51167) - http://www.bohemiancoding.com/sketch -->
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="139" height="23"></rect>
+        <linearGradient x1="-21.3274736%" y1="-6.73300242%" x2="77.1999233%" y2="-99.3560042%" id="linearGradient-3">
+            <stop stop-color="#FFFFFF" offset="0%"></stop>
+            <stop stop-color="#C6C6C6" offset="12.01%"></stop>
+            <stop stop-color="#929292" offset="24.46%"></stop>
+            <stop stop-color="#656565" offset="37.13%"></stop>
+            <stop stop-color="#414141" offset="49.78%"></stop>
+            <stop stop-color="#242424" offset="62.4%"></stop>
+            <stop stop-color="#101010" offset="74.98%"></stop>
+            <stop stop-color="#040404" offset="87.52%"></stop>
+            <stop stop-color="#FFFFFF" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="404-Mars-Illustration" transform="translate(-702.000000, -156.000000)">
+            <g id="Star" transform="translate(761.938766, 184.709292) rotate(-30.000000) translate(-761.938766, -184.709292) translate(692.438766, 173.209292)">
+                <mask id="mask-2" fill="white">
+                    <use xlink:href="#path-1"></use>
+                </mask>
+                <g id="Mask"></g>
+                <polygon id="path75_fill" fill="url(#linearGradient-3)" fill-rule="nonzero" opacity="0.15" mask="url(#mask-2)" transform="translate(75.246443, 12.532852) rotate(25.000000) translate(-75.246443, -12.532852) " points="68.589341 14.5118 123.748941 -7.6518 46.081841 26.2267 111.860941 0.7387 32.926041 34.4589 100.924141 8.3376 13.430031 45.0657 9.30894584 35.8837 93.632941 -7.0185 29.755941 27.1766 104.886741 -10.34305 48.776341 18.9444 120.102941 -15.40899 70.966941 9.6041 141.183941 -19.9999952"></polygon>
+                <path d="M6.70218631,16.1477704 C9.50290021,16.1477704 11.773372,13.8791082 11.773372,11.080594 C11.773372,8.28207967 9.50290021,6.01344239 6.70218631,6.01344239 C3.90147242,6.01344239 1.63103095,8.28207967 1.63103095,11.080594 C1.63103095,13.8791082 3.90147242,16.1477704 6.70218631,16.1477704 Z" id="path77_fill" fill="#CFD8DC" fill-rule="nonzero" mask="url(#mask-2)"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -11,13 +11,13 @@
             <el-button type="primary" @click="complaintButton" class="complaint-button">
               <span>上传照片<br>建议/提交BUG</span>
             </el-button>
-            <a href="https://gitee.com/hzming1/machine63136-vue3-springboot" target="_blank">
+            <a href="https://gitee.com/hzming1/sb6657" target="_blank">
               <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img"/>
             </a>
             <a href="https://yuba.douyu.com/user/main/lOdEpeOJzwnR" target="_blank">
               <img src="@/assets/imgs/douyu.png" alt="douyu" class="icon-img"/>
             </a>
-            <a href="https://github.com/SEhzm/machine63136.icu-" target="_blank">
+            <a href="https://github.com/SEhzm/sb6657/" target="_blank">
               <img src="@/assets/imgs/github.png" alt="github" class="icon-img"/>
             </a>
             <el-image class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7"

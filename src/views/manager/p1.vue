@@ -139,6 +139,8 @@ const copyText = (row) => {
           table: 'p1',
           id: row.id
         })
+      }).then(() => {
+        setTimeout(load, 50); // 50 毫秒后执行 load
       })
       .catch((err) => {
         // 复制失败，可以显示错误信息
