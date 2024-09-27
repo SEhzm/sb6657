@@ -1,5 +1,8 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657">
+  <div style="height:200px;">
+    <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
+      class="boom6657">
+  </div>
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 10px;">
       <div><b>
@@ -54,9 +57,9 @@
 
     <div class="card" style="margin-top: 8px; text-align: center;">
 
-      <div class="Addform">
+      <div>
         <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
-          <el-form-item label="分栏" :label-width="100" prop="table">
+          <el-form-item label="分栏" :label-width="auto" prop="table">
             <el-select v-model="data.table" placeholder="选择上传的分栏">
               <el-option label="喷玩机器篇" value="machine_penWJQ" />
               <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
@@ -82,8 +85,8 @@
 
     </div>
     <div class="footer">
-      <a href="https://beian.miit.gov.cn/" target="_blank">基于腾讯云服务器搭建<a style="font-size: 11px">(离服务器到期还有{{ ServerDate
-          }}天)</a></a>
+      <!-- <a href="https://beian.miit.gov.cn/" target="_blank">基于腾讯云服务器搭建<a style="font-size: 11px">(离服务器到期还有{{ ServerDate
+          }}天)</a></a> -->
       <!-- </a>&nbsp;&nbsp;&nbsp;&nbsp; 
           Copyright
         ©HZM 2024
@@ -93,6 +96,13 @@
         target="_blank">桂公网安备45040302000258号</a> -->
     </div>
   </div>
+
+  <div class="el-footer">
+    基于腾讯云服务器搭建<text style="font-size: 11px">(离服务器到期还有{{ ServerDate }}天)</text>
+    <text> 域名所有：<a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></text>
+  </div>
+
+
 </template>
 
 
@@ -205,11 +215,12 @@ const getRandomItem = () => {
 
 // 过滤搜索结果
 const filteredItems = computed(() => {
-  return searchQuery.value
-    ? data.tableData.filter(item =>
-      item.barrage.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-    : [];
+  const query = searchQuery.value?.toLowerCase();
+  if (!query) return [];
+  return data.tableData.filter(item => {
+    const itemStr = `${item.name}${item.barrage}${item.description}`.toLowerCase();
+    return itemStr.includes(query);
+  });
 });
 
 
@@ -237,8 +248,8 @@ const copyText = (row) => {
         id: row.id
       })
     }).then(() => {
-        setTimeout(load, 50); // 50 毫秒后执行 load
-      })
+      setTimeout(load, 80); // 80 毫秒后执行 load
+    })
     .catch((err) => {
       // 复制失败，可以显示错误信息
       console.error('复制失败:', err);
@@ -268,7 +279,7 @@ onMounted(() => {
 </script>
 
 
-<style>
+<style scoped lang="scss">
 .header-text {
   margin-left: 25px;
   font-size: 27px;
@@ -302,10 +313,6 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.Addform {
-  width: 700px;
-}
-
 .footer {
   text-align: center;
   font-size: 17px;
@@ -314,17 +321,27 @@ onMounted(() => {
 
 @media (min-width: 601px) {
   .boom6657 {
-    position: fixed;
-    margin-top: 200px;
-    margin-left: 62%;
-    width: 530px;
-
+    left: calc(50vw - 153px);  
+    position: absolute;
+    height: 200px;
+    border-radius: 10px;
   }
 
-
-
   .home {
-    width: 60vw;
+    width: 90%;
+  }
+
+  .el-footer {
+    height: 40px;
+    line-height: 40px;
+    position: fixed;
+    bottom: 0;
+    width: 100% !important;
+    text-align: center;
+    font-family: Arial;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin-left: -153px;
   }
 }
 
@@ -378,6 +395,14 @@ onMounted(() => {
   .footer {
     margin-left: 0px;
     font-size: 14px;
+  }
+
+  .el-footer {
+    text-align: center;
+    font-family: Arial;
+    font-size: 12px;
+    letter-spacing: 0px;
+    margin-left: 0px;
   }
 }
 </style>

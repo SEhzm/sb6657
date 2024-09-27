@@ -4,9 +4,9 @@ import axios from "axios";
 
 const request = axios.create({
     //线上版本测试
-    baseURL: 'https://dgq63136.icu:9090',
+    // baseURL: 'https://dgq63136.icu:9090',
     //线下测试
-    // baseURL: 'http://localhost:9090',
+    baseURL: 'http://localhost:9090',
     timeout: 5000  // 后台接口超时时间设置
 })
 // request 拦截器

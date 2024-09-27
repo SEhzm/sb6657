@@ -29,6 +29,7 @@
             background
             layout="prev, pager, next, jumper"
             :total="data.total"
+            :pager-count=4
             :page-size="data.pageSize"
             @current-change="handlePageChange"
         ></el-pagination>
@@ -139,7 +140,7 @@ const copyText = (row) => {
           id: row.id
         })
       }).then(() => {
-        setTimeout(load, 50); // 50 毫秒后执行 load
+        setTimeout(load(data.currentPage), 80); // 80 毫秒后执行 load
       })
       .catch((err) => {
         // 复制失败，可以显示错误信息
@@ -207,7 +208,6 @@ const continuousSaveBarrage = () => {
 
 .pagination-wrapper {
   display: flex;
-  justify-content: center;
   margin-top: 20px;
 }
 
@@ -228,7 +228,7 @@ const continuousSaveBarrage = () => {
 
 @media (min-width: 601px) {
   .card {
-    width: 60vw;
+    width: 80vw;
   }
 
 }

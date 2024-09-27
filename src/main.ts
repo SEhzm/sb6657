@@ -25,6 +25,7 @@ app.component('StarrySky', StarrySky);
 // app.component('audioPlay', audioPlay);
 // app.component('videoPlay', videoPlay);
 
+
 app.mount('#app')
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {

@@ -1,56 +1,48 @@
 <template>
   <div>
     <div class="card">
-      <el-button type="primary" class="handleAdd"
-                 @click="handleAdd">
+      <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
       <b class="copyCount">复制次数</b>
-      <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
-                class="eldtable"
-                :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{}"
-      >
+      <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
+        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{}"
+        @row-click="copyText">
         <el-table-column width="70" prop="id" label="序号"></el-table-column>
-        <el-table-column prop="barrage" min-width="90" label="弹幕"/>
+        <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
           <template #default="scope">
             <el-button type="primary" label="操作" @click="copyText(scope.row)">复制</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="cnt" label="" width="65"/>
+        <el-table-column prop="cnt" label="" width="65" />
       </el-table>
     </div>
 
     <div class="pagination-wrapper">
       <!-- 分页 -->
       <div>
-        <el-pagination
-            background
-            layout="prev, pager, next, jumper"
-            :total="data.total"
-            :page-size="data.pageSize"
-            @current-change="handlePageChange"
-        ></el-pagination>
+        <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :page-size="data.pageSize"
+          @current-change="handlePageChange"></el-pagination>
       </div>
     </div>
 
-    <el-backtop :right="50" :bottom="50"/>
+    <el-backtop :right="50" :bottom="50" />
 
     <el-dialog v-model="data.dialogFormVisible" draggable title="投稿弹幕" width="82%">
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
         <el-form-item label="分栏" :label-width="100" prop="table">
           <el-select v-model="data.table" placeholder="选择上传的分栏">
-              <el-option label="喷玩机器篇" value="machine_penWJQ" />
-              <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
-              <el-option label="喷选手篇" value="machine_penPlayer" />
-              <el-option label="+1" value="machine_p1" />
-              <el-option label="群魔乱舞篇" value="machine_QMLW" />
-              <el-option label="QUQU" value="machine_QUQU" />
-            </el-select>
+            <el-option label="喷玩机器篇" value="machine_penWJQ" />
+            <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
+            <el-option label="喷选手篇" value="machine_penPlayer" />
+            <el-option label="+1" value="machine_p1" />
+            <el-option label="群魔乱舞篇" value="machine_QMLW" />
+            <el-option label="QUQU" value="machine_QUQU" />
+          </el-select>
         </el-form-item>
         <el-form-item label="弹幕内容" prop="barrage">
-          <el-input maxlength="255" v-model="data.barrage" autocomplete="off"/>
+          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -69,18 +61,18 @@
 </template>
 
 <script setup>
-import {ref, reactive} from 'vue'
+import { ref, reactive } from 'vue'
 import request from "@/utils/request";
-import {ElNotification} from 'element-plus'
+import { ElNotification } from 'element-plus'
 import autoExecPng from "@/assets/autoexec.vue";
 
 
 const rules = ({
   table: [
-    {required: true, message: '请选择分栏', trigger: 'blur'},
+    { required: true, message: '请选择分栏', trigger: 'blur' },
   ],
   barrage: [
-    {required: true, message: '请输入弹幕', trigger: 'blur'},
+    { required: true, message: '请输入弹幕', trigger: 'blur' },
   ]
 })
 
@@ -132,23 +124,23 @@ const open4 = () => {
 const copyText = (row) => {
   // console.log(row)
   navigator.clipboard.writeText(row.barrage)
-      .then(() => {
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板');
-        request.post('/machine/addCnt', {
-          PageNum:data.currentPage,
-          table: 'allbarrage',
-          id: row.id
-        })
-      }).then(() => {
-        setTimeout(load, 50); // 50 毫秒后执行 load
+    .then(() => {
+      // 复制成功，可以显示提示信息
+      open2();
+      console.log('内容已复制到剪贴板');
+      request.post('/machine/addCnt', {
+        PageNum: data.currentPage,
+        table: 'allbarrage',
+        id: row.id
       })
-      .catch((err) => {
-        // 复制失败，可以显示错误信息
-        console.error('复制失败:', err);
-        open4()
-      });
+    }).then(() => {
+      setTimeout(load(data.currentPage), 80); // 80 毫秒后执行 load
+    })
+    .catch((err) => {
+      // 复制失败，可以显示错误信息
+      console.error('复制失败:', err);
+      open4()
+    });
 
 };
 
@@ -216,7 +208,6 @@ const continuousSaveBarrage = () => {
 
 .pagination-wrapper {
   display: flex;
-  justify-content: center;
   margin-top: 20px;
 }
 
@@ -226,6 +217,7 @@ const continuousSaveBarrage = () => {
   font-size: 18px;
   margin-left: 150px
 }
+
 .copyCount {
   font-size: 13px;
   color: red;
@@ -237,7 +229,7 @@ const continuousSaveBarrage = () => {
 
 @media (min-width: 601px) {
   .card {
-    width: 60vw;
+    width: 80vw;
   }
 
 }
@@ -247,6 +239,7 @@ const continuousSaveBarrage = () => {
   .copyCount {
     margin-left: 77vw;
   }
+
   .eldtable {
     font-size: 16px;
     white-space: nowrap;
