@@ -9,14 +9,12 @@
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{}"
+                :cell-style="{}"  @row-click=" copyText"
       >
         <el-table-column width="60" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕"/>
         <el-table-column label="" align="center" width="85">
-          <template #default="scope">
-            <el-button type="primary" label="操作" @click="copyText(scope.row)">复制</el-button>
-          </template>
+            <el-button type="primary" label="操作" >复制</el-button>
         </el-table-column>
         <el-table-column prop="cnt" label="" width="65"/>
       </el-table>
@@ -150,6 +148,9 @@ const copyText = (row) => {
 
 };
 
+ 
+
+
 //点击新增按钮
 const handleAdd = () => {
   data.table = ''
@@ -222,7 +223,7 @@ const continuousSaveBarrage = () => {
   color: red;
   position: absolute;
   z-index: 10;
-  margin-left: 55vw;
+  margin-left:75vw;
   margin-top: 5px
 }
 
@@ -230,11 +231,12 @@ const continuousSaveBarrage = () => {
   .card {
     width: 80vw;
   }
-
 }
-
-
 @media (max-width: 600px) {
+  .el-pagination{
+    margin: 0;
+    --el-pagination-button-width: 22px;
+  }
   .copyCount {
     margin-left: 77vw;
   }

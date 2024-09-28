@@ -5,27 +5,20 @@
         投稿弹幕
       </el-button>
       <b class="copyCount">复制次数</b>
-      <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
+      <el-table stripe :data="currentPageData"
+      lazy=true empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
         :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{}"
-        @row-click="copyText">
+        @row-click=" copyText">
         <el-table-column width="70" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
-          <template #default="scope">
-            <el-button type="primary" label="操作" @click="copyText(scope.row)">复制</el-button>
-          </template>
+       <el-button type="primary" label="操作" >复制</el-button>
         </el-table-column>
         <el-table-column prop="cnt" label="" width="65" />
       </el-table>
     </div>
 
-    <div class="pagination-wrapper">
-      <!-- 分页 -->
-      <div>
-        <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :page-size="data.pageSize"
-          @current-change="handlePageChange"></el-pagination>
-      </div>
-    </div>
+ 
 
     <el-backtop :right="50" :bottom="50" />
 
@@ -79,7 +72,7 @@ const rules = ({
 const data = reactive({
   tableData: [],
   total: 0,
-  pageSize: 15, //每页个数
+  pageSize: 3500, //每页个数
   currentPage: 1, //起始页码
   dialogFormVisible: false,
   table: '',
@@ -93,10 +86,10 @@ const load = (pageNum = 1) => {
       status: 0
     }
   }).then(res => {
-    console.log(res)
+    // console.log(res)
     data.tableData = res.data || [];
     data.total = res.data?.total || 0
-    console.log(data.tableData)
+    // console.log(data.tableData)
   }).catch(err => {
     console.error('加载数据失败:', err)
   })
@@ -106,8 +99,17 @@ load(data.currentPage)
 
 const handlePageChange = (page) => {
   data.currentPage = page
-  load(page)
+  updateCurrentPageData();
 }
+
+const updateCurrentPageData = () => {
+  const start = (data.currentPage - 1) * data.pageSize;
+  const end = start + data.pageSize;
+  const currentPageData = data.tableData.slice(start, end);
+  return currentPageData;
+}
+
+const currentPageData = computed(() => updateCurrentPageData());
 
 const open2 = () => {
   load()
@@ -143,6 +145,7 @@ const copyText = (row) => {
     });
 
 };
+ 
 
 //点击新增按钮
 const handleAdd = () => {
@@ -236,6 +239,10 @@ const continuousSaveBarrage = () => {
 
 
 @media (max-width: 600px) {
+  .el-pagination{
+    margin: 0;
+    --el-pagination-button-width: 22px;
+  }
   .copyCount {
     margin-left: 77vw;
   }

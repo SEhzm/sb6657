@@ -3,7 +3,9 @@
 	margin: 0;
 	padding: 0;
 }
-
+.el-table .cell{
+    padding: 0 !important; 
+}
 body {
     margin: 0;
     padding: 0;

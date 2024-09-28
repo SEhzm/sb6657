@@ -4,33 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="26cdce58-b491-474c-8f2e-bf7194c9dc3d" name="更改" comment="1">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/components.d.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/AllBarrage-3652b48f.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/AllBarrage-f9ea9656.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/Home-37ea7cf8.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/Manager-f935bef5.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/QMLW-188b4089.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/QMLW-2a1a2a4e.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/QUQU-63a23f69.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/QUQU-924fac3e.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/ZbjHuPen-0f00f952.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/ZbjHuPen-b0b2e452.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/image-719132dd.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/index-a3943ac6.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/p1-7fbd75ed.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/p1-d7bb283e.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/penPlayer-38394d9f.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/penPlayer-444c128c.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/penWJQ-23ff8355.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/penWJQ-29abf57c.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/test-2d7ff1da.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/assets/test2-5638b27e.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/dist/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/VideoPlayer.vue" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/audioPlayer.vue" beforeDir="false" />
-    </list>
+    <list default="true" id="26cdce58-b491-474c-8f2e-bf7194c9dc3d" name="更改" comment="2024-9-27" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -58,23 +32,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Desktop/BarrageVue/WJQvue",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "ts.external.directory.path": "D:\\Desktop\\BarrageVue\\WJQvue\\node_modules\\typescript\\lib",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Desktop/BarrageVue/WJQvue&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Desktop\\BarrageVue\\WJQvue\\node_modules\\typescript\\lib&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="vue" />
@@ -111,6 +85,7 @@
       <workItem from="1727268090470" duration="38000" />
       <workItem from="1727268170593" duration="515000" />
       <workItem from="1727317762975" duration="119000" />
+      <workItem from="1727420634087" duration="108000" />
     </task>
     <task id="LOCAL-00001" summary="1">
       <option name="closed" value="true" />
@@ -168,7 +143,15 @@
       <option name="project" value="LOCAL" />
       <updated>1727268333608</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="2024-9-27">
+      <option name="closed" value="true" />
+      <created>1727420674318</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1727420674318</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,6 +186,7 @@
       <path value="$PROJECT_DIR$/docs" />
     </ignored-roots>
     <MESSAGE value="1" />
-    <option name="LAST_COMMIT_MESSAGE" value="1" />
+    <MESSAGE value="2024-9-27" />
+    <option name="LAST_COMMIT_MESSAGE" value="2024-9-27" />
   </component>
 </project>

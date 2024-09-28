@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div style="height:200px;">
-    <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
+    <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom"
       class="boom6657">
   </div>
   <div class="home">
@@ -23,7 +23,7 @@
       <div>
         <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
         <el-table v-if="randomlySelectedItem" :data="[randomlySelectedItem]" style="font-family: 微软雅黑; font-size: 20px;"
-          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }">
+          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }"  @row-click=" copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
             <template #default="scope">
@@ -32,7 +32,7 @@
           </el-table-column>
         </el-table>
         <div v-else>
-          <p>未选择随机项</p>
+          <p>《未选择随机项》----出错啦，请手动刷新</p>
         </div>
       </div>
     </div>
@@ -42,9 +42,9 @@
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
           --------搜索在这，🦐吗---------
         </span>
-        <el-input v-model="searchQuery" placeholder="搜索弹幕..." style="font-size: 30px; margin-top: 30px;">
+        <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="font-size: 30px; margin-top: 30px;">
         </el-input>
-        <el-table v-if="searchQuery" :data="filteredItems" stripe>
+        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText"  empty-text="请稍等！或者请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
             <template #default="scope">
@@ -57,7 +57,7 @@
 
     <div class="card" style="margin-top: 8px; text-align: center;">
 
-      <div>
+      <div><p>这里是投稿烂梗，上面才是搜索</p>
         <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
           <el-form-item label="分栏" :label-width="auto" prop="table">
             <el-select v-model="data.table" placeholder="选择上传的分栏">
@@ -69,7 +69,7 @@
               <el-option label="QUQU" value="machine_QUQU" />
             </el-select>
           </el-form-item>
-          <el-form-item label="弹幕内容" prop="barrage">
+          <el-form-item label="烂梗内容" prop="barrage">
             <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />
           </el-form-item>
           <el-button type="primary" @click="saveBarrage" style="font-size: 20px;">
@@ -111,6 +111,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
 import autoExecPng from "@/assets/autoexec.vue";
+
 // 获取IP
 
 
@@ -126,7 +127,7 @@ const autoexec = () => {
         message:
           "<p>欢迎来自<b>" +
           resData.location +
-          "</b>的厕友<br/>" +
+          "</b>的朋友<br/>" +
           resData.system +
           " " +
           resData.browser +
@@ -134,7 +135,7 @@ const autoexec = () => {
           resData.ip +
           "</p>",
         offset: 50,
-        duration: 10000
+        duration: 5000
       })
     })
 }
@@ -157,14 +158,14 @@ const rules = ({
     { required: true, message: '请选择分栏', trigger: 'blur' },
   ],
   barrage: [
-    { required: true, message: '请输入弹幕', trigger: 'blur' },
+    { required: true, message: '请输入烂梗', trigger: 'blur' },
   ]
 })
 
 //提交
 const saveBarrage = () => {
   if (data.table === '' || data.barrage === '') {
-    ElNotification.error("请选择分栏或输入弹幕");
+    ElNotification.error("请选择分栏或输入烂梗");
   } else {
     request.post('/machine/addUnaudit', {
       ip: localStorage.getItem('ip'),
@@ -189,7 +190,7 @@ const data = reactive({
   table: '',
   barrage: '',
 })
-
+let searchBarrageMeg=ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
 const load = () => {
   request.get('/machine/allBarrage/Page', {})
     .then(res => {
@@ -197,6 +198,7 @@ const load = () => {
       data.tableData = res.data || [];
       // console.log(data.tableData)
       getRandomItem();
+      searchBarrageMeg = '搜索弹幕...';
     })
     .catch(err => {
       console.error('加载数据失败:', err);
@@ -204,7 +206,6 @@ const load = () => {
 };
 
 load();
-
 //在数组中随机弹幕
 const getRandomItem = () => {
   if (data.tableData.length > 0) {
@@ -232,14 +233,16 @@ const open2 = () => {
 };
 
 const open4 = () => {
-  ElMessage.error('复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器')
+  ElMessage({
+    message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
+    type: 'error',
+  })
 };
 
 const copyText = (row) => {
   // console.log(row)
   navigator.clipboard.writeText(row.barrage)
     .then(() => {
-      // 复制成功，可以显示提示信息
       open2();
       console.log('内容已复制到剪贴板');
       request.post('/machine/addCnt', {
@@ -247,16 +250,14 @@ const copyText = (row) => {
         table: 'allbarrage',
         id: row.id
       })
-    }).then(() => {
-      setTimeout(load, 80); // 80 毫秒后执行 load
     })
     .catch((err) => {
-      // 复制失败，可以显示错误信息
       console.error('复制失败:', err);
       open4()
     });
 };
 
+ 
 
 const calculateCountdown = () => {
   const now = new Date();
@@ -332,6 +333,7 @@ onMounted(() => {
   }
 
   .el-footer {
+    z-index: 200;
     height: 40px;
     line-height: 40px;
     position: fixed;
@@ -346,6 +348,10 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
+  .el-pagination{
+    margin: 0;
+    --el-pagination-button-width: 22px;
+  }
   .boom6657 {
     position: relative;
     width: 192px;
