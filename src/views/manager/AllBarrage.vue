@@ -4,7 +4,7 @@
       <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
-      <b class="copyCount">复制次数</b>
+      <!-- <b class="copyCount">复制次数</b> -->
       <el-table stripe :data="currentPageData"
       lazy=true empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
         :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{}"
@@ -14,13 +14,13 @@
         <el-table-column label="" align="center" width="85">
        <el-button type="primary" label="操作" >复制</el-button>
         </el-table-column>
-        <el-table-column prop="cnt" label="" width="65" />
+        <el-table-column prop="cnt" label="复制次数" width="65" />
       </el-table>
     </div>
 
  
 
-    <el-backtop :right="50" :bottom="50" />
+    <el-backtop :right="50" :bottom="50" >UP</el-backtop>
 
     <el-dialog v-model="data.dialogFormVisible" draggable title="投稿弹幕" width="82%">
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">

@@ -44,7 +44,7 @@
         </span>
         <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="font-size: 30px; margin-top: 30px;">
         </el-input>
-        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText"  empty-text="请稍等！或者请手动刷新页面">
+        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText" style="font-size: 19px;" empty-text="请稍等！或者请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
             <template #default="scope">
