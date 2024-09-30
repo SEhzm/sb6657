@@ -23,7 +23,7 @@
       <div>
         <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
         <el-table v-if="randomlySelectedItem" :data="[randomlySelectedItem]" style="font-family: 微软雅黑; font-size: 20px;"
-          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }"  @row-click=" copyText">
+          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }"  @row-click="copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
             <template #default="scope">
@@ -42,9 +42,9 @@
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
           --------搜索在这，🦐吗---------
         </span>
-        <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="font-size: 30px; margin-top: 30px;">
+        <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="background-color: yellow;font-size: 30px; margin-top: 30px;">
         </el-input>
-        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText" style="font-size: 19px;" empty-text="请稍等！或者请手动刷新页面">
+        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText" style="font-size: 19px;" empty-text="可能没有这条烂梗或请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
             <template #default="scope">
@@ -198,7 +198,7 @@ const load = () => {
       data.tableData = res.data || [];
       // console.log(data.tableData)
       getRandomItem();
-      searchBarrageMeg = '搜索弹幕...';
+      searchBarrageMeg = '搜索烂梗...';
     })
     .catch(err => {
       console.error('加载数据失败:', err);

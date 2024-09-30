@@ -9,7 +9,7 @@
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{}" @row-click=" copyText"
+                :cell-style="{}" @row-click="copyText"
       >
         <el-table-column width="60" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕"/>
@@ -63,6 +63,20 @@
       </template>
     </el-dialog>
   </div>
+  <!-- <div style="right: 10px;top: 50px;position: fixed;background-color: #fff;">
+    <p>热门烂梗</p>
+    <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
+                class="eldtable"
+                :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
+                :cell-style="{}" @row-click=" copyText"
+      >
+        <el-table-column width="60" prop="id" label="序号"></el-table-column>
+        <el-table-column prop="barrage" min-width="90" label="弹幕"/>
+        <el-table-column prop="cnt" label="热度" width="65"/>
+      </el-table>
+  
+  
+  </div> -->
 </template>
 
 <script setup>
@@ -227,7 +241,7 @@ const continuousSaveBarrage = () => {
 
 @media (min-width: 601px) {
   .card {
-    width: 80vw;
+    width: 80%;
   }
 
 }

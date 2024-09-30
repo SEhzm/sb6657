@@ -7,10 +7,10 @@
     <div v-for="(image, index) in image.outerImg" :key="index" class="image-block">
       <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
                 :preview-src-list="[image.url]" fit="cover" lazy
-                style="width: 250px; height: 300px; box-sizing: border-box;">
+                style="width: 250px; height: 300px; ">
       </el-image>
       <div style="text-align: center; padding: 5%;">
-        <el-button style="width: 100%; font-size: 20px; box-sizing: border-box;">{{ image.date }}</el-button>
+        <el-button style="width: 100%; font-size: 19px; box-sizing: border-box;">{{ image.date }}</el-button>
       </div>
       <el-button @click="toggleComments(image)" style=" font-size: 18px; margin-left: 15px; box-sizing: border-box;">{{
           image.showComments ? '隐藏评论' : '显示评论'
@@ -145,85 +145,84 @@ const saveComment = (Obimage) => {
 
 
 <style scoped>
-.outer {
-  margin-top: 2%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 25px;
-}
+  .outer {
+    margin-top: 2%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 25px;
+  }
 
-.image-block {
-  margin-right: 20px;
-  margin-bottom: 20px;
-  margin-left: 1%;
-  background-color: #fff;
-  border-radius: 5px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
+  .image-block {
+    margin-right: 20px;
+    margin-bottom: 20px;
+    margin-left: 1%;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
 
-.demo-image__preview {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0;
-  overflow: auto;
-}
+  .demo-image__preview {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    overflow: auto;
+  }
 
-.demo-image__error .image-slot {
-  font-size: 30px;
-}
+  .demo-image__error .image-slot {
+    font-size: 30px;
+  }
 
-.demo-image__error .image-slot .el-icon {
-  font-size: 30px;
-}
+  .demo-image__error .image-slot .el-icon {
+    font-size: 30px;
+  }
 
-.demo-image__error .el-image {
-  width: 100%;
-  height: 200px;
-}
+  .demo-image__error .el-image {
+    width: 100%;
+    height: 200px;
+  }
 
-.outer {
-  color: white;
-  text-align: center;
-  margin-bottom: 20px;
-}
+  .outer {
+    color: white;
+    text-align: center;
+    margin-bottom: 20px;
+  }
 
-.image-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.image-block {
-
-}
-
-.comment-list {
-  margin-top: 10px;
-}
-
-.comment-item {
-  margin-bottom: 5px;
-}
-
-.comment-content {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.comment-date {
-  font-size: 11px;
-  color: #999;
-}
-
-@media (max-width: 600px) {
   .image-list {
-
-    width: 400px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
-}
+
+  .image-block {
+
+  }
+
+  .comment-list {
+    margin-top: 10px;
+  }
+
+  .comment-item {
+    margin-bottom: 5px;
+  }
+
+  .comment-content {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .comment-date {
+    font-size: 11px;
+    color: #999;
+  }
+
+  @media (max-width: 600px) {
+    .image-list {
+      width: 400px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  }
 </style>

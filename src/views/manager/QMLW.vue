@@ -9,7 +9,7 @@
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{}"  @row-click=" copyText"
+                :cell-style="{}"  @row-click="copyText"
       >
         <el-table-column width="60" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕"/>
@@ -141,7 +141,7 @@ const copyText = (row) => {
         });
         load();
       }).then(() => {
-        setTimeout(load(data.currentPage), 80); // 80 毫秒后执行 load
+        setTimeout(load(data.currentPage), 50); // 80 毫秒后执行 load
       })
       .catch((err) => {
         // 复制失败，可以显示错误信息
@@ -232,7 +232,7 @@ const continuousSaveBarrage = () => {
 
 @media (min-width: 601px) {
   .card {
-    width: 80vw;
+    width: 80%;
   }
 
 }
