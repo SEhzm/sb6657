@@ -16,7 +16,7 @@
         <el-table-column label="" align="center" width="85">
        <el-button type="primary" label="操作" >复制</el-button>
         </el-table-column>
-        <el-table-column prop="cnt" label="复制次数" width="65"/>
+        <el-table-column prop="cnt" label="复制次数" width="55"/>
       </el-table>
     </div>
 
@@ -227,14 +227,7 @@ const continuousSaveBarrage = () => {
   font-size: 18px;
   margin-left: 150px
 }
-.copyCount {
-  font-size: 13px;
-  color: red;
-  position: absolute;
-  z-index: 10;
-  margin-left: 55vw;
-  margin-top: 5px
-}
+
 
 @media (min-width: 601px) {
   .card {
@@ -248,9 +241,6 @@ const continuousSaveBarrage = () => {
   .el-pagination{
     margin: 0;
     --el-pagination-button-width: 22px;
-  }
-  .copyCount {
-    margin-left: 77vw;
   }
   .eldtable {
     font-size: 16px;

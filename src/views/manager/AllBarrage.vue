@@ -5,23 +5,26 @@
         投稿弹幕
       </el-button>
 
-      <el-table stripe :data="currentPageData"
-      lazy=true empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
-        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{cursor:'Pointer'}"
-        @row-click="copyText">
+      <el-table stripe :data="data.displayedData" empty-text="因本页烂梗较多，可能会出现卡顿" class="eldtable"
+        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+        :cell-style="{ cursor: 'Pointer' }" @row-click="copyText" @scroll="handleScroll">
         <el-table-column width="70" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
-       <el-button type="primary" label="操作" >复制</el-button>
+          <el-button type="primary" label="操作">复制</el-button>
         </el-table-column>
-        <el-table-column prop="cnt" label="复制次数" width="65" />
+        <el-table-column prop="cnt" label="复制次数" width="55" />
       </el-table>
     </div>
 
- 
-
-    <el-backtop :right="50" :bottom="50" >UP</el-backtop>
-
+    <el-backtop :right="50" :bottom="50">UP</el-backtop>
+    <div class="pagination-wrapper">
+      <!-- 分页 -->
+      <div>
+        <el-pagination background="red" layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
+          :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
+      </div>
+    </div>
     <el-dialog v-model="data.dialogFormVisible" draggable title="投稿弹幕" width="82%">
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
         <el-form-item label="分栏" :label-width="100" prop="table">
@@ -54,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, nextTick, reactive } from 'vue'
 import request from "@/utils/request";
 import { ElNotification } from 'element-plus'
 
@@ -71,13 +74,16 @@ const rules = ({
 
 const data = reactive({
   tableData: [],
+  copiedData: [],
+  displayedData: [], // 当前展示的数据
+  pageSize: 200,
   total: 0,
-  pageSize: 5500, //每页个数
   currentPage: 1, //起始页码
   dialogFormVisible: false,
   table: '',
   barrage: '',
   ip: '',
+  loadingMore: false, // 控制是否正在加载更多数据
 })
 
 const load = (pageNum = 1) => {
@@ -88,28 +94,28 @@ const load = (pageNum = 1) => {
   }).then(res => {
     // console.log(res)
     data.tableData = res.data || [];
-    data.total = res.data?.total || 0
+    data.total = data.tableData.length;
+    data.displayedData = data.tableData.slice(0, data.pageSize); 
     // console.log(data.tableData)
   }).catch(err => {
     console.error('加载数据失败:', err)
   })
 }
 
+
 load(data.currentPage)
-
 const handlePageChange = (page) => {
-  data.currentPage = page
-  updateCurrentPageData();
+  loaded(page);
 }
 
-const updateCurrentPageData = () => {
-  const start = (data.currentPage - 1) * data.pageSize;
-  const end = start + data.pageSize;
-  const currentPageData = data.tableData.slice(start, end);
-  return currentPageData;
-}
+const loaded =(n) => {
+  if (data.tableData.length > 0) {
+    data.displayedData = [];
+    data.displayedData = data.tableData.slice(0+(n-1)*(data.pageSize), n*(data.pageSize)); 
+  }
+};
 
-const currentPageData = computed(() => updateCurrentPageData());
+
 
 const open2 = () => {
   load()
@@ -151,7 +157,7 @@ const copyText = (row) => {
   }
   document.body.removeChild(tempInput); // 清理临时元素
 };
- 
+
 
 //点击新增按钮
 const handleAdd = () => {
@@ -227,14 +233,7 @@ const continuousSaveBarrage = () => {
   margin-left: 150px
 }
 
-.copyCount {
-  font-size: 13px;
-  color: red;
-  position: absolute;
-  z-index: 10;
-  margin-left: 55vw;
-  margin-top: 5px
-}
+
 
 @media (min-width: 601px) {
   .card {
@@ -245,12 +244,9 @@ const continuousSaveBarrage = () => {
 
 
 @media (max-width: 600px) {
-  .el-pagination{
+  .el-pagination {
     margin: 0;
     --el-pagination-button-width: 22px;
-  }
-  .copyCount {
-    margin-left: 77vw;
   }
 
   .eldtable {
