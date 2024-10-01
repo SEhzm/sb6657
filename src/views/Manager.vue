@@ -11,7 +11,7 @@
           <div class="header-actions">
 
             <div style="margin-right: 20px;" class="elinput">
-              <el-input v-model="searchQuery" placeholder='搜索烂梗...' style="font-size: 18px;">
+              <el-input v-model="searchQuery" clearable placeholder='搜索烂梗...' style="font-size: 18px;">
                 <template #prefix>
                   <el-icon>
                     <search />
@@ -238,7 +238,7 @@ const wxurl =
 @media (min-width: 601px) {
   .QueryTable {
     padding: 20px;
-    z-index: 1000;
+    z-index: 100;
     position: absolute;
     width: 500px;
     background-color: white;
@@ -289,11 +289,12 @@ const wxurl =
 
 
   .header {
-    height: 55px;
-    opacity: 1;
-    display: flex;
-    align-items: center;
-  }
+  height: 55px;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  z-index: 1000;
+}
 
   .header-content {
     padding-left: 20px;

@@ -23,12 +23,10 @@
       <div>
         <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
         <el-table v-if="randomlySelectedItem" :data="[randomlySelectedItem]" style="font-family: 微软雅黑; font-size: 20px;"
-          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }"  @row-click="copyText">
+          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }" :cell-style="{cursor:'Pointer'}" @row-click="copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-            <template >
               <el-button type="primary" >复制</el-button>
-            </template>
           </el-table-column>
         </el-table>
         <div v-else>
@@ -44,12 +42,12 @@
         </span>
         <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="background-color: yellow;font-size: 30px; margin-top: 30px;">
         </el-input>
-        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText" style="font-size: 19px;" empty-text="可能没有这条烂梗或请手动刷新页面">
+        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click="copyText" style="font-size: 19px;" :cell-style="{cursor:'Pointer'}" empty-text="可能没有这条烂梗或请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-            <template>
+
               <el-button type="primary">复制</el-button>
-            </template>
+
           </el-table-column>
         </el-table>
       </div>
@@ -240,21 +238,29 @@ const open4 = () => {
 };
 
 const copyText = (row) => {
-  // console.log(row)
-  navigator.clipboard.writeText(row.barrage)
-    .then(() => {
-      open2();
-      console.log('内容已复制到剪贴板');
-      request.post('/machine/addCnt', {
-        ip: localStorage.getItem('ip'),
-        table: 'allbarrage',
-        id: row.id
-      })
-    })
-    .catch((err) => {
-      console.error('复制失败:', err);
-      open4()
+  const textToCopy = row.barrage;
+  let tempInput = document.createElement('input');
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // 选择对象
+  try {
+    document.execCommand('Copy'); // 执行浏览器复制命令
+    // 复制成功，可以显示提示信息
+    open2();
+    console.log('内容已复制到剪贴板');
+    request.post('/machine/addCnt', {
+      PageNum: data.currentPage,
+      table: 'allbarrage',
+      id: row.id
+    }).then(() => {
+      setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
     });
+  } catch (err) {
+    // 复制失败，可以显示错误信息
+    console.error('复制失败:', err);
+    open4();
+  }
+  document.body.removeChild(tempInput); // 清理临时元素
 };
 
  

@@ -9,7 +9,7 @@
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{}"  @row-click="copyText"
+                :cell-style="{cursor:'Pointer'}"  @row-click="copyText"
       >
         <el-table-column width="60" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕"/>
@@ -63,6 +63,7 @@
       </template>
     </el-dialog>
   </div>
+    <el-backtop :right="50" :bottom="50" >UP</el-backtop>
 </template>
 
 <script setup>
@@ -128,25 +129,29 @@ const open4 = () => {
 };
 
 const copyText = (row) => {
-  // console.log(row)
-  navigator.clipboard.writeText(row.barrage)
-      .then(() => {
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板');
-        request.post('/machine/addCnt', {
-          PageNum:data.currentPage,
-          table: 'ZbjHuPen',
-          id: row.id
-        })
-      }).then(() => {
-        setTimeout(load(data.currentPage), 50); // 80 毫秒后执行 load
-      })
-      .catch((err) => {
-        // 复制失败，可以显示错误信息
-        console.error('复制失败:', err);
-        open4()
-      });
+  const textToCopy = row.barrage;
+  let tempInput = document.createElement('input');
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // 选择对象
+  try {
+    document.execCommand('Copy'); // 执行浏览器复制命令
+    // 复制成功，可以显示提示信息
+    open2();
+    console.log('内容已复制到剪贴板');
+    request.post('/machine/addCnt', {
+      PageNum: data.currentPage,
+      table: 'ZbjHuPen',
+      id: row.id
+    }).then(() => {
+      setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+    });
+  } catch (err) {
+    // 复制失败，可以显示错误信息
+    console.error('复制失败:', err);
+    open4();
+  }
+  document.body.removeChild(tempInput); // 清理临时元素
 };
 
  
