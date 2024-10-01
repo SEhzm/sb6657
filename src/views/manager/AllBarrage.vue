@@ -17,7 +17,7 @@
       </el-table>
     </div>
 
-    <el-backtop :right="50" :bottom="50">UP</el-backtop>
+    <el-backtop ref="backtopRef" :right="50" :bottom="50">UP</el-backtop>
     <div class="pagination-wrapper">
       <!-- 分页 -->
       <div>
@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, reactive } from 'vue'
+import { ref, nextTick, reactive , onMounted } from 'vue'
 import request from "@/utils/request";
 import { ElNotification } from 'element-plus'
 
@@ -74,7 +74,6 @@ const rules = ({
 
 const data = reactive({
   tableData: [],
-  copiedData: [],
   displayedData: [], // 当前展示的数据
   pageSize: 200,
   total: 0,
@@ -102,20 +101,43 @@ const load = (pageNum = 1) => {
   })
 }
 
+//回顶部
+const scrollToTop = () => {
+  window.scrollTo({
+    // top: document.documentElement.offsetHeight, //回到底部
+    top: 0, //回到顶部
+    left: 0,
+    behavior: "smooth", //smooth 平滑；auto:瞬间
+  });
+};
+ 
+onMounted(() => {
+  // 页面滚动窗口监听事件
+  window.onscroll = function () {
+    // 获取浏览器卷去的高度
+    let high = document.documentElement.scrollTop || document.body.scrollTop; //兼容各浏览器
+    if (high >= 900) {
+      totop.value.style.display = "block";
+    } else {
+      totop.value.style.display = "none";
+    }
+  };
+});
 
 load(data.currentPage)
+
 const handlePageChange = (page) => {
   loaded(page);
+  scrollToTop();
 }
 
 const loaded =(n) => {
   if (data.tableData.length > 0) {
     data.displayedData = [];
     data.displayedData = data.tableData.slice(0+(n-1)*(data.pageSize), n*(data.pageSize)); 
+
   }
 };
-
-
 
 const open2 = () => {
   load()
