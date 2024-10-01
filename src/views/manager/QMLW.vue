@@ -5,7 +5,7 @@
                  @click="handleAdd">
         投稿弹幕
       </el-button>
-      <!-- <b class="copyCount">复制次数</b> -->
+
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
@@ -124,7 +124,10 @@ const open2 = () => {
 };
 
 const open4 = () => {
-  ElNotification.error('复制失败，请更换浏览器或手动复制,请勿使用夸克浏览器')
+  ElNotification({
+    message: '复制失败',
+    type: 'error',
+  })
 };
 
 const copyText = (row) => {

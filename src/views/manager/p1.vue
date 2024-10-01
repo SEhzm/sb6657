@@ -4,14 +4,14 @@
       <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
-      <!-- <b class="copyCount">复制次数</b> -->
+
       <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable"
         :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{}"
         @row-click="copyText">
         <el-table-column width="58" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
-       <el-button type="primary" label="操作" >复制</el-button>
+          <el-button type="primary" label="操作">复制</el-button>
         </el-table-column>
         <el-table-column prop="cnt" label="复制次数" width="60" />
       </el-table>
@@ -55,7 +55,7 @@
     </el-dialog>
   </div>
 
-  <el-backtop :right="50" :bottom="50" >UP</el-backtop>
+  <el-backtop :right="50" :bottom="50">UP</el-backtop>
 </template>
 
 <script setup>
@@ -113,7 +113,10 @@ const open2 = () => {
 };
 
 const open4 = () => {
-  ElNotification.error('复制失败，请更换浏览器或手动复制,请勿使用夸克浏览器')
+  ElNotification({
+    message: '复制失败',
+    type: 'error',
+  })
 };
 
 const copyText = (row) => {
@@ -138,7 +141,7 @@ const copyText = (row) => {
     });
 };
 
- 
+
 
 
 //点击新增按钮
@@ -229,10 +232,11 @@ const continuousSaveBarrage = () => {
 
 
 @media (max-width: 600px) {
-  .el-pagination{
+  .el-pagination {
     margin: 0;
     --el-pagination-button-width: 22px;
   }
+
   .copyCount {
     margin-left: 77vw;
   }

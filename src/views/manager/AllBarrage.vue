@@ -4,7 +4,7 @@
       <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
-      <!-- <b class="copyCount">复制次数</b> -->
+
       <el-table stripe :data="currentPageData"
       lazy=true empty-text="我还没有加载完喔~~因本页烂梗较多，可能会出现卡顿" class="eldtable"
         :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{}"
@@ -120,7 +120,10 @@ const open2 = () => {
 };
 
 const open4 = () => {
-  ElNotification.error('复制失败，请更换浏览器或手动复制,请勿使用夸克浏览器')
+  ElNotification({
+    message: '复制失败',
+    type: 'error',
+  })
 };
 
 const copyText = (row) => {
