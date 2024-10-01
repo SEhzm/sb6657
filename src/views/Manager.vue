@@ -43,9 +43,7 @@
           <el-table :data="filteredItems" stripe @row-click="copyText" style="" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
             <el-table-column label="" align="center" width="85">
-              <template #default="scope">
-                <el-button type="primary" @click="copyText(scope.row)">复制</el-button>
-              </template>
+                <el-button type="primary">复制</el-button>
             </el-table-column>
           </el-table>
         </div>
@@ -58,7 +56,7 @@
       </div>
     </div>
 
-    <div class="main-content">
+    <div class="main-content" style="position: relative;">
       <div class="sidebar">
         <el-menu router style="border: none; margin-right: auto" :default-active="$route.path"
           :default-openeds="['/home', '2']" :collapse="isCollapse">

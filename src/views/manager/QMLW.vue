@@ -69,7 +69,7 @@
 import {ref, reactive, nextTick} from 'vue'
 import request from "@/utils/request";
 import {ElNotification} from 'element-plus'
-import autoExecPng from "@/assets/autoexec.vue";
+
 
 
 const rules = ({
@@ -84,7 +84,7 @@ const rules = ({
 const data = reactive({
   tableData: [],
   total: 0,
-  pageSize: 15, //每页个数
+  pageSize: 50, //每页个数
   currentPage: 1, //起始页码
   dialogFormVisible: false,
   table: '',

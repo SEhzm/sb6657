@@ -1,5 +1,5 @@
 <template>
-  <img src="@/assets/imgs/hello.png" alt="" style="width: 40px;">
+  <img src="/public/favicon.ico" alt="" style="width: 40px;">
 </template>
 
 <script setup lang='ts'>

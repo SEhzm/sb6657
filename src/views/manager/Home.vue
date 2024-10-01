@@ -26,8 +26,8 @@
           :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }"  @row-click="copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-            <template #default="scope">
-              <el-button type="primary" @click="copyText(scope.row)">复制</el-button>
+            <template >
+              <el-button type="primary" >复制</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -47,8 +47,8 @@
         <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click=" copyText" style="font-size: 19px;" empty-text="可能没有这条烂梗或请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-            <template #default="scope">
-              <el-button type="primary" @click="copyText(scope.row)">复制</el-button>
+            <template>
+              <el-button type="primary">复制</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -190,7 +190,7 @@ const data = reactive({
   table: '',
   barrage: '',
 })
-let searchBarrageMeg=ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
+var searchBarrageMeg=ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
 const load = () => {
   request.get('/machine/allBarrage/Page', {})
     .then(res => {
@@ -198,7 +198,7 @@ const load = () => {
       data.tableData = res.data || [];
       // console.log(data.tableData)
       getRandomItem();
-      searchBarrageMeg = '搜索烂梗...';
+      searchBarrageMeg = ref('搜索烂梗...');
     })
     .catch(err => {
       console.error('加载数据失败:', err);

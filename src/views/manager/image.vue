@@ -55,7 +55,7 @@
 import {ref, reactive} from 'vue'
 import request from "@/utils/request";
 import {ElNotification} from 'element-plus'
-import autoExecPng from "@/assets/autoexec.vue";
+
 
 const autoexec = () => {
   ElNotification({
