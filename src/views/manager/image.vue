@@ -63,7 +63,7 @@ const autoexec = () => {
     dangerouslyUseHTMLString: true,
     title: '照片可以评论喔',
     offset: 50,
-    duration: 10000
+    duration: 5000
   })
 }
 autoexec()

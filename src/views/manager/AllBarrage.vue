@@ -5,7 +5,7 @@
         投稿弹幕
       </el-button>
 
-      <el-table stripe :data="data.displayedData" empty-text="因本页烂梗较多，可能会出现卡顿" class="eldtable"
+      <el-table v-loading="loading" stripe :data="data.displayedData" empty-text="因本页烂梗较多，可能会出现卡顿" class="eldtable"
         :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
         :cell-style="{ cursor: 'Pointer' }" @row-click="copyText" @scroll="handleScroll">
         <el-table-column width="70" prop="id" label="序号"></el-table-column>
@@ -61,6 +61,7 @@ import { ref, nextTick, reactive , onMounted } from 'vue'
 import request from "@/utils/request";
 import { ElNotification } from 'element-plus'
 
+const loading = ref(true)
 
 
 const rules = ({
@@ -85,7 +86,7 @@ const data = reactive({
   loadingMore: false, // 控制是否正在加载更多数据
 })
 
-const load = (pageNum = 1) => {
+const load = (page) => {
   request.get('/machine/allBarrage/Page', {
     params: {
       status: 0
@@ -94,8 +95,9 @@ const load = (pageNum = 1) => {
     // console.log(res)
     data.tableData = res.data || [];
     data.total = data.tableData.length;
-    data.displayedData = data.tableData.slice(0, data.pageSize); 
+    data.displayedData = data.tableData.slice(0+(page-1)*(data.pageSize), page*(data.pageSize)); 
     // console.log(data.tableData)
+    loading.value=false;
   }).catch(err => {
     console.error('加载数据失败:', err)
   })

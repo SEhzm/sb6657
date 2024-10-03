@@ -6,7 +6,7 @@
         投稿弹幕
       </el-button>
 
-      <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
+      <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
                 class="eldtable"
                 :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
                 :cell-style="{cursor:'Pointer'}" @row-click="copyText"
@@ -85,6 +85,7 @@ import {ref, reactive} from 'vue'
 import request from "@/utils/request";
 import {ElNotification} from 'element-plus'
 
+const loading = ref(true)
 
 const rules = ({
   table: [
@@ -116,6 +117,7 @@ const load = (pageNum = 1) => {
     data.tableData = res.data?.list || []
     data.total = res.data?.total || 0
     // console.log(data.tableData)
+    loading.value=false;
   }).catch(err => {
     console.error('加载数据失败:', err)
   })

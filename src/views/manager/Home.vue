@@ -1,7 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
-  <div style="height:200px;">
-    <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom"
-      class="boom6657">
+  <div class="boomouder">
+    <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom" class="boom6657">
   </div>
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 10px;">
@@ -22,11 +21,13 @@
     <div class="card" style="line-height: 0px; margin-top: 8px;">
       <div>
         <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
-        <el-table v-if="randomlySelectedItem" :data="[randomlySelectedItem]" style="font-family: 微软雅黑; font-size: 20px;"
-          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }" :cell-style="{cursor:'Pointer'}" @row-click="copyText">
+        <el-table v-loading="loading" v-if="randomlySelectedItem" :data="[randomlySelectedItem]"
+          style="font-family: 微软雅黑; font-size: 20px;"
+          :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }"
+          @row-click="copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-              <el-button type="primary" >复制</el-button>
+            <el-button type="primary">复制</el-button>
           </el-table-column>
         </el-table>
         <div v-else>
@@ -40,13 +41,15 @@
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
           --------搜索在这，🦐吗---------
         </span>
-        <el-input v-model="searchQuery"  :placeholder= searchBarrageMeg style="background-color: yellow;font-size: 30px; margin-top: 30px;">
+        <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
+          style="background-color: yellow;font-size: 30px; margin-top: 30px;">
         </el-input>
-        <el-table v-if="searchQuery" :data="filteredItems" stripe @row-click="copyText" style="font-size: 19px;" :cell-style="{cursor:'Pointer'}" empty-text="可能没有这条烂梗或请手动刷新页面">
+        <el-table v-loading="loading" v-if="searchQuery" :data="filteredItems" stripe @row-click="copyText"
+          style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }" empty-text="可能没有这条烂梗或请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
 
-              <el-button type="primary">复制</el-button>
+            <el-button type="primary">复制</el-button>
 
           </el-table-column>
         </el-table>
@@ -55,7 +58,8 @@
 
     <div class="card" style="margin-top: 8px; text-align: center;">
 
-      <div><p>这里是投稿烂梗，上面才是搜索</p>
+      <div>
+        <p>这里是投稿烂梗，上面才是搜索</p>
         <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
           <el-form-item label="分栏" :label-width="auto" prop="table">
             <el-select v-model="data.table" placeholder="选择上传的分栏">
@@ -110,8 +114,7 @@ import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
 import autoExecPng from "@/assets/autoexec.vue";
 
-// 获取IP
-
+const loading = ref(true)
 
 const autoexec = () => {
   request.get("https://api.vvhan.com/api/visitor.info")
@@ -125,15 +128,15 @@ const autoexec = () => {
         message:
           "<p>欢迎来自<b>" +
           resData.location +
-          "</b>的朋友<br/>" +
+          "</b>的朋友<br/> " +
           resData.system +
-          " " +
           resData.browser +
           " <br>IP: " +
           resData.ip +
           "</p>",
         offset: 50,
-        duration: 5000
+        customClass: "myClass",
+        duration: 2000
       })
     })
 }
@@ -188,7 +191,7 @@ const data = reactive({
   table: '',
   barrage: '',
 })
-var searchBarrageMeg=ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
+var searchBarrageMeg = ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
 const load = () => {
   request.get('/machine/allBarrage/Page', {})
     .then(res => {
@@ -197,6 +200,7 @@ const load = () => {
       // console.log(data.tableData)
       getRandomItem();
       searchBarrageMeg = ref('搜索烂梗...');
+      loading.value=false;
     })
     .catch(err => {
       console.error('加载数据失败:', err);
@@ -263,7 +267,7 @@ const copyText = (row) => {
   document.body.removeChild(tempInput); // 清理临时元素
 };
 
- 
+
 
 const calculateCountdown = () => {
   const now = new Date();
@@ -328,10 +332,14 @@ onMounted(() => {
 
 @media (min-width: 601px) {
   .boom6657 {
-    left: calc(50vw - 153px);  
+    left: calc(50vw - 153px);
     position: absolute;
     height: 200px;
     border-radius: 10px;
+  }
+
+  .boomouder {
+    height: 200px;
   }
 
   .home {
@@ -354,20 +362,23 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
-  .el-pagination{
-    margin: 0;
-    --el-pagination-button-width: 22px;
-  }
+
   .boom6657 {
-    position: relative;
+    position: absolute;
+    border-radius: 10px;
     width: 192px;
     height: 108px;
     left: 25%;
   }
 
-  .el-notification {
-    width: 60%;
-    height: auto;
+  .boomouder {
+    height: 105px !important;
+  }
+
+  .myClass {
+    --el-notification-width: 290px;
+    height: 20px;
+    width: 20px !important;
   }
 
   .header-text {
@@ -412,9 +423,13 @@ onMounted(() => {
   .el-footer {
     text-align: center;
     font-family: Arial;
+    position: fixed;
+    bottom: 2px;
     font-size: 12px;
-    letter-spacing: 0px;
-    margin-left: 0px;
+
+    width: 100%;
+
+
   }
 }
 </style>

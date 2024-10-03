@@ -40,7 +40,7 @@
         </div>
 
         <div class="QueryTable" v-if="searchQuery">
-          <el-table :data="filteredItems" stripe @row-click="copyText" style="" empty-text="可能没有这条烂梗或请手动刷新页面">
+          <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyText" style="" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
             <el-table-column label="" align="center" width="85">
                 <el-button type="primary">复制</el-button>
@@ -59,10 +59,7 @@
     <div class="main-content" style="position: relative;">
       <div class="sidebar">
         <el-menu router style="border: none; margin-right: auto" :default-active="$route.path"
-          :default-openeds="['/home', '2']" :collapse="isCollapse">
-          <el-button type="primary" @click="toggleCollapse" class="collapse-button">折叠
-          </el-button>
-
+          >
           <el-menu-item index="/home">
             <el-icon>
               <HomeFilled />
@@ -140,6 +137,7 @@ import { ref, reactive, computed, onMounted } from 'vue';
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
 
+const loading=ref(true)
 const table = [
   { text: '首页', path: '/home' },
   { text: '+1', path: '/p1' },
@@ -163,6 +161,7 @@ const load = () => {
     .then(res => {
       // console.log(res);
       data.tableData = res.data || [];
+      loading.value=false
     })
     .catch(err => {
       console.error('加载数据失败:', err);
@@ -217,15 +216,13 @@ function navigateTo(path: string): void {
   router.push(path);
 }
 
-const isCollapse = ref(false);
+
 
 const complaintButton = () => {
   window.open("https://www.wjx.cn/vm/rQUgnS0.aspx#");
 };
 
-const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value;
-};
+
 
 const $route = useRoute();
 console.log($route.path);
@@ -275,6 +272,7 @@ const wxurl =
   .el-sub-menu .el-menu-item.is-active {
     background-color: rgba(255, 255, 255, 0.5) !important;
     color: black;
+    border-radius: 5px;
   }
 
   .el-menu.el-menu--vertical.v-enter-to {
@@ -285,6 +283,7 @@ const wxurl =
     outline: 0 !important;
     color: #2E95FB !important;
     background: linear-gradient(270deg, #F2F7FC 0%, #FEFEFE 100%) !important;
+    border-radius: 5px;
   }
 
 
@@ -312,11 +311,12 @@ const wxurl =
     height: 40px;
     float: left;
     margin: 5px;
+    border-radius: 5px;
   }
 
   .header-title {
     color: #ff552e;
-    font-size: 35px;
+    font-size: 30px;
     align-items: center;
   }
 
@@ -353,12 +353,7 @@ const wxurl =
     min-height: calc(100vh - 60px);
   }
 
-  .collapse-button {
-    margin-top: 2%;
-    align-content: center;
-    width: 96%;
-    margin-left: 2%;
-  }
+
 
   .menu-icon {
     height: 18px;
@@ -404,16 +399,17 @@ const wxurl =
 
   .icon-img-rounded {
     margin-top: 5px;
-    width: 20px;
+    width: 22px;
     height: 20px;
     border-radius: 5px;
     margin-right: 5px;
   }
 
   .complaint-button {
-    width: 95px;
+    width: 80px;
     height: 30px;
-    font-size: 12px;
+    font-size: 11px;
+    margin-right: 5px;
   }
 
   .icon-img {
@@ -451,15 +447,15 @@ const wxurl =
   //移动端
   .tab {
     display: flex;
-    overflow-x: auto;
+    overflow-x: scroll;
     white-space: nowrap;
     //关掉滑动条
-    //scrollbar-width: none;
-    //-ms-overflow-style: none;
-    //
-    //&::-webkit-scrollbar { /* Webkit browsers (Chrome, Safari) */
-    //  width: 8px;
-    //}
+    // scrollbar-width: none;
+    // -ms-overflow-style: none;
+    
+    &::-webkit-scrollbar { /* Webkit browsers (Chrome, Safari) */
+     height: 8px;
+    }
 
     &::-webkit-scrollbar-track {
       background: transparent;
