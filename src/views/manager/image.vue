@@ -196,7 +196,7 @@ const saveComment = (Obimage) => {
   }
 
   .image-block {
-
+z-index: 3;
   }
 
   .comment-list {

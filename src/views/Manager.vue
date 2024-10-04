@@ -9,6 +9,15 @@
           </a>
 
           <div class="header-actions">
+            <img src="@/assets/imgs/hot.png" alt="热门" style="width: 24px;height: 24px;cursor:pointer;margin-right: 10px"
+              class="hotBarrageImg" @click="hotDialog = true">
+            <div @click="hotDialog = true" class="hotBarrage"
+              style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: black;white-space: nowrap;">
+              <transition name="fade">
+                <span :key="currentBarrageIndex" class="hotBarrageSpan">热门：{{
+                  data.hotBarrageOf10[currentBarrageIndex]?.barrage }}</span>
+              </transition>
+            </div>
 
             <div style="margin-right: 20px;" class="elinput">
               <el-input v-model="searchQuery" clearable placeholder='搜索烂梗...' style="font-size: 18px;">
@@ -39,11 +48,55 @@
           </div>
         </div>
 
+        <!-- 热门弹幕弹出框 -->
+        <el-dialog v-model="hotDialog" title="24h热门烂梗"><el-button style=""
+            @click="hotDialogOf7day = true, hotDialog = false">查看近七天热门</el-button>
+          <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~" class="eldtable"
+            :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+            :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+            <el-table-column width="45" fixed prop="" label="top10">
+              <template #default="scope">
+                {{ scope.$index + 1 }}
+              </template>
+            </el-table-column><el-table-column prop="barrage" min-width="90" label="烂梗" />
+            <el-table-column label="" align="center" width="85">
+              <el-button type="primary" label="操作">复制</el-button>
+            </el-table-column>
+            <el-table-column prop="cnt" label="复制次数" width="55">
+              <template #default="scope">
+                {{ scope.row.cnt }}k
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
+
+        <!-- 七天热门弹幕弹出框 -->
+        <el-dialog v-model="hotDialogOf7day" title="七天热门烂梗">
+          <el-table v-loading="loading" stripe :data="data.hotBarrageOf7day" empty-text="我还没有加载完喔~~" class="eldtable"
+            :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+            :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+            <el-table-column width="35" fixed prop="" label="排名">
+              <template #default="scope">
+                {{ scope.$index + 1 }}
+              </template>
+            </el-table-column><el-table-column prop="barrage" min-width="90" label="烂梗" />
+            <el-table-column label="" align="center" width="85">
+              <el-button type="primary" label="操作">复制</el-button>
+            </el-table-column>
+            <el-table-column prop="cnt" label="复制次数" width="55">
+              <template #default="scope">
+                {{ scope.row.cnt }}k
+              </template>
+            </el-table-column>
+          </el-table>
+        </el-dialog>
+
         <div class="QueryTable" v-if="searchQuery">
-          <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyText" style="" empty-text="可能没有这条烂梗或请手动刷新页面">
+          <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyToQueryTableText"
+            style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
             <el-table-column label="" align="center" width="85">
-                <el-button type="primary">复制</el-button>
+              <el-button type="primary">复制</el-button>
             </el-table-column>
           </el-table>
         </div>
@@ -58,8 +111,7 @@
 
     <div class="main-content" style="position: relative;">
       <div class="sidebar">
-        <el-menu router style="border: none; margin-right: auto" :default-active="$route.path"
-          >
+        <el-menu router style="border: none; margin-right: auto" :default-active="$route.path">
           <el-menu-item index="/home">
             <el-icon>
               <HomeFilled />
@@ -133,11 +185,13 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
 
-const loading=ref(true)
+const hotDialog = ref(false)
+const hotDialogOf7day = ref(false)
+const loading = ref(true)
 const table = [
   { text: '首页', path: '/home' },
   { text: '+1', path: '/p1' },
@@ -155,13 +209,15 @@ const data = reactive({
   tableData: [],
   table: '',
   barrage: '',
+  hotBarrageOf10: [],
+  hotBarrageOf7day: [],
 })
 const load = () => {
   request.get('/machine/allBarrage/Page', {})
     .then(res => {
       // console.log(res);
       data.tableData = res.data || [];
-      loading.value=false
+      loading.value = false
     })
     .catch(err => {
       console.error('加载数据失败:', err);
@@ -169,7 +225,48 @@ const load = () => {
 };
 
 load();
+const hotBarrageOf10 = () => {
+  request.get('/machine/hotBarrageOfAll')
+    .then(res => {
+      data.hotBarrageOf10 = res.data.slice(0, 10) || [];
+      // console.log(data.hotBarrageOf10)
+    }).catch(err => {
+      console.error('加载数据失败:', err);
+    })
+}
+hotBarrageOf10()
+const hotBarrageOf7 = () => {
+  request.get('/machine/hotBarrageOf7Day')
+    .then(res => {
+      data.hotBarrageOf7day = res.data || [];
+    }).catch(err => {
+      console.error('加载数据失败:', err);
+    })
+}
+hotBarrageOf7()
+const currentBarrageIndex = ref(0);
+let intervalId;
 
+// 开始切换
+function startSwitching() {
+  intervalId = setInterval(() => {
+    currentBarrageIndex.value = (currentBarrageIndex.value + 1) % data.hotBarrageOf10.length;
+  }, 5000); // 每五秒切换一次
+}
+
+// 在组件挂载时启动定时器
+onMounted(() => {
+  startSwitching();
+});
+
+// 在组件销毁前清除定时器
+onUnmounted(() => {
+  clearInterval(intervalId);
+});
+
+const openHot = () => {
+  console.log("111")
+}
 
 // 过滤搜索结果
 const filteredItems = computed(() => {
@@ -194,22 +291,56 @@ const open4 = () => {
   })
 };
 
-const copyText = (row) => {
-  // console.log(row)
-  navigator.clipboard.writeText(row.barrage)
-    .then(() => {
-      open2();
-      console.log('内容已复制到剪贴板');
-      request.post('/machine/addCnt', {
-        ip: localStorage.getItem('ip'),
-        table: 'allbarrage',
-        id: row.id
-      })
+
+const copyToQueryTableText = (row) => {
+  console.log(row)
+  const textToCopy = row.barrage;
+  let tempInput = document.createElement('input');
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // 选择对象
+  try {
+    document.execCommand('Copy'); // 执行浏览器复制命令
+    // 复制成功，可以显示提示信息
+    open2();
+    console.log('内容已复制到剪贴板');
+    request.post('/machine/addCnt', {
+      table: 'allbarrage',
+      id: row.id
     })
-    .catch((err) => {
-      console.error('复制失败:', err);
-      open4()
-    });
+    setTimeout(() => hotBarrageOf10(), 200);// 200 毫秒后执行 hotBarrageOf10
+    setTimeout(() => hotBarrageOf7(), 200);// 200 毫秒后执行 hotBarrageOf10
+  } catch (err) {
+    // 复制失败，可以显示错误信息
+    console.error('复制失败:', err);
+    open4();
+  }
+  document.body.removeChild(tempInput); // 清理临时元素
+};
+const copyText = (row) => {
+  console.log(row)
+  const textToCopy = row.barrage;
+  let tempInput = document.createElement('input');
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // 选择对象
+  try {
+    document.execCommand('Copy'); // 执行浏览器复制命令
+    // 复制成功，可以显示提示信息
+    open2();
+    console.log('内容已复制到剪贴板');
+    request.post('/machine/addCnt', {
+      table: 'allbarrage',
+      id: row.barrageId
+    })
+    setTimeout(() => hotBarrageOf10(), 200);// 200 毫秒后执行 hotBarrageOf10
+    setTimeout(() => hotBarrageOf7(), 200);// 200 毫秒后执行 hotBarrageOf10
+  } catch (err) {
+    // 复制失败，可以显示错误信息
+    console.error('复制失败:', err);
+    open4();
+  }
+  document.body.removeChild(tempInput); // 清理临时元素
 };
 
 function navigateTo(path: string): void {
@@ -233,6 +364,23 @@ const wxurl =
 
 <style lang="scss">
 @media (min-width: 601px) {
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
+  .hotBarrageSpan {
+    color: #e4d6b8;
+    border-bottom: 1px solid #e4d6b8;
+    padding-bottom: 1px;
+  }
+
   .QueryTable {
     padding: 20px;
     z-index: 100;
@@ -288,12 +436,12 @@ const wxurl =
 
 
   .header {
-  height: 55px;
-  display: flex;
-  align-items: center;
-  width: 100%;
-  z-index: 1000;
-}
+    height: 55px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    z-index: 1000;
+  }
 
   .header-content {
     padding-left: 20px;
@@ -368,6 +516,45 @@ const wxurl =
 }
 
 @media (max-width: 600px) {
+  .hotBarrageSpan {
+    color: black;
+    border-bottom: 1px solid #e4d6b8;
+    padding-bottom: 1px;
+  }
+
+  .el-overlay-dialog {
+    z-index: 3;
+  }
+
+  .el-dialog {
+    width: 100vw;
+  }
+
+  .hotBarrage {
+    position: absolute;
+    margin-top: 200px;
+    left: 30px;
+    z-index: 1;
+    color: black;
+  }
+
+  .hotBarrageImg {
+    z-index: 1;
+    top: 200px;
+    position: absolute;
+    left: 2px;
+  }
+
+  .fade-enter-active,
+  .fade-leave-active {
+    transition: opacity 0.5s;
+  }
+
+  .fade-enter-from,
+  .fade-leave-to {
+    opacity: 0;
+  }
+
   .QueryTable {
     padding: 20px;
     z-index: 1000;
@@ -452,9 +639,10 @@ const wxurl =
     //关掉滑动条
     // scrollbar-width: none;
     // -ms-overflow-style: none;
-    
-    &::-webkit-scrollbar { /* Webkit browsers (Chrome, Safari) */
-     height: 8px;
+
+    &::-webkit-scrollbar {
+      /* Webkit browsers (Chrome, Safari) */
+      height: 8px;
     }
 
     &::-webkit-scrollbar-track {

@@ -3,7 +3,7 @@
     <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom" class="boom6657">
   </div>
   <div class="home">
-    <div class="card" style="line-height: 30px;margin-top: 10px;">
+    <div class="card" style="line-height: 30px;margin-top: 50px;">
       <div><b>
           <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕</em></b>
       </div>
@@ -200,7 +200,7 @@ const load = () => {
       // console.log(data.tableData)
       getRandomItem();
       searchBarrageMeg = ref('搜索烂梗...');
-      loading.value=false;
+      loading.value = false;
     })
     .catch(err => {
       console.error('加载数据失败:', err);
@@ -320,6 +320,7 @@ onMounted(() => {
 }
 
 .dgq63136 {
+  margin-top: 120px;
   font-size: 24px;
   font-weight: bold;
 }
@@ -362,6 +363,10 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
+  .el-notification {
+    width: 60%;
+    height: auto;
+  }
 
   .boom6657 {
     position: absolute;
@@ -426,10 +431,7 @@ onMounted(() => {
     position: fixed;
     bottom: 2px;
     font-size: 12px;
-
     width: 100%;
-
-
   }
 }
 </style>

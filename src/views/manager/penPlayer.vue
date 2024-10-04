@@ -210,6 +210,7 @@ const continuousSaveBarrage = () => {
 font-size: 29px;
 }
 .eldtable {
+  z-index: 3;
   font-size: 18px;
   white-space: nowrap;
   overflow-x: auto;

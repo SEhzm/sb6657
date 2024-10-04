@@ -213,6 +213,7 @@ const continuousSaveBarrage = () => {
 
 <style scoped>
 .eldtable {
+  z-index: 3;
   font-size: 18px;
   white-space: nowrap;
   overflow-x: auto;
