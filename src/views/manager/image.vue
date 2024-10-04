@@ -5,16 +5,15 @@
   </div>
   <div class="image-list">
     <div v-for="(image, index) in image.outerImg" :key="index" class="image-block">
-      <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
-                :preview-src-list="[image.url]" fit="cover" lazy
-                style="width: 250px; height: 300px; ">
+      <el-image :zoom-rate="3.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
+        :preview-src-list="[image.url]" fit="cover" lazy style="width: 250px; height: 300px; ">
       </el-image>
       <div style="text-align: center; padding: 5%;">
         <el-button style="width: 100%; font-size: 19px; box-sizing: border-box;">{{ image.date }}</el-button>
       </div>
       <el-button @click="toggleComments(image)" style=" font-size: 18px; margin-left: 15px; box-sizing: border-box;">{{
-          image.showComments ? '隐藏评论' : '显示评论'
-        }}
+        image.showComments ? '隐藏评论' : '显示评论'
+      }}
       </el-button>
       <div v-if="image.showComments" class="comment-list">
         <div v-for="(comments, cIndex) in image.comments" :key="cIndex" class="comment-item">
@@ -24,7 +23,7 @@
         </div>
       </div>
       <el-button type="success" plain @click="addComment(image)" style=" font-size: 18px; box-sizing: border-box;">
-        新增评论
+        我要评论
       </el-button>
     </div>
   </div>
@@ -32,10 +31,10 @@
   <el-dialog v-model="image.dialogFormVisible" draggable title="评论">
     <el-form :model="image" label-width="100px" :rules="rules" label-position="right">
       <el-form-item label="你的斗鱼id" prop="douyuID">
-        <el-input v-model="image.douyuID" autocomplete="off"/>
+        <el-input v-model="image.douyuID" autocomplete="off" />
       </el-form-item>
       <el-form-item label="评论内容" prop="Commentname">
-        <el-input v-model="image.Commentname" autocomplete="off"/>
+        <el-input v-model="image.Commentname" autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>
@@ -47,14 +46,14 @@
       </div>
     </template>
   </el-dialog>
-  <el-backtop :right="50" :bottom="50"/>
+  <el-backtop :right="50" :bottom="50" />
 </template>
 
 
 <script setup>
-import {ref, reactive} from 'vue'
+import { ref, reactive } from 'vue'
 import request from "@/utils/request";
-import {ElNotification} from 'element-plus'
+import { ElNotification } from 'element-plus'
 
 
 const autoexec = () => {
@@ -98,10 +97,10 @@ const formatDate = (date) => {
 
 const rules = ({
   douyuId: [
-    {required: true, message: '请输入你的斗鱼ID', trigger: 'blur'},
+    { required: true, message: '请输入你的斗鱼ID', trigger: 'blur' },
   ],
   Commentname: [
-    {required: true, message: '请输入评论', trigger: 'blur'},
+    { required: true, message: '请输入评论', trigger: 'blur' },
   ]
 })
 
@@ -145,84 +144,88 @@ const saveComment = (Obimage) => {
 
 
 <style scoped>
-  .outer {
-    margin-top: 2%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 25px;
-  }
+.el-image-viewer__img {
+  width: 200px;
+  height: 200px;
+}
 
-  .image-block {
-    margin-right: 20px;
-    margin-bottom: 20px;
-    margin-left: 1%;
-    background-color: #fff;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-  }
+.outer {
+  margin-top: 2%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 23px;
+  text-align: center;
+  color:white;
+}
 
-  .demo-image__preview {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    overflow: auto;
-  }
+.image-block {
+  margin-right: 20px;
+  margin-bottom: 20px;
+  margin-left: 1%;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
 
-  .demo-image__error .image-slot {
-    font-size: 30px;
-  }
+.demo-image__preview {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  overflow: auto;
+}
 
-  .demo-image__error .image-slot .el-icon {
-    font-size: 30px;
-  }
+.demo-image__error .image-slot {
+  font-size: 30px;
+}
 
-  .demo-image__error .el-image {
-    width: 100%;
-    height: 200px;
-  }
+.demo-image__error .image-slot .el-icon {
+  font-size: 30px;
+}
 
-  .outer {
-    color: white;
-    text-align: center;
+.demo-image__error .el-image {
+  width: 100%;
+  height: 200px;
+}
+
+.image-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.image-block {}
+
+.comment-list {
+  margin-top: 10px;
+}
+
+.comment-item {
+  margin-bottom: 5px;
+}
+
+.comment-content {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.comment-date {
+  font-size: 11px;
+  color: #999;
+}
+
+@media (max-width: 600px) {
+  .outer{
+    color:black;
     margin-bottom: 20px;
   }
 
   .image-list {
+    width: 400px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
   }
-
-  .image-block {
-z-index: 3;
-  }
-
-  .comment-list {
-    margin-top: 10px;
-  }
-
-  .comment-item {
-    margin-bottom: 5px;
-  }
-
-  .comment-content {
-    font-weight: bold;
-    font-size: 14px;
-  }
-
-  .comment-date {
-    font-size: 11px;
-    color: #999;
-  }
-
-  @media (max-width: 600px) {
-    .image-list {
-      width: 400px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-  }
+}
 </style>

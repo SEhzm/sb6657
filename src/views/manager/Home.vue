@@ -136,7 +136,7 @@ const autoexec = () => {
           "</p>",
         offset: 50,
         customClass: "myClass",
-        duration: 2000
+        duration: 200000
       })
     })
 }
@@ -297,8 +297,6 @@ onMounted(() => {
   color: red;
 }
 
-
-
 .dog_head {
   margin-top: -10px;
   height: 70px;
@@ -363,9 +361,9 @@ onMounted(() => {
 }
 
 @media (max-width: 600px) {
-  .el-notification {
-    width: 60%;
-    height: auto;
+  .myClass {
+    width: 200px;
+    height: 200px;
   }
 
   .boom6657 {

@@ -249,8 +249,6 @@ const continuousSaveBarrage = () => {
   }
 
 }
-
-
 @media (max-width: 600px) {
   .el-pagination{
     margin: 0;

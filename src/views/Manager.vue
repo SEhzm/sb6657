@@ -362,7 +362,7 @@ const wxurl =
   "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @media (min-width: 601px) {
 
   .fade-enter-active,

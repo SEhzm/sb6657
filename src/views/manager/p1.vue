@@ -192,8 +192,6 @@ const continuousSaveBarrage = () => {
     })
   }
 }
-
-
 </script>
 
 <style scoped>
@@ -215,11 +213,6 @@ const continuousSaveBarrage = () => {
   font-size: 18px;
   margin-left: 150px
 }
-
-
-
-
-
 @media (min-width: 601px) {
   .card {
     width: 80%;
@@ -227,14 +220,11 @@ const continuousSaveBarrage = () => {
 
 }
 
-
 @media (max-width: 600px) {
   .el-pagination {
     margin: 0;
     --el-pagination-button-width: 22px;
   }
-
-
 
   .eldtable {
     font-size: 16px;
@@ -242,9 +232,6 @@ const continuousSaveBarrage = () => {
     overflow-x: auto;
     cursor: cell;
   }
-
-
-
   .dialogFormVisible {
     font-size: 15px;
   }

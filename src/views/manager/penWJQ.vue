@@ -222,25 +222,17 @@ const continuousSaveBarrage = () => {
   font-size: 18px;
   margin-left: 150px
 }
-
-
-
 @media (min-width: 601px) {
   .card {
     width: 80%;
   }
 
 }
-
-
 @media (max-width: 600px) {
   .el-pagination {
     margin: 0;
     --el-pagination-button-width: 22px;
   }
-
-
-
   .eldtable {
     font-size: 16px;
     white-space: nowrap;

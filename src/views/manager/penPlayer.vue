@@ -227,8 +227,6 @@ font-size: 29px;
   font-size: 18px;
   margin-left: 150px
 }
-
-
 @media (min-width: 601px) {
   .card {
     width: 80%;

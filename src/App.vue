@@ -16,7 +16,7 @@
 <script setup lang="ts">
 
 </script>
-<style>
+<style scoped>
 
 .close-button {
   position: absolute;
