@@ -57,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, reactive , onMounted } from 'vue'
+import { ref, nextTick, reactive, onMounted } from 'vue'
 import request from "@/utils/request";
 import { ElNotification } from 'element-plus'
 
@@ -95,9 +95,9 @@ const load = (page) => {
     // console.log(res)
     data.tableData = res.data || [];
     data.total = data.tableData.length;
-    data.displayedData = data.tableData.slice(0+(page-1)*(data.pageSize), page*(data.pageSize)); 
+    data.displayedData = data.tableData.slice(0 + (page - 1) * (data.pageSize), page * (data.pageSize));
     // console.log(data.tableData)
-    loading.value=false;
+    loading.value = false;
   }).catch(err => {
     console.error('加载数据失败:', err)
   })
@@ -112,7 +112,7 @@ const scrollToTop = () => {
     behavior: "smooth", //smooth 平滑；auto:瞬间
   });
 };
- 
+
 onMounted(() => {
   // 页面滚动窗口监听事件
   window.onscroll = function () {
@@ -133,10 +133,10 @@ const handlePageChange = (page) => {
   scrollToTop();
 }
 
-const loaded =(n) => {
+const loaded = (n) => {
   if (data.tableData.length > 0) {
     data.displayedData = [];
-    data.displayedData = data.tableData.slice(0+(n-1)*(data.pageSize), n*(data.pageSize)); 
+    data.displayedData = data.tableData.slice(0 + (n - 1) * (data.pageSize), n * (data.pageSize));
 
   }
 };

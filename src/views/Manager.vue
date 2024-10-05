@@ -10,17 +10,19 @@
 
           <div class="header-actions">
             <img src="@/assets/imgs/hot.png" alt="热门" style="width: 24px;height: 24px;cursor:pointer;margin-right: 10px"
-              class="hotBarrageImg" @click="hotDialog = true">
+              class="hotBarrageImg" @click="hotDialog = true" />
             <div @click="hotDialog = true" class="hotBarrage"
-              style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: black;white-space: nowrap;">
+              style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: #e4d6b8;white-space: nowrap;">
               <transition name="fade">
-                <span :key="currentBarrageIndex" class="hotBarrageSpan">热门：{{
-                  data.hotBarrageOf10[currentBarrageIndex]?.barrage }}</span>
+                <span :key="currentBarrageIndex" class="hotBarrageSpan">
+                  热门：{{
+                    data.hotBarrageOf10[currentBarrageIndex]?.barrage }}
+                </span>
               </transition>
             </div>
 
             <div style="margin-right: 20px;" class="elinput">
-              <el-input v-model="searchQuery" clearable placeholder='搜索烂梗...' style="font-size: 18px;">
+              <el-input v-model="searchQuery" clearable placeholder="搜索烂梗..." style="font-size: 18px;">
                 <template #prefix>
                   <el-icon>
                     <search />
@@ -30,7 +32,10 @@
             </div>
 
             <el-button type="primary" @click="complaintButton" class="complaint-button">
-              <span>上传照片<br>建议/提交BUG</span>
+              <span>
+                上传照片
+                <br />建议/提交BUG
+              </span>
             </el-button>
             <a href="https://gitee.com/hzming1/sb6657" target="_blank">
               <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img" />
@@ -41,52 +46,49 @@
             <a href="https://github.com/SEhzm/sb6657/" target="_blank">
               <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
             </a>
-              <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2"
-                :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['zfb.jpg']" :initial-index="4" fit="cover" />
+            <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2"
+              :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['zfb.jpg']" :initial-index="4" fit="cover" />
             <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy
               :max-scale="7" :min-scale="0.2" :preview-src-list="['wx.jpg']" :initial-index="4" fit="cover" />
           </div>
         </div>
 
         <!-- 24h热门弹幕弹出框 -->
-        <el-dialog v-model="hotDialog" title="24h热门烂梗"><el-button style=""
-            @click="hotDialogOf7day = true, hotDialog = false">查看近七天热门</el-button>
+        <el-dialog v-model="hotDialog" title="24h热门烂梗" style="width: 100%;">
+          <template #title>
+            <span>24h热门烂梗</span>
+            <el-button style="float: right;" @click="hotDialogOf7day = true, hotDialog = false">查看近七天热门</el-button>
+          </template>
           <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
-            <el-table-column width="45" fixed prop="" label="top10">
-              <template #default="scope">
-                {{ scope.$index + 1 }}
-              </template>
-            </el-table-column><el-table-column prop="barrage" min-width="90" label="烂梗" />
-            <el-table-column label="" align="center" width="85">
+            <el-table-column width="45" fixed prop label="top10">
+              <template #default="scope">{{ scope.$index + 1 }}</template>
+            </el-table-column>
+            <el-table-column prop="barrage" min-width="90" label="烂梗" />
+            <el-table-column label align="center" width="85">
               <el-button type="primary" label="操作">复制</el-button>
             </el-table-column>
             <el-table-column prop="cnt" label="复制次数" width="55">
-              <template #default="scope">
-                {{ scope.row.cnt }}k
-              </template>
+              <template #default="scope">{{ scope.row.cnt }}k</template>
             </el-table-column>
           </el-table>
         </el-dialog>
 
         <!-- 七天热门弹幕弹出框 -->
-        <el-dialog v-model="hotDialogOf7day" title="七天热门烂梗">
+        <el-dialog v-model="hotDialogOf7day" title="七天热门烂梗" style="width: 100%;">
           <el-table v-loading="loading" stripe :data="data.hotBarrageOf7day" empty-text="我还没有加载完喔~~" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
-            <el-table-column width="35" fixed prop="" label="排名">
-              <template #default="scope">
-                {{ scope.$index + 1 }}
-              </template>
-            </el-table-column><el-table-column prop="barrage" min-width="90" label="烂梗" />
-            <el-table-column label="" align="center" width="85">
+            <el-table-column width="35" fixed prop label="排名">
+              <template #default="scope">{{ scope.$index + 1 }}</template>
+            </el-table-column>
+            <el-table-column prop="barrage" min-width="90" label="烂梗" />
+            <el-table-column label align="center" width="85">
               <el-button type="primary" label="操作">复制</el-button>
             </el-table-column>
             <el-table-column prop="cnt" label="复制次数" width="55">
-              <template #default="scope">
-                {{ scope.row.cnt }}k
-              </template>
+              <template #default="scope">{{ scope.row.cnt }}k</template>
             </el-table-column>
           </el-table>
         </el-dialog>
@@ -95,7 +97,7 @@
           <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyToQueryTableText"
             style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
-            <el-table-column label="" align="center" width="85">
+            <el-table-column label align="center" width="85">
               <el-button type="primary">复制</el-button>
             </el-table-column>
           </el-table>
@@ -103,10 +105,10 @@
       </div>
     </div>
 
-    <div class="tab"> <!--    移动端-->
+    <div class="tab">
+      <!--    移动端-->
       <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="item in table" :key="item.path"
-        @click="navigateTo(item.path)"> {{ item.text }}
-      </div>
+        @click="navigateTo(item.path)">{{ item.text }}</div>
     </div>
 
     <div class="main-content" style="position: relative;">
@@ -134,9 +136,7 @@
           </el-menu-item>
 
           <el-menu-item index="/penWJQ">
-            <el-icon>
-              玩
-            </el-icon>
+            <el-icon>玩</el-icon>
             <span>喷玩机器篇</span>
           </el-menu-item>
 
@@ -170,8 +170,6 @@
             <img src="@/assets/imgs/Z.png" alt="Z!!" class="menu-icon" />
             <span>QUQU篇</span>
           </el-menu-item>
-
-
         </el-menu>
       </div>
       <div class="content">
@@ -179,78 +177,90 @@
       </div>
     </div>
   </div>
-
 </template>
 
 
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router';
-import { ref, reactive, computed, onMounted, onUnmounted , onBeforeUnmount} from 'vue';
+import { useRoute, useRouter } from "vue-router";
+import {
+  ref,
+  reactive,
+  computed,
+  onMounted,
+  onUnmounted,
+  onBeforeUnmount,
+} from "vue";
 import request from "@/utils/request";
-import { ElMessage, ElNotification } from 'element-plus';
+import { ElMessage, ElNotification } from "element-plus";
 
-const hotDialog = ref(false)
-const hotDialogOf7day = ref(false)
-const loading = ref(true)
+const hotDialog = ref(false);
+const hotDialogOf7day = ref(false);
+const loading = ref(true);
 const table = [
-  { text: '首页', path: '/home' },
-  { text: '+1', path: '/p1' },
-  { text: '喷玩机器篇', path: '/penWJQ' },
-  { text: '喷选手篇', path: '/penPlayer' },
-  { text: '群魔乱舞篇', path: '/QMLW' },
-  { text: '全部烂梗', path: '/AllBarrage' },
-  { text: 'QUQU篇', path: '/QUQU' },
-  { text: '时光相册', path: '/image' },
+  { text: "首页", path: "/home" },
+  { text: "+1", path: "/p1" },
+  { text: "喷玩机器篇", path: "/penWJQ" },
+  { text: "喷选手篇", path: "/penPlayer" },
+  { text: "群魔乱舞篇", path: "/QMLW" },
+  { text: "全部烂梗", path: "/AllBarrage" },
+  { text: "QUQU篇", path: "/QUQU" },
+  { text: "时光相册", path: "/image" },
 ];
 const route = useRoute();
 const router = useRouter();
-const searchQuery = ref('');
+const searchQuery = ref("");
 const data = reactive({
   tableData: [],
-  table: '',
-  barrage: '',
+  table: "",
+  barrage: "",
   hotBarrageOf10: [],
   hotBarrageOf7day: [],
-})
+});
 const load = () => {
-  request.get('/machine/allBarrage/Page', {})
-    .then(res => {
+  request
+    .get("/machine/allBarrage/Page", {})
+    .then((res) => {
       // console.log(res);
       data.tableData = res.data || [];
-      loading.value = false
+      loading.value = false;
     })
-    .catch(err => {
-      console.error('加载数据失败:', err);
+    .catch((err) => {
+      console.error("加载数据失败:", err);
     });
 };
 
 load();
 const hotBarrageOf10 = () => {
-  request.get('/machine/hotBarrageOfAll')
-    .then(res => {
+  request
+    .get("/machine/hotBarrageOfAll")
+    .then((res) => {
       data.hotBarrageOf10 = res.data.slice(0, 10) || [];
       // console.log(data.hotBarrageOf10)
-    }).catch(err => {
-      console.error('加载数据失败:', err);
     })
-}
-hotBarrageOf10()
+    .catch((err) => {
+      console.error("加载数据失败:", err);
+    });
+};
+hotBarrageOf10();
 const hotBarrageOf7 = () => {
-  request.get('/machine/hotBarrageOf7Day')
-    .then(res => {
+  request
+    .get("/machine/hotBarrageOf7Day")
+    .then((res) => {
       data.hotBarrageOf7day = res.data || [];
-    }).catch(err => {
-      console.error('加载数据失败:', err);
     })
-}
-hotBarrageOf7()
+    .catch((err) => {
+      console.error("加载数据失败:", err);
+    });
+};
+hotBarrageOf7();
 const currentBarrageIndex = ref(0);
 let intervalId;
 
 // 开始切换
 function startSwitching() {
   intervalId = setInterval(() => {
-    currentBarrageIndex.value = (currentBarrageIndex.value + 1) % data.hotBarrageOf10.length;
+    currentBarrageIndex.value =
+      (currentBarrageIndex.value + 1) % data.hotBarrageOf10.length;
   }, 5000); // 每五秒切换一次
 }
 
@@ -264,53 +274,53 @@ onUnmounted(() => {
   clearInterval(intervalId);
 });
 
-
-
 // 过滤搜索结果
 const filteredItems = computed(() => {
   const query = searchQuery.value?.toLowerCase();
   if (!query) return [];
-  return data.tableData.filter(item => {
-    const itemStr = `${item.name}${item.barrage}${item.description}`.toLowerCase();
+  return data.tableData.filter((item) => {
+    const itemStr =
+      `${item.name}${item.barrage}${item.description}`.toLowerCase();
     return itemStr.includes(query);
   });
 });
 const open2 = () => {
   ElMessage({
-    message: '复制成功',
-    type: 'success',
-  })
+    message: "复制成功",
+    type: "success",
+  });
 };
 
 const open4 = () => {
   ElMessage({
-    message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
-    type: 'error',
-  })
+    message:
+      "复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器",
+    type: "error",
+  });
 };
 
 //复制搜索结果方法
 const copyToQueryTableText = (row) => {
-  console.log(row)
+  console.log(row);
   const textToCopy = row.barrage;
-  let tempInput = document.createElement('input');
+  let tempInput = document.createElement("input");
   tempInput.value = textToCopy;
   document.body.appendChild(tempInput);
   tempInput.select(); // 选择对象
   try {
-    document.execCommand('Copy'); // 执行浏览器复制命令
+    document.execCommand("Copy"); // 执行浏览器复制命令
     // 复制成功，可以显示提示信息
     open2();
-    console.log('内容已复制到剪贴板');
-    request.post('/machine/addCnt', {
-      table: 'allbarrage',
-      id: row.id
-    })
-    setTimeout(() => hotBarrageOf10(), 200);// 200 毫秒后执行 hotBarrageOf10
-    setTimeout(() => hotBarrageOf7(), 200);// 200 毫秒后执行 hotBarrageOf10
+    console.log("内容已复制到剪贴板");
+    request.post("/machine/addCnt", {
+      table: "allbarrage",
+      id: row.id,
+    });
+    setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
+    setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
   } catch (err) {
     // 复制失败，可以显示错误信息
-    console.error('复制失败:', err);
+    console.error("复制失败:", err);
     open4();
   }
   document.body.removeChild(tempInput); // 清理临时元素
@@ -319,24 +329,24 @@ const copyToQueryTableText = (row) => {
 const copyText = (row) => {
   // console.log(row)
   const textToCopy = row.barrage;
-  let tempInput = document.createElement('input');
+  let tempInput = document.createElement("input");
   tempInput.value = textToCopy;
   document.body.appendChild(tempInput);
   tempInput.select(); // 选择对象
   try {
-    document.execCommand('Copy'); // 执行浏览器复制命令
+    document.execCommand("Copy"); // 执行浏览器复制命令
     // 复制成功，可以显示提示信息
     open2();
-    console.log('内容已复制到剪贴板');
-    request.post('/machine/addCnt', {
+    console.log("内容已复制到剪贴板");
+    request.post("/machine/addCnt", {
       table: row.tableName,
-      id: row.barrageId
-    })
-    setTimeout(() => hotBarrageOf10(), 200);// 200 毫秒后执行 hotBarrageOf10
-    setTimeout(() => hotBarrageOf7(), 200);// 200 毫秒后执行 hotBarrageOf10
+      id: row.barrageId,
+    });
+    setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
+    setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
   } catch (err) {
     // 复制失败，可以显示错误信息
-    console.error('复制失败:', err);
+    console.error("复制失败:", err);
     open4();
   }
   document.body.removeChild(tempInput); // 清理临时元素
@@ -346,35 +356,36 @@ function navigateTo(path: string): void {
   router.push(path);
 }
 //定时一小时弹出支持我！！！
-setTimeout(function() {
-    // IE浏览器
-    if (document.all) {
-        const myDiv = document.getElementById("myDiv") as HTMLElement | null;
-        if (myDiv) {
-            myDiv.click();
-        }
+setTimeout(function () {
+  // IE浏览器
+  if (document.all) {
+    const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+    if (myDiv) {
+      myDiv.click();
     }
-    // 其它浏览器
-    else {
-        const myDiv = document.getElementById("myDiv") as HTMLElement | null;
-        if (myDiv) {
-            const e = document.createEvent("MouseEvents");
-            e.initEvent("click", true, true);
-            myDiv.dispatchEvent(e);
-        }
+  }
+  // 其它浏览器
+  else {
+    const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+    if (myDiv) {
+      const e = document.createEvent("MouseEvents");
+      e.initEvent("click", true, true);
+      myDiv.dispatchEvent(e);
     }
-},  60 * 60 * 1000);   // 一小时
-
+  }
+}, 60 * 60 * 1000); // 一小时
 
 const $route = useRoute();
 console.log($route.path);
 const url = "https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png";
-const wxurl =
-  "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
+const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
 </script>
 
 <style lang="scss" scoped>
 @media (min-width: 601px) {
+  .el-dialog {
+    --el-dialog-width: 50%;
+  }
 
   .fade-enter-active,
   .fade-leave-active {
@@ -411,7 +422,6 @@ const wxurl =
     }
   }
 
-
   .tab {
     display: none;
   }
@@ -426,7 +436,6 @@ const wxurl =
     background-color: transparent !important;
   }
 
-
   .el-menu-item.is-active,
   .el-sub-menu .el-menu-item.is-active {
     background-color: rgba(255, 255, 255, 0.5) !important;
@@ -440,11 +449,10 @@ const wxurl =
 
   .el-menu .el-menu-item:hover {
     outline: 0 !important;
-    color: #2E95FB !important;
-    background: linear-gradient(270deg, #F2F7FC 0%, #FEFEFE 100%) !important;
+    color: #2e95fb !important;
+    background: linear-gradient(270deg, #f2f7fc 0%, #fefefe 100%) !important;
     border-radius: 5px;
   }
-
 
   .header {
     height: 55px;
@@ -506,13 +514,10 @@ const wxurl =
   }
 
   .sidebar {
-
     width: auto;
     border-right: 0px solid #ddd;
     min-height: calc(100vh - 60px);
   }
-
-
 
   .menu-icon {
     height: 18px;
@@ -529,16 +534,12 @@ const wxurl =
 @media (max-width: 600px) {
   .hotBarrageSpan {
     color: black;
-    border-bottom: 1px solid #e4d6b8;
+    border-bottom: 1px solid black;
     padding-bottom: 1px;
   }
 
   .el-overlay-dialog {
     z-index: 3;
-  }
-
-  .el-dialog {
-    width: 100vw;
   }
 
   .hotBarrage {
@@ -575,6 +576,10 @@ const wxurl =
     border-radius: 10px;
     right: 0px;
     box-shadow: 0px 0px 35px rgb(37, 19, 19);
+  }
+
+  .eldtable {
+    width: 100% !important;
   }
 
   .elinput {
@@ -677,7 +682,7 @@ const wxurl =
       background-color: #fff;
 
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         left: 0;
         bottom: -2px;
@@ -695,16 +700,14 @@ const wxurl =
     &>div:hover,
     &>.selected {
       color: #fff;
-      background-color: #007BFF;
+      background-color: #007bff;
 
       &::before {
-        background-color: #007BFF;
+        background-color: #007bff;
       }
-
     }
   }
 
   //移动端
-
 }
 </style>
