@@ -5,7 +5,7 @@
   </div>
   <div class="image-list">
     <div v-for="(image, index) in image.outerImg" :key="index" class="image-block">
-      <el-image :zoom-rate="3.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
+      <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
         :preview-src-list="[image.url]" fit="cover" lazy style="width: 250px; height: 300px; ">
       </el-image>
       <div style="text-align: center; padding: 5%;">

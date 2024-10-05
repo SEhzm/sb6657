@@ -41,14 +41,14 @@
             <a href="https://github.com/SEhzm/sb6657/" target="_blank">
               <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
             </a>
-            <el-image class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7"
-              lazy :min-scale="0.2" :preview-src-list="['zfb.jpg']" :initial-index="4" fit="cover" />
+              <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2"
+                :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['zfb.jpg']" :initial-index="4" fit="cover" />
             <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy
               :max-scale="7" :min-scale="0.2" :preview-src-list="['wx.jpg']" :initial-index="4" fit="cover" />
           </div>
         </div>
 
-        <!-- 热门弹幕弹出框 -->
+        <!-- 24h热门弹幕弹出框 -->
         <el-dialog v-model="hotDialog" title="24h热门烂梗"><el-button style=""
             @click="hotDialogOf7day = true, hotDialog = false">查看近七天热门</el-button>
           <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~" class="eldtable"
@@ -185,7 +185,7 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, computed, onMounted, onUnmounted , onBeforeUnmount} from 'vue';
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
 
@@ -264,9 +264,7 @@ onUnmounted(() => {
   clearInterval(intervalId);
 });
 
-const openHot = () => {
-  console.log("111")
-}
+
 
 // 过滤搜索结果
 const filteredItems = computed(() => {
@@ -291,7 +289,7 @@ const open4 = () => {
   })
 };
 
-
+//复制搜索结果方法
 const copyToQueryTableText = (row) => {
   console.log(row)
   const textToCopy = row.barrage;
@@ -317,8 +315,9 @@ const copyToQueryTableText = (row) => {
   }
   document.body.removeChild(tempInput); // 清理临时元素
 };
+// 复制热门弹幕方法
 const copyText = (row) => {
-  console.log(row)
+  // console.log(row)
   const textToCopy = row.barrage;
   let tempInput = document.createElement('input');
   tempInput.value = textToCopy;
@@ -330,7 +329,7 @@ const copyText = (row) => {
     open2();
     console.log('内容已复制到剪贴板');
     request.post('/machine/addCnt', {
-      table: 'allbarrage',
+      table: row.tableName,
       id: row.barrageId
     })
     setTimeout(() => hotBarrageOf10(), 200);// 200 毫秒后执行 hotBarrageOf10
@@ -346,13 +345,25 @@ const copyText = (row) => {
 function navigateTo(path: string): void {
   router.push(path);
 }
-
-
-
-const complaintButton = () => {
-  window.open("https://www.wjx.cn/vm/rQUgnS0.aspx#");
-};
-
+//定时一小时弹出支持我！！！
+setTimeout(function() {
+    // IE浏览器
+    if (document.all) {
+        const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+        if (myDiv) {
+            myDiv.click();
+        }
+    }
+    // 其它浏览器
+    else {
+        const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+        if (myDiv) {
+            const e = document.createEvent("MouseEvents");
+            e.initEvent("click", true, true);
+            myDiv.dispatchEvent(e);
+        }
+    }
+},  60 * 60 * 1000);   // 一小时
 
 
 const $route = useRoute();

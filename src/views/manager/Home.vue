@@ -3,7 +3,7 @@
     <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom" class="boom6657">
   </div>
   <div class="home">
-    <div class="card" style="line-height: 30px;margin-top: 50px;">
+    <div class="card" style="line-height: 30px;margin-top: 40px;">
       <div><b>
           <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕</em></b>
       </div>
@@ -42,7 +42,7 @@
           --------搜索在这，🦐吗---------
         </span>
         <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
-          style="background-color: yellow;font-size: 30px; margin-top: 30px;">
+          style="background-color: yellow;font-size: 30px; margin-top: 30px;" :prefix-icon="Search">
         </el-input>
         <el-table v-loading="loading" v-if="searchQuery" :data="filteredItems" stripe @row-click="copyText"
           style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }" empty-text="可能没有这条烂梗或请手动刷新页面">
@@ -112,6 +112,7 @@
 import { ref, reactive, computed, onMounted } from 'vue';
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from 'element-plus';
+import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
 
 const loading = ref(true)
@@ -136,7 +137,7 @@ const autoexec = () => {
           "</p>",
         offset: 50,
         customClass: "myClass",
-        duration: 200000
+        duration: 2000
       })
     })
 }
