@@ -104,7 +104,7 @@
                 d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
                 fill="#111111" p-id="4540"></path>
             </svg></el-button>
-          <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyToQueryTableText"
+          <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copyToQueryTableText"
             style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
             <el-table-column label align="center" width="85">
@@ -235,6 +235,7 @@ const queryBarrage = () => {
     QueryBarrage: searchQuery.value
   }).then(res => {
     isInput.value = true;
+    loading.value = false;
     data.filteredItems = res.data || [];
   })
 }
@@ -252,7 +253,7 @@ const load = () => {
     });
 };
 
-load();
+
 const hotBarrageOf10 = () => {
   request
     .get("/machine/hotBarrageOfAll")

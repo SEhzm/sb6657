@@ -41,7 +41,7 @@
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
           --------需点击右侧搜索按钮---------
         </span>
-        <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
+        <el-input v-model="searchQuery" :placeholder=searchBarrageMeg clearable
           style="background-color: yellow;font-size: 16px; margin-top: 30px;" @input="onSearchQueryChange">
           <template #append>
             <el-button type="primary" @click="queryBarrage"><el-icon>
@@ -141,13 +141,7 @@ autoexec()
 const searchQuery = ref('');
 const randomlySelectedItem = ref(null);
 
-const targetDate = new Date('2041-06-07');
-const diudiugaokao = ref(0);
-
-const DaoJiShiDate = new Date('2024-10-23');
-const DaoJiShi = ref(0);
-
-const TxServerDate = new Date('2025-02-20');
+const TxServerDate = new Date('2025-02-20');//服务器倒计时
 const ServerDate = ref(0);
 
 
@@ -170,7 +164,6 @@ const saveBarrage = () => {
       table: data.table,
       barrage: data.barrage
     }).then(res => {
-      load()
       data.dialogFormVisible = false;
       data.barrage = '';
       if (res.code === '200') {
@@ -188,6 +181,7 @@ const queryBarrage = () => {
     QueryBarrage: searchQuery.value
   }).then(res => {
     isInput.value = true;
+    loading.value = false;
     data.filteredItems = res.data || [];
   })
 }
@@ -210,7 +204,7 @@ const load = () => {
     });
 };
 
-load();
+
 //在数组中随机弹幕
 const getRandomItem = () => {
   if (data.tableData.length > 0) {
@@ -251,7 +245,7 @@ const copyText = (row) => {
       table: 'allbarrage',
       id: row.id
     }).then(() => {
-      setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+      console.log("复制成功")
     });
   } catch (err) {
     // 复制失败，可以显示错误信息
@@ -265,11 +259,9 @@ const copyText = (row) => {
 
 const calculateCountdown = () => {
   const now = new Date();
-  const diffTime1 = targetDate - now;
-  const diffTime2 = DaoJiShiDate - now;
+
   const diffTime3 = TxServerDate - now;
-  diudiugaokao.value = Math.ceil(diffTime1 / (1000 * 60 * 60 * 24));
-  DaoJiShi.value = Math.ceil(diffTime2 / (1000 * 60 * 60 * 24));
+
   ServerDate.value = Math.ceil(diffTime3 / (1000 * 60 * 60 * 24));
 };
 
