@@ -36,17 +36,21 @@
       </div>
     </div>
 
-    <div class="card" style="line-height: 45px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
+    <div class="card" style="line-height: 50px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
       <div>
-        <el-button type="primary" @click="queryBarrage"></el-button>
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
-          --------搜索在这，🦐吗---------
+          --------需要手动点击搜索按钮---------
         </span>
         <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
-          style="background-color: yellow;font-size: 30px; margin-top: 30px;" :prefix-icon="Search">
+          style="background-color: yellow;font-size: 16px; margin-top: 30px;" @input="onSearchQueryChange">
+          <template #append>
+            <el-button type="primary" @click="queryBarrage"><el-icon>
+                <Search />
+              </el-icon></el-button>
+          </template>
         </el-input>
-        <el-table v-loading="loading" v-if="searchQuery" :data="data.filteredItems" stripe @row-click="copyText"
-          style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }" empty-text="可能没有这条烂梗或请手动刷新页面">
+        <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
+          style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
 
@@ -102,7 +106,7 @@ import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
 
 const loading = ref(true)
-
+const isInput = ref(false)
 const data = reactive({
   filteredItems: [],
   tableData: [],
@@ -184,13 +188,14 @@ const queryBarrage = () => {
   request.post('/machine/Query', {
     QueryBarrage: searchQuery.value
   }).then(res => {
+    isInput.value = true;
     data.filteredItems = res.data || [];
   })
 }
 
 
 
-var searchBarrageMeg = ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
+var searchBarrageMeg = ref('请稍等！或请手动刷新页面');
 const load = () => {
   request.get('/machine/allBarrage/Page', {})
     .then(res => {
@@ -215,15 +220,6 @@ const getRandomItem = () => {
   }
 };
 
-// 过滤搜索结果
-const filteredItems = computed(() => {
-  const query = searchQuery.value?.toLowerCase();
-  if (!query) return [];
-  return data.tableData.filter(item => {
-    const itemStr = `${item.name}${item.barrage}${item.description}`.toLowerCase();
-    return itemStr.includes(query);
-  });
-});
 
 
 const open2 = () => {
@@ -278,6 +274,10 @@ const calculateCountdown = () => {
   ServerDate.value = Math.ceil(diffTime3 / (1000 * 60 * 60 * 24));
 };
 
+const onSearchQueryChange = () => {
+  data.filteredItems = [];
+  isInput.value = false;
+};
 
 // 在组件挂载时计算倒计时
 onMounted(() => {
@@ -290,6 +290,11 @@ onMounted(() => {
 
 
 <style scoped lang="scss">
+.el-input__inner {
+  font-size: 22px;
+  /* 调整 placeholder 的字体大小 */
+}
+
 .header-text {
   margin-left: 25px;
   font-size: 27px;
