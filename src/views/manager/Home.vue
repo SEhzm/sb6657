@@ -39,7 +39,7 @@
     <div class="card" style="line-height: 50px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
       <div>
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
-          --------需要手动点击搜索按钮---------
+          --------需点击右侧搜索按钮---------
         </span>
         <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
           style="background-color: yellow;font-size: 16px; margin-top: 30px;" @input="onSearchQueryChange">
@@ -63,7 +63,6 @@
 
     <div class="card" style="margin-top: 8px; text-align: center;">
       <div>
-        <p>这里是投稿烂梗，上面才是搜索</p>
         <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
           <el-form-item label="分栏" :label-width="auto" prop="table">
             <el-select v-model="data.table" placeholder="选择上传的分栏">
@@ -203,7 +202,7 @@ const load = () => {
       data.tableData = res.data || [];
       // console.log(data.tableData)
       getRandomItem();
-      searchBarrageMeg = ref('搜索烂梗...');
+      searchBarrageMeg = ref('搜索烂梗...➡️➡️');
       loading.value = false;
     })
     .catch(err => {

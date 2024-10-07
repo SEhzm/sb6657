@@ -23,11 +23,12 @@
             </div>
 
             <div style="margin-right: 20px;" class="elinput">
-              <el-input v-model="searchQuery" clearable placeholder="搜索烂梗..." style="font-size: 18px;">
-                <template #prefix>
-                  <el-icon>
-                    <search />
-                  </el-icon>
+              <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable
+              style="" @input="onSearchQueryChange">
+                <template #append>
+                  <el-button type="primary" @click="queryBarrage"><el-icon>
+                <Search />
+              </el-icon></el-button>
                 </template>
               </el-input>
             </div>
@@ -94,7 +95,7 @@
           </el-table>
         </el-dialog>
 
-        <div class="QueryTable" v-if="searchQuery">
+        <div class="QueryTable" v-if="isInput">
           <el-button class="close-button" @click="closeQueryTable"><svg t="1725098483582" class="icon"
               viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16"
               height="16">
@@ -217,13 +218,27 @@ const table = [
 const route = useRoute();
 const router = useRouter();
 const searchQuery = ref("");
+const isInput = ref(false)
 const data = reactive({
+  filteredItems: [],
   tableData: [],
   table: "",
   barrage: "",
   hotBarrageOf10: [],
   hotBarrageOf7day: [],
 });
+
+//搜索
+const queryBarrage = () => {
+  console.log(searchQuery.value)
+  request.post('/machine/Query', {
+    QueryBarrage: searchQuery.value
+  }).then(res => {
+    isInput.value = true;
+    data.filteredItems = res.data || [];
+  })
+}
+
 const load = () => {
   request
     .get("/machine/allBarrage/Page", {})
@@ -386,9 +401,14 @@ setTimeout(function () {
 const complaintButton = () => {
   window.open("https://www.wjx.cn/vm/rQUgnS0.aspx#");
 };
+const onSearchQueryChange = () => {
+  data.filteredItems = [];
+  isInput.value = false;
+};
 
 const closeQueryTable = () => {
   searchQuery.value = '';
+  isInput.value=false;
 };
 const $route = useRoute();
 console.log($route.path);
