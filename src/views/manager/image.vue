@@ -8,8 +8,8 @@
       <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
         :preview-src-list="[image.url]" fit="cover" lazy style="width: 250px; height: 300px; ">
       </el-image>
-      <div style="text-align: center; padding: 5%;">
-        <el-button style="width: 100%; font-size: 19px; box-sizing: border-box;">{{ image.date }}</el-button>
+      <div style="text-align: center; padding: 0 0 5px 0;">
+        <el-button style="width: 230px; font-size: 16px;  white-space: normal; word-break: break-word;">{{ image.date }}</el-button>
       </div>
       <el-button @click="toggleComments(image)" style=" font-size: 18px; margin-left: 15px; box-sizing: border-box;">{{
         image.showComments ? '隐藏评论' : '显示评论'
@@ -144,6 +144,7 @@ const saveComment = (Obimage) => {
 
 
 <style scoped>
+
 .el-image-viewer__img {
   width: 200px;
   height: 200px;

@@ -5,7 +5,7 @@
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 40px;">
       <div><b>
-          <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕</em></b>
+          <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕。2024-10-7流量激增，可能出现卡顿或不可用</em></b>
       </div>
     </div>
 
@@ -31,20 +31,21 @@
           </el-table-column>
         </el-table>
         <div v-else>
-          <p>《未选择随机项》----出错啦，请手动刷新</p>
+          <p>----出错啦，请手动刷新----</p>
         </div>
       </div>
     </div>
 
     <div class="card" style="line-height: 45px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
       <div>
+        <el-button type="primary" @click="queryBarrage"></el-button>
         <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
           --------搜索在这，🦐吗---------
         </span>
         <el-input v-model="searchQuery" :placeholder=searchBarrageMeg
           style="background-color: yellow;font-size: 30px; margin-top: 30px;" :prefix-icon="Search">
         </el-input>
-        <el-table v-loading="loading" v-if="searchQuery" :data="filteredItems" stripe @row-click="copyText"
+        <el-table v-loading="loading" v-if="searchQuery" :data="data.filteredItems" stripe @row-click="copyText"
           style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }" empty-text="可能没有这条烂梗或请手动刷新页面">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
@@ -57,7 +58,6 @@
     </div>
 
     <div class="card" style="margin-top: 8px; text-align: center;">
-
       <div>
         <p>这里是投稿烂梗，上面才是搜索</p>
         <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
@@ -84,18 +84,6 @@
     </div>
     <div class="card" style="line-height: 30px;margin-top: 10px;">
       友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
-
-    </div>
-    <div class="footer">
-      <!-- <a href="https://beian.miit.gov.cn/" target="_blank">基于腾讯云服务器搭建<a style="font-size: 11px">(离服务器到期还有{{ ServerDate
-          }}天)</a></a> -->
-      <!-- </a>&nbsp;&nbsp;&nbsp;&nbsp; 
-          Copyright
-        ©HZM 2024
-        桂ICP备2024022150号</a> &nbsp;
-      <img src="https://ywtb.mps.gov.cn/newhome/templates/Zwfw_Fwmh/img/main/foot-ga.png" alt="">
-      <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=45040302000258"
-        target="_blank">桂公网安备45040302000258号</a> -->
     </div>
   </div>
 
@@ -103,8 +91,6 @@
     基于腾讯云服务器搭建<text style="font-size: 11px">(离服务器到期还有{{ ServerDate }}天)</text>
     <text> 域名所有：<a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></text>
   </div>
-
-
 </template>
 
 
@@ -117,6 +103,12 @@ import autoExecPng from "@/assets/autoexec.vue";
 
 const loading = ref(true)
 
+const data = reactive({
+  filteredItems: [],
+  tableData: [],
+  table: '',
+  barrage: '',
+})
 const autoexec = () => {
   request.get("https://api.vvhan.com/api/visitor.info")
     .then(res => {
@@ -141,6 +133,7 @@ const autoexec = () => {
       })
     })
 }
+
 autoexec()
 const searchQuery = ref('');
 const randomlySelectedItem = ref(null);
@@ -185,13 +178,18 @@ const saveBarrage = () => {
     })
   }
 }
+//搜索
+const queryBarrage = () => {
+  console.log(searchQuery.value)
+  request.post('/machine/Query', {
+    QueryBarrage: searchQuery.value
+  }).then(res => {
+    data.filteredItems = res.data || [];
+  })
+}
 
 
-const data = reactive({
-  tableData: [],
-  table: '',
-  barrage: '',
-})
+
 var searchBarrageMeg = ref('请稍等！或者请手动刷新页面,搜索不可能是空的');
 const load = () => {
   request.get('/machine/allBarrage/Page', {})

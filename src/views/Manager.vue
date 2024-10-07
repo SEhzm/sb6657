@@ -9,9 +9,10 @@
           </a>
 
           <div class="header-actions">
-            <img src="@/assets/imgs/hot.png" alt="热门" style="width: 24px;height: 24px;cursor:pointer;margin-right: 10px"
-              class="hotBarrageImg" @click="hotDialog = true" />
-            <div @click="hotDialog = true" class="hotBarrage"
+            <img v-if="$route.name !== 'image'" src="@/assets/imgs/hot.png" alt="热门"
+              style="width: 24px;height: 24px;cursor:pointer;margin-right: 10px" class="hotBarrageImg"
+              @click="hotDialog = true" />
+            <div v-if="$route.name !== 'image'" @click="hotDialog = true" class="hotBarrage"
               style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: #e4d6b8;white-space: nowrap;">
               <transition name="fade">
                 <span :key="currentBarrageIndex" class="hotBarrageSpan">
@@ -94,6 +95,14 @@
         </el-dialog>
 
         <div class="QueryTable" v-if="searchQuery">
+          <el-button class="close-button" @click="closeQueryTable"><svg t="1725098483582" class="icon"
+              viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16"
+              height="16">
+              <path d="M0 0h1024v1024H0z" fill="#FF0033" fill-opacity="0" p-id="4539"></path>
+              <path
+                d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
+                fill="#111111" p-id="4540"></path>
+            </svg></el-button>
           <el-table v-loading="loading" :data="filteredItems" stripe @row-click="copyToQueryTableText"
             style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
             <el-table-column prop="barrage" label="弹幕"></el-table-column>
@@ -192,7 +201,6 @@ import {
 } from "vue";
 import request from "@/utils/request";
 import { ElMessage, ElNotification } from "element-plus";
-
 const hotDialog = ref(false);
 const hotDialogOf7day = ref(false);
 const loading = ref(true);
@@ -374,7 +382,14 @@ setTimeout(function () {
     }
   }
 }, 60 * 60 * 1000); // 一小时
+//上传按钮
+const complaintButton = () => {
+  window.open("https://www.wjx.cn/vm/rQUgnS0.aspx#");
+};
 
+const closeQueryTable = () => {
+  searchQuery.value = '';
+};
 const $route = useRoute();
 console.log($route.path);
 const url = "https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png";
@@ -382,6 +397,14 @@ const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
 </script>
 
 <style lang="scss" scoped>
+.close-button {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  z-index: 10;
+  border: none;
+}
+
 @media (min-width: 601px) {
   .el-dialog {
     --el-dialog-width: 50%;

@@ -5,10 +5,10 @@
         投稿弹幕
       </el-button>
 
-      <el-table v-loading="loading" stripe :data="data.displayedData" empty-text="因本页烂梗较多，可能会出现卡顿" class="eldtable"
-        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-        :cell-style="{ cursor: 'Pointer' }" @row-click="copyText" @scroll="handleScroll">
-        <el-table-column width="70" prop="id" label="序号"></el-table-column>
+      <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable"
+        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{cursor:'Pointer'}"
+        @row-click="copyText">
+        <el-table-column width="58" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
           <el-button type="primary" label="操作">复制</el-button>
@@ -17,7 +17,6 @@
       </el-table>
     </div>
 
-    <el-backtop ref="backtopRef" :right="50" :bottom="50">UP</el-backtop>
     <div class="pagination-wrapper">
       <!-- 分页 -->
       <div>
@@ -25,16 +24,17 @@
           :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
       </div>
     </div>
+
     <el-dialog v-model="data.dialogFormVisible" draggable title="投稿弹幕" width="82%">
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
         <el-form-item label="分栏" :label-width="100" prop="table">
           <el-select v-model="data.table" placeholder="选择上传的分栏">
-            <el-option label="喷玩机器篇" value="machine_penWJQ" />
-            <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
-            <el-option label="喷选手篇" value="machine_penPlayer" />
-            <el-option label="+1" value="machine_p1" />
-            <el-option label="群魔乱舞篇" value="machine_QMLW" />
-            <el-option label="QUQU" value="machine_QUQU" />
+            <el-option label="喷玩机器篇" value="penWJQ" />
+            <el-option label="直播间互喷篇" value="ZbjHuPen" />
+            <el-option label="喷选手篇" value="penPlayer" />
+            <el-option label="+1" value="p1" />
+            <el-option label="群魔乱舞篇" value="QMLW" />
+            <el-option label="QUQU" value="QUQU" />
           </el-select>
         </el-form-item>
         <el-form-item label="弹幕内容" prop="barrage">
@@ -54,15 +54,16 @@
       </template>
     </el-dialog>
   </div>
+
+  <el-backtop :right="50" :bottom="50">UP</el-backtop>
 </template>
 
 <script setup>
-import { ref, nextTick, reactive, onMounted } from 'vue'
+import { ref, reactive } from 'vue'
 import request from "@/utils/request";
 import { ElNotification } from 'element-plus'
 
 const loading = ref(true)
-
 
 const rules = ({
   table: [
@@ -75,74 +76,38 @@ const rules = ({
 
 const data = reactive({
   tableData: [],
-  displayedData: [], // 当前展示的数据
-  pageSize: 200,
   total: 0,
+  pageSize: 200, //每页个数
   currentPage: 1, //起始页码
   dialogFormVisible: false,
   table: '',
   barrage: '',
-  ip: '',
-  loadingMore: false, // 控制是否正在加载更多数据
 })
 
-const load = (page) => {
-  request.get('/machine/allBarrage/Page', {
+const load = (pageNum = 1) => {
+  request.get('/machine/all/Page', {
     params: {
-      status: 0
+      pageNum: pageNum,
+      pageSize: data.pageSize
     }
   }).then(res => {
     // console.log(res)
-    data.tableData = res.data || [];
-    data.total = data.tableData.length;
-    data.displayedData = data.tableData.slice(0 + (page - 1) * (data.pageSize), page * (data.pageSize));
-    // console.log(data.tableData)
-    loading.value = false;
+    data.tableData = res.data?.list || []
+    data.total = res.data?.total || 0
+    loading.value=false;
   }).catch(err => {
     console.error('加载数据失败:', err)
   })
 }
 
-//回顶部
-const scrollToTop = () => {
-  window.scrollTo({
-    // top: document.documentElement.offsetHeight, //回到底部
-    top: 0, //回到顶部
-    left: 0,
-    behavior: "smooth", //smooth 平滑；auto:瞬间
-  });
-};
-
-onMounted(() => {
-  // 页面滚动窗口监听事件
-  window.onscroll = function () {
-    // 获取浏览器卷去的高度
-    let high = document.documentElement.scrollTop || document.body.scrollTop; //兼容各浏览器
-    if (high >= 900) {
-      totop.value.style.display = "block";
-    } else {
-      totop.value.style.display = "none";
-    }
-  };
-});
-
 load(data.currentPage)
 
 const handlePageChange = (page) => {
-  loaded(page);
-  scrollToTop();
+  data.currentPage = page
+  load(page)
 }
 
-const loaded = (n) => {
-  if (data.tableData.length > 0) {
-    data.displayedData = [];
-    data.displayedData = data.tableData.slice(0 + (n - 1) * (data.pageSize), n * (data.pageSize));
-
-  }
-};
-
 const open2 = () => {
-  load()
   ElNotification({
     message: '复制成功',
     type: 'success',
@@ -182,19 +147,12 @@ const copyText = (row) => {
   document.body.removeChild(tempInput); // 清理临时元素
 };
 
-
 //点击新增按钮
 const handleAdd = () => {
-  ElNotification({
-    title: '温馨提醒',
-    message: '请注意你的行为，不要上传违反法律的内容，后台能监控到你',
-    type: 'warning',
-  })
   data.table = ''
   data.barrage = ''
   data.dialogFormVisible = true
 }
-
 //提交并关闭
 const saveBarrage = () => {
   if (data.table === '' || data.barrage === '') {
@@ -234,8 +192,6 @@ const continuousSaveBarrage = () => {
     })
   }
 }
-
-
 </script>
 
 <style scoped>
@@ -257,16 +213,12 @@ const continuousSaveBarrage = () => {
   font-size: 18px;
   margin-left: 150px
 }
-
-
-
 @media (min-width: 601px) {
   .card {
     width: 80%;
   }
 
 }
-
 
 @media (max-width: 600px) {
   .el-pagination {
@@ -278,8 +230,8 @@ const continuousSaveBarrage = () => {
     font-size: 16px;
     white-space: nowrap;
     overflow-x: auto;
+    cursor: cell;
   }
-
   .dialogFormVisible {
     font-size: 15px;
   }
@@ -290,5 +242,6 @@ const continuousSaveBarrage = () => {
     font-size: 13px;
     margin-left: 150px
   }
+
 }
 </style>
