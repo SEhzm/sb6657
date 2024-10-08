@@ -31,13 +31,14 @@
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
         <el-form-item label="分栏" :label-width="100" prop="table">
           <el-select v-model="data.table" placeholder="选择上传的分栏">
-            <el-option label="喷玩机器篇" value="machine_penWJQ" />
-            <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
-            <el-option label="喷选手篇" value="machine_penPlayer" />
-            <el-option label="+1" value="machine_p1" />
-            <el-option label="群魔乱舞篇" value="machine_QMLW" />
-            <el-option label="QUQU" value="machine_QUQU" />
-          </el-select>
+              <el-option label="喷玩机器篇" value="machine_penWJQ" />
+              <el-option label="木柜子篇" value="machine_mygo" />
+              <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
+              <el-option label="喷选手篇" value="machine_penPlayer" />
+              <el-option label="+1" value="machine_p1" />
+              <el-option label="群魔乱舞篇" value="machine_QMLW" />
+              <el-option label="QUQU" value="machine_QUQU" />
+            </el-select>
         </el-form-item>
         <el-form-item label="弹幕内容" prop="barrage">
           <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />

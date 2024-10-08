@@ -14,9 +14,9 @@
         <el-table-column width="60" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕"/>
         <el-table-column label="" align="center" width="85">
-            <el-button type="primary" label="操作" >复制</el-button>
+       <el-button type="primary" label="操作" >复制</el-button>
         </el-table-column>
-        <el-table-column width="55" prop="cnt" label="复制次数" />
+        <el-table-column prop="cnt" label="复制次数" width="55"/>
       </el-table>
     </div>
 
@@ -68,12 +68,12 @@
 </template>
 
 <script setup>
-import {ref, reactive} from 'vue'
+import {ref, reactive, nextTick} from 'vue'
 import request from "@/utils/request";
 import {ElNotification} from 'element-plus'
 
-
 const loading = ref(true)
+
 
 const rules = ({
   table: [
@@ -94,21 +94,23 @@ const data = reactive({
   barrage: '',
 })
 
-const load = (pageNum = 1) => {
-  request.get('/machine/penPlayer/Page', {
-    params: {
-      pageNum: pageNum,
-      pageSize: data.pageSize
-    }
-  }).then(res => {
+const load = async (pageNum = 1) => {
+  try {
+    const res = await request.get('/machine/mygo/Page', {
+      params: {
+        pageNum: pageNum,
+        pageSize: data.pageSize
+      }
+    })
     // console.log(res)
     data.tableData = res.data?.list || []
-    data.total = res.data?.total || 0
+    data.total = res.data?.total || 0;
+    await nextTick();
     // console.log(data.tableData)
     loading.value=false;
-  }).catch(err => {
-    console.error('加载数据失败:', err)
-  })
+  } catch (error) {
+    console.log('加载数据失败', error)
+  }
 }
 
 load(data.currentPage)
@@ -125,6 +127,7 @@ const handlePageChange = (page) => {
   scrollToTop();
   load(page)
 }
+
 const open2 = () => {
   ElNotification({
     message: '复制成功',
@@ -152,7 +155,7 @@ const copyText = (row) => {
     console.log('内容已复制到剪贴板');
     request.post('/machine/addCnt', {
       PageNum: data.currentPage,
-      table: 'penPlayer',
+      table: 'mygo',
       id: row.id
     }).then(() => {
       setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
@@ -164,6 +167,10 @@ const copyText = (row) => {
   }
   document.body.removeChild(tempInput); // 清理临时元素
 };
+
+ 
+
+
 //点击新增按钮
 const handleAdd = () => {
   data.table = ''
@@ -214,9 +221,6 @@ const continuousSaveBarrage = () => {
 </script>
 
 <style scoped>
-.el-table_3_column_12 {
-font-size: 29px;
-}
 .eldtable {
   z-index: 3;
   font-size: 18px;
@@ -235,17 +239,19 @@ font-size: 29px;
   font-size: 18px;
   margin-left: 150px
 }
+
+
 @media (min-width: 601px) {
   .card {
     width: 80%;
   }
+
 }
 @media (max-width: 600px) {
   .el-pagination{
     margin: 0;
     --el-pagination-button-width: 22px;
   }
-
   .eldtable {
     font-size: 16px;
     white-space: nowrap;

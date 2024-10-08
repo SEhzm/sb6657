@@ -5,7 +5,8 @@
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 40px;">
       <div><b>
-          <em style="font-size: 17px;color: red;">新增时光相册(可评论)，新增在线投稿弹幕。最近可能会出现卡顿，玩神照片可以在上方上传照片上传至相册</em></b>
+        <p style="font-size: 14px;">新增时光相册(可评论)，新增在线投稿弹幕。最近可能会出现卡顿，玩神照片可以在上方上传照片上传至相册</p>
+          <p style="font-size: 18px;color: red;">最新推出了油猴Tampermonkey插件，可以在直播间直接搜索进行复制和一键发送，<a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a></p></b>
       </div>
     </div>
 
@@ -61,6 +62,7 @@
           <el-form-item label="分栏" :label-width="auto" prop="table">
             <el-select v-model="data.table" placeholder="选择上传的分栏">
               <el-option label="喷玩机器篇" value="machine_penWJQ" />
+              <el-option label="木柜子篇" value="machine_mygo" />
               <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
               <el-option label="喷选手篇" value="machine_penPlayer" />
               <el-option label="+1" value="machine_p1" />

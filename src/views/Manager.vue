@@ -23,12 +23,11 @@
             </div>
 
             <div style="margin-right: 20px;" class="elinput">
-              <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable
-              style="" @input="onSearchQueryChange">
+              <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable style="" @input="onSearchQueryChange">
                 <template #append>
                   <el-button type="primary" @click="queryBarrage"><el-icon>
-                <Search />
-              </el-icon></el-button>
+                      <Search />
+                    </el-icon></el-button>
                 </template>
               </el-input>
             </div>
@@ -39,6 +38,9 @@
                 <br />建议/提交BUG
               </span>
             </el-button>
+            <a href="https://sb6657.cn/#/Tampermonkey">
+              <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee" class="icon-img" />
+            </a>
             <a href="https://gitee.com/hzming1/sb6657" target="_blank">
               <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img" />
             </a>
@@ -150,6 +152,13 @@
             <span>喷玩机器篇</span>
           </el-menu-item>
 
+          <el-menu-item index="/mygo">
+            <el-icon>
+              <Female />
+            </el-icon>
+            <span>木柜子篇</span>
+          </el-menu-item>
+
           <el-menu-item index="/ZbjHuPen">
             <el-icon>
               <ChatDotRound />
@@ -209,6 +218,7 @@ const table = [
   { text: "首页", path: "/home" },
   { text: "+1", path: "/p1" },
   { text: "喷玩机器篇", path: "/penWJQ" },
+  { text: "木柜子篇", path: "/mygo" },
   { text: "喷选手篇", path: "/penPlayer" },
   { text: "群魔乱舞篇", path: "/QMLW" },
   { text: "全部烂梗", path: "/AllBarrage" },
@@ -403,7 +413,7 @@ const onSearchQueryChange = () => {
 
 const closeQueryTable = () => {
   searchQuery.value = '';
-  isInput.value=false;
+  isInput.value = false;
 };
 const $route = useRoute();
 console.log($route.path);
