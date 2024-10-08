@@ -20,9 +20,8 @@
 
     <div class="card" style="line-height: 0px; margin-top: 8px;">
       <div>
-        <el-button type="primary" @click="getRandomItem">点我随机一条弹幕</el-button>
-        <el-table v-loading="loading" v-if="randomlySelectedItem" :data="[randomlySelectedItem]"
-          style="font-family: 微软雅黑; font-size: 20px;"
+        <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
+        <el-table v-loading="loading" :data="data.tableData" style="font-family: 微软雅黑; font-size: 20px;"
           :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }"
           @row-click="copyText">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
@@ -30,9 +29,6 @@
             <el-button type="primary">复制</el-button>
           </el-table-column>
         </el-table>
-        <div v-else>
-          <p>----出错啦，请手动刷新----</p>
-        </div>
       </div>
     </div>
 
@@ -53,9 +49,7 @@
           style="font-size: 19px;" :cell-style="{ cursor: 'Pointer' }">
           <el-table-column prop="barrage" label="弹幕"></el-table-column>
           <el-table-column label="" align="center" width="85">
-
             <el-button type="primary">复制</el-button>
-
           </el-table-column>
         </el-table>
       </div>
@@ -107,6 +101,7 @@ import autoExecPng from "@/assets/autoexec.vue";
 const loading = ref(true)
 const isInput = ref(false)
 const data = reactive({
+  getRandOne: [],
   filteredItems: [],
   tableData: [],
   table: '',
@@ -139,7 +134,6 @@ const autoexec = () => {
 
 autoexec()
 const searchQuery = ref('');
-const randomlySelectedItem = ref(null);
 
 const TxServerDate = new Date('2025-02-20');//服务器倒计时
 const ServerDate = ref(0);
@@ -187,32 +181,32 @@ const queryBarrage = () => {
 }
 
 
+var searchBarrageMeg = ref('搜索烂梗...');
+// const load = () => {
+//   request.get('/machine/allBarrage/Page', {})
+//     .then(res => {
+//       // console.log(res);
+//       data.tableData = res.data || [];
+//       // console.log(data.tableData)
+//       searchBarrageMeg = ref('搜索烂梗...➡️➡️');
+//       loading.value = false;
+//     })
+//     .catch(err => {
+//       console.error('加载数据失败:', err);
+//     });
+// };
 
-var searchBarrageMeg = ref('请稍等！或请手动刷新页面');
-const load = () => {
-  request.get('/machine/allBarrage/Page', {})
+const getRandOne = () => {
+  request.get('/machine/getRandOne')
     .then(res => {
-      // console.log(res);
-      data.tableData = res.data || [];
-      // console.log(data.tableData)
-      getRandomItem();
-      searchBarrageMeg = ref('搜索烂梗...➡️➡️');
+      data.tableData = [res.data];
+      // console.log(res)
       loading.value = false;
+    }).catch(err => {
+      console.error("随机失败")
     })
-    .catch(err => {
-      console.error('加载数据失败:', err);
-    });
-};
-
-
-//在数组中随机弹幕
-const getRandomItem = () => {
-  if (data.tableData.length > 0) {
-    const randomIndex = Math.floor(Math.random() * data.tableData.length);
-    randomlySelectedItem.value = data.tableData[randomIndex];
-  }
-};
-
+}
+getRandOne();
 
 
 const open2 = () => {

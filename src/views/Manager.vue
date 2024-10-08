@@ -260,6 +260,7 @@ const hotBarrageOf10 = () => {
     .then((res) => {
       data.hotBarrageOf10 = res.data.slice(0, 10) || [];
       // console.log(data.hotBarrageOf10)
+      loading.value = false;
     })
     .catch((err) => {
       console.error("加载数据失败:", err);
@@ -270,6 +271,7 @@ const hotBarrageOf7 = () => {
   request
     .get("/machine/hotBarrageOf7Day")
     .then((res) => {
+      loading.value = false;
       data.hotBarrageOf7day = res.data || [];
     })
     .catch((err) => {
@@ -299,15 +301,7 @@ onUnmounted(() => {
 });
 
 // 过滤搜索结果
-const filteredItems = computed(() => {
-  const query = searchQuery.value?.toLowerCase();
-  if (!query) return [];
-  return data.tableData.filter((item) => {
-    const itemStr =
-      `${item.name}${item.barrage}${item.description}`.toLowerCase();
-    return itemStr.includes(query);
-  });
-});
+
 const open2 = () => {
   ElMessage({
     message: "复制成功",
