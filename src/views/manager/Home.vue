@@ -5,7 +5,7 @@
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 40px;">
       <div><b>
-          <em style="font-size: 17px;color: red;">新增时光相册2015年-2024年(可评论)，新增在线投稿弹幕。2024-10-7流量激增，可能出现卡顿或不可用</em></b>
+          <em style="font-size: 17px;color: red;">新增时光相册(可评论)，新增在线投稿弹幕。最近可能会出现卡顿，玩神照片可以在上方上传照片上传至相册</em></b>
       </div>
     </div>
 
@@ -79,7 +79,7 @@
 
       <el-backtop :right="50" :bottom="50" />
     </div>
-    <div class="card" style="line-height: 30px;margin-top: 10px;">
+    <div class="card" style="line-height: 30px;margin-top: 10px;z-index: 300;">
       友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
     </div>
   </div>
@@ -331,10 +331,12 @@ onMounted(() => {
   }
 
   .home {
+
     width: 90%;
   }
 
   .el-footer {
+    pointer-events: none; /* 禁用事件处理 */
     z-index: 200;
     height: 40px;
     line-height: 40px;

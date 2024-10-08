@@ -112,11 +112,19 @@ const load = (pageNum = 1) => {
 
 load(data.currentPage)
 
+const scrollToTop = () => {
+  window.scrollTo({
+    // top: document.documentElement.offsetHeight, //回到底部
+    top: 0, //回到顶部
+    left: 0,
+    behavior: "smooth", //smooth 平滑；auto:瞬间
+  });
+};
 const handlePageChange = (page) => {
   data.currentPage = page
+  scrollToTop();
   load(page)
 }
-
 const open2 = () => {
   ElNotification({
     message: '复制成功',
