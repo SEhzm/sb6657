@@ -110,7 +110,6 @@ const scrollToTop = () => {
   window.scrollTo({
     // top: document.documentElement.offsetHeight, //回到底部
     top: 0, //回到顶部
-    left: 0,
     behavior: "smooth", //smooth 平滑；auto:瞬间
   });
 };
