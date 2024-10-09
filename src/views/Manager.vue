@@ -16,8 +16,7 @@
               style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: #e4d6b8;white-space: nowrap;">
               <transition name="fade">
                 <span :key="currentBarrageIndex" class="hotBarrageSpan">
-                  热门：{{
-                    data.hotBarrageOf10[currentBarrageIndex]?.barrage }}
+                  热门：{{ data.hotBarrageOf10[currentBarrageIndex]?.barrage }}
                 </span>
               </transition>
             </div>
@@ -74,7 +73,7 @@
               <el-button type="primary" label="操作">复制</el-button>
             </el-table-column>
             <el-table-column prop="cnt" label="复制次数" width="55">
-              <template #default="scope">{{ scope.row.cnt }}k</template>
+              <template #default="scope">{{ scope.row.cnt }}</template>
             </el-table-column>
           </el-table>
         </el-dialog>
@@ -92,7 +91,7 @@
               <el-button type="primary" label="操作">复制</el-button>
             </el-table-column>
             <el-table-column prop="cnt" label="复制次数" width="55">
-              <template #default="scope">{{ scope.row.cnt }}k</template>
+              <template #default="scope">{{ scope.row.cnt }}</template>
             </el-table-column>
           </el-table>
         </el-dialog>
