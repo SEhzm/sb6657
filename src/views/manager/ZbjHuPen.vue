@@ -139,7 +139,55 @@ const open4 = () => {
   })
 };
 
+
+let lastCallTime = 0;
+let lastMousePosition = null;
+let mousePositionCnt = 0;
 const copyText = (row) => {
+  const currentTime = new Date().getTime();
+  const currentMousePosition = { x: event.clientX, y: event.clientY };
+  // 检查鼠标位置是否变化
+  if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
+    mousePositionCnt++;
+    console.log(mousePositionCnt)
+    if(mousePositionCnt>4){
+      ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
+      confirmButtonText: '好吧，我错了',
+    })
+    }
+  }else{
+    mousePositionCnt = 0;
+  }
+  // 检查是否已经过了 1.5 秒
+  if (currentTime - lastCallTime < 1500) {
+    ElNotification({
+      title: '请勿刷次数',
+      message: '复制成功，但次数没有增加',
+      type: 'warning',
+    });
+    const textToCopy = row.barrage;
+    let tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select(); // 选择对象
+    try {
+      document.execCommand('Copy'); // 执行浏览器复制命令
+    } catch (err) {
+      // 复制失败，可以显示错误信息
+      ElNotification({
+        title: '复制失败',
+        message: '复制操作失败，请稍后重试',
+        type: 'error',
+      });
+      console.error('复制失败:', err);
+    }
+    document.body.removeChild(tempInput); // 清理临时元素
+    lastCallTime = currentTime;
+    lastMousePosition = currentMousePosition;
+    return;
+  }
+  lastMousePosition = currentMousePosition;
+  lastCallTime = currentTime;
   const textToCopy = row.barrage;
   let tempInput = document.createElement('input');
   tempInput.value = textToCopy;
@@ -159,6 +207,11 @@ const copyText = (row) => {
     });
   } catch (err) {
     // 复制失败，可以显示错误信息
+    ElNotification({
+      title: '复制失败',
+      message: '复制操作失败，请稍后重试',
+      type: 'error',
+    });
     console.error('复制失败:', err);
     open4();
   }

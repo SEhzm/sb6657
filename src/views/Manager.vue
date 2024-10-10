@@ -50,9 +50,11 @@
               <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
             </a>
             <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2"
-              :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['zfb.jpg']" :initial-index="4" fit="cover" />
+              :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']"
+              :initial-index="4" fit="cover" />
             <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy
-              :max-scale="7" :min-scale="0.2" :preview-src-list="['wx.jpg']" :initial-index="4" fit="cover" />
+              :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4"
+              fit="cover" />
           </div>
         </div>
 
@@ -60,7 +62,7 @@
         <el-dialog v-model="hotDialog" title="24h热门烂梗" style="width: 100%;">
           <template #title>
             <span>24h热门烂梗</span>
-            <el-button style="float: right;" @click="hotDialogOf7day = true, hotDialog = false">查看近七天热门</el-button>
+            <el-button style="float: right;" @click="openHotDialogOf7day">查看近七天热门</el-button>
           </template>
           <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
@@ -198,7 +200,7 @@
 </template>
 
 
-<script setup lang="ts">
+<script setup>
 import { useRoute, useRouter } from "vue-router";
 import {
   ref,
@@ -287,7 +289,12 @@ const hotBarrageOf7 = () => {
       console.error("加载数据失败:", err);
     });
 };
-hotBarrageOf7();
+const openHotDialogOf7day = () => {
+  hotDialog.value = false;
+  hotDialogOf7day.value = true;
+  hotBarrageOf7();
+}
+
 const currentBarrageIndex = ref(0);
 let intervalId;
 
@@ -327,73 +334,170 @@ const open4 = () => {
 };
 
 //复制搜索结果方法
+let lastCallTime = 0;
+let lastMousePosition = null;
+let mousePositionCnt = 0;
 const copyToQueryTableText = (row) => {
-  console.log(row);
+  const currentTime = new Date().getTime();
+  const currentMousePosition = { x: event.clientX, y: event.clientY };
+  if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
+    mousePositionCnt++;
+    if (mousePositionCnt > 4) {
+      ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
+        confirmButtonText: '好吧，我错了',
+      })
+    }
+  } else {
+    mousePositionCnt = 0;
+  }
+  // 检查是否已经过了 1.5 秒
+  if (currentTime - lastCallTime < 1500) {
+    ElNotification({
+      title: '请勿刷次数',
+      message: '复制成功，但次数没有增加',
+      type: 'warning',
+    });
+    const textToCopy = row.barrage;
+    let tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select(); // 选择对象
+    try {
+      document.execCommand('Copy'); // 执行浏览器复制命令
+    } catch (err) {
+      // 复制失败，可以显示错误信息
+      ElNotification({
+        title: '复制失败',
+        message: '复制操作失败，请稍后重试',
+        type: 'error',
+      });
+      console.error('复制失败:', err);
+    }
+    document.body.removeChild(tempInput); // 清理临时元素
+    lastCallTime = currentTime;
+    lastMousePosition = currentMousePosition;
+    return;
+  }
+  lastCallTime = currentTime;
   const textToCopy = row.barrage;
-  let tempInput = document.createElement("input");
+  let tempInput = document.createElement('input');
   tempInput.value = textToCopy;
   document.body.appendChild(tempInput);
   tempInput.select(); // 选择对象
   try {
-    document.execCommand("Copy"); // 执行浏览器复制命令
+    document.execCommand('Copy'); // 执行浏览器复制命令
     // 复制成功，可以显示提示信息
     open2();
-    console.log("内容已复制到剪贴板");
+    console.log('内容已复制到剪贴板');
     request.post("/machine/addCnt", {
-      table: "allbarrage",
+      table: 'allbarrage',
       id: row.id,
     });
     setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
     setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
+
   } catch (err) {
     // 复制失败，可以显示错误信息
-    console.error("复制失败:", err);
+    ElNotification({
+      title: '复制失败',
+      message: '复制操作失败，请稍后重试',
+      type: 'error',
+    });
+    console.error('复制失败:', err);
     open4();
   }
   document.body.removeChild(tempInput); // 清理临时元素
 };
+
 // 复制热门弹幕方法
 const copyText = (row) => {
-  // console.log(row)
+  const currentTime = new Date().getTime();
+  // 检查是否已经过了 1.5 秒
+  const currentMousePosition = { x: event.clientX, y: event.clientY };
+  if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
+    mousePositionCnt++;
+    console.log(mousePositionCnt)
+    if (mousePositionCnt > 4) {
+      ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
+        confirmButtonText: '好吧，我错了',
+      })
+    }
+  }
+  mousePositionCnt = 0;
+  if (currentTime - lastCallTime < 1500) {
+    ElNotification({
+      title: '请勿刷次数',
+      message: '复制成功，但次数没有增加',
+      type: 'warning',
+    });
+    const textToCopy = row.barrage;
+    let tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select(); // 选择对象
+    try {
+      document.execCommand('Copy'); // 执行浏览器复制命令
+    } catch (err) {
+      // 复制失败，可以显示错误信息
+      ElNotification({
+        title: '复制失败',
+        message: '复制操作失败，请稍后重试',
+        type: 'error',
+      });
+      console.error('复制失败:', err);
+    }
+    document.body.removeChild(tempInput); // 清理临时元素
+    lastCallTime = currentTime;
+    return;
+  }
+  lastCallTime = currentTime;
   const textToCopy = row.barrage;
-  let tempInput = document.createElement("input");
+  let tempInput = document.createElement('input');
   tempInput.value = textToCopy;
   document.body.appendChild(tempInput);
   tempInput.select(); // 选择对象
   try {
-    document.execCommand("Copy"); // 执行浏览器复制命令
+    document.execCommand('Copy'); // 执行浏览器复制命令
     // 复制成功，可以显示提示信息
     open2();
-    console.log("内容已复制到剪贴板");
+    console.log('内容已复制到剪贴板');
     request.post("/machine/addCnt", {
       table: row.tableName,
       id: row.barrageId,
     });
     setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
     setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
+
   } catch (err) {
     // 复制失败，可以显示错误信息
-    console.error("复制失败:", err);
+    ElNotification({
+      title: '复制失败',
+      message: '复制操作失败，请稍后重试',
+      type: 'error',
+    });
+    console.error('复制失败:', err);
     open4();
   }
   document.body.removeChild(tempInput); // 清理临时元素
 };
 
-function navigateTo(path: string): void {
+
+
+function navigateTo(path) {
   router.push(path);
 }
 //定时一小时弹出支持我！！！
 setTimeout(function () {
   // IE浏览器
   if (document.all) {
-    const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+    const myDiv = document.getElementById("myDiv");
     if (myDiv) {
       myDiv.click();
     }
   }
   // 其它浏览器
   else {
-    const myDiv = document.getElementById("myDiv") as HTMLElement | null;
+    const myDiv = document.getElementById("myDiv");
     if (myDiv) {
       const e = document.createEvent("MouseEvents");
       e.initEvent("click", true, true);

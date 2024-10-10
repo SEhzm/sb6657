@@ -9,7 +9,17 @@ import '@/assets/css/global.css'
 
 const app = createApp(App)
 
-
+/**
+ * Í³Ò»ÃüÃû
+ * allbarrage
+ * mygo
+ * p1
+ * penPlayer
+ * penWJQ
+ * QMLW
+ * QUQU
+ * ZbjHuPen
+ */
 
 app.use(router)
 app.use(ElementPlus, {
