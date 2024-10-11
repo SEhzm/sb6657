@@ -41,7 +41,7 @@
             </el-select>
         </el-form-item>
         <el-form-item label="弹幕内容" prop="barrage">
-          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />
+          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea"/>
         </el-form-item>
       </el-form>
       <template #footer>

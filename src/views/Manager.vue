@@ -119,9 +119,13 @@
     </div>
 
     <div class="tab">
-      <!--    移动端-->
-      <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="item in table" :key="item.path"
-        @click="navigateTo(item.path)">{{ item.text }}</div>
+      <!-- 移动端 -->
+      <div class="tab-container">
+        <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="(item, index) in table"
+          :key="item.path" @click="navigateTo(item.path)">
+          {{ item.text }}
+        </div>
+      </div>
     </div>
 
     <div class="main-content" style="position: relative;">
@@ -803,60 +807,72 @@ const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
     display: flex;
     overflow-x: scroll;
     white-space: nowrap;
-    //关掉滑动条
-    // scrollbar-width: none;
-    // -ms-overflow-style: none;
+    scrollbar-width: none; // 确保 Firefox 也隐藏滚动条
+    -ms-overflow-style: none; // IE 和 Edge
+    -webkit-overflow-scrolling: touch; // 启用原生滚动效果
+    touch-action: pan-x; // 允许水平滚动，阻止其他触摸行为
+  }
 
-    &::-webkit-scrollbar {
-      /* Webkit browsers (Chrome, Safari) */
-      height: 8px;
-    }
+  .tab-container {
+    display: flex;
+    flex-wrap: nowrap;
+    width: 100%;
+  }
 
-    &::-webkit-scrollbar-track {
-      background: transparent;
-    }
+  .tab1 {
+    position: relative;
+    white-space: nowrap;
+    padding: 10px 5px;
+    margin-right: 10px;
+    border-radius: 15px 15px 0 0;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    color: #000000;
+    background-color: #fff;
+    flex-shrink: 0; // 防止缩小
+    touch-action: pan-x;
+  }
 
-    &::-webkit-scrollbar-thumb {
-      background-color: rgba(0, 0, 0, 0.2);
-      border-radius: 10px;
-    }
+  .tab1::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background-color: transparent;
+    transition: all 0.3s ease;
+  }
 
-    &>div {
-      position: relative;
-      white-space: nowrap;
-      padding: 10px 15px;
-      margin-right: 10px;
-      border-radius: 15px 15px 0 0;
-      transition: all 0.3s ease;
-      font-size: 15px;
-      color: #000000;
-      background-color: #fff;
+  .none {
+    background-color: #93a2b9;
+    padding: 10px;
+  }
 
-      &::before {
-        content: "";
-        position: absolute;
-        left: 0;
-        bottom: -2px;
-        width: 100%;
-        background-color: transparent;
-        transition: all 0.3s ease;
-      }
-    }
+  .tab1:hover,
+  .selected {
+    color: #fff;
+    background-color: #007bff;
+    
 
-    .none {
-      background-color: #93a2b9;
-      padding: 10px;
-    }
-
-    &>div:hover,
-    &>.selected {
-      color: #fff;
+    &::before {
       background-color: #007bff;
-
-      &::before {
-        background-color: #007bff;
-      }
     }
+    padding-left: 15px; /* 左侧 padding 增加 10px */
+    padding-right: 15px; /* 右侧 padding 增加 10px */
+
+  }
+
+  .tab::-webkit-scrollbar {
+    /* Webkit browsers (Chrome, Safari) */
+    height: 8px;
+  }
+
+  .tab::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .tab::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
   }
 
   //移动端

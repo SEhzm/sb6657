@@ -48,7 +48,7 @@
             </el-select>
         </el-form-item>
         <el-form-item maxlength="255" label="弹幕内容" prop="barrage">
-          <el-input v-model="data.barrage" autocomplete="off"/>
+          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea"/>
         </el-form-item>
       </el-form>
       <template #footer>
@@ -64,20 +64,6 @@
       </template>
     </el-dialog>
   </div>
-  <!-- <div style="right: 10px;top: 50px;position: fixed;background-color: #fff;">
-    <p>热门烂梗</p>
-    <el-table stripe :data="data.tableData" empty-text="我还没有加载完喔~~"
-                class="eldtable"
-                :header-cell-style="{color: '#ff0000', fontSize: '13px',whitespace:'normal !important'}"
-                :cell-style="{cursor:'Pointer'}" @row-click=" copyText"
-      >
-        <el-table-column width="60" prop="id" label="序号"></el-table-column>
-        <el-table-column prop="barrage" min-width="90" label="弹幕"/>
-        <el-table-column prop="cnt" label="热度" width="65"/>
-      </el-table>
-  
-  
-  </div> -->
     <el-backtop :right="50" :bottom="50" >UP</el-backtop>
 </template>
 

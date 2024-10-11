@@ -5,8 +5,10 @@
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 40px;">
       <div><b>
-        <p style="font-size: 14px;">新增时光相册(可评论)，新增在线投稿弹幕。最近可能会出现卡顿，玩神照片可以在上方上传照片上传至相册</p>
-          <p style="font-size: 18px;color: red;">最新推出了油猴Tampermonkey插件，可以在直播间直接搜索进行复制和一键发送，<a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a></p></b>
+          <p style="font-size: 14px;">新增时光相册(可评论)，新增在线投稿弹幕。最近可能会出现卡顿，玩神照片可以在上方上传照片上传至相册</p>
+          <p style="font-size: 18px;color: red;">最新推出了油猴Tampermonkey插件，可以在直播间直接搜索进行复制和一键发送，<a
+              href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a></p>
+        </b>
       </div>
     </div>
 
@@ -71,7 +73,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="烂梗内容" prop="barrage">
-            <el-input maxlength="255" v-model="data.barrage" autocomplete="off" />
+            <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 1, maxRows: 4 }"
+              show-word-limit type="textarea" />
           </el-form-item>
           <el-button type="primary" @click="saveBarrage" style="font-size: 20px;">
             投稿
@@ -110,28 +113,31 @@ const data = reactive({
   barrage: '',
 })
 const autoexec = () => {
-  request.get("https://api.vvhan.com/api/visitor.info")
-    .then(res => {
-      const resData = res;
-      localStorage.setItem("ip", res.ip)
-      ElNotification({
-        icon: autoExecPng,
-        dangerouslyUseHTMLString: true,
-        title: '你好',
-        message:
-          "<p>欢迎来自<b>" +
-          resData.location +
-          "</b>的朋友<br/> " +
-          resData.system +
-          resData.browser +
-          " <br>IP: " +
-          resData.ip +
-          "</p>",
-        offset: 50,
-        customClass: "myClass",
-        duration: 2000
+  if (!sessionStorage.getItem("firstOpening")) {
+    request.get("https://api.vvhan.com/api/visitor.info")
+      .then(res => {
+        const resData = res;
+        localStorage.setItem("ip", res.ip)
+        ElNotification({
+          icon: autoExecPng,
+          dangerouslyUseHTMLString: true,
+          title: '你好',
+          message:
+            "<p>欢迎来自<b>" +
+            resData.location +
+            "</b>的朋友<br/> " +
+            resData.system +
+            resData.browser +
+            " <br>IP: " +
+            resData.ip +
+            "</p>",
+          offset: 50,
+          customClass: "myClass",
+          duration: 2000
+        })
+        sessionStorage.setItem("firstOpening", 1)
       })
-    })
+  }
 }
 
 autoexec()
@@ -235,12 +241,12 @@ const copyText = (row) => {
   if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
     mousePositionCnt++;
     console.log(mousePositionCnt)
-    if(mousePositionCnt>4){
+    if (mousePositionCnt > 4) {
       ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-      confirmButtonText: '好吧，我错了',
-    })
+        confirmButtonText: '好吧，我错了',
+      })
     }
-  }else{
+  } else {
     mousePositionCnt = 0;
   }
   // 检查是否已经过了 1.5 秒
@@ -390,7 +396,8 @@ onMounted(() => {
   }
 
   .el-footer {
-    pointer-events: none; /* 禁用事件处理 */
+    pointer-events: none;
+    /* 禁用事件处理 */
     z-index: 200;
     height: 40px;
     line-height: 40px;
@@ -403,9 +410,10 @@ onMounted(() => {
     letter-spacing: 1px;
     margin-left: -153px;
   }
+
   .el-footer a {
-  pointer-events: auto;
-}
+    pointer-events: auto;
+  }
 }
 
 @media (max-width: 600px) {
