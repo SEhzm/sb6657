@@ -1,19 +1,22 @@
 <template>
   <div>
-    <div class="card">
+    <div class="cardTable" style="position: relative;">
+      <p style="position: absolute;right: 50px;z-index: 4;pointer-events: none;">
+        Look!是排序诶➡️<br><text
+          style="position: absolute;right: 5px;">{{ sortOrder==null?'默认':sortOrder=='asc'?'升序':'降序' }}</text></p>
       <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
 
       <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable"
-        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{cursor:'Pointer'}"
-        @row-click="copyText">
+        :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+        :cell-style="{ cursor: 'Pointer' }" @row-click="copyText" @sort-change="handleSortChange">
         <el-table-column width="58" prop="id" label="序号"></el-table-column>
         <el-table-column prop="barrage" min-width="90" label="弹幕" />
         <el-table-column label="" align="center" width="85">
           <el-button type="primary" label="操作">复制</el-button>
         </el-table-column>
-        <el-table-column prop="cnt" label="复制次数" width="55" />
+        <el-table-column prop="cnt" label="复制次数" width="55" sortable="custom" />
       </el-table>
     </div>
 
@@ -29,17 +32,18 @@
       <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
         <el-form-item label="分栏" :label-width="100" prop="table">
           <el-select v-model="data.table" placeholder="选择上传的分栏">
-              <el-option label="喷玩机器篇" value="machine_penWJQ" />
-              <el-option label="木柜子篇" value="machine_mygo" />
-              <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
-              <el-option label="喷选手篇" value="machine_penPlayer" />
-              <el-option label="+1" value="machine_p1" />
-              <el-option label="群魔乱舞篇" value="machine_QMLW" />
-              <el-option label="QUQU" value="machine_QUQU" />
-            </el-select>
+            <el-option label="喷玩机器篇" value="machine_penWJQ" />
+            <el-option label="木柜子篇" value="machine_mygo" />
+            <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
+            <el-option label="喷选手篇" value="machine_penPlayer" />
+            <el-option label="+1" value="machine_p1" />
+            <el-option label="群魔乱舞篇" value="machine_QMLW" />
+            <el-option label="QUQU" value="machine_QUQU" />
+          </el-select>
         </el-form-item>
         <el-form-item label="弹幕内容" prop="barrage">
-          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea"/>
+          <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }"
+            show-word-limit type="textarea" />
         </el-form-item>
       </el-form>
       <template #footer>
@@ -74,7 +78,7 @@ const rules = ({
     { required: true, message: '请输入弹幕', trigger: 'blur' },
   ]
 })
-
+const sortOrder = ref(null)
 const data = reactive({
   tableData: [],
   total: 0,
@@ -95,13 +99,20 @@ const load = (pageNum = 1) => {
     // console.log(res)
     data.tableData = res.data?.list || []
     data.total = res.data?.total || 0
-    loading.value=false;
+    loading.value = false;
   }).catch(err => {
     console.error('加载数据失败:', err)
   })
 }
 
 load(data.currentPage)
+//点击排序按钮执行的方法
+const handleSortChange = ({ prop, order }) => {
+  if (prop === 'cnt') {
+    data.currentPage = 1;
+    fetchSortedData(order, data.currentPage);
+  }
+};
 const scrollToTop = () => {
   window.scrollTo({
     // top: document.documentElement.offsetHeight, //回到底部
@@ -110,9 +121,15 @@ const scrollToTop = () => {
   });
 };
 const handlePageChange = (page) => {
-  data.currentPage = page
+  data.currentPage = page;
   scrollToTop();
-  load(page)
+  if (sortOrder.value === null) {
+    load(page)
+  } else if (sortOrder.value === 'desc') {
+    fetchSortedData("desc", page)
+  } else {
+    fetchSortedData("ascending", page)
+  }
 }
 
 const open2 = () => {
@@ -130,6 +147,32 @@ const open4 = () => {
 };
 
 
+// 从后端获取排序后的数据
+const fetchSortedData = (order, pageNum = 1) => {
+  loading.value = true;
+  sortOrder.value = order === 'ascending' ? 'asc' : order === null ? null : 'desc';
+  console.log(sortOrder.value);
+  if (sortOrder.value === null) {
+    load()
+  } else {
+    request.get('/machine/sortAllBarrage', {
+      params: {
+        pageNum: pageNum,
+        pageSize: data.pageSize,
+        order: sortOrder.value
+      }
+    })
+      .then(res => {
+        data.tableData = res.data.list; // 使用后端返回的数据更新 tableData
+        data.total = res.data?.total || 0
+      })
+      .finally(() => {
+        data.currentPage = 1
+        loading.value = false;
+      });
+  }
+};
+
 let lastCallTime = 0;
 let lastMousePosition = null;
 let mousePositionCnt = 0;
@@ -139,12 +182,12 @@ const copyText = (row) => {
   // 检查鼠标位置是否变化
   if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
     mousePositionCnt++;
-    if(mousePositionCnt>4){
+    if (mousePositionCnt > 4) {
       ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-      confirmButtonText: '好吧，我错了',
-    })
+        confirmButtonText: '好吧，我错了',
+      })
     }
-  }else{
+  } else {
     mousePositionCnt = 0;
   }
   // 检查是否已经过了 1.5 秒
@@ -188,11 +231,19 @@ const copyText = (row) => {
     open2();
     console.log('内容已复制到剪贴板');
     request.post('/machine/addCnt', {
+      sortOrder: sortOrder.value,
       PageNum: data.currentPage,
       table: 'allbarrage',
       id: row.id
     }).then(() => {
-      setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+      // console.log(sortOrder.value);
+      if (sortOrder.value === 'null') {
+        setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+      } else if (sortOrder.value === 'desc') {
+        setTimeout(() => fetchSortedData('desc', data.currentPage), 50);
+      } else {
+        setTimeout(() => fetchSortedData('ascending', data.currentPage), 50);
+      }
     });
   } catch (err) {
     // 复制失败，可以显示错误信息
@@ -271,10 +322,12 @@ const continuousSaveBarrage = () => {
   z-index: 100;
   position: absolute;
   font-size: 18px;
+  margin-top: 25px;
   margin-left: 150px
 }
+
 @media (min-width: 601px) {
-  .card {
+  .cardTable {
     width: 80%;
   }
 
@@ -292,6 +345,7 @@ const continuousSaveBarrage = () => {
     overflow-x: auto;
     cursor: cell;
   }
+
   .dialogFormVisible {
     font-size: 15px;
   }
@@ -300,7 +354,7 @@ const continuousSaveBarrage = () => {
     z-index: 100;
     position: absolute;
     font-size: 13px;
-    margin-left: 150px
+    margin-left: 100px
   }
 
 }

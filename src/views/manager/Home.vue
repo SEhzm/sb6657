@@ -133,7 +133,7 @@ const autoexec = () => {
             "</p>",
           offset: 50,
           customClass: "myClass",
-          duration: 2000
+          duration: 1000
         })
         sessionStorage.setItem("firstOpening", 1)
       })

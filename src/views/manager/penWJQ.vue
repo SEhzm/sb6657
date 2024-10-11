@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="card">
+    <div class="cardTable">
       <el-button type="primary" class="handleAdd" @click="handleAdd">
         投稿弹幕
       </el-button>
@@ -281,10 +281,11 @@ const continuousSaveBarrage = () => {
   z-index: 100;
   position: absolute;
   font-size: 18px;
+  margin-top: 3px;
   margin-left: 150px
 }
 @media (min-width: 601px) {
-  .card {
+  .cardTable {
     width: 80%;
   }
 

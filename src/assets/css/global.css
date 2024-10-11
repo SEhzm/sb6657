@@ -21,3 +21,10 @@ a {
     padding: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,.1);
 }
+.cardTable {
+    z-index: 1;
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 0 5px 10px 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,.1);
+}
