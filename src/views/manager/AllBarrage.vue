@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="cardTable" style="position: relative;">
-      <p style="position: absolute;right: 50px;z-index: 4;pointer-events: none;">
+      <p style="position: absolute;right: 65px;margin-top: 10px;z-index: 4;pointer-events: none;">
         Look!是排序诶➡️<br><text
           style="position: absolute;right: 5px;">{{ sortOrder==null?'默认':sortOrder=='asc'?'升序':'降序' }}</text></p>
       <el-button type="primary" class="handleAdd" @click="handleAdd">
@@ -322,7 +322,7 @@ const continuousSaveBarrage = () => {
   z-index: 100;
   position: absolute;
   font-size: 18px;
-  margin-top: 25px;
+  margin-top: 15px;
   margin-left: 150px
 }
 
