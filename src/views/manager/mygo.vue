@@ -68,11 +68,12 @@
 </template>
 
 <script setup>
-import {ref, reactive} from 'vue'
+import {ref, reactive, nextTick} from 'vue'
 import request from "@/utils/request";
 import {ElNotification} from 'element-plus'
 
 const loading = ref(true)
+
 
 const rules = ({
   table: [
@@ -93,21 +94,23 @@ const data = reactive({
   barrage: '',
 })
 
-const load = (pageNum = 1) => {
-  request.get('/machine/ZbjHuPen/Page', {
-    params: {
-      pageNum: pageNum,
-      pageSize: data.pageSize
-    }
-  }).then(res => {
+const load = async (pageNum = 1) => {
+  try {
+    const res = await request.get('/machine/mygo/Page', {
+      params: {
+        pageNum: pageNum,
+        pageSize: data.pageSize
+      }
+    })
     // console.log(res)
     data.tableData = res.data?.list || []
-    data.total = res.data?.total || 0
+    data.total = res.data?.total || 0;
+    await nextTick();
     // console.log(data.tableData)
     loading.value=false;
-  }).catch(err => {
-    console.error('加载数据失败:', err)
-  })
+  } catch (error) {
+    console.log('加载数据失败', error)
+  }
 }
 
 load(data.currentPage)
@@ -200,7 +203,7 @@ const copyText = (row) => {
     console.log('内容已复制到剪贴板');
     request.post('/machine/addCnt', {
       PageNum: data.currentPage,
-      table: 'ZbjHuPen',
+      table: 'mygo',
       id: row.id
     }).then(() => {
       setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
@@ -303,7 +306,6 @@ const continuousSaveBarrage = () => {
     margin: 0;
     --el-pagination-button-width: 22px;
   }
-
   .eldtable {
     font-size: 16px;
     white-space: nowrap;

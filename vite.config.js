@@ -1,19 +1,26 @@
-import {fileURLToPath, URL} from 'node:url'
+import {
+    fileURLToPath,
+    URL
+} from 'node:url'
 
-import {defineConfig} from 'vite'
+import {
+    defineConfig
+} from 'vite'
 import vue from '@vitejs/plugin-vue'
 // 导入对应包
 
 import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
-import {ElementPlusResolver} from 'unplugin-vue-components/resolvers'
+import {
+    ElementPlusResolver
+} from 'unplugin-vue-components/resolvers'
 import IconsResolver from 'unplugin-icons/resolver'
 import ElementPlus from 'unplugin-element-plus/vite'
 
 
 // https://vitejs.dev/config/
-export default defineConfig({
-    base: "/sb6657/",
+export default defineConfig({ 
+    // base: '/sb6657.cn/',
     plugins: [
         vue(),
         AutoImport({
@@ -24,9 +31,9 @@ export default defineConfig({
                     prefix: 'Icon',
                 }),
                 // 自动导入 Element Plus 相关函数，如：ElMessage, ElMessageBox... (带样式)
-                ElementPlusResolver(
-                    {importStyle: 'sass'}
-                )
+                ElementPlusResolver({
+                    importStyle: 'sass'
+                })
             ],
         }),
         Components({
@@ -36,9 +43,10 @@ export default defineConfig({
                     enabledCollections: ['ep'],
                 }),
                 // 自动导入 Element Plus 组件
-                ElementPlusResolver(
-                    {importStyle: 'sass'}
-                )],
+                ElementPlusResolver({
+                    importStyle: 'sass'
+                })
+            ],
         }),
 
         // 按需定制主题配置
@@ -48,7 +56,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url))
+            '@': fileURLToPath(new URL('./src',
+                import.meta.url))
         }
     },
     css: {
@@ -62,34 +71,36 @@ export default defineConfig({
         }
     },
     build: {
-        outDir: "docs"
-    }
-    // build: {
-    //     chunkSizeWarningLimit: 1000, // 调整包的大小
-    //     rollupOptions: {
-    //         output: {
-    //             // 最小化拆分包
-    //             manualChunks(id) {
-    //                 if (id.includes('node_modules')) {
-    //                     return id.toString().split('node_modules/')[1].split('/')[0].toString()
-    //                 }
-    //             },
-    //             // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
-    //             entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
-    //             chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
-    //             assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
-    //         }
-    //     }
-    // },
+        chunkSizeWarningLimit: 1000, // 调整包的大小
+        rollupOptions: {
+            output: {
+                // 最小化拆分包
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        return id.toString().split('node_modules/')[1].split('/')[0].toString()
+                    }
+                },
+                // 用于从入口点创建的块的打包输出格式[name]表示文件名,[hash]表示该文件内容hash值
+                entryFileNames: 'assets/js/[name].[hash].js', // 用于命名代码拆分时创建的共享块的输出命名
+                chunkFileNames: 'assets/js/[name].[hash].js', // 用于输出静态资源的命名，[ext]表示文件扩展名
+                assetFileNames: 'assets/[ext]/[name].[hash].[ext]'
+            }
+        }
+    },
     // devServer: {
     //     proxy: {
-    //         '/api': {//获取路径中包含了/api的请求，与axios请求同步增加
-    //             target: 'https://localhost:9090',//后台服务所在的源
-    //             changeOrigin: true,//修改源
-    //             rewrite: (path) => path.replace(/^\/api/, '')///api替换为''
+    //         '/api': {
+    //             target: 'https://s5k.cn',
+    //             changeOrigin: true,
+    //             secure: false,
+    //             ws: true,
+    //             logLevel: 'debug',
+    //             pathRewrite: {
+    //                 '^/api': ''
+    //             },
+    //             credentials: true // 允许携带凭据
     //         }
     //     }
     // },
 
 })
-

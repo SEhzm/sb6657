@@ -1,0 +1,54 @@
+# name: 自动化打包，部署vue项目到sb6657.cn库
+# on: push
+    
+# permissions:
+#   contents: write
+
+# jobs:
+#   npm-build:
+#     name: npmbuild运行 
+#     runs-on: ubuntu-latest
+
+#     steps:
+#     - name: 读取仓库
+#       uses: actions/checkout@v4
+
+#     - name: 设置 Node.js
+#       uses: actions/setup-node@v4
+#       with:
+#         node-version: '20.x'  # 根据项目需求选择合适版本
+
+#     - name: 安装依赖
+#       run: npm install --verbose
+
+#     - name: 打包项目
+#       run: npm run build
+
+#     - name: 检查打包输出
+#       run: ls -la ./dist  # 如果输出目录是 dist，可以用此步骤确认打包文件
+
+#     - name: 部署到 sb6657.cn 的 main 分支
+#       run: |
+#         git config --global user.name 'SEhzm'
+#         git config --global user.email '2693445032@qq.com'
+#         git clone https://sehzm:${{ secrets.ACCESS_TOKEN }}@github.com/sehzm/sb6657.cn.git sb6657-cn
+#         cd sb6657-cn
+#         git checkout main
+#          # 保留 CNAME 文件
+#         if [ -f "./CNAME" ]; then
+#           mv ./CNAME ./CNAME_backup
+#         fi
+        
+#         # 清空其他文件
+#         rm -rf *
+        
+#         # 恢复 CNAME 文件
+#         if [ -f "./CNAME_backup" ]; then
+#           mv ./CNAME_backup ./CNAME
+#         fi
+        
+#         cp -r ../dist/* .
+#         git add .
+#         git commit -m "自动部署: 更新打包文件"
+#         git push https://sehzm:${{ secrets.ACCESS_TOKEN }}@github.com/sehzm/sb6657.cn.git main
+    

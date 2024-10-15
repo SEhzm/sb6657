@@ -4,13 +4,22 @@ import router from './router'
 import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
+import StarrySky from '@/views/Starrysky.vue'
 import '@/assets/css/global.css'
 
 const app = createApp(App)
 
-import StarrySky from '@/views/StarrySky.vue';
-// import audioPlay from './components/audioPlayer.vue';
-// import videoPlay from './components/VideoPlayer.vue';
+/**
+ * Í³Ò»ÃüÃû
+ * allbarrage
+ * mygo
+ * p1
+ * penPlayer
+ * penWJQ
+ * QMLW
+ * QUQU
+ * ZbjHuPen
+ */
 
 app.use(router)
 app.use(ElementPlus, {
@@ -25,6 +34,7 @@ setInterval(() => {
 app.component('StarrySky', StarrySky);
 // app.component('audioPlay', audioPlay);
 // app.component('videoPlay', videoPlay);
+
 
 app.mount('#app')
 

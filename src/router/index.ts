@@ -22,6 +22,8 @@ const router = createRouter({
                 {path: 'test', name: 'test', component: () => import('@/views/manager/test.vue')},
                 {path: 'test2', name: 'test2', component: () => import('@/views/manager/test2.vue')},
                 {path: 'Starrysky', name: 'Starrysky', component: () => import('@/views/Starrysky.vue')},
+                {path: 'mygo', name: 'mygo', component: () => import('@/views/manager/mygo.vue')},
+                {path: 'Tampermonkey', name: 'Tampermonkey', component: () => import('@/views/manager/Tampermonkey.vue')},
             ]
         },
         {
