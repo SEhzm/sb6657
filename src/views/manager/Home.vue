@@ -88,11 +88,6 @@
       友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
     </div>
   </div>
-
-  <div class="el-footer">
-    基于腾讯云服务器搭建<text style="font-size: 11px">(离服务器到期还有{{ ServerDate }}天)</text>
-    <text> 域名所有：<a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></text>
-  </div>
 </template>
 
 
@@ -142,10 +137,6 @@ const autoexec = () => {
 
 autoexec()
 const searchQuery = ref('');
-
-const TxServerDate = new Date('2025-02-20');//服务器倒计时
-const ServerDate = ref(0);
-
 
 const rules = ({
   table: [
@@ -309,28 +300,10 @@ const copyText = (row) => {
   document.body.removeChild(tempInput); // 清理临时元素
 };
 
-
-
-const calculateCountdown = () => {
-  const now = new Date();
-
-  const diffTime3 = TxServerDate - now;
-
-  ServerDate.value = Math.ceil(diffTime3 / (1000 * 60 * 60 * 24));
-};
-
 const onSearchQueryChange = () => {
   data.filteredItems = [];
   isInput.value = false;
 };
-
-// 在组件挂载时计算倒计时
-onMounted(() => {
-  calculateCountdown();
-  // 设置一个定时器每天更新一次倒计时
-  setInterval(calculateCountdown, 1000 * 60 * 60 * 24);
-});
-
 </script>
 
 
@@ -372,11 +345,6 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.footer {
-  text-align: center;
-  font-size: 17px;
-  margin-left: -250px;
-}
 
 @media (min-width: 601px) {
   .boom6657 {
@@ -393,26 +361,6 @@ onMounted(() => {
   .home {
 
     width: 90%;
-  }
-
-  .el-footer {
-    pointer-events: none;
-    /* 禁用事件处理 */
-    z-index: 200;
-    height: 40px;
-    line-height: 40px;
-    position: fixed;
-    bottom: 0;
-    width: 100% !important;
-    text-align: center;
-    font-family: Arial;
-    font-size: 12px;
-    letter-spacing: 1px;
-    margin-left: -153px;
-  }
-
-  .el-footer a {
-    pointer-events: auto;
   }
 }
 
@@ -472,20 +420,6 @@ onMounted(() => {
   .dgq63136 {
     font-size: 17px;
     font-weight: bold;
-  }
-
-  .footer {
-    margin-left: 0px;
-    font-size: 14px;
-  }
-
-  .el-footer {
-    text-align: center;
-    font-family: Arial;
-    position: fixed;
-    bottom: 2px;
-    font-size: 12px;
-    width: 100%;
   }
 }
 </style>
