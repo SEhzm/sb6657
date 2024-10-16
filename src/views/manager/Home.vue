@@ -27,7 +27,7 @@
         <el-table v-loading="loading" :data="data.tableData" style="font-family: 微软雅黑; font-size: 20px;"
           :header-cell-style="{ fontSize: '14px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }"
           @row-click="copyText">
-          <el-table-column prop="barrage" label="弹幕"></el-table-column>
+          <el-table-column prop="barrage"/>
           <el-table-column label="" align="center" width="85">
             <el-button type="primary">复制</el-button>
           </el-table-column>
@@ -37,7 +37,7 @@
 
     <div class="card" style="line-height: 50px; margin-top: 10px; margin-bottom: 10px; min-height: 80px;">
       <div>
-        <span style="position: absolute; font-size: 22px; margin-top: -20px; color: blue;">
+        <span style="position: absolute; font-size: 20px; margin-top: -20px; color: blue;">
           --------需点击右侧搜索按钮---------
         </span>
         <el-input v-model="searchQuery" :placeholder=searchBarrageMeg clearable
