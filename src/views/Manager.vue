@@ -214,7 +214,7 @@ import {
   onUnmounted,
   onBeforeUnmount,
 } from "vue";
-import request from "@/utils/request";
+import httpInstance from "@/apis/httpInstance";
 import { ElMessage, ElNotification } from "element-plus";
 const hotDialog = ref(false);
 const hotDialogOf7day = ref(false);
@@ -246,7 +246,7 @@ const data = reactive({
 //搜索
 const queryBarrage = () => {
   console.log(searchQuery.value)
-  request.post('/machine/Query', {
+  httpInstance.post('/machine/Query', {
     QueryBarrage: searchQuery.value
   }).then(res => {
     isInput.value = true;
@@ -256,7 +256,7 @@ const queryBarrage = () => {
 }
 
 const load = () => {
-  request
+  httpInstance
     .get("/machine/allBarrage/Page", {})
     .then((res) => {
       // console.log(res);
@@ -270,7 +270,7 @@ const load = () => {
 
 
 const hotBarrageOf10 = () => {
-  request
+  httpInstance
     .get("/machine/hotBarrageOfAll")
     .then((res) => {
       data.hotBarrageOf10 = res.data.slice(0, 10) || [];
@@ -283,7 +283,7 @@ const hotBarrageOf10 = () => {
 };
 hotBarrageOf10();
 const hotBarrageOf7 = () => {
-  request
+  httpInstance
     .get("/machine/hotBarrageOf7Day")
     .then((res) => {
       loading.value = false;
@@ -393,7 +393,7 @@ const copyToQueryTableText = (row) => {
     // 复制成功，可以显示提示信息
     open2();
     console.log('内容已复制到剪贴板');
-    request.post("/machine/addCnt", {
+    httpInstance.post("/machine/addCnt", {
       table: 'allbarrage',
       id: row.id,
     });
@@ -465,7 +465,7 @@ const copyText = (row) => {
     // 复制成功，可以显示提示信息
     open2();
     console.log('内容已复制到剪贴板');
-    request.post("/machine/addCnt", {
+    httpInstance.post("/machine/addCnt", {
       table: row.tableName,
       id: row.barrageId,
     });

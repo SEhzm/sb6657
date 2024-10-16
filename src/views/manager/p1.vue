@@ -61,7 +61,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import request from "@/utils/request";
+import httpInstance from "@/apis/httpInstance";
 import { ElNotification } from 'element-plus'
 
 const loading = ref(true)
@@ -86,7 +86,7 @@ const data = reactive({
 })
 
 const load = (pageNum = 1) => {
-  request.get('/machine/p1/Page', {
+  httpInstance.get('/machine/p1/Page', {
     params: {
       pageNum: pageNum,
       pageSize: data.pageSize
@@ -188,7 +188,7 @@ const copyText = (row) => {
     // 复制成功，可以显示提示信息
     open2();
     console.log('内容已复制到剪贴板');
-    request.post('/machine/addCnt', {
+    httpInstance.post('/machine/addCnt', {
       PageNum: data.currentPage,
       table: 'p1',
       id: row.id
@@ -219,7 +219,7 @@ const saveBarrage = () => {
   if (data.table === '' || data.barrage === '') {
     ElNotification.error("请选择分栏或输入弹幕");
   } else {
-    request.post('/machine/addUnaudit', {
+    httpInstance.post('/machine/addUnaudit', {
       table: data.table,
       barrage: data.barrage
     }).then(res => {
@@ -239,7 +239,7 @@ const continuousSaveBarrage = () => {
   if (data.table === '' || data.barrage === '') {
     ElNotification.error("请选择分栏或输入弹幕");
   } else {
-    request.post('/machine/addUnaudit', {
+    httpInstance.post('/machine/addUnaudit', {
       table: data.table,
       barrage: data.barrage
     }).then(res => {

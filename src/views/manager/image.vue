@@ -52,7 +52,7 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import request from "@/utils/request";
+import httpInstance from "@/apis/httpInstance";
 import { ElNotification } from 'element-plus'
 
 
@@ -76,7 +76,7 @@ const image = reactive({
 })
 
 const load = () => {
-  request.get('/machine/showImage', {}).then(res => {
+  httpInstance.get('/machine/showImage', {}).then(res => {
     // console.log(res)
     image.outerImg = res.data || []
     // console.log(image.outerImg)
@@ -122,7 +122,7 @@ const saveComment = (Obimage) => {
   if (Obimage.douyuID === '' || Obimage.Commentname === '') {
     ElNotification.error("请输入斗鱼id或输入评论");
   } else {
-    request.post('/machine/addCommentname', {
+    httpInstance.post('/machine/addCommentname', {
       id: '',
       imageId: image.imageId,
       douyuID: Obimage.douyuID,

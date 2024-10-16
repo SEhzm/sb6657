@@ -87,9 +87,9 @@ npm run build
 ### 后端启动：
 
 
-(1.测试) ：注释yml中ssl,request.ts中调整baseURL
+(1.测试) ：注释yml中ssl,httpInstance.ts中调整baseURL
 
-(2.上线)：放开yml注释,request.ts中调整baseURL
+(2.上线)：放开yml注释,httpInstance.ts中调整baseURL
 
 2.配置跨域设置(非必须)
 

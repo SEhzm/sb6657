@@ -98,7 +98,7 @@
 
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
-import request from "@/utils/request";
+import httpInstance from "@/apis/httpInstance";
 import { ElMessage, ElNotification } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
@@ -114,7 +114,7 @@ const data = reactive({
 })
 const autoexec = () => {
   if (!sessionStorage.getItem("firstOpening")) {
-    request.get("https://api.vvhan.com/api/visitor.info")
+    httpInstance.get("https://api.vvhan.com/api/visitor.info")
       .then(res => {
         const resData = res;
         localStorage.setItem("ip", res.ip)
@@ -161,7 +161,7 @@ const saveBarrage = () => {
   if (data.table === '' || data.barrage === '') {
     ElNotification.error("请选择分栏或输入烂梗");
   } else {
-    request.post('/machine/addUnaudit', {
+    httpInstance.post('/machine/addUnaudit', {
       ip: localStorage.getItem('ip'),
       table: data.table,
       barrage: data.barrage
@@ -179,7 +179,7 @@ const saveBarrage = () => {
 //搜索
 const queryBarrage = () => {
   console.log(searchQuery.value)
-  request.post('/machine/Query', {
+  httpInstance.post('/machine/Query', {
     QueryBarrage: searchQuery.value
   }).then(res => {
     isInput.value = true;
@@ -191,7 +191,7 @@ const queryBarrage = () => {
 
 var searchBarrageMeg = ref('搜索烂梗...');
 // const load = () => {
-//   request.get('/machine/allBarrage/Page', {})
+//   httpInstance.get('/machine/allBarrage/Page', {})
 //     .then(res => {
 //       // console.log(res);
 //       data.tableData = res.data || [];
@@ -205,7 +205,7 @@ var searchBarrageMeg = ref('搜索烂梗...');
 // };
 
 const getRandOne = () => {
-  request.get('/machine/getRandOne')
+  httpInstance.get('/machine/getRandOne')
     .then(res => {
       data.tableData = [res.data];
       // console.log(res)
@@ -289,7 +289,7 @@ const copyText = (row) => {
     // 复制成功，可以显示提示信息
     open2();
     console.log('内容已复制到剪贴板');
-    request.post('/machine/addCnt', {
+    httpInstance.post('/machine/addCnt', {
       PageNum: data.currentPage,
       table: 'allbarrage',
       id: row.id
