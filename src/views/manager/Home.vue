@@ -99,28 +99,19 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue';
 import request from "@/utils/request";
-import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
-import { Search } from '@element-plus/icons-vue';
+import { ElMessage, ElNotification } from 'element-plus';
+import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
-import {
-  TsaveBarrage,
-  TqueryBarrage,
-  TgetRandOne,
-  TcopyText,
-  TcalculateCountdown,
-  TonSearchQueryChange
-} from '@/js/functions.js';
 
-const loading = ref(true);
-const isInput = ref(false);
+const loading = ref(true)
+const isInput = ref(false)
 const data = reactive({
   getRandOne: [],
   filteredItems: [],
   tableData: [],
   table: '',
   barrage: '',
-  currentPage: 1
-});
+})
 const autoexec = () => {
   if (!sessionStorage.getItem("firstOpening")) {
     request.get("https://api.vvhan.com/api/visitor.info")
@@ -148,12 +139,13 @@ const autoexec = () => {
       })
   }
 }
-autoexec()
 
+autoexec()
 const searchQuery = ref('');
 
-const TxServerDate = new Date('2025-02-20');
+const TxServerDate = new Date('2025-02-20');//服务器倒计时
 const ServerDate = ref(0);
+
 
 const rules = ({
   table: [
@@ -162,62 +154,183 @@ const rules = ({
   barrage: [
     { required: true, message: '请输入烂梗', trigger: 'blur' },
   ]
-});
+})
 
+//提交
 const saveBarrage = () => {
-  TsaveBarrage(data);
-};
+  if (data.table === '' || data.barrage === '') {
+    ElNotification.error("请选择分栏或输入烂梗");
+  } else {
+    request.post('/machine/addUnaudit', {
+      ip: localStorage.getItem('ip'),
+      table: data.table,
+      barrage: data.barrage
+    }).then(res => {
+      data.dialogFormVisible = false;
+      data.barrage = '';
+      if (res.code === '200') {
+        ElNotification.success("投稿成功，待审核(一天内)");
+      } else {
+        ElNotification.error("请求失败");
+      }
+    })
+  }
+}
+//搜索
+const queryBarrage = () => {
+  console.log(searchQuery.value)
+  request.post('/machine/Query', {
+    QueryBarrage: searchQuery.value
+  }).then(res => {
+    isInput.value = true;
+    loading.value = false;
+    data.filteredItems = res.data || [];
+  })
+}
 
-const queryBarrage = async () => {
-  const result = await TqueryBarrage(searchQuery.value,data);
-  console.log(result.filteredItems);
-  data.isInput = result.isInput;
-  data.loading = result.loading;
-  data.filteredItems = result.filteredItems;
-};
 
-const getRandOne = async () => {
-  const result = await TgetRandOne(data);
-  loading.value = result.value;
-};
+var searchBarrageMeg = ref('搜索烂梗...');
+// const load = () => {
+//   request.get('/machine/allBarrage/Page', {})
+//     .then(res => {
+//       // console.log(res);
+//       data.tableData = res.data || [];
+//       // console.log(data.tableData)
+//       searchBarrageMeg = ref('搜索烂梗...➡️➡️');
+//       loading.value = false;
+//     })
+//     .catch(err => {
+//       console.error('加载数据失败:', err);
+//     });
+// };
 
+const getRandOne = () => {
+  request.get('/machine/getRandOne')
+    .then(res => {
+      data.tableData = [res.data];
+      // console.log(res)
+      loading.value = false;
+    }).catch(err => {
+      console.error("随机失败")
+    })
+}
 getRandOne();
+
 
 const open2 = () => {
   ElMessage({
     message: '复制成功',
     type: 'success',
-  });
+  })
 };
 
 const open4 = () => {
   ElMessage({
     message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
     type: 'error',
-  });
+  })
 };
 
 let lastCallTime = 0;
 let lastMousePosition = null;
 let mousePositionCnt = 0;
-
 const copyText = (row) => {
-  TcopyText(row);
+  const currentTime = new Date().getTime();
+  const currentMousePosition = { x: event.clientX, y: event.clientY };
+  // 检查鼠标位置是否变化
+  if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
+    mousePositionCnt++;
+    console.log(mousePositionCnt)
+    if (mousePositionCnt > 4) {
+      ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
+        confirmButtonText: '好吧，我错了',
+      })
+    }
+  } else {
+    mousePositionCnt = 0;
+  }
+  // 检查是否已经过了 1.5 秒
+  if (currentTime - lastCallTime < 1500) {
+    ElNotification({
+      title: '请勿刷次数',
+      message: '复制成功，但次数没有增加',
+      type: 'warning',
+    });
+    const textToCopy = row.barrage;
+    let tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select(); // 选择对象
+    try {
+      document.execCommand('Copy'); // 执行浏览器复制命令
+    } catch (err) {
+      // 复制失败，可以显示错误信息
+      ElNotification({
+        title: '复制失败',
+        message: '复制操作失败，请稍后重试',
+        type: 'error',
+      });
+      console.error('复制失败:', err);
+    }
+    document.body.removeChild(tempInput); // 清理临时元素
+    lastCallTime = currentTime;
+    lastMousePosition = currentMousePosition;
+    return;
+  }
+  lastMousePosition = currentMousePosition;
+  lastCallTime = currentTime;
+  const textToCopy = row.barrage;
+  let tempInput = document.createElement('input');
+  tempInput.value = textToCopy;
+  document.body.appendChild(tempInput);
+  tempInput.select(); // 选择对象
+  try {
+    document.execCommand('Copy'); // 执行浏览器复制命令
+    // 复制成功，可以显示提示信息
+    open2();
+    console.log('内容已复制到剪贴板');
+    request.post('/machine/addCnt', {
+      PageNum: data.currentPage,
+      table: 'allbarrage',
+      id: row.id
+    }).then(() => {
+      setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+    });
+  } catch (err) {
+    // 复制失败，可以显示错误信息
+    ElNotification({
+      title: '复制失败',
+      message: '复制操作失败，请稍后重试',
+      type: 'error',
+    });
+    console.error('复制失败:', err);
+    open4();
+  }
+  document.body.removeChild(tempInput); // 清理临时元素
 };
 
+
+
 const calculateCountdown = () => {
-  TcalculateCountdown(TxServerDate, ServerDate);
+  const now = new Date();
+
+  const diffTime3 = TxServerDate - now;
+
+  ServerDate.value = Math.ceil(diffTime3 / (1000 * 60 * 60 * 24));
 };
 
 const onSearchQueryChange = () => {
-  TonSearchQueryChange(searchQuery.value, data);
+  data.filteredItems = [];
+  isInput.value = false;
 };
 
 // 在组件挂载时计算倒计时
 onMounted(() => {
   calculateCountdown();
+  // 设置一个定时器每天更新一次倒计时
   setInterval(calculateCountdown, 1000 * 60 * 60 * 24);
 });
+
 </script>
 
 
@@ -278,6 +391,7 @@ onMounted(() => {
   }
 
   .home {
+
     width: 90%;
   }
 
