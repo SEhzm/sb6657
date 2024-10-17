@@ -1,20 +1,25 @@
 /**
- * 经典节流函数
+ * 经典节流函数，但是真是tm酣畅淋漓的类型体操啊，加了节流中触发要怎么处理的回调，有完善类型推导
  * @param cb 回调，真正要节流的函数
  * @param cbthen 回调2，节流时间段如果调了触发这个。一般是提示之类的，不能带参数
  * @param delay 节流时间，传入毫秒
  * @returns 返回节流处理过的函数
  */
-export function throttle(cb: (...arg: any[]) => any, cbthen: () => void, delay: number): (...arg: any[]) => void {
+export function throttle<CB extends (...args: any[]) => any, CBTHEN extends () => any>(
+    cb: CB,
+    cbthen: CBTHEN,
+    delay: number
+): (...args: Parameters<CB>) => ReturnType<CB> | ReturnType<CBTHEN> {
     let timer: ReturnType<typeof setTimeout> | null = null;
-    return (...args: any[]): any => {
+    return (...args: Parameters<CB>): ReturnType<CB> | ReturnType<CBTHEN> => {
         if (!timer) {
-            cb(...args);
+            const res = cb(...args);
             timer = setTimeout(() => {
                 timer = null;
             }, delay);
+            return res;
         } else {
-            cbthen();
+            return cbthen();
         }
     };
 }

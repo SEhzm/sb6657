@@ -68,7 +68,7 @@
                 <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~"
                     class="eldtable"
                     :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyHotMeme">
                     <el-table-column width="45" fixed prop label="top10">
                         <template #default="scope">{{ scope.$index + 1 }}</template>
                     </el-table-column>
@@ -84,10 +84,14 @@
 
             <!-- 七天热门弹幕弹出框 -->
             <el-dialog v-model="hotDialogOf7day" title="七天热门烂梗" style="width: 100%;">
+                <template #title>
+                    <span>七天热门烂梗</span>
+                    <el-button style="float: right;" @click="openHotDialogOf24h">查看近24h热门</el-button>
+                </template>
                 <el-table v-loading="loading" stripe :data="data.hotBarrageOf7day" empty-text="我还没有加载完喔~~"
                     class="eldtable"
                     :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyHotMeme">
                     <el-table-column width="35" fixed prop label="排名">
                         <template #default="scope">{{ scope.$index + 1 }}</template>
                     </el-table-column>
@@ -110,7 +114,7 @@
                             d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
                             fill="#111111" p-id="4540"></path>
                     </svg></el-button>
-                <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copyToQueryTableText"
+                <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copySearchMeme"
                     style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
                     <el-table-column prop="barrage" label="弹幕"></el-table-column>
                     <el-table-column label align="center" width="85">
@@ -126,6 +130,10 @@
 import { ref, reactive, onMounted, onUnmounted, } from "vue";
 import httpInstance from "@/apis/httpInstance";
 import { ElMessage, ElNotification } from "element-plus";
+import { throttle } from "@/utils/throttle";
+import { copyToClipboard, copySuccess, limitedCopy } from "@/utils/clipboard";
+import { copyCountPlus1, plus1Error } from "@/apis/setMeme";
+
 const hotDialog = ref(false);
 const hotDialogOf7day = ref(false);
 const loading = ref(true);
@@ -183,6 +191,11 @@ const openHotDialogOf7day = () => {
     hotDialogOf7day.value = true;
     hotBarrageOf7();
 }
+function openHotDialogOf24h(){
+    hotDialog.value = true;
+    hotDialogOf7day.value = false;
+    hotBarrageOf10();
+}
 
 const currentBarrageIndex = ref(0);
 let intervalId;
@@ -205,169 +218,41 @@ onUnmounted(() => {
     clearInterval(intervalId);
 });
 
-// 过滤搜索结果
-const open2 = () => {
-    ElMessage({
-        message: "复制成功",
-        type: "success",
-    });
-};
+// 1.5s节流。节流期间触发了就调第二个回调
+const copyText = throttle(copyToClipboard, limitedCopy, 1500);
 
-const open4 = () => {
-    ElMessage({
-        message:
-            "复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器",
-        type: "error",
-    });
-};
-
-//复制搜索结果方法
-let lastCallTime = 0;
-let lastMousePosition = null;
-let mousePositionCnt = 0;
-const copyToQueryTableText = (row) => {
-    const currentTime = new Date().getTime();
-    const currentMousePosition = { x: event.clientX, y: event.clientY };
-    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
-        mousePositionCnt++;
-        if (mousePositionCnt > 4) {
-            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-                confirmButtonText: '好吧，我错了',
-            })
-        }
-    } else {
-        mousePositionCnt = 0;
-    }
-    // 检查是否已经过了 1.5 秒
-    if (currentTime - lastCallTime < 1500) {
-        ElNotification({
-            title: '请勿刷次数',
-            message: '复制成功，但次数没有增加',
-            type: 'warning',
-        });
-        const textToCopy = row.barrage;
-        let tempInput = document.createElement('input');
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select(); // 选择对象
-        try {
-            document.execCommand('Copy'); // 执行浏览器复制命令
-        } catch (err) {
-            // 复制失败，可以显示错误信息
-            ElNotification({
-                title: '复制失败',
-                message: '复制操作失败，请稍后重试',
-                type: 'error',
-            });
-            console.error('复制失败:', err);
-        }
-        document.body.removeChild(tempInput); // 清理临时元素
-        lastCallTime = currentTime;
-        lastMousePosition = currentMousePosition;
-        return;
-    }
-    lastCallTime = currentTime;
-    const textToCopy = row.barrage;
-    let tempInput = document.createElement('input');
-    tempInput.value = textToCopy;
-    document.body.appendChild(tempInput);
-    tempInput.select(); // 选择对象
-    try {
-        document.execCommand('Copy'); // 执行浏览器复制命令
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板');
-        httpInstance.post("/machine/addCnt", {
-            table: 'allbarrage',
-            id: row.id,
-        });
-        setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
-        setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
-
-    } catch (err) {
-        // 复制失败，可以显示错误信息
-        ElNotification({
-            title: '复制失败',
-            message: '复制操作失败，请稍后重试',
-            type: 'error',
-        });
-        console.error('复制失败:', err);
-        open4();
-    }
-    document.body.removeChild(tempInput); // 清理临时元素
-};
-
-// 复制热门弹幕方法
-const copyText = (row) => {
-    const currentTime = new Date().getTime();
-    // 检查是否已经过了 1.5 秒
-    const currentMousePosition = { x: event.clientX, y: event.clientY };
-    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
-        mousePositionCnt++;
-        console.log(mousePositionCnt)
-        if (mousePositionCnt > 4) {
-            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-                confirmButtonText: '好吧，我错了',
-            })
-        }
-    }
-    mousePositionCnt = 0;
-    if (currentTime - lastCallTime < 1500) {
-        ElNotification({
-            title: '请勿刷次数',
-            message: '复制成功，但次数没有增加',
-            type: 'warning',
-        });
-        const textToCopy = row.barrage;
-        let tempInput = document.createElement('input');
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select(); // 选择对象
-        try {
-            document.execCommand('Copy'); // 执行浏览器复制命令
-        } catch (err) {
-            // 复制失败，可以显示错误信息
-            ElNotification({
-                title: '复制失败',
-                message: '复制操作失败，请稍后重试',
-                type: 'error',
-            });
-            console.error('复制失败:', err);
-        }
-        document.body.removeChild(tempInput); // 清理临时元素
-        lastCallTime = currentTime;
-        return;
-    }
-    lastCallTime = currentTime;
-    const textToCopy = row.barrage;
-    let tempInput = document.createElement('input');
-    tempInput.value = textToCopy;
-    document.body.appendChild(tempInput);
-    tempInput.select(); // 选择对象
-    try {
-        document.execCommand('Copy'); // 执行浏览器复制命令
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板');
-        httpInstance.post("/machine/addCnt", {
-            table: row.tableName,
-            id: row.barrageId,
-        });
-        setTimeout(() => hotBarrageOf10(), 200); // 200 毫秒后执行 hotBarrageOf10
-        setTimeout(() => hotBarrageOf7(), 200); // 200 毫秒后执行 hotBarrageOf10
-
-    } catch (err) {
-        // 复制失败，可以显示错误信息
-        ElNotification({
-            title: '复制失败',
-            message: '复制操作失败，请稍后重试',
-            type: 'error',
-        });
-        console.error('复制失败:', err);
-        open4();
-    }
-    document.body.removeChild(tempInput); // 清理临时元素
-};
+async function copySearchMeme(row: { barrage: string, id: string }) {
+    const memeText = row.barrage;
+    /**
+     * 三种返回值情况
+     * 1. false，代表错误了，用户没能正确复制到剪贴板
+     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
+     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
+     *    由第二个回调函数limitedCopy里出弹窗提醒
+     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
+     */
+    const res = copyText(memeText);
+    if (!res || res === 'limitedSuccess') return;
+    copySuccess();
+    if (await copyCountPlus1('allbarrage', row.id)) {
+        hotBarrageOf10()
+        hotBarrageOf7()
+        return
+    };
+    plus1Error();
+}
+async function copyHotMeme(row: { barrage: string, barrageId: string, tableName: string }) {
+    const memeText = row.barrage;
+    const res = copyText(memeText);
+    if (!res || res === 'limitedSuccess') return;
+    copySuccess();
+    if (await copyCountPlus1(row.tableName, `${row.barrageId}`)) {
+        hotBarrageOf10()
+        hotBarrageOf7()
+        return
+    };
+    plus1Error();
+}
 
 //定时一小时弹出支持我！！！
 setTimeout(function () {
@@ -377,7 +262,6 @@ setTimeout(function () {
         e.initEvent("click", true, true);
         myDiv.dispatchEvent(e);
     }
-
 }, 60 * 60 * 1000); // 一小时
 //上传按钮
 const complaintButton = () => {
