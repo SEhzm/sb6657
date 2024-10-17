@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import HeaderBar from '@/views/header-bar.vue';
+import HeaderBar from '@/views/header-bar/header-bar.vue';
 import FooterBar from '@/views/footer-bar.vue';
 </script>
 

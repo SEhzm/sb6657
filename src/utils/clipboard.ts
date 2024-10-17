@@ -1,0 +1,3 @@
+function copyToClipboard(text: string) {
+
+}
