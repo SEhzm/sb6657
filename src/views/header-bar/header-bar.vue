@@ -25,8 +25,9 @@
                             @input="onSearchQueryChange">
                             <template #append>
                                 <el-button type="primary" @click="queryBarrage"><el-icon>
-                                        <Search />
-                                    </el-icon></el-button>
+                                        <Search/>
+                                    </el-icon>
+                                </el-button>
                             </template>
                         </el-input>
                     </div>

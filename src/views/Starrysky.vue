@@ -11,6 +11,12 @@
       </div>
     </div>
   </div>
+  <div class="draggable" :style="{ left: `${x}vw`, top: `${y}px` }" @mousedown="startDrag" v-show="isChatVisible">
+    <ChatRoom></ChatRoom>
+    <el-button class="close-button" @click="closeChat" type="primary">
+      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16"><path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path><path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#ff0505" p-id="4540"></path></svg>
+    </el-button>
+  </div>
 </template>
 
 <script setup>
@@ -18,7 +24,7 @@ import {onMounted, ref, onBeforeUnmount} from 'vue'
 // 用于存储元素X和Y位置的响应性引用
 const x = ref(74);
 const y = ref(200);
-const isAudioVisible = ref(true);
+const isChatVisible = ref(true);
 // 是否正在拖动的标志
 const isDragging = ref(false);
 
@@ -138,12 +144,23 @@ onBeforeUnmount(() => {
   clearInterval(createMeteorInterval);
 });
 
-const closeVideo = () => {
-  isAudioVisible.value = false;
+const closeChat = () => {
+  isChatVisible.value = false;
 };
 </script>
 
 <style scoped>
+.close-button:hover{
+  color:black;
+}
+.close-button{
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  width: 30px;
+  height: 25px;
+}
 #bg {
   position: fixed;
   top: 0;
@@ -210,6 +227,9 @@ const closeVideo = () => {
 
 @media (min-width: 601px) {
   .draggable {
+    box-shadow: 0px 7px 30px 0px rgba(100, 100, 111, 0.3);
+    background-color: white;
+    border-radius: 10px;
     margin-top: -50px;
     width: 450px;
     right: 30px;

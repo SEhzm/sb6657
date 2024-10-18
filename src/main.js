@@ -5,6 +5,7 @@ import ElementPlus from 'element-plus'
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import StarrySky from '@/views/Starrysky.vue'
+import ChatRoom from '@/components/ChatRoom.vue'
 import '@/assets/css/global.css'
 
 const app = createApp(App)
@@ -32,8 +33,7 @@ setInterval(() => {
 }, 86400000); //…Ë÷√ ±º‰£¨ms
 
 app.component('StarrySky', StarrySky);
-// app.component('audioPlay', audioPlay);
-// app.component('videoPlay', videoPlay);
+app.component('ChatRoom', ChatRoom);
 
 
 app.mount('#app')
