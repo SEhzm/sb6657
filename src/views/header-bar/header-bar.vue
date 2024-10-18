@@ -191,7 +191,7 @@ const openHotDialogOf7day = () => {
     hotDialogOf7day.value = true;
     hotBarrageOf7();
 }
-function openHotDialogOf24h(){
+function openHotDialogOf24h() {
     hotDialog.value = true;
     hotDialogOf7day.value = false;
     hotBarrageOf10();
@@ -397,9 +397,17 @@ const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
         z-index: 3;
     }
 
+    .hotBarrageImg{
+        position: absolute;
+        margin-top: 230px;
+    }
+    .logo-link {
+        display: none;
+    }
+
     .hotBarrage {
         position: absolute;
-        margin-top: 200px;
+        margin-top: 230px;
         left: 30px;
         z-index: 1;
         color: black;
