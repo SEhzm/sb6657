@@ -37,7 +37,7 @@ const messageContainer = ref(null); // 引用消息容器
 
 // 判断当前浏览器是否支持WebSocket
 if ('WebSocket' in window) {
-	websocket.value = new WebSocket(`ws://dgq63136.icu:9090/machine/ws/${clientId.value}`);
+	websocket.value = new WebSocket(`wss://dgq63136.icu:9090/machine/ws/${clientId.value}`);
 } else {
 	ElMessageBox.alert('请输入名字和内容', '请输入名字和内容', {
 		confirmButtonText: 'OK',
@@ -116,7 +116,7 @@ const closeWebSocket = () => {
 // 重新连接
 const reconnectWebSocket = () => {
 	if (!websocket.value || websocket.value.readyState !== WebSocket.CONNECTING) {
-		websocket.value = new WebSocket(`ws://dgq63136.icu:9090/machine/ws/${clientId.value}`);
+		websocket.value = new WebSocket(`wss://dgq63136.icu:9090/machine/ws/${clientId.value}`);
 		websocket.value.onerror = onWebSocketError;
 		websocket.value.onopen = onWebSocketOpen;
 		websocket.value.onmessage = onWebSocketMessage;
