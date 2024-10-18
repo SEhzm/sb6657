@@ -24,7 +24,7 @@ const router = createRouter({
                 {path: 'Starrysky', name: 'Starrysky', component: () => import('@/views/Starrysky.vue')},
                 {path: 'mygo', name: 'mygo', component: () => import('@/views/manager/mygo.vue')},
                 {path: 'Tampermonkey', name: 'Tampermonkey', component: () => import('@/views/manager/Tampermonkey.vue')},
-                {path: 'ChatRoom', name: 'ChatRoom', component: () => import('@/views/components/ChatRoom.vue')},
+                {path: 'ChatRoom', name: 'ChatRoom', component: () => import('@/components/ChatRoom.vue')},
             ]
         },
         {
