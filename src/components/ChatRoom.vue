@@ -7,7 +7,6 @@
 		<el-button @click="closeWebSocket">关闭连接</el-button>
 		<el-button @click="reconnectWebSocket"
 			v-if="!websocket.value || websocket.value.readyState !== WebSocket.OPEN">重新连接</el-button>
-		<el-button type="primary" @click="filterWord">12323132</el-button>
 		<div id="message-container" ref="messageContainer">
 			<div v-for="(msg, index) in messages" :key="index"
 				:class="{ 'message-bubble': true, 'mine': msg.isMine, 'others': !msg.isMine }">
