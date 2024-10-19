@@ -20,7 +20,7 @@ import ElementPlus from 'unplugin-element-plus/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({ 
-    base: '/',
+    base: '/sb6657.cn/',
     plugins: [
         vue(),
         AutoImport({
