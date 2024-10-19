@@ -8,24 +8,19 @@
                 </a>
 
                 <div class="header-actions">
-                    <img src="@/assets/imgs/hot.png" alt="热门"
-                        style="width: 24px;height: 24px;cursor:pointer;margin-right: 10px" class="hotBarrageImg"
-                        @click="hotDialog = true" />
-                    <div @click="hotDialog = true" class="hotBarrage"
-                        style="cursor:pointer;width:300px;overflow: hidden; text-overflow: ellipsis;color: #e4d6b8;white-space: nowrap;">
+                    <img src="@/assets/imgs/hot.png" alt="热门" style="width: 24px; height: 24px; cursor: pointer; margin-right: 10px" class="hotBarrageImg" @click="openHotMeme24h" />
+                    <div @click="openHotMeme24h" class="hotBarrage" style="cursor: pointer; width: 300px; overflow: hidden; text-overflow: ellipsis; color: #e4d6b8; white-space: nowrap">
                         <transition name="fade">
-                            <span :key="currentBarrageIndex" class="hotBarrageSpan">
-                                热门：{{ data.hotBarrageOf10[currentBarrageIndex]?.barrage }}
-                            </span>
+                            <span :key="rotationIndex" class="hotBarrageSpan">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
                         </transition>
                     </div>
 
-                    <div style="margin-right: 20px;" class="elinput">
-                        <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable style=""
-                            @input="onSearchQueryChange">
+                    <div style="margin-right: 20px" class="elinput">
+                        <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable style="" @input="onSearchQueryChange">
                             <template #append>
-                                <el-button type="primary" @click="queryBarrage"><el-icon>
-                                        <Search/>
+                                <el-button type="primary" @click="queryBarrage">
+                                    <el-icon>
+                                        <Search />
                                     </el-icon>
                                 </el-button>
                             </template>
@@ -35,12 +30,12 @@
                     <el-button type="primary" @click="complaintButton" class="complaint-button">
                         <span>
                             上传照片
-                            <br />建议/提交BUG
+                            <br />
+                            建议/提交BUG
                         </span>
                     </el-button>
                     <a href="https://sb6657.cn/#/Tampermonkey">
-                        <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee"
-                            class="icon-img" />
+                        <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee" class="icon-img" />
                     </a>
                     <a href="https://gitee.com/hzming1/sb6657" target="_blank">
                         <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img" />
@@ -51,72 +46,23 @@
                     <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                         <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                     </a>
-                    <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true"
-                        :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2"
-                        :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
-                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy
-                        :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']"
-                        :initial-index="4" fit="cover" />
+                    <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
+                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
                 </div>
             </div>
 
-            <!-- 24h热门弹幕弹出框 -->
-            <el-dialog v-model="hotDialog" title="24h热门烂梗" style="width: 100%;">
-                <template #title>
-                    <span>24h热门烂梗</span>
-                    <el-button style="float: right;" @click="openHotDialogOf7day">查看近七天热门</el-button>
-                </template>
-                <el-table v-loading="loading" stripe :data="data.hotBarrageOf10" empty-text="我还没有加载完喔~~"
-                    class="eldtable"
-                    :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyHotMeme">
-                    <el-table-column width="45" fixed prop label="top10">
-                        <template #default="scope">{{ scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column prop="barrage" min-width="90" label="烂梗" />
-                    <el-table-column label align="center" width="85">
-                        <el-button type="primary" label="操作">复制</el-button>
-                    </el-table-column>
-                    <el-table-column prop="cnt" label="复制次数" width="55">
-                        <template #default="scope">{{ scope.row.cnt }}</template>
-                    </el-table-column>
-                </el-table>
-            </el-dialog>
-
-            <!-- 七天热门弹幕弹出框 -->
-            <el-dialog v-model="hotDialogOf7day" title="七天热门烂梗" style="width: 100%;">
-                <template #title>
-                    <span>七天热门烂梗</span>
-                    <el-button style="float: right;" @click="openHotDialogOf24h">查看近24h热门</el-button>
-                </template>
-                <el-table v-loading="loading" stripe :data="data.hotBarrageOf7day" empty-text="我还没有加载完喔~~"
-                    class="eldtable"
-                    :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-                    :cell-style="{ cursor: 'Pointer' }" @row-click="copyHotMeme">
-                    <el-table-column width="35" fixed prop label="排名">
-                        <template #default="scope">{{ scope.$index + 1 }}</template>
-                    </el-table-column>
-                    <el-table-column prop="barrage" min-width="90" label="烂梗" />
-                    <el-table-column label align="center" width="85">
-                        <el-button type="primary" label="操作">复制</el-button>
-                    </el-table-column>
-                    <el-table-column prop="cnt" label="复制次数" width="55">
-                        <template #default="scope">{{ scope.row.cnt }}</template>
-                    </el-table-column>
-                </el-table>
-            </el-dialog>
-
             <div class="QueryTable" v-if="isInput">
-                <el-button class="close-button" @click="closeQueryTable"><svg t="1725098483582" class="icon"
-                        viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16"
-                        height="16">
+                <el-button class="close-button" @click="closeQueryTable">
+                    <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
                         <path d="M0 0h1024v1024H0z" fill="#FF0033" fill-opacity="0" p-id="4539"></path>
                         <path
                             d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
-                            fill="#111111" p-id="4540"></path>
-                    </svg></el-button>
-                <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copySearchMeme"
-                    style="cursor:pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
+                            fill="#111111"
+                            p-id="4540"
+                        ></path>
+                    </svg>
+                </el-button>
+                <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copySearchMeme" style="cursor: pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
                     <el-table-column prop="barrage" label="弹幕"></el-table-column>
                     <el-table-column label align="center" width="85">
                         <el-button type="primary">复制</el-button>
@@ -124,105 +70,107 @@
                 </el-table>
             </div>
         </div>
+
+        <!-- 24h热门弹幕对话框 -->
+        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips" @refresh="refreshHotMeme24h">
+            <div class="dialog-header">
+                <div>24h热门烂梗</div>
+                <div><el-button @click="openHotMeme7d">查看近七天热门</el-button></div>
+            </div>
+        </memeDialog>
+        <!-- 7天热门弹幕对话框 -->
+        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips" @refresh="refreshHotMeme7d">
+            <div class="dialog-header">
+                <div>七天热门烂梗</div>
+                <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
+            </div>
+        </memeDialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, onUnmounted, } from "vue";
-import httpInstance from "@/apis/httpInstance";
-import { ElMessage, ElNotification } from "element-plus";
-import { throttle } from "@/utils/throttle";
-import { copyToClipboard, copySuccess, limitedCopy } from "@/utils/clipboard";
-import { copyCountPlus1, plus1Error } from "@/apis/setMeme";
+import { ref, reactive } from 'vue';
+import httpInstance from '@/apis/httpInstance';
+import { throttle } from '@/utils/throttle';
+import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import { getHotMeme24h, getHotMeme7d } from '@/apis/getMeme';
+import memeDialog from './components/meme-dialog.vue';
 
-const hotDialog = ref(false);
-const hotDialogOf7day = ref(false);
+const loadingTips = '我还没有加载完喔~~';
+// 24h热门烂梗对话框
+const showHotMeme24h = ref(false);
+const hotMeme24h = ref<Meme[]>([]);
+const hotMeme24hLoading = ref(true);
+async function refreshHotMeme24h() {
+    const memeArr = await getHotMeme24h();
+    if (!memeArr) return;
+    hotMeme24h.value = memeArr;
+    hotMeme24hLoading.value = false;
+}
+function openHotMeme24h() {
+    showHotMeme24h.value = true;
+    showHotMeme7d.value = false;
+    hotMeme24hLoading.value = true;
+    refreshHotMeme24h();
+}
+// 7天热门烂梗对话框
+const showHotMeme7d = ref(false);
+const hotMeme7d = ref<Meme[]>([]);
+const hotMeme7dLoading = ref(true);
+async function refreshHotMeme7d() {
+    const memeArr = await getHotMeme7d();
+    if (!memeArr) return;
+    hotMeme7d.value = memeArr;
+    hotMeme7dLoading.value = false;
+}
+function openHotMeme7d() {
+    showHotMeme24h.value = false;
+    showHotMeme7d.value = true;
+    hotMeme7dLoading.value = true;
+    refreshHotMeme7d();
+}
+
+// 顶部栏的单条烂梗轮播展示。因为取用的24h热榜数据，所以先触发一次获取到数据
+refreshHotMeme24h();
+const rotationIndex = ref(0);
+setInterval(() => {
+    const length = hotMeme24h.value.length;
+    rotationIndex.value = (rotationIndex.value + 1) % length;
+}, 5000);
+
 const loading = ref(true);
-
-
-const searchQuery = ref("");
-const isInput = ref(false)
+const searchQuery = ref('');
+const isInput = ref(false);
 const data = reactive({
     filteredItems: [],
     tableData: [],
-    table: "",
-    barrage: "",
+    table: '',
+    barrage: '',
     hotBarrageOf10: [],
     hotBarrageOf7day: [],
 });
 
 //搜索
 const queryBarrage = () => {
-    console.log(searchQuery.value)
-    httpInstance.post('/machine/Query', {
-        QueryBarrage: searchQuery.value
-    }).then(res => {
-        isInput.value = true;
-        loading.value = false;
-        data.filteredItems = res.data || [];
-    })
-}
-
-const hotBarrageOf10 = () => {
+    console.log(searchQuery.value);
     httpInstance
-        .get("/machine/hotBarrageOfAll")
-        .then((res) => {
-            data.hotBarrageOf10 = res.data.slice(0, 10) || [];
-            // console.log(data.hotBarrageOf10)
-            loading.value = false;
+        .post('/machine/Query', {
+            QueryBarrage: searchQuery.value,
         })
-        .catch((err) => {
-            console.error("加载数据失败:", err);
+        .then((res) => {
+            console.log(res);
+            isInput.value = true;
+            loading.value = false;
+            data.filteredItems = res.data || [];
         });
 };
-hotBarrageOf10();
-const hotBarrageOf7 = () => {
-    httpInstance
-        .get("/machine/hotBarrageOf7Day")
-        .then((res) => {
-            loading.value = false;
-            data.hotBarrageOf7day = res.data || [];
-        })
-        .catch((err) => {
-            console.error("加载数据失败:", err);
-        });
-};
-const openHotDialogOf7day = () => {
-    hotDialog.value = false;
-    hotDialogOf7day.value = true;
-    hotBarrageOf7();
-}
-function openHotDialogOf24h() {
-    hotDialog.value = true;
-    hotDialogOf7day.value = false;
-    hotBarrageOf10();
-}
 
-const currentBarrageIndex = ref(0);
-let intervalId;
+// 2s节流。节流期间触发了就调第二个回调
+const copyText = throttle(copyToClipboard, limitedCopy, 2000);
 
-// 开始切换
-function startSwitching() {
-    intervalId = setInterval(() => {
-        currentBarrageIndex.value =
-            (currentBarrageIndex.value + 1) % data.hotBarrageOf10.length;
-    }, 5000); // 每五秒切换一次
-}
-
-// 在组件挂载时启动定时器
-onMounted(() => {
-    startSwitching();
-});
-
-// 在组件销毁前清除定时器
-onUnmounted(() => {
-    clearInterval(intervalId);
-});
-
-// 1.5s节流。节流期间触发了就调第二个回调
-const copyText = throttle(copyToClipboard, limitedCopy, 1500);
-
-async function copySearchMeme(row: { barrage: string, id: string }) {
+async function copySearchMeme(row: { barrage: string; id: string }) {
+    console.log('搜索', row);
     const memeText = row.barrage;
     /**
      * 三种返回值情况
@@ -236,37 +184,23 @@ async function copySearchMeme(row: { barrage: string, id: string }) {
     if (!res || res === 'limitedSuccess') return;
     copySuccess();
     if (await copyCountPlus1('allbarrage', row.id)) {
-        hotBarrageOf10()
-        hotBarrageOf7()
-        return
-    };
-    plus1Error();
-}
-async function copyHotMeme(row: { barrage: string, barrageId: string, tableName: string }) {
-    const memeText = row.barrage;
-    const res = copyText(memeText);
-    if (!res || res === 'limitedSuccess') return;
-    copySuccess();
-    if (await copyCountPlus1(row.tableName, `${row.barrageId}`)) {
-        hotBarrageOf10()
-        hotBarrageOf7()
-        return
-    };
+        return;
+    }
     plus1Error();
 }
 
 //定时一小时弹出支持我！！！
 setTimeout(function () {
-    const myDiv = document.getElementById("myDiv");
+    const myDiv = document.getElementById('myDiv');
     if (myDiv) {
-        const e = document.createEvent("MouseEvents");
-        e.initEvent("click", true, true);
+        const e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
         myDiv.dispatchEvent(e);
     }
 }, 60 * 60 * 1000); // 一小时
 //上传按钮
 const complaintButton = () => {
-    window.open("https://www.wjx.cn/vm/rQUgnS0.aspx#");
+    window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
 const onSearchQueryChange = () => {
     data.filteredItems = [];
@@ -278,8 +212,8 @@ const closeQueryTable = () => {
     isInput.value = false;
 };
 
-const url = "https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png";
-const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
+const url = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
+const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 </script>
 
 <style scoped lang="scss">
@@ -398,10 +332,11 @@ const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
         z-index: 3;
     }
 
-    .hotBarrageImg{
+    .hotBarrageImg {
         position: absolute;
         margin-top: 230px;
     }
+
     .logo-link {
         display: none;
     }
@@ -475,5 +410,10 @@ const wxurl = "https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png";
         align-items: center;
         border-bottom: 1px solid #ddd;
     }
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
 }
 </style>
