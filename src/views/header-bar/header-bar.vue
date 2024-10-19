@@ -16,9 +16,9 @@
                     </div>
 
                     <div style="margin-right: 20px" class="elinput">
-                        <el-input v-model="searchQuery" placeholder="搜索烂梗" clearable style="" @input="onSearchQueryChange">
+                        <el-input v-model="searchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
                             <template #append>
-                                <el-button type="primary" @click="queryBarrage">
+                                <el-button type="primary" @click="handleSearchMeme">
                                     <el-icon>
                                         <Search />
                                     </el-icon>
@@ -50,25 +50,6 @@
                     <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
                 </div>
             </div>
-
-            <div class="QueryTable" v-if="isInput">
-                <el-button class="close-button" @click="closeQueryTable">
-                    <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
-                        <path d="M0 0h1024v1024H0z" fill="#FF0033" fill-opacity="0" p-id="4539"></path>
-                        <path
-                            d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
-                            fill="#111111"
-                            p-id="4540"
-                        ></path>
-                    </svg>
-                </el-button>
-                <el-table v-loading="loading" :data="data.filteredItems" stripe @row-click="copySearchMeme" style="cursor: pointer" empty-text="可能没有这条烂梗或请手动刷新页面">
-                    <el-table-column prop="barrage" label="弹幕"></el-table-column>
-                    <el-table-column label align="center" width="85">
-                        <el-button type="primary">复制</el-button>
-                    </el-table-column>
-                </el-table>
-            </div>
         </div>
 
         <!-- 24h热门弹幕对话框 -->
@@ -85,19 +66,21 @@
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
             </div>
         </memeDialog>
+        <!-- 搜索结果框 -->
+        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading" :emptyText="searchEmptyText" @refresh="handleSearchMeme">
+            <div class="search-tips">烂梗搜索结果:</div>
+        </memeDialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue';
-import httpInstance from '@/apis/httpInstance';
-import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
-import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
-import { getHotMeme24h, getHotMeme7d } from '@/apis/getMeme';
+import { ref } from 'vue';
+import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
+import { Search } from '@element-plus/icons-vue';
 import memeDialog from './components/meme-dialog.vue';
 
 const loadingTips = '我还没有加载完喔~~';
+
 // 24h热门烂梗对话框
 const showHotMeme24h = ref(false);
 const hotMeme24h = ref<Meme[]>([]);
@@ -114,6 +97,7 @@ function openHotMeme24h() {
     hotMeme24hLoading.value = true;
     refreshHotMeme24h();
 }
+
 // 7天热门烂梗对话框
 const showHotMeme7d = ref(false);
 const hotMeme7d = ref<Meme[]>([]);
@@ -139,58 +123,32 @@ setInterval(() => {
     rotationIndex.value = (rotationIndex.value + 1) % length;
 }, 5000);
 
-const loading = ref(true);
-const searchQuery = ref('');
-const isInput = ref(false);
-const data = reactive({
-    filteredItems: [],
-    tableData: [],
-    table: '',
-    barrage: '',
-    hotBarrageOf10: [],
-    hotBarrageOf7day: [],
-});
-
-//搜索
-const queryBarrage = () => {
-    console.log(searchQuery.value);
-    httpInstance
-        .post('/machine/Query', {
-            QueryBarrage: searchQuery.value,
-        })
-        .then((res) => {
-            console.log(res);
-            isInput.value = true;
-            loading.value = false;
-            data.filteredItems = res.data || [];
-        });
-};
-
-// 2s节流。节流期间触发了就调第二个回调
-const copyText = throttle(copyToClipboard, limitedCopy, 2000);
-
-async function copySearchMeme(row: { barrage: string; id: string }) {
-    console.log('搜索', row);
-    const memeText = row.barrage;
-    /**
-     * 三种返回值情况
-     * 1. false，代表错误了，用户没能正确复制到剪贴板
-     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
-     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
-     *    由第二个回调函数limitedCopy里出弹窗提醒
-     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
-     */
-    const res = copyText(memeText);
-    if (!res || res === 'limitedSuccess') return;
-    copySuccess();
-    if (await copyCountPlus1('allbarrage', row.id)) {
+// 搜索
+const searchKey = ref('');
+const showSearchDialog = ref(false);
+const searchedMeme = ref<Meme[]>([]);
+const searchDialogLoading = ref(true);
+const searchEmptyText = ref(loadingTips);
+async function handleSearchMeme() {
+    searchDialogLoading.value = true;
+    showSearchDialog.value = true;
+    searchEmptyText.value = loadingTips;
+    const res = await searchMeme(searchKey.value);
+    searchDialogLoading.value = false;
+    if (!res) {
+        searchedMeme.value = [];
         return;
     }
-    plus1Error();
+    if (res === 'notfound') {
+        searchedMeme.value = [];
+        searchEmptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
+        return;
+    }
+    searchedMeme.value = res;
 }
 
 //定时一小时弹出支持我！！！
-setTimeout(function () {
+setTimeout(() => {
     const myDiv = document.getElementById('myDiv');
     if (myDiv) {
         const e = document.createEvent('MouseEvents');
@@ -202,34 +160,13 @@ setTimeout(function () {
 const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
-const onSearchQueryChange = () => {
-    data.filteredItems = [];
-    isInput.value = false;
-};
-
-const closeQueryTable = () => {
-    searchQuery.value = '';
-    isInput.value = false;
-};
 
 const url = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
 const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 </script>
 
 <style scoped lang="scss">
-.close-button {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 10;
-    border: none;
-}
-
 @media (min-width: 601px) {
-    .el-dialog {
-        --el-dialog-width: 50%;
-    }
-
     .fade-enter-active,
     .fade-leave-active {
         transition: opacity 0.5s;
@@ -246,18 +183,8 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
         padding-bottom: 1px;
     }
 
-    .QueryTable {
-        padding: 20px;
-        z-index: 100;
-        position: absolute;
-        width: 500px;
-        background-color: white;
-        border-radius: 10px;
-        right: 265px;
-        box-shadow: 0px 0px 35px rgb(37, 19, 19);
-    }
-
     .elinput {
+        width: 180px;
         .el-input__wrapper {
             border-radius: 95px;
             border: 0;
@@ -328,10 +255,6 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
         padding-bottom: 1px;
     }
 
-    .el-overlay-dialog {
-        z-index: 3;
-    }
-
     .hotBarrageImg {
         position: absolute;
         margin-top: 230px;
@@ -359,22 +282,9 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
         opacity: 0;
     }
 
-    .QueryTable {
-        padding: 20px;
-        z-index: 1000;
-        position: absolute;
-        width: 100%;
-        background-color: white;
-        border-radius: 10px;
-        right: 0px;
-        box-shadow: 0px 0px 35px rgb(37, 19, 19);
-    }
-
-    .eldtable {
-        width: 100% !important;
-    }
-
     .elinput {
+        width: 180px;
+
         .el-input__wrapper {
             border-radius: 95px;
             border: 0;
@@ -415,5 +325,9 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 .dialog-header {
     display: flex;
     justify-content: space-between;
+}
+
+.search-tips {
+    font-size: x-large;
 }
 </style>

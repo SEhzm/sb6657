@@ -40,3 +40,38 @@ export function getHotMeme24h() {
 export function getHotMeme7d() {
     return getHotMeme(API.GET_HOT_MEME_7D, '七天热门');
 }
+
+interface searchMeme_data {
+    barrage: string;
+    cnt: string;
+    id: string;
+}
+interface searchMeme_res {
+    code: string;
+    data: searchMeme_data[];
+    msg: string;
+}
+export async function searchMeme(searchKey: string) {
+    console.log(`搜索词: ${searchKey}`);
+    try {
+        const res: searchMeme_res = await httpInstance.post(API.SEARCH_MEME, {
+            QueryBarrage: searchKey,
+        });
+        if (res.data.length === 0) {
+            console.log('未搜索到烂梗');
+            return 'notfound';
+        }
+        const memeArr: Meme[] = res.data.map((item) => {
+            return {
+                content: item.barrage,
+                category: 'allbarrage', // 由于目前搜索不返分类，所以分类写死成所有
+                id: item.id,
+                copyCount: +item.cnt,
+            };
+        });
+        return memeArr;
+    } catch (err: any) {
+        console.log('搜索烂梗失败', err);
+        return false;
+    }
+}
