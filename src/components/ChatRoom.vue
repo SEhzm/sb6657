@@ -61,11 +61,14 @@ if ('WebSocket' in window) {
 //过滤敏感词
 const filterWord = async () => {
 	try {
-		const res = await httpInstance.post("https://easycomment.ai/api/xhs/v1/detect-sensitive-words", {
+		const res1 = await httpInstance.post("https://easycomment.ai/api/xhs/v1/detect-sensitive-words", {
 			content: message.value
 		});
+		const res2 = await httpInstance.post("https://easycomment.ai/api/xhs/v1/detect-sensitive-words", {
+			content: userId.value
+		});
 		// console.log(res);
-		if (res.data.sensitive_words.length > 0) {
+		if (res1.data.sensitive_words.length > 0 || res2.data.sensitive_words.length > 0) {
 			await ElMessageBox.alert('您的内容中包含一些可能不适宜的词语，建议您检查并修改', '❌❌❌', {
 				confirmButtonText: '好的',
 			});
