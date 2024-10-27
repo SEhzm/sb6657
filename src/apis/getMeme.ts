@@ -1,4 +1,4 @@
-import httpInstance from './httpInstance';
+import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 interface hotMeme_res {
     barrage: string;
@@ -75,3 +75,5 @@ export async function searchMeme(searchKey: string) {
         return false;
     }
 }
+
+export async function getMemeList(category:string) {}

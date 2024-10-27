@@ -1,92 +1,96 @@
 <template>
-  <div>
-    <div class="tab">
-      <!-- 移动端 -->
-      <div class="tab-container">
-        <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="(item, index) in table"
-          :key="item.path" @click="navigateTo(item.path)">
-          {{ item.text }}
+    <div>
+        <HeaderBar></HeaderBar>
+        <div class="tab">
+            <!-- 移动端 -->
+            <div class="tab-container">
+                <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="(item, index) in table"
+                    :key="item.path" @click="navigateTo(item.path)">
+                    {{ item.text }}
+                </div>
+            </div>
         </div>
-      </div>
+
+        <div class="main-content" style="position: relative;">
+            <div class="sidebar">
+                <el-menu router style="border: none; margin-right: auto" :default-active="$route.path">
+                    <el-menu-item index="/home">
+                        <el-icon>
+                            <HomeFilled />
+                        </el-icon>
+                        <span>首页</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/AllBarrage">
+                        <el-icon>
+                            <List />
+                        </el-icon>
+                        <span>全部烂梗</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/image">
+                        <el-icon>
+                            <Camera />
+                        </el-icon>
+                        <span>时光相册</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/penWJQ">
+                        <el-icon>玩</el-icon>
+                        <span>喷玩机器篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/mygo">
+                        <el-icon>
+                            <Female />
+                        </el-icon>
+                        <span>木柜子篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/ZbjHuPen">
+                        <el-icon>
+                            <ChatDotRound />
+                        </el-icon>
+                        <span>直播间互喷篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/penPlayer">
+                        <el-icon>🦐</el-icon>
+                        <span>喷选手篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/p1">
+                        <el-icon>
+                            <plus />
+                        </el-icon>
+                        <span>+1篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/QMLW">
+                        <el-icon>
+                            <User />
+                        </el-icon>
+                        <span>群魔乱舞篇</span>
+                    </el-menu-item>
+
+                    <el-menu-item index="/QUQU">
+                        <img src="@/assets/imgs/Z.png" alt="Z!!" class="menu-icon" />
+                        <span>QUQU篇</span>
+                    </el-menu-item>
+                </el-menu>
+            </div>
+            <div class="content">
+                <router-view />
+            </div>
+        </div>
+        <FooterBar></FooterBar>
     </div>
-
-    <div class="main-content" style="position: relative;">
-      <div class="sidebar">
-        <el-menu router style="border: none; margin-right: auto" :default-active="$route.path">
-          <el-menu-item index="/home">
-            <el-icon>
-              <HomeFilled />
-            </el-icon>
-            <span>首页</span>
-          </el-menu-item>
-
-          <el-menu-item index="/AllBarrage">
-            <el-icon>
-              <List />
-            </el-icon>
-            <span>全部烂梗</span>
-          </el-menu-item>
-
-          <el-menu-item index="/image">
-            <el-icon>
-              <Camera />
-            </el-icon>
-            <span>时光相册</span>
-          </el-menu-item>
-
-          <el-menu-item index="/penWJQ">
-            <el-icon>玩</el-icon>
-            <span>喷玩机器篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/mygo">
-            <el-icon>
-              <Female />
-            </el-icon>
-            <span>木柜子篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/ZbjHuPen">
-            <el-icon>
-              <ChatDotRound />
-            </el-icon>
-            <span>直播间互喷篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/penPlayer">
-            <el-icon>🦐</el-icon>
-            <span>喷选手篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/p1">
-            <el-icon>
-              <plus />
-            </el-icon>
-            <span>+1篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/QMLW">
-            <el-icon>
-              <User />
-            </el-icon>
-            <span>群魔乱舞篇</span>
-          </el-menu-item>
-
-          <el-menu-item index="/QUQU">
-            <img src="@/assets/imgs/Z.png" alt="Z!!" class="menu-icon" />
-            <span>QUQU篇</span>
-          </el-menu-item>
-        </el-menu>
-      </div>
-      <div class="content">
-        <router-view />
-      </div>
-    </div>
-  </div>
 </template>
 
 
 <script setup>
+import HeaderBar from "@/views/MainLayout/components/header-bar/header-bar.vue";
+import FooterBar from "@/views/MainLayout/components/footer-bar.vue";
 import { useRoute, useRouter } from "vue-router";
 import { ref, reactive, } from "vue";
 import httpInstance from "@/apis/httpInstance";

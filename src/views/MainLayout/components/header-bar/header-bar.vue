@@ -46,7 +46,7 @@
                     <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                         <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                     </a>
-                    <el-image id="myDiv" class="icon-img-rounded" :src="url" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
+                    <el-image id="myDiv" class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
                     <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
                 </div>
             </div>
@@ -161,7 +161,7 @@ const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
 
-const url = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
+const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
 const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 </script>
 

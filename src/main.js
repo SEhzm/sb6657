@@ -1,17 +1,17 @@
-import { createApp } from 'vue'
-import App from './App.vue'
-import router from './router'
-import ElementPlus from 'element-plus'
-import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
-import * as ElementPlusIconsVue from '@element-plus/icons-vue'
-import StarrySky from '@/views/Starrysky.vue'
-import ChatRoom from '@/components/ChatRoom.vue'
-import '@/assets/css/global.css'
+import { createApp } from 'vue';
+import App from './App.vue';
+import router from './router';
+import ElementPlus from 'element-plus';
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
+import * as ElementPlusIconsVue from '@element-plus/icons-vue';
+import StarrySky from '@/views/Starrysky.vue';
+import ChatRoom from '@/components/ChatRoom.vue';
+import '@/assets/css/global.css';
 
-const app = createApp(App)
+const app = createApp(App);
 
 /**
- * Í³Ò»ÃüÃû
+ * ç»Ÿä¸€å‘½å
  * allbarrage
  * mygo
  * p1
@@ -22,24 +22,21 @@ const app = createApp(App)
  * ZbjHuPen
  */
 
-app.use(router)
+app.use(router);
 app.use(ElementPlus, {
     locale: zhCn,
-})
+});
 
-// ÉèÖÃÈ«¾Ö¶¨Ê±Æ÷
+// è®¾ç½®å…¨å±€å®šæ—¶å™¨
 setInterval(() => {
-    location.reload(); // Ë¢ĞÂÕû¸öÒ³Ãæ
-}, 86400000); //ÉèÖÃÊ±¼ä£¬ms
+    location.reload(); // åˆ·æ–°æ•´ä¸ªé¡µé¢
+}, 86400000); //è®¾ç½®æ—¶é—´ï¼Œms
 
 app.component('StarrySky', StarrySky);
 app.component('ChatRoom', ChatRoom);
 
-
-app.mount('#app')
+app.mount('#app');
 
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    app.component(key, component)
+    app.component(key, component);
 }
-
-

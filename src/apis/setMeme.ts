@@ -1,4 +1,4 @@
-import httpInstance from './httpInstance';
+import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { ElNotification } from 'element-plus';
 
