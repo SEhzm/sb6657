@@ -243,7 +243,7 @@ const closeChat = () => {
 
 @media (max-width: 600px) {
   .draggable {
-    margin-top: 200px;
+    margin-top: 50px;
   }
   .close-button {
     display: none;
