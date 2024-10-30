@@ -17,7 +17,8 @@
 		<el-input id="userId" type="text" v-model="userId" :disabled="firstIn" maxlength="10"
 			placeholder="请输入您的ID(你只能输入一次，请谨慎)" />
 		<el-input id="text" type="text" v-model="message" maxlength="30" placeholder="请输入内容" />
-		<el-button class="btn-animate btn-animate__vibrate" type="primary" @click="send">发送消息</el-button>
+		<el-button v-loading="ChatRoomLoading" class="btn-animate btn-animate__vibrate" type="primary"
+			@click="send">发送消息</el-button>
 	</div>
 </template>
 
@@ -46,7 +47,7 @@ const message = ref<string>('');
 const isFilter = ref<boolean>(false);
 const messages = ref<Message[]>([]);
 const onlineCount = ref<number>(0);
-
+const ChatRoomLoading = ref<boolean>(false);
 const firstIn = ref<boolean>(false);
 const messageContainer = ref<HTMLElement | null>(null); // 引用消息容器
 
@@ -128,9 +129,11 @@ const onWebSocketClose = () => {
 
 // 发送消息
 const send = async () => {
+	ChatRoomLoading.value = true;
 	const isPassFilter = await filterWord();  // 等待过滤词语结果
 	if (!isPassFilter) {
 		// 如果过滤没有通过，直接返回，不发送消息
+		ChatRoomLoading.value = false;
 		return;
 	}
 	if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
@@ -151,10 +154,12 @@ const send = async () => {
 				confirmButtonText: 'OK',
 			});
 		}
+		ChatRoomLoading.value = false;
 	} else {
 		ElMessageBox.alert('☝️🤓请点击重新连接', '连接未打开', {
 			confirmButtonText: 'OK',
 		});
+		ChatRoomLoading.value = false;
 	}
 };
 
@@ -276,6 +281,7 @@ onMounted(() => {
 }
 
 #online-count {
+	user-select: none;
 	color: black;
 }
 
