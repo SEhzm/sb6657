@@ -1,18 +1,10 @@
 <template>
-    <div>
-        <HeaderBar></HeaderBar>
-        <div class="main">
-            <RouterView />
-        </div>
-        <FooterBar></FooterBar>
-        <StarrySky class="starrySky" />
-    </div>
-
+    <RouterView />
+    <StarrySky class="starrySky" />
 </template>
 
 <script setup lang="ts">
-import HeaderBar from '@/views/header-bar/header-bar.vue';
-import FooterBar from '@/views/footer-bar.vue';
+import StarrySky from '@/views/Starrysky.vue';
 </script>
 
 <style scoped>

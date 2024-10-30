@@ -18,6 +18,18 @@ export const API = {
     SUBMIT_MEME: '/machine/addUnaudit', // 烂梗投稿
 } as const;
 
+export const MemeCategory = [
+    { path: '/home', text: '首页' },
+    { path: '/image', text: '时光相册' },
+    { path: '/p1', text: '+1', api: API.GET_P1_MEME },
+    { path: '/penWJQ', text: '喷玩机器篇', api: API.GET_FK_WJQ_MEME },
+    { path: '/mygo', text: '木柜子篇', api: API.GET_MYGO_MEME },
+    { path: '/penPlayer', text: '喷选手篇', api: API.GET_FK_PLAYER_MEME },
+    { path: '/QMLW', text: '群魔乱舞篇', api: API.GET_FK_EACHOTHER_MEME },
+    { path: '/AllBarrage', text: '全部烂梗', api: API.GET_ALL_MEME },
+    { path: '/QUQU', text: 'QUQU篇', api: API.GET_QUQU_MEME },
+];
+
 declare global {
     type Meme = {
         content: string; // 梗内容

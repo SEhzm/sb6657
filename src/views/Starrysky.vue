@@ -22,6 +22,7 @@
 </template>
 
 <script setup>
+import ChatRoom from '@/components/ChatRoom.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue'
 // 用于存储元素X和Y位置的响应性引用
 const x = ref(74);
