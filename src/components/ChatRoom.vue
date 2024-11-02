@@ -16,7 +16,7 @@
 		</div>
 		<el-input id="userId" type="text" v-model="userId" :disabled="firstIn" maxlength="10"
 			placeholder="请输入您的ID(你只能输入一次，请谨慎)" />
-		<el-input id="text" type="text" v-model="message" maxlength="30" placeholder="请输入内容" />
+		<el-input id="text" type="text" v-model="message" maxlength="66.57" show-word-limit placeholder="请输入内容" />
 		<el-button v-loading="ChatRoomLoading" class="btn-animate btn-animate__vibrate" type="primary"
 			@click="send">发送消息</el-button>
 	</div>
@@ -310,6 +310,7 @@ onMounted(() => {
 }
 
 .others {
+	border-radius: 8px;
 	background-color: #e1e1e1;
 	align-self: flex-start;
 	text-align: left;

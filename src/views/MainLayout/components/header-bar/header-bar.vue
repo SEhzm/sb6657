@@ -8,10 +8,14 @@
                 </a>
 
                 <div class="header-actions">
-                    <img src="@/assets/imgs/hot.png" alt="热门" style="width: 24px; height: 24px; cursor: pointer; margin-right: 10px" class="hotBarrageImg" @click="openHotMeme24h" />
-                    <div @click="openHotMeme24h" class="hotBarrage" style="cursor: pointer; width: 300px; overflow: hidden; text-overflow: ellipsis; color: #e4d6b8; white-space: nowrap">
+                    <img src="@/assets/imgs/hot.png" alt="热门"
+                        style="width: 24px; height: 24px; cursor: pointer; margin-right: 10px" class="hotBarrageImg"
+                        @click="openHotMeme24h" />
+                    <div @click="openHotMeme24h" class="hotBarrage"
+                        style="cursor: pointer; width: 300px; overflow: hidden; text-overflow: ellipsis; color: #e4d6b8; white-space: nowrap">
                         <transition name="fade">
-                            <span :key="rotationIndex" class="hotBarrageSpan">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
+                            <span :key="rotationIndex" class="hotBarrageSpan">热门：{{ hotMeme24h?.[rotationIndex]?.content
+                                || '' }}</span>
                         </transition>
                     </div>
 
@@ -35,7 +39,8 @@
                         </span>
                     </el-button>
                     <a href="https://sb6657.cn/#/Tampermonkey">
-                        <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee" class="icon-img" />
+                        <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee"
+                            class="icon-img" />
                     </a>
                     <a href="https://gitee.com/hzming1/sb6657" target="_blank">
                         <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img" />
@@ -46,41 +51,53 @@
                     <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                         <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                     </a>
-                    <el-image id="myDiv" class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
-                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
+                    <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2"
+                        :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']"
+                        :initial-index="4" fit="cover" />
+                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy
+                        :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']"
+                        :initial-index="4" fit="cover" />
                 </div>
             </div>
         </div>
 
         <!-- 24h热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips" @refresh="refreshHotMeme24h">
+        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme24h">
             <div class="dialog-header">
                 <div>24h热门烂梗</div>
                 <div><el-button @click="openHotMeme7d">查看近七天热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 7天热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips" @refresh="refreshHotMeme7d">
+        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme7d">
             <div class="dialog-header">
                 <div>七天热门烂梗</div>
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 搜索结果框 -->
-        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading" :emptyText="searchEmptyText" @refresh="handleSearchMeme">
+        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading"
+            :emptyText="searchEmptyText" @refresh="handleSearchMeme">
             <div class="search-tips">烂梗搜索结果:</div>
         </memeDialog>
     </div>
+    <!-- 支持我弹出框 -->
+    <el-dialog v-model="supportMeDialog" title="谢谢你" width="1100">
+        <img src="http://cdn.dgq63136.icu/zfb.jpg" alt="" width="1000">
+    </el-dialog>
+
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
 import { Search } from '@element-plus/icons-vue';
 import memeDialog from './components/meme-dialog.vue';
 
 const loadingTips = '我还没有加载完喔~~';
-
+const supportMeDialog = ref(false)
 // 24h热门烂梗对话框
 const showHotMeme24h = ref(false);
 const hotMeme24h = ref<Meme[]>([]);
@@ -148,14 +165,11 @@ async function handleSearchMeme() {
 }
 
 //定时一小时弹出支持我！！！
-setTimeout(() => {
-    const myDiv = document.getElementById('myDiv');
-    if (myDiv) {
-        const e = document.createEvent('MouseEvents');
-        e.initEvent('click', true, true);
-        myDiv.dispatchEvent(e);
-    }
-}, 60 * 60 * 1000); // 一小时
+onMounted(() => {
+    setTimeout(() => {
+        supportMeDialog.value = true;
+    }, 60 * 60 * 1000); // 1h
+});
 //上传按钮
 const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
@@ -167,6 +181,7 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 
 <style scoped lang="scss">
 @media (min-width: 601px) {
+
     .fade-enter-active,
     .fade-leave-active {
         transition: opacity 0.5s;
@@ -185,6 +200,7 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 
     .elinput {
         width: 180px;
+
         .el-input__wrapper {
             border-radius: 95px;
             border: 0;
