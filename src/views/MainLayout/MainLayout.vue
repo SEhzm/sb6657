@@ -4,7 +4,7 @@
         <div class="tab">
             <!-- 移动端 -->
             <div class="tab-container">
-                <div :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" v-for="(item, index) in table"
+                <div v-for="(item, index) in MemeCategory" :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" 
                     :key="item.path" @click="navigateTo(item.path)">
                     {{ item.text }}
                 </div>
@@ -21,7 +21,7 @@
                         <span>首页</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/AllBarrage">
+                    <el-menu-item index="/memes/AllBarrage">
                         <el-icon>
                             <List />
                         </el-icon>
@@ -35,45 +35,45 @@
                         <span>时光相册</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/penWJQ">
+                    <el-menu-item index="/memes/penWJQ">
                         <el-icon>玩</el-icon>
                         <span>喷玩机器篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/mygo">
+                    <el-menu-item index="/memes/mygo">
                         <el-icon>
                             <Female />
                         </el-icon>
                         <span>木柜子篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/ZbjHuPen">
+                    <el-menu-item index="/memes/ZbjHuPen">
                         <el-icon>
                             <ChatDotRound />
                         </el-icon>
                         <span>直播间互喷篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/penPlayer">
+                    <el-menu-item index="/memes/penPlayer">
                         <el-icon>🦐</el-icon>
                         <span>喷选手篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/p1">
+                    <el-menu-item index="/memes/p1">
                         <el-icon>
                             <plus />
                         </el-icon>
                         <span>+1篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/QMLW">
+                    <el-menu-item index="/memes/QMLW">
                         <el-icon>
                             <User />
                         </el-icon>
                         <span>群魔乱舞篇</span>
                     </el-menu-item>
 
-                    <el-menu-item index="/QUQU">
+                    <el-menu-item index="/memes/QUQU">
                         <img src="@/assets/imgs/Z.png" alt="Z!!" class="menu-icon" />
                         <span>QUQU篇</span>
                     </el-menu-item>
@@ -92,19 +92,8 @@
 import HeaderBar from "@/views/MainLayout/components/header-bar/header-bar.vue";
 import FooterBar from "@/views/MainLayout/components/footer-bar.vue";
 import { useRoute, useRouter } from "vue-router";
-import { ref } from "vue";
+import { MemeCategory } from "@/constants/backend";
 
-const table = [
-    { text: "首页", path: "/home" },
-    { text: "+1", path: "/p1" },
-    { text: "喷玩机器篇", path: "/penWJQ" },
-    { text: "木柜子篇", path: "/mygo" },
-    { text: "喷选手篇", path: "/penPlayer" },
-    { text: "群魔乱舞篇", path: "/QMLW" },
-    { text: "全部烂梗", path: "/AllBarrage" },
-    { text: "QUQU篇", path: "/QUQU" },
-    { text: "时光相册", path: "/image" },
-];
 const route = useRoute();
 const router = useRouter();
 function navigateTo(path: string) {
