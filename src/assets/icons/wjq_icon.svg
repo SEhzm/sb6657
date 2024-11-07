@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+    <style>
+        .icon_wjq {
+            fill: #000000;
+            font-size: 16px;
+            font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+            font-style: italic;
+            text-align: center;
+            dominant-baseline: middle;
+        }
+    </style>
+    <text x="50%" y="50%" class="icon_wjq" text-anchor="middle" dominant-baseline="middle">玩</text>
+</svg>

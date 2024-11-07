@@ -4,78 +4,20 @@
         <div class="tab">
             <!-- 移动端 -->
             <div class="tab-container">
-                <div v-for="(item, index) in MemeCategory" :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" 
-                    :key="item.path" @click="navigateTo(item.path)">
+                <div v-for="(item, index) in MemeCategory" :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" :key="item.path" @click="navigateTo(item.path)">
                     {{ item.text }}
                 </div>
             </div>
         </div>
 
-        <div class="main-content" style="position: relative;">
+        <div class="main-content" style="position: relative">
             <div class="sidebar">
                 <el-menu router style="border: none; margin-right: auto" :default-active="$route.path">
-                    <el-menu-item index="/home">
-                        <el-icon>
-                            <HomeFilled />
-                        </el-icon>
-                        <span>首页</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/AllBarrage">
-                        <el-icon>
-                            <List />
-                        </el-icon>
-                        <span>全部烂梗</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/image">
-                        <el-icon>
-                            <Camera />
-                        </el-icon>
-                        <span>时光相册</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/penWJQ">
-                        <el-icon>玩</el-icon>
-                        <span>喷玩机器篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/mygo">
-                        <el-icon>
-                            <Female />
-                        </el-icon>
-                        <span>木柜子篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/ZbjHuPen">
-                        <el-icon>
-                            <ChatDotRound />
-                        </el-icon>
-                        <span>直播间互喷篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/penPlayer">
-                        <el-icon>🦐</el-icon>
-                        <span>喷选手篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/p1">
-                        <el-icon>
-                            <plus />
-                        </el-icon>
-                        <span>+1篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/QMLW">
-                        <el-icon>
-                            <User />
-                        </el-icon>
-                        <span>群魔乱舞篇</span>
-                    </el-menu-item>
-
-                    <el-menu-item index="/memes/QUQU">
-                        <img src="@/assets/imgs/Z.png" alt="Z!!" class="menu-icon" />
-                        <span>QUQU篇</span>
+                    <el-menu-item v-for="(category, index) in MemeCategory" v-bind:key="category.path" :index="category.path">
+                        <div class="sidebar-icon">
+                            <img :src="category.icon" alt="" />
+                        </div>
+                        <span>{{ category.text }}</span>
                     </el-menu-item>
                 </el-menu>
             </div>
@@ -87,12 +29,11 @@
     </div>
 </template>
 
-
 <script setup lang="ts">
-import HeaderBar from "@/views/MainLayout/components/header-bar/header-bar.vue";
-import FooterBar from "@/views/MainLayout/components/footer-bar.vue";
-import { useRoute, useRouter } from "vue-router";
-import { MemeCategory } from "@/constants/backend";
+import HeaderBar from '@/views/MainLayout/components/header-bar/header-bar.vue';
+import FooterBar from '@/views/MainLayout/components/footer-bar.vue';
+import { useRoute, useRouter } from 'vue-router';
+import { MemeCategory } from '@/constants/backend';
 
 const route = useRoute();
 const router = useRouter();
@@ -100,12 +41,10 @@ function navigateTo(path: string) {
     router.push(path);
 }
 
-const $route = useRoute();
-console.log($route.path);
+console.log('当前页面path:', route.path);
 </script>
 
 <style lang="scss" scoped>
-
 @media (min-width: 601px) {
     .tab {
         display: none;
@@ -155,6 +94,18 @@ console.log($route.path);
         width: auto;
         border-right: 0px solid #ddd;
         min-height: calc(100vh - 60px);
+        .sidebar-icon {
+            height: 18px;
+            width: 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 5px;
+            img {
+                height: 18px;
+                width: 18px;
+            }
+        }
     }
 
     .menu-icon {
@@ -206,7 +157,7 @@ console.log($route.path);
     }
 
     .tab1::before {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         width: 100%;
@@ -224,16 +175,12 @@ console.log($route.path);
         color: #fff;
         background-color: #007bff;
 
-
         &::before {
             background-color: #007bff;
         }
 
         padding-left: 15px;
-        /* 左侧 padding 增加 10px */
         padding-right: 15px;
-        /* 右侧 padding 增加 10px */
-
     }
 
     .tab::-webkit-scrollbar {

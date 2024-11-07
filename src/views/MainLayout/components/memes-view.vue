@@ -89,7 +89,6 @@ const load = (pageNum = 1) => {
             },
         })
         .then((res) => {
-            console.log('load res', currentCategory.value.api, res);
             data.tableData = res.data?.list || [];
             data.total = res.data?.total || 0;
             loading.value = false;

@@ -2,7 +2,6 @@ import { createRouter, createWebHashHistory } from 'vue-router';
 import NotFoundView from '@/views/404.vue';
 const router = createRouter({
     history: createWebHashHistory(import.meta.env.BASE_URL),
-    mode: 'history',
     routes: [
         {
             path: '/',
