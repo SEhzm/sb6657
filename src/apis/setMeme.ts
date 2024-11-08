@@ -30,3 +30,26 @@ export function plus1Error() {
         type: 'warning',
     });
 }
+
+interface submitMeme_res {
+    code: string;
+    msg: string;
+    data: object;
+}
+export async function submitMeme(category: string, meme: string) {
+    console.log(`烂梗投稿\n 所属分类: ${category} \n烂梗内容: ${meme}`);
+    try {
+        const res: submitMeme_res = await httpInstance.post(API.SUBMIT_MEME, {
+            table: category,
+            barrage: meme,
+        });
+        if (res.code !== '200') {
+            console.log('烂梗投稿失败');
+            return false;
+        }
+        return true;
+    } catch (err: any) {
+        console.error('烂梗投稿失败', err);
+        return false;
+    }
+}

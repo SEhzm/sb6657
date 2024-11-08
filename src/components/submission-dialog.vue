@@ -19,8 +19,8 @@
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="dialogFormVisible = false">关闭</el-button>
-                <el-button type="primary" @click="saveBarrage">投稿并关闭</el-button>
-                <el-button type="primary" @click="continuousSaveBarrage">连续投稿</el-button>
+                <el-button type="primary" @click="saveMeme">投稿并关闭</el-button>
+                <el-button type="primary" @click="continuousSaveMeme">连续投稿</el-button>
             </div>
         </template>
     </el-dialog>
@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { ElNotification } from 'element-plus';
-import httpInstance from '@/apis/httpInstance';
+import { submitMeme } from '@/apis/setMeme';
 
 const dialogFormVisible = defineModel();
 
@@ -42,48 +42,37 @@ const inputMeme = reactive({
     content: '',
 });
 
-//提交并关闭
-const saveBarrage = () => {
-    if (inputMeme.category === '' || inputMeme.content === '') {
-        ElNotification.error('请选择分栏或输入弹幕');
-    } else {
-        httpInstance
-            .post('/machine/addUnaudit', {
-                table: inputMeme.category,
-                barrage: inputMeme.content,
-            })
-            .then((res) => {
-                dialogFormVisible.value = false;
-                inputMeme.content = '';
-                inputMeme.category = '';
-                if (res.code === '200') {
-                    ElNotification.success('投稿成功，待审核(一天内)');
-                } else {
-                    ElNotification.error('请求失败');
-                }
-            });
+async function submit() {
+    if (inputMeme.content === '') {
+        ElNotification.error('烂梗内容不能为空');
+        return false;
     }
-};
+    if (inputMeme.category === '') {
+        ElNotification.error('分类不能为空');
+        return false;
+    }
+    if (!await submitMeme(inputMeme.category, inputMeme.content)) {
+        ElNotification.error('投稿失败，必要时请及时反馈bug');
+        return false;
+    }
+    ElNotification.success('投稿成功，审核完成后展示(一天内)');
+    return true;
+}
 
-//连续提交
-const continuousSaveBarrage = () => {
-    if (inputMeme.category === '' || inputMeme.content === '') {
-        ElNotification.error('请选择分栏或输入弹幕');
-    } else {
-        httpInstance
-            .post('/machine/addUnaudit', {
-                table: inputMeme.category,
-                barrage: inputMeme.content,
-            })
-            .then((res) => {
-                inputMeme.content = '';
-                if (res.code === '200') {
-                    ElNotification.success('投稿成功，待审核(一天内)');
-                } else {
-                    ElNotification.error('投稿失败，必要时请及时反馈');
-                }
-            });
+async function saveMeme() {
+    if (!await submit()) {
+        return;
     }
-};
+    dialogFormVisible.value = false;
+    inputMeme.content = '';
+    inputMeme.category = '';
+}
+
+async function continuousSaveMeme() {
+    if (!await submit()) {
+        return;
+    }
+    inputMeme.content = '';
+}
 </script>
 <style scoped lang="scss"></style>

@@ -136,7 +136,7 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
             total: res.data.total,
         };
     } catch (err: any) {
-        console.log('请求烂梗列表失败', err);
+        console.error('请求烂梗列表失败', err);
         return false;
     }
 }
