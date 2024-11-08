@@ -3,7 +3,7 @@
         <div class="card-table">
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿！→→</div>
-                <el-button type="primary" class="handleAdd" @click="handleAdd">烂梗投稿</el-button>
+                <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
             </div>
 
             <el-table :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
@@ -114,8 +114,9 @@ async function copyMeme_countPlus1(meme: Meme) {
 }
 
 const dialogFormVisible = ref(false);
-//点击新增按钮
-const handleAdd = () => {
+
+// 弹出投稿弹窗按钮
+const handleSubmit = () => {
     dialogFormVisible.value = true;
 };
 </script>
@@ -126,7 +127,6 @@ const handleAdd = () => {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-
     .card-table {
         width: 100%;
         max-width: 1200px;
@@ -135,10 +135,12 @@ const handleAdd = () => {
             align-items: center;
             padding-top: 10px;
             padding-left: 10px;
-            font-size: small;
-            font-weight: bold;
             gap: 6px;
             background-color: #fff;
+            .submit-tips {
+                font-size: small;
+                font-weight: bold;
+            }
         }
 
         :deep(.dialog-main) {

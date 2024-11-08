@@ -1,6 +1,6 @@
 <template xmlns="http://www.w3.org/1999/html">
   <div class="boomouder">
-    <img src="https://pic.imgdb.cn/item/66f7a491f21886ccc022f12a.png" alt="6657boom" class="boom6657">
+    <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657">
   </div>
   <div class="home">
     <div class="card" style="line-height: 30px;margin-top: 40px;">

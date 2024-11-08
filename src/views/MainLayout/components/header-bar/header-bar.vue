@@ -7,10 +7,10 @@
             </a>
 
             <div class="header-actions">
-                <img src="@/assets/imgs/hot.png" alt="热门" class="hotBarrageImg" @click="openHotMeme24h" />
-                <div @click="openHotMeme24h" class="hotBarrage">
+                <img src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
+                <div @click="openHotMeme24h" class="hot-barrage">
                     <transition name="fade">
-                        <span :key="rotationIndex" class="hotBarrageSpan">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
+                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
                     </transition>
                 </div>
 
@@ -166,105 +166,93 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 
 <style scoped lang="scss">
 @media (min-width: 601px) {
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 0.5s;
-    }
-
-    .fade-enter-from,
-    .fade-leave-to {
-        opacity: 0;
-    }
-
-    .hotBarrageSpan {
-        color: #e4d6b8;
-        border-bottom: 1px solid #e4d6b8;
-        padding-bottom: 1px;
-    }
-
-    .elinput {
-        width: 180px;
-        margin-right: 20px;
-        .el-input__wrapper {
-            border-radius: 95px;
-            border: 0;
-            box-shadow: 0 0 0 0px;
-        }
-    }
-
     .header {
-        height: 55px;
-        display: flex;
-        align-items: center;
-        width: 100%;
-        z-index: 1000;
-    }
+        .header-content {
+            height: 55px;
+            width: 100%;
+            min-width: 1270px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            .logo-link {
+                display: flex;
+                margin-left: 10px;
+                .logo-img {
+                    height: 40px;
+                    margin: 5px;
+                    border-radius: 5px;
+                }
+                .header-title {
+                    color: #ff552e;
+                    font-size: 30px;
+                }
+            }
+            .header-actions {
+                display: flex;
+                .hot-barrage-img {
+                    width: 26px;
+                    height: 26px;
+                }
+                .hot-barrage {
+                    cursor: pointer;
+                    width: 300px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    color: #e4d6b8;
+                    white-space: nowrap;
+                    .hot-barrage-span {
+                        color: #e4d6b8;
+                        border-bottom: 1px solid #e4d6b8;
+                    }
+                    .fade-enter-active,
+                    .fade-leave-active {
+                        transition: opacity 0.5s;
+                    }
 
-    .header-content {
-        padding-left: 20px;
-        display: flex;
-        align-items: center;
-    }
+                    .fade-enter-from,
+                    .fade-leave-to {
+                        opacity: 0;
+                    }
+                }
+            }
 
-    .logo-link {
-        display: block;
-        width: 370px;
-        height: 50px;
-    }
+            .elinput {
+                width: 180px;
+                margin-right: 20px;
+                .el-input__wrapper {
+                    border-radius: 95px;
+                    border: 0;
+                    box-shadow: 0 0 0 0px;
+                }
+            }
 
-    .logo-img {
-        height: 40px;
-        float: left;
-        margin: 5px;
-        border-radius: 5px;
-    }
+            .complaint-button {
+                margin-right: 10px;
+            }
 
-    .hotBarrage {
-        cursor: pointer;
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: #e4d6b8;
-        white-space: nowrap;
-    }
+            .icon-img {
+                width: 31px;
+                margin-right: 15px;
+            }
 
-    .header-title {
-        color: #ff552e;
-        font-size: 30px;
-        align-items: center;
-    }
-
-    .header-actions {
-        display: flex;
-        justify-content: flex-end;
-        margin-left: auto;
-    }
-
-    .complaint-button {
-        margin-right: 10px;
-    }
-
-    .icon-img {
-        width: 31px;
-        margin-right: 15px;
-    }
-
-    .icon-img-rounded {
-        width: 31px;
-        height: 31px;
-        margin-right: 15px;
-        border-radius: 5px;
+            .icon-img-rounded {
+                width: 31px;
+                height: 31px;
+                margin-right: 15px;
+                border-radius: 5px;
+            }
+        }
     }
 }
 
 @media (max-width: 600px) {
-    .hotBarrageSpan {
+    .hot-barrage-span {
         color: black;
         border-bottom: 1px solid black;
         padding-bottom: 1px;
     }
 
-    .hotBarrageImg {
+    .hot-barrage-img {
         position: absolute;
         margin-top: 230px;
         width: 24px;
@@ -277,7 +265,7 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
         display: none;
     }
 
-    .hotBarrage {
+    .hot-barrage {
         cursor: pointer;
         width: 300px;
         overflow: hidden;
