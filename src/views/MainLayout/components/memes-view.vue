@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="cardTable" style="position: relative">
+        <div class="cardTable">
             <el-button type="primary" class="handleAdd" @click="handleAdd">烂梗投稿</el-button>
 
             <el-table v-loading="loading" stripe :data="memeArr" empty-text="我还没有加载完喔~~" class="eldtable" :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }" @row-click="copyMeme_countPlus1">
@@ -134,6 +134,7 @@ const handleAdd = () => {
 
 @media (min-width: 601px) {
     .cardTable {
+        position: relative;
         width: 80%;
     }
 }

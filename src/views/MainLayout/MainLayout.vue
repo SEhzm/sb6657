@@ -10,9 +10,9 @@
             </div>
         </div>
 
-        <div class="main-content" style="position: relative">
+        <div class="main-content">
             <div class="sidebar">
-                <el-menu router style="border: none; margin-right: auto" :default-active="$route.path">
+                <el-menu router class="sidebar-el-menu" :default-active="$route.path">
                     <el-menu-item v-for="(category, index) in MemeCategory" v-bind:key="category.path" :index="category.path">
                         <div class="sidebar-icon">
                             <img :src="category.icon" alt="" />
@@ -85,6 +85,7 @@ function navigateTo(path: string) {
     }
 
     .main-content {
+        position: relative;
         display: flex;
     }
 
@@ -92,6 +93,12 @@ function navigateTo(path: string) {
         width: auto;
         border-right: 0px solid #ddd;
         min-height: calc(100vh - 60px);
+
+        .sidebar-el-menu {
+            border: none;
+            margin-right: auto;
+        }
+
         .sidebar-icon {
             height: 18px;
             width: 18px;
@@ -99,6 +106,7 @@ function navigateTo(path: string) {
             justify-content: center;
             align-items: center;
             margin-right: 5px;
+
             img {
                 height: 18px;
                 width: 18px;
