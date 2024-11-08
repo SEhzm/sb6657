@@ -7,12 +7,13 @@ interface copyCountPlus1_res {
     data: object;
     msg: string;
 }
-export async function copyCountPlus1(category: string, memeId: string, pageNum?: number, sortOrder?: string) {
+export async function copyCountPlus1(category: string, memeId: string, pageNum?: number, PageSize?: number, sortOrder?: string) {
     try {
         const res: copyCountPlus1_res = await httpInstance.post(API.INCREASE_COPY_COUNT, {
             table: category,
             id: memeId,
             ...(pageNum ? { PageNum: pageNum } : {}),
+            ...(PageSize ? { PageSize: 50 } : {}),
             ...(sortOrder ? { sortOrder: sortOrder } : {}),
         });
         console.log('弹幕复制次数+1成功', res);

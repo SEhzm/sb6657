@@ -40,8 +40,6 @@ const router = useRouter();
 function navigateTo(path: string) {
     router.push(path);
 }
-
-console.log('当前页面path:', route.path);
 </script>
 
 <style lang="scss" scoped>

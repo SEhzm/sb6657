@@ -3,31 +3,27 @@
         <div class="cardTable" style="position: relative">
             <el-button type="primary" class="handleAdd" @click="handleAdd">投稿弹幕</el-button>
 
-            <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable"
-                :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-                :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+            <el-table v-loading="loading" stripe :data="memeArr" empty-text="我还没有加载完喔~~" class="eldtable" :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }" @row-click="copyMeme_countPlus1">
                 <el-table-column width="58" prop="id" label="序号"></el-table-column>
-                <el-table-column prop="barrage" min-width="90" label="弹幕" />
+                <el-table-column prop="content" min-width="90" label="弹幕" />
                 <el-table-column label="" align="center" width="85">
                     <el-button type="primary" label="操作">复制</el-button>
                 </el-table-column>
-                <el-table-column prop="cnt" label="复制次数" width="55" />
+                <el-table-column prop="copyCount" label="复制次数" width="55" />
             </el-table>
         </div>
 
         <div class="pagination-wrapper">
             <!-- 分页 -->
             <div>
-                <el-pagination background="red" layout="prev, pager, next, jumper" :current-page="data.currentPage"
-                    :total="data.total" :pager-count="4" :page-size="data.pageSize"
-                    @current-change="handlePageChange"></el-pagination>
+                <el-pagination background="red" layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
-        <el-dialog v-model="data.dialogFormVisible" draggable title="投稿弹幕" width="82%">
-            <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
+        <el-dialog v-model="dialogFormVisible" draggable title="投稿弹幕" width="82%">
+            <el-form :model="inputMeme" label-width="100px" :rules="rules" label-position="right">
                 <el-form-item label="分栏" :label-width="100" prop="table">
-                    <el-select v-model="data.table" placeholder="选择上传的分栏">
+                    <el-select v-model="inputMeme.category" placeholder="选择上传的分栏">
                         <el-option label="喷玩机器篇" value="machine_penWJQ" />
                         <el-option label="木柜子篇" value="machine_mygo" />
                         <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
@@ -38,15 +34,14 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="弹幕内容" prop="barrage">
-                    <el-input maxlength="255" v-model="data.barrage" autocomplete="off"
-                        :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" />
+                    <el-input maxlength="255" v-model="inputMeme.content" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
-                    <el-button @click="data.dialogFormVisible = false">关闭</el-button>
-                    <el-button type="primary" @click="saveBarrage(1)">投稿并关闭</el-button>
-                    <el-button type="primary" @click="saveBarrage(2)">连续投稿</el-button>
+                    <el-button @click="dialogFormVisible = false">关闭</el-button>
+                    <el-button type="primary" @click="saveBarrage">投稿并关闭</el-button>
+                    <el-button type="primary" @click="continuousSaveBarrage">连续投稿</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -59,58 +54,52 @@
 import { ref, reactive, computed, watch } from 'vue';
 import httpInstance from '@/apis/httpInstance';
 import { ElNotification } from 'element-plus';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { MemeCategory } from '@/constants/backend';
+import { getMemeList } from '@/apis/getMeme';
+import { throttle } from '@/utils/throttle';
+import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 
 const route = useRoute();
-
+const router = useRouter();
+/**
+ * currentCategory可能为空，代表没匹配到路由对应分类。
+ * 不过正常情况路由只有点击tab能改变，这时候都是能匹配到的，出现空只可能是用户自己瞎几把改url。
+ * 所以我采取的方法是匹配不到就定位到404页。建议后面用currentCategory的地方都这么处理
+ */
 const currentCategory = computed(() => {
     return MemeCategory.find((item) => item.path === route.path);
 });
 
 const loading = ref(true);
+const memeArr = ref<Meme[]>([]);
+const total = ref(0);
+const pageSize = 50;
+const currentPage = ref(1);
 
-const rules = {
-    table: [{ required: true, message: '请选择分栏', trigger: 'blur' }],
-    barrage: [{ required: true, message: '请输入弹幕', trigger: 'blur' }],
-};
+async function refreshMeme(pageNum: number) {
+    const category = currentCategory.value?.category;
+    if (!category) {
+        router.push('/404');
+        return;
+    }
+    const res = await getMemeList(category, pageNum, pageSize);
+    if (!res) return;
 
-const data = reactive({
-    tableData: [],
-    total: 0,
-    pageSize: 50, //每页个数
-    currentPage: 1, //起始页码
-    dialogFormVisible: false,
-    table: '',
-    barrage: '',
-});
-
-const load = (pageNum = 1) => {
-    httpInstance
-        .get(currentCategory.value!.api!, {
-            params: {
-                pageNum: pageNum,
-                pageSize: data.pageSize,
-            },
-        })
-        .then((res) => {
-            data.tableData = res.data?.list || [];
-            data.total = res.data?.total || 0;
-            loading.value = false;
-        })
-        .catch((err) => {
-            console.error('加载数据失败:', err);
-        });
-};
-
-load(data.currentPage);
+    memeArr.value = res.memeArr;
+    total.value = res.total;
+    loading.value = false;
+}
+refreshMeme(1);
 
 watch(
     () => route.path,
     () => {
-        data.currentPage = 1;
+        console.log('当前页面path:', route.path);
+        currentPage.value = 1;
         loading.value = true;
-        load(1);
+        refreshMeme(1);
     }
 );
 
@@ -121,130 +110,77 @@ const scrollToTop = () => {
         behavior: 'smooth', //smooth 平滑；auto:瞬间
     });
 };
-const handlePageChange = (page) => {
-    data.currentPage = page;
+const handlePageChange = (page: number) => {
+    currentPage.value = page;
     scrollToTop();
-    load(page);
+    refreshMeme(page);
 };
 
-const open2 = () => {
-    ElNotification({
-        message: '复制成功',
-        type: 'success',
-    });
-};
+// 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
 
-const open4 = () => {
-    ElNotification({
-        message: '复制失败',
-        type: 'error',
-    });
-};
-
-let lastCallTime = 0;
-let lastMousePosition = null;
-let mousePositionCnt = 0;
-const copyText = (row) => {
-    const currentTime = new Date().getTime();
-    const currentMousePosition = { x: event.clientX, y: event.clientY };
-    // 检查鼠标位置是否变化
-    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
-        mousePositionCnt++;
-        if (mousePositionCnt > 4) {
-            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-                confirmButtonText: '好吧，我错了',
-            });
-        }
-    } else {
-        mousePositionCnt = 0;
-    }
-    // 检查是否已经过了 1.5 秒
-    if (currentTime - lastCallTime < 1500) {
-        ElNotification({
-            title: '请勿刷次数',
-            message: '复制成功，但次数没有增加',
-            type: 'warning',
-        });
-        const textToCopy = row.barrage;
-        let tempInput = document.createElement('input');
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select(); // 选择对象
-        try {
-            document.execCommand('Copy'); // 执行浏览器复制命令
-        } catch (err) {
-            // 复制失败，可以显示错误信息
-            ElNotification({
-                title: '复制失败',
-                message: '复制操作失败，请稍后重试',
-                type: 'error',
-            });
-            console.error('复制失败:', err);
-        }
-        document.body.removeChild(tempInput); // 清理临时元素
-        lastCallTime = currentTime;
-        lastMousePosition = currentMousePosition;
+async function copyMeme_countPlus1(meme: Meme) {
+    const memeText = meme.content;
+    const res = copyMeme(memeText);
+    if (!res || res === 'limitedSuccess') return;
+    copySuccess();
+    if (await copyCountPlus1(meme.category, meme.id, currentPage.value, pageSize)) {
+        await refreshMeme(currentPage.value);
         return;
     }
-    lastMousePosition = currentMousePosition;
-    lastCallTime = currentTime;
-    const textToCopy = row.barrage;
-    let tempInput = document.createElement('input');
-    tempInput.value = textToCopy;
-    document.body.appendChild(tempInput);
-    tempInput.select(); // 选择对象
-    try {
-        document.execCommand('Copy'); // 执行浏览器复制命令
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板', currentCategory);
-        httpInstance
-            .post('/machine/addCnt', {
-                PageNum: data.currentPage,
-                PageSize: data.pageSize,
-                table: currentCategory.value?.category,
-                id: row.id,
-            })
-            .then((res) => {
-                setTimeout(() => load(data.currentPage), 200);
-            });
-    } catch (err) {
-        // 复制失败，可以显示错误信息
-        ElNotification({
-            title: '复制失败',
-            message: '复制操作失败，请稍后重试',
-            type: 'error',
-        });
-        console.error('复制失败:', err);
-        open4();
-    }
-    document.body.removeChild(tempInput); // 清理临时元素
-};
+    plus1Error();
+}
 
+const rules = {
+    table: [{ required: true, message: '请选择分栏', trigger: 'blur' }],
+    barrage: [{ required: true, message: '请输入弹幕', trigger: 'blur' }],
+};
+const dialogFormVisible = ref(false);
+const inputMeme = reactive({
+    category: '',
+    content: '',
+});
 //点击新增按钮
 const handleAdd = () => {
-    data.table = '';
-    data.barrage = '';
-    data.dialogFormVisible = true;
+    inputMeme.category = '';
+    inputMeme.content = '';
+    dialogFormVisible.value = true;
 };
-/**
- * 提交投稿
- * continuous：是否连续提交 1：非连续  2：连续
- */
-const saveBarrage = (continuous: Number) => {
-    if (data.table === '' || data.barrage === '') {
+//提交并关闭
+const saveBarrage = () => {
+    if (inputMeme.category === '' || inputMeme.content === '') {
         ElNotification.error('请选择分栏或输入弹幕');
     } else {
         httpInstance
             .post('/machine/addUnaudit', {
-                table: data.table,
-                barrage: data.barrage,
+                table: inputMeme.category,
+                barrage: inputMeme.content,
             })
             .then((res) => {
-                load();
-                if (continuous === 1) {//1：非连续投稿  关闭弹窗
-                    data.dialogFormVisible = false;
+                refreshMeme(1);
+                dialogFormVisible.value = false;
+                if (res.code === '200') {
+                    ElNotification.success('投稿成功，待审核(一天内)');
+                } else {
+                    ElNotification.error('请求失败');
                 }
+            });
+    }
+};
+
+//连续提交
+const continuousSaveBarrage = () => {
+    if (inputMeme.category === '' || inputMeme.content === '') {
+        ElNotification.error('请选择分栏或输入弹幕');
+    } else {
+        httpInstance
+            .post('/machine/addUnaudit', {
+                table: inputMeme.category,
+                barrage: inputMeme.content,
+            })
+            .then((res) => {
+                refreshMeme(1);
+                inputMeme.content = '';
                 if (res.code === '200') {
                     ElNotification.success('投稿成功，待审核(一天内)');
                     data.barrage = '';
@@ -294,10 +230,6 @@ const saveBarrage = (continuous: Number) => {
         white-space: nowrap;
         overflow-x: auto;
         cursor: cell;
-    }
-
-    .dialogFormVisible {
-        font-size: 15px;
     }
 
     .handleAdd {

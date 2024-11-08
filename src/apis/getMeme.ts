@@ -1,5 +1,6 @@
 import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
+import { MemeCategory } from '@/constants/backend';
 interface hotMeme_res {
     barrage: string;
     barrageId: number;
@@ -76,4 +77,66 @@ export async function searchMeme(searchKey: string) {
     }
 }
 
-export async function getMemeList(category:string) {}
+interface getMemeList_meme {
+    id: string;
+    barrage: string;
+    cnt: string;
+}
+interface getMemeList_data {
+    total: number;
+    list: getMemeList_meme[];
+    pageNum: number;
+    pageSize: number;
+    size: number;
+    startRow: number;
+    endRow: number;
+    pages: number;
+    prePage: number;
+    nextPage: number;
+    isFirstPage: boolean;
+    isLastPage: boolean;
+    hasPreviousPage: boolean;
+    hasNextPage: boolean;
+    navigatePages: number;
+    navigatepageNums: number[];
+    navigateFirstPage: number;
+    navigateLastPage: number;
+}
+interface getMemeList_res {
+    code: string;
+    msg: string;
+    data: getMemeList_data;
+}
+export async function getMemeList(category: string, pageIndex: number, pageSize: number) {
+    console.log(`请求烂梗分类: ${category}, 页数: ${pageIndex}, 每页烂梗数: ${pageSize}`);
+    try {
+        const api = MemeCategory.find((item) => item.category === category)?.api;
+        if (!api) {
+            throw new Error('未找到此分类');
+        }
+        const res: getMemeList_res = await httpInstance.get(api, {
+            params: {
+                pageNum: pageIndex,
+                pageSize: pageSize,
+            },
+        });
+        if (res.data?.list?.length <= 0) {
+            throw new Error('请求到的烂梗列表为空');
+        }
+        const memeArr: Meme[] = res.data.list.map((item) => {
+            return {
+                content: item.barrage,
+                id: item.id,
+                category: category,
+                copyCount: +item.cnt,
+            };
+        });
+        return {
+            memeArr,
+            total: res.data.total,
+        };
+    } catch (err: any) {
+        console.log('请求烂梗列表失败', err);
+        return false;
+    }
+}
