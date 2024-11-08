@@ -1,13 +1,12 @@
 <template>
-    <div>
-        <div class="cardTable">
+    <div class="memes-view">
+        <div class="card-table">
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿！→→</div>
                 <el-button type="primary" class="handleAdd" @click="handleAdd">烂梗投稿</el-button>
             </div>
 
-            <el-table :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
-                @row-click="copyMeme_countPlus1">
+            <el-table :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <span class="index">{{ scope.row.id }}</span>
@@ -20,18 +19,15 @@
                 </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 ({{
-                            scope.row.copyCount }})</el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 ({{ scope.row.copyCount }})</el-button>
                     </template>
                 </el-table-column>
             </el-table>
+            <div class="pagination-wrapper">
+                <el-pagination v-if="!loading" background="red" layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
+            </div>
         </div>
 
-        <div class="pagination-wrapper">
-            <el-pagination v-if="!loading" background="red" layout="prev, pager, next, jumper"
-                :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize"
-                @current-change="handlePageChange"></el-pagination>
-        </div>
         <submission-dialog v-model="dialogFormVisible"></submission-dialog>
         <el-backtop :right="50" :bottom="50">UP</el-backtop>
     </div>
@@ -125,36 +121,46 @@ const handleAdd = () => {
 </script>
 
 <style scoped lang="scss">
-.cardTable {
-    .top {
-        display: flex;
-        align-items: center;
-        padding-top: 10px;
-        padding-left: 10px;
-        font-size: small;
-        font-weight: bold;
-        gap: 6px;
-    }
+.memes-view {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 
-    :deep(.dialog-main) {
-        width: 95%;
-    }
+    .card-table {
+        width: 100%;
+        max-width: 1200px;
+        .top {
+            display: flex;
+            align-items: center;
+            padding-top: 10px;
+            padding-left: 10px;
+            font-size: small;
+            font-weight: bold;
+            gap: 6px;
+            background-color: #fff;
+        }
 
-    :deep(.hover-pointer) {
-        cursor: pointer;
-    }
+        :deep(.dialog-main) {
+            width: 95%;
+        }
 
-    .index {
-        font-size: large;
-    }
+        :deep(.hover-pointer) {
+            cursor: pointer;
+        }
 
-    .copy-btn {
-        width: 90px;
-    }
-}
+        .index {
+            font-size: large;
+        }
+
+        .copy-btn {
+            width: 90px;
+        }
         .pagination-wrapper {
             display: flex;
             justify-content: center;
             margin-top: 16px;
         }
+    }
+}
 </style>
