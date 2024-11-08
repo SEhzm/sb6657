@@ -26,7 +26,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';

@@ -1,27 +1,40 @@
 <template>
     <div>
         <div class="cardTable">
-            <el-button type="primary" class="handleAdd" @click="handleAdd">烂梗投稿</el-button>
+            <div class="top">
+                <div class="submit-tips">想要补充更多烂梗？点击这里投稿！→→</div>
+                <el-button type="primary" class="handleAdd" @click="handleAdd">烂梗投稿</el-button>
+            </div>
 
-            <el-table v-loading="loading" stripe :data="memeArr" empty-text="我还没有加载完喔~~" class="eldtable" :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }" @row-click="copyMeme_countPlus1">
-                <el-table-column width="58" prop="id" label="序号"></el-table-column>
-                <el-table-column prop="content" min-width="90" label="弹幕" />
-                <el-table-column label="" align="center" width="85">
-                    <el-button type="primary" label="操作">复制</el-button>
+            <el-table :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
+                @row-click="copyMeme_countPlus1">
+                <el-table-column align="center" width="60">
+                    <template #default="scope">
+                        <span class="index">{{ scope.row.id }}</span>
+                    </template>
                 </el-table-column>
-                <el-table-column prop="copyCount" label="复制次数" width="55" />
+                <el-table-column prop="content">
+                    <template #default="scope">
+                        {{ scope.row.content }}
+                    </template>
+                </el-table-column>
+                <el-table-column align="center" width="100">
+                    <template #default="scope">
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 ({{
+                            scope.row.copyCount }})</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
 
         <div class="pagination-wrapper">
-            <!-- 分页 -->
-            <div>
-                <el-pagination background="red" layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
-            </div>
+            <el-pagination v-if="!loading" background="red" layout="prev, pager, next, jumper"
+                :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize"
+                @current-change="handlePageChange"></el-pagination>
         </div>
+        <submission-dialog v-model="dialogFormVisible"></submission-dialog>
+        <el-backtop :right="50" :bottom="50">UP</el-backtop>
     </div>
-    <submission-dialog v-model="dialogFormVisible"></submission-dialog>
-    <el-backtop :right="50" :bottom="50">UP</el-backtop>
 </template>
 
 <script setup lang="ts">
@@ -111,52 +124,37 @@ const handleAdd = () => {
 };
 </script>
 
-<style scoped>
-.eldtable {
-    z-index: 3;
-    font-size: 18px;
-    white-space: nowrap;
-    overflow-x: auto;
-}
-
-.pagination-wrapper {
-    display: flex;
-    margin-top: 20px;
-}
-
-.handleAdd {
-    z-index: 100;
-    position: absolute;
-    font-size: 18px;
-    margin-top: 4px;
-    margin-left: 150px;
-}
-
-@media (min-width: 601px) {
-    .cardTable {
-        position: relative;
-        width: 80%;
-    }
-}
-
-@media (max-width: 600px) {
-    .el-pagination {
-        margin: 0;
-        --el-pagination-button-width: 22px;
+<style scoped lang="scss">
+.cardTable {
+    .top {
+        display: flex;
+        align-items: center;
+        padding-top: 10px;
+        padding-left: 10px;
+        font-size: small;
+        font-weight: bold;
+        gap: 6px;
     }
 
-    .eldtable {
-        font-size: 16px;
-        white-space: nowrap;
-        overflow-x: auto;
-        cursor: cell;
+    :deep(.dialog-main) {
+        width: 95%;
     }
 
-    .handleAdd {
-        z-index: 100;
-        position: absolute;
-        font-size: 13px;
-        margin-left: 100px;
+    :deep(.hover-pointer) {
+        cursor: pointer;
+    }
+
+    .index {
+        font-size: large;
+    }
+
+    .copy-btn {
+        width: 90px;
     }
 }
+        .pagination-wrapper {
+            display: flex;
+            justify-content: center;
+            margin-top: 16px;
+        }
 </style>
