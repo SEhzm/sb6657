@@ -3,7 +3,9 @@
         <div class="cardTable" style="position: relative">
             <el-button type="primary" class="handleAdd" @click="handleAdd">投稿弹幕</el-button>
 
-            <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable" :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }" :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
+            <el-table v-loading="loading" stripe :data="data.tableData" empty-text="我还没有加载完喔~~" class="eldtable"
+                :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+                :cell-style="{ cursor: 'Pointer' }" @row-click="copyText">
                 <el-table-column width="58" prop="id" label="序号"></el-table-column>
                 <el-table-column prop="barrage" min-width="90" label="弹幕" />
                 <el-table-column label="" align="center" width="85">
@@ -16,7 +18,9 @@
         <div class="pagination-wrapper">
             <!-- 分页 -->
             <div>
-                <el-pagination background="red" layout="prev, pager, next, jumper" :current-page="data.currentPage" :total="data.total" :pager-count="4" :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
+                <el-pagination background="red" layout="prev, pager, next, jumper" :current-page="data.currentPage"
+                    :total="data.total" :pager-count="4" :page-size="data.pageSize"
+                    @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
@@ -34,14 +38,15 @@
                     </el-select>
                 </el-form-item>
                 <el-form-item label="弹幕内容" prop="barrage">
-                    <el-input maxlength="255" v-model="data.barrage" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" />
+                    <el-input maxlength="255" v-model="data.barrage" autocomplete="off"
+                        :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" />
                 </el-form-item>
             </el-form>
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="data.dialogFormVisible = false">关闭</el-button>
-                    <el-button type="primary" @click="saveBarrage">投稿并关闭</el-button>
-                    <el-button type="primary" @click="continuousSaveBarrage">连续投稿</el-button>
+                    <el-button type="primary" @click="saveBarrage(1)">投稿并关闭</el-button>
+                    <el-button type="primary" @click="saveBarrage(2)">连续投稿</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -196,6 +201,7 @@ const copyText = (row) => {
         httpInstance
             .post('/machine/addCnt', {
                 PageNum: data.currentPage,
+                PageSize: data.pageSize,
                 table: currentCategory.value?.category,
                 id: row.id,
             })
@@ -221,8 +227,11 @@ const handleAdd = () => {
     data.barrage = '';
     data.dialogFormVisible = true;
 };
-//提交并关闭
-const saveBarrage = () => {
+/**
+ * 提交投稿
+ * continuous：是否连续提交 1：非连续  2：连续
+ */
+const saveBarrage = (continuous: Number) => {
     if (data.table === '' || data.barrage === '') {
         ElNotification.error('请选择分栏或输入弹幕');
     } else {
@@ -233,33 +242,14 @@ const saveBarrage = () => {
             })
             .then((res) => {
                 load();
-                data.dialogFormVisible = false;
-                if (res.code === '200') {
-                    ElNotification.success('投稿成功，待审核(一天内)');
-                } else {
-                    ElNotification.error('请求失败');
+                if (continuous === 1) {//1：非连续投稿  关闭弹窗
+                    data.dialogFormVisible = false;
                 }
-            });
-    }
-};
-
-//连续提交
-const continuousSaveBarrage = () => {
-    if (data.table === '' || data.barrage === '') {
-        ElNotification.error('请选择分栏或输入弹幕');
-    } else {
-        httpInstance
-            .post('/machine/addUnaudit', {
-                table: data.table,
-                barrage: data.barrage,
-            })
-            .then((res) => {
-                load();
-                data.barrage = '';
                 if (res.code === '200') {
                     ElNotification.success('投稿成功，待审核(一天内)');
+                    data.barrage = '';
                 } else {
-                    ElNotification.error('请求失败');
+                    ElNotification.error('投稿失败，必要时请及时反馈');
                 }
             });
     }
