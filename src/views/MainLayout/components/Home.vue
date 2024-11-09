@@ -117,15 +117,13 @@ const autoexec = () => {
           icon: autoExecPng,
           dangerouslyUseHTMLString: true,
           title: '你好',
-          message:
-            "<p>欢迎来自<b>" +
-            resData.location +
-            "</b>的朋友<br/> " +
-            resData.system +
-            resData.browser +
-            " <br>IP: " +
-            resData.ip +
-            "</p>",
+          message: /* HTML */`
+            <p>
+                欢迎来自<b>${resData.location || '地球'}</b>的朋友<br/>  
+                ${resData.system || '外星操作系统'} ${resData.browser || '牛逼浏览器'}<br/>
+                IP: ${resData.ip || '地球'} 
+            </p>
+            `,
           offset: 50,
           customClass: "myClass",
           duration: 1000
