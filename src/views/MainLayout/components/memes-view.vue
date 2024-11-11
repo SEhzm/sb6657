@@ -19,7 +19,7 @@
                 </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 ({{ scope.row.copyCount }})</el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 (<flip-num :num="scope.row.copyCount" />)</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -42,6 +42,7 @@ import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import submissionDialog from '@/components/submission-dialog.vue';
+import flipNum from '@/components/flip-num.vue';
 
 const route = useRoute();
 const router = useRouter();

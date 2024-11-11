@@ -17,7 +17,7 @@
                 </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 ({{ scope.row.copyCount }})</el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 (<flip-num :num="scope.row.copyCount" />)</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -29,6 +29,7 @@
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import flipNum from '@/components/flip-num.vue';
 /**
  * 组件输入:
  * 1.插槽，弹窗头部的内容。主要是描述，标题，切换其他弹窗按钮之类的。(注意，我把对话框的title删了，因为插槽放在header，设置插槽就行，会覆盖title)
