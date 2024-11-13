@@ -7,8 +7,8 @@
             </a>
 
             <div class="header-actions">
-                <img src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
-                <div @click="openHotMeme24h" class="hot-barrage">
+                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
+                <div v-if="showHotMeme" @click="openHotMeme24h" class="hot-barrage">
                     <transition name="fade">
                         <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
                     </transition>
@@ -76,10 +76,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
 import { Search } from '@element-plus/icons-vue';
 import memeDialog from './components/meme-dialog.vue';
+import { useIsMobile } from '@/utils/common';
+import { useRoute } from 'vue-router';
+const isMobile = useIsMobile();
+const route = useRoute();
 
 const loadingTips = '我还没有加载完喔~~';
 const supportMeDialog = ref(false);
@@ -116,6 +120,9 @@ function openHotMeme7d() {
     hotMeme7dLoading.value = true;
     refreshHotMeme7d();
 }
+
+// 顶部烂梗热榜，控制其在移动端，非首页的时候不显示
+const showHotMeme = computed(() => !(isMobile.value && route.path !== '/home'));
 
 // 顶部栏的单条烂梗轮播展示。因为取用的24h热榜数据，所以先触发一次获取到数据
 refreshHotMeme24h();
