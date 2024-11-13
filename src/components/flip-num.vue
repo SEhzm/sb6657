@@ -19,16 +19,21 @@ const currNum = ref(props.num);
 const nextNum = ref(props.num);
 let flipping = false;
 
-const flipState = ref<'normal' | 'end'>('normal');
+const flipState = ref<'normal' | 'end' | 'end flex-start'>('normal');
 
 watch(
     () => props.num,
     async (newVaL, oldVal) => {
         currNum.value = oldVal;
-        nextNum.value = Math.max(oldVal, newVaL);
-        if (flipping) return;
+        nextNum.value = newVaL;
+        if (flipping) {
+            currNum.value = newVaL;
+            nextNum.value = newVaL;
+            return;
+        }
         flipping = true;
-        flipState.value = 'end';
+        // 这么写是因为对齐问题。宽度占位用的新值，所以在新值比旧值小的时候要靠左对齐，不然动画很诡异
+        flipState.value = newVaL < oldVal ? 'end flex-start' : 'end';
         await sleep(500);
         currNum.value = newVaL;
         nextNum.value = newVaL;
@@ -48,6 +53,9 @@ watch(
     .flip {
         position: absolute;
         top: 0px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
     .normal {
         transform: translateY(0);
@@ -55,6 +63,9 @@ watch(
     .end {
         transition: transform 0.5s;
         transform: translateY(-50%);
+    }
+    .flex-start {
+        align-items: flex-start;
     }
 }
 </style>
