@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import StarrySky from '@/views/Starrysky.vue';
-const value = new Date("2024-11-17 23:30:00")  //1
+const value = new Date("2024-11-18 00:30:00")  //1
 
 </script>
 
