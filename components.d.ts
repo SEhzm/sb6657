@@ -10,6 +10,7 @@ declare module 'vue' {
     ChatRoom: typeof import('./src/components/ChatRoom.vue')['default']
     ElBacktop: typeof import('element-plus/es')['ElBacktop']
     ElButton: typeof import('element-plus/es')['ElButton']
+    ElCountdown: typeof import('element-plus/es')['ElCountdown']
     ElDialog: typeof import('element-plus/es')['ElDialog']
     ElForm: typeof import('element-plus/es')['ElForm']
     ElFormItem: typeof import('element-plus/es')['ElFormItem']

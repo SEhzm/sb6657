@@ -6,7 +6,7 @@
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
             </div>
 
-            <el-table :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <span class="index">{{ scope.row.id }}</span>
@@ -164,6 +164,11 @@ const handleSubmit = () => {
             justify-content: center;
             margin-top: 16px;
         }
+    }
+}
+@media (min-width: 600px) {
+    .main-table{
+        font-size: large;
     }
 }
 </style>
