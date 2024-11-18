@@ -254,7 +254,7 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 
 @media (max-width: 600px) {
     .hot-barrage-span {
-        color: black;
+        color: #e4d6b8;
         border-bottom: 1px solid black;
         padding-bottom: 1px;
     }

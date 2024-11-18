@@ -330,7 +330,7 @@ const onSearchQueryChange = () => {
         line-height: 30px;
 
         &.first-card {
-            margin-top: 20px;
+            margin-top: 00px;
         }
 
         &.second-card {
@@ -400,5 +400,22 @@ const onSearchQueryChange = () => {
             color: red;
         }
     }
+}
+@media(max-width :600px){
+    .boomouder {
+    height: 150px;
+
+        .boom6657 {
+            position: absolute;
+            border-radius: 10px;
+            width: 192px;
+            height: 108px;
+            left: 25%;
+        }
+    }
+    .home {
+        width: 100%;
+    }
+    
 }
 </style>
