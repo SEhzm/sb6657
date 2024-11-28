@@ -1,4 +1,4 @@
-export const SERVER_ADDRESS = 'https://82.157.198.237:9090';
+export const SERVER_ADDRESS = 'https://dgq63136.icu:9090';
 
 export const API = {
     INCREASE_COPY_COUNT: '/machine/addCnt',             // 增加复制次数
