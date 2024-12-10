@@ -32,7 +32,7 @@
             :cell-style="{}">
             <el-table-column width="50" prop="id" label="序号"></el-table-column>
             <el-table-column prop="barrage" min-width="90"
-                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;目前的提名榜" />
+                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;每人三票，目前的提名榜" />
             <el-table-column v-if="isTable" label="" align="center" width="85">
                 <template #default="scope">
                     <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
