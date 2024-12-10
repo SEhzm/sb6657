@@ -1,4 +1,3 @@
-<!-- 星空背景 -->
 <template>
   <div id="bg">
     <div class="body" id="bodyId">
@@ -7,15 +6,31 @@
       </div>
     </div>
   </div>
-  <div class="draggable" :style="{ left: `${x}vw`, top: `${y}px` }" @mousedown="startDrag" v-show="isChatVisible">
+  <div 
+    class="draggable chat-room-draggable" 
+    :style="{ left: `${chatX}vw`, top: `${chatY}px` }" 
+    @mousedown="startDrag($event, 'chat')"
+    v-show="isChatVisible"
+  >
     <ChatRoom></ChatRoom>
     <el-button class="close-button" @click="closeChat" type="primary">
-      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-        p-id="4538" width="16" height="16">
+      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
         <path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path>
-        <path
-          d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
-          fill="#ff0505" p-id="4540"></path>
+        <path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#ff0505" p-id="4540"></path>
+      </svg>
+    </el-button>
+  </div>
+  <div 
+    class="draggable annual-hot-list-draggable" 
+    :style="{ left: `${annualX}vw`, top: `${annualY}px` }" 
+    @mousedown="startDrag($event, 'annual')"
+    v-show="isHotVisible"
+  >
+    <AnnualHotList></AnnualHotList>
+    <el-button class="close-button-1" @click="closeHot" type="primary">
+      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
+        <path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path>
+        <path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#ff0505" p-id="4540"></path>
       </svg>
     </el-button>
   </div>
@@ -23,23 +38,31 @@
 
 <script setup>
 import ChatRoom from '@/components/ChatRoom.vue';
-import { onMounted, ref, onBeforeUnmount } from 'vue'
+import AnnualHotList from '@/components/AnnualHotList.vue';
+import { onMounted, ref, onBeforeUnmount } from 'vue';
+
 // 用于存储元素X和Y位置的响应性引用
-const x = ref(74);
-const y = ref(200);
+const chatX = ref(74);
+const chatY = ref(200);
+const annualX = ref(8.2);
+const annualY = ref(125);
 const isChatVisible = ref(true);
+const isHotVisible = ref(true);
+
 // 是否正在拖动的标志
 const isDragging = ref(false);
+let currentDraggingComponent = null;
 
 // 开始拖动的函数
-const startDrag = (event) => {
+const startDrag = (event, component) => {
+  currentDraggingComponent = component;
   // 记录初始鼠标位置
   const initialMouseX = event.clientX;
   const initialMouseY = event.clientY;
 
   // 记录初始元素位置
-  const initialX = x.value;
-  const initialY = y.value;
+  const initialX = component === 'chat' ? chatX.value : annualX.value;
+  const initialY = component === 'chat' ? chatY.value : annualY.value;
 
   // 开始拖动，设置为true
   isDragging.value = true;
@@ -53,8 +76,13 @@ const startDrag = (event) => {
       const deltaY = moveEvent.clientY - initialMouseY;
 
       // 更新元素的位置
-      x.value = initialX + deltaX / 19.2;
-      y.value = initialY + deltaY;
+      if (component === 'chat') {
+        chatX.value = initialX + deltaX / 19.2;
+        chatY.value = initialY + deltaY;
+      } else if (component === 'annual') {
+        annualX.value = initialX + deltaX / 19.2;
+        annualY.value = initialY + deltaY;
+      }
     }
   };
 
@@ -72,7 +100,6 @@ const startDrag = (event) => {
   document.addEventListener('mousemove', dragging);
   document.addEventListener('mouseup', stopDrag);
 };
-
 
 //星星
 let starsRef = ref(null);
@@ -150,6 +177,9 @@ onBeforeUnmount(() => {
 const closeChat = () => {
   isChatVisible.value = false;
 };
+const closeHot = () => {
+  isHotVisible.value = false;
+};
 </script>
 
 <style scoped>
@@ -165,7 +195,14 @@ const closeChat = () => {
   width: 30px;
   height: 25px;
 }
-
+.close-button-1 {
+  position: absolute;
+  top: 5px;
+  right: -160px;
+  background: transparent;
+  width: 30px;
+  height: 25px;
+}
 #bg {
   position: fixed;
   top: 0;
@@ -224,21 +261,17 @@ const closeChat = () => {
   backface-visibility: hidden;
 }
 
-
-
-@media (min-width: 601px) {
-  .draggable {
-    box-shadow: 0px 7px 30px 0px rgba(100, 100, 111, 0.3);
-    background-color: white;
-    border-radius: 10px;
-    margin-top: -50px;
-    width: 450px;
-    right: 30px;
-    position: fixed;
-    cursor: Move;
-    /* 设置鼠标样式为可移动状态 */
-    z-index: 100;
-  }
+.draggable {
+  box-shadow: 0px 7px 30px 0px rgba(100, 100, 111, 0.3);
+  background-color: white;
+  border-radius: 10px;
+  margin-top: -50px;
+  width: 450px;
+  right: 30px;
+  position: fixed;
+  cursor: Move;
+  /* 设置鼠标样式为可移动状态 */
+  z-index: 100;
 }
 
 @media (max-width: 600px) {
@@ -246,6 +279,12 @@ const closeChat = () => {
     margin-top: 50px;
   }
   .close-button {
+    display: none;
+  }
+  .chat-room-draggable{
+    display: none;
+  }
+  .annual-hot-list-draggable{
     display: none;
   }
 }

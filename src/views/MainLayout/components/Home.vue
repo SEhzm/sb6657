@@ -3,6 +3,7 @@
         <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
             class="boom6657">
     </div>
+    <AnnualHotList class="AnnualHotList"></AnnualHotList>
     <div class="home">
         <div class="card first-card">
             <div>
@@ -10,10 +11,11 @@
                     <p class="announcement">
                         新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册
                     </p>
-                    <p class="announcement-highlight">
+                    <!-- <p class="announcement-highlight">
                         最新推出了油猴TamperMonkey插件，可以在直播间直接搜索进行复制和一键发送，
                         <a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a>
-                    </p>
+                    </p> -->
+                    <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示</p>
                 </b>
             </div>
         </div>
@@ -90,7 +92,7 @@
             </div>
             <el-backtop :right="50" :bottom="50" />
         </div>
-
+<ChatRoom class="ChatRoom"></ChatRoom>
         <div class="card sixth-card">
             友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
         </div>
@@ -104,6 +106,10 @@ import httpInstance from "@/apis/httpInstance";
 import { ElMessage, ElNotification } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
+
+import ChatRoom from '@/components/ChatRoom.vue';
+import AnnualHotList from '@/components/AnnualHotList.vue';
+
 
 const loading = ref(true)
 const isInput = ref(false)
@@ -330,7 +336,7 @@ const onSearchQueryChange = () => {
         line-height: 30px;
 
         &.first-card {
-            margin-top: 00px;
+            margin-top: 10px;
         }
 
         &.second-card {
@@ -401,7 +407,18 @@ const onSearchQueryChange = () => {
         }
     }
 }
+@media (min-width: 601px) {
+    .ChatRoom{
+        display: none;
+    }
+    .AnnualHotList{
+        display: none;
+    }
+}
 @media(max-width :600px){
+    .AnnualHotList{
+        margin-bottom: 20px;
+    }
     .boomouder {
     height: 150px;
 
