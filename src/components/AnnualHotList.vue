@@ -123,7 +123,7 @@ const pick = (row: any) => {
                 confirmButtonText: 'OK',
             });
         } else {
-            ElMessageBox.alert(row.barrage, '你投了一票', {
+            ElMessageBox.alert(row.barrage, '每人有三票，你刚投了一票', {
                 confirmButtonText: 'OK',
             });
 
