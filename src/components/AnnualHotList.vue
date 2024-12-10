@@ -33,9 +33,14 @@
             <el-table-column width="50" prop="id" label="序号"></el-table-column>
             <el-table-column prop="barrage" min-width="90"
                 label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;目前的提名榜" />
-            <el-table-column label="" align="center" width="85">
+            <el-table-column v-if="isTable" label="" align="center" width="85">
                 <template #default="scope">
                     <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column v-if="isHot" label="" align="center" width="85">
+                <template #default="scope">
+                    <el-button type="primary" label="" @click="pickHot(scope.row)">提名</el-button>
                 </template>
             </el-table-column>
             <el-table-column prop="pickCnt" label="提名次数" width="55" />
@@ -57,6 +62,8 @@ import httpInstance from "@/apis/httpInstance";
 import { API } from "@/constants/backend";
 
 const isTableVisible = ref(false);
+const isTable = ref(false);
+const isHot = ref(true);
 const pickSum = ref(0);
 
 //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -82,6 +89,8 @@ const data = reactive({
     currentPage: 1, //起始页码
 })
 const handleSearchMeme = () => {
+    isTable.value = true
+    isHot.value = false
     isTableVisible.value = true
     httpInstance.post('/machine/hotTop20/Query', {
         QueryBarrage: searchKey.value
@@ -92,6 +101,8 @@ const handleSearchMeme = () => {
     })
 }
 const pick = (row: any) => {
+    console.log(row);
+
     if (pickCnt.value <= 0) {
         ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
             confirmButtonText: 'OK',
@@ -128,7 +139,48 @@ const pick = (row: any) => {
         });
     });
 }
+const pickHot = (row: any) => {
+    console.log(row);
+
+    if (pickCnt.value <= 0) {
+        ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
+            confirmButtonText: 'OK',
+        });
+        return;
+    }
+
+    httpInstance.post('/machine/hotTop20/pick', {
+        barrageId: row.barrageId,
+        barrage: row.barrage
+    }).then(res => {
+        if (res.code == 600) {
+            ElMessageBox.alert('你已经提名过这条烂梗!', '换一条提名吧!', {
+                confirmButtonText: 'OK',
+            });
+        } else if (res.code == 500) {
+            ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
+                confirmButtonText: 'OK',
+            });
+        } else {
+            ElMessageBox.alert(row.barrage, '你投了一票', {
+                confirmButtonText: 'OK',
+            });
+
+
+            pickCnt.value -= 1;
+
+            //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            localStorage.setItem("pickCnt", pickCnt.value.toString());
+        }
+    }).catch(err => {
+        ElMessageBox.alert('慢点哟', '别别别, 你的手速太快辣', {
+            confirmButtonText: 'OK',
+        });
+    });
+}
 const load = (pageNum = 1) => {
+    isHot.value = true
+    isTable.value = false
     loading.value = true
     httpInstance.get('/machine/hotTop20/loadTop20').then(res => {
         data.total = res.data?.total || 0
