@@ -36,9 +36,6 @@
                 <a href="https://sb6657.cn/#/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee" class="icon-img" />
                 </a>
-                <a href="https://gitee.com/hzming1/sb6657" target="_blank">
-                    <img src="@/assets/imgs/gitee.png" alt="gitee" class="icon-img" />
-                </a>
                 <a href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
                     <img src="@/assets/imgs/douyu.png" alt="douyu" class="icon-img" />
                 </a>

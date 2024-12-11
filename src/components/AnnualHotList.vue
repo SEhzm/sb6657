@@ -14,7 +14,7 @@
             <div style="display: flex;">
                 <el-input v-model="searchKey" placeholder="先在这搜索烂梗再提名" clearable @keydown.enter="handleSearchMeme">
                     <template #append>
-                        <el-button type="primary" @click="handleSearchMeme">
+                        <el-button type="primary" @click="handleSearchMeme(currentPage)">
                             <el-icon>
                                 <Search />
                             </el-icon>
@@ -22,8 +22,8 @@
                         </el-button>
                     </template>
                 </el-input>
-                <span @click="isTableVisible = true">
-                    <el-button class="loadBtn" type="primary" label="" @click="load">看看提名榜</el-button></span>
+                <span @click="isTableVisible=true">
+                <el-button class="loadBtn" type="primary" @click="load(1)">看看提名榜</el-button></span>
             </div>
         </div>
         <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData"
@@ -32,8 +32,8 @@
             :cell-style="{}">
             <el-table-column width="50" prop="id" label="序号"></el-table-column>
             <el-table-column prop="barrage" min-width="90"
-                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;每人三票，目前的提名榜" />
-            <el-table-column v-if="isTable" label="" align="center" width="85">
+                label=" 每人三票，目前的提名榜" />
+            <el-table-column v-if="isQuery" label="" align="center" width="85">
                 <template #default="scope">
                     <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
                 </template>
@@ -43,13 +43,20 @@
                     <el-button type="primary" label="" @click="pickHot(scope.row)">提名</el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="pickCnt" label="提名次数" width="55" />
+            <el-table-column v-if="isFinish" prop="pickCnt" label="提名次数" width="55" />
         </el-table>
         <div class="pagination-wrapper" v-if="isTableVisible">
             <!-- 分页 -->
-            <div>
+            <div v-if="isQuery">
                 <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
-                    :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
+                    :page-size="data.pageSize" @current-change="handleQueryPageChange"></el-pagination>
+            </div>
+        </div>
+        <div class="pagination-wrapper" v-if="isTableVisible">
+            <!-- 分页 -->
+            <div v-if="isHot">
+                <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
+                    :page-size="data.pageSize" @current-change="handleHotPageChange"></el-pagination>
             </div>
         </div>
     </div>
@@ -62,20 +69,24 @@ import httpInstance from "@/apis/httpInstance";
 import { API } from "@/constants/backend";
 
 const isTableVisible = ref(false);
-const isTable = ref(false);
+const isQuery = ref(false);
 const isHot = ref(true);
 const pickSum = ref(0);
 
 //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 const pickCnt = ref(localStorage.getItem("pickCnt"));
-
+const isFinish = ref(true);
 const Preloader = () => {
     //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     const storedPickCnt = localStorage.getItem("pickCnt");
     //不存在就设置
     if (storedPickCnt === null) {
-        localStorage.setItem("pickCnt", "3");
+        localStorage.setItem("pickCnt", "3"); //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         pickCnt.value = "3";
+        
+    }
+    if (localStorage.getItem("pickCnt") > 0) { //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        isFinish.value = false
     }
 }
 Preloader()
@@ -88,22 +99,32 @@ const data = reactive({
     pageSize: 10, //每页个数
     currentPage: 1, //起始页码
 })
-const handleSearchMeme = () => {
-    isTable.value = true
-    isHot.value = false
-    isTableVisible.value = true
+
+const handleSearchMeme = (pageNum:number = 1) => {
+    if(searchKey.value==null){
+        return 
+    }
+    isQuery.value = true;
+    isHot.value = false;
+    isTableVisible.value = true;
     httpInstance.post('/machine/hotTop20/Query', {
-        QueryBarrage: searchKey.value
+        QueryBarrage: searchKey.value,
+        pageNum: pageNum,
+        pageSize: data.pageSize
     }).then(res => {
-        data.total = res.data?.total || 0
-        data.tableData = res.data?.list || []
-        loading.value = false
-    })
+        data.total = res.data?.total || 0;
+        data.tableData = res.data?.list || [];
+        loading.value = false;
+    }).catch(err => {
+        console.error('Error fetching data:', err);
+        loading.value = false;
+    });
 }
 const pick = (row: any) => {
     console.log(row);
 
     if (pickCnt.value <= 0) {
+        isFinish.value = true
         ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
             confirmButtonText: 'OK',
         });
@@ -119,15 +140,14 @@ const pick = (row: any) => {
                 confirmButtonText: 'OK',
             });
         } else if (res.code == 500) {
+            isFinish.value = true
             ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
                 confirmButtonText: 'OK',
             });
         } else {
-            ElMessageBox.alert(row.barrage, '每人有三票，你刚投了一票', {
+            ElMessageBox.alert(row.barrage, '每人有三票，你刚投了一票，投完票就能看到提名次数啦', {
                 confirmButtonText: 'OK',
             });
-
-
             pickCnt.value -= 1;
 
             //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -143,6 +163,7 @@ const pickHot = (row: any) => {
     console.log(row);
 
     if (pickCnt.value <= 0) {
+        isFinish.value = true
         ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
             confirmButtonText: 'OK',
         });
@@ -158,6 +179,11 @@ const pickHot = (row: any) => {
                 confirmButtonText: 'OK',
             });
         } else if (res.code == 500) {
+            isFinish.value = false
+            pickCnt.value = 0;
+
+            //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            localStorage.setItem("pickCnt", pickCnt.value.toString());
             ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
                 confirmButtonText: 'OK',
             });
@@ -180,25 +206,33 @@ const pickHot = (row: any) => {
 }
 const load = (pageNum = 1) => {
     isHot.value = true
-    isTable.value = false
+    isQuery.value = false
     loading.value = true
-    httpInstance.get('/machine/hotTop20/loadTop20').then(res => {
+    httpInstance.get('/machine/hotTop20/loadTop20', {
+        params: {
+            pageNum: pageNum,
+            pageSize: data.pageSize
+        }
+    }).then(res => {
         data.total = res.data?.total || 0
         data.tableData = res.data?.list || []
         loading.value = false
     });
     httpInstance.get('/machine/hotTop20/pickSum').then(res => {
-        console.log(res);
-
         pickSum.value = res.data
     })
 }
-load()
+load(data.currentPage)
 
 
-const handlePageChange = (page) => {
-    data.currentPage = page
-    load(page)
+const handleHotPageChange = (page: number) => {
+    data.currentPage = page;
+    load(page);
+}
+
+const handleQueryPageChange = (page: number) => {
+    data.currentPage = page;
+    handleSearchMeme(page);
 }
 const handleOpen = () => {
     isTableVisible.value = !isTableVisible.value;

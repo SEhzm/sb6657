@@ -15,7 +15,7 @@
                         最新推出了油猴TamperMonkey插件，可以在直播间直接搜索进行复制和一键发送，
                         <a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a>
                     </p> -->
-                    <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示</p>
+                    <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示，每人每阶段有三票，投完票即可看到提名次数</p>
                 </b>
             </div>
         </div>

@@ -45,7 +45,7 @@ import { onMounted, ref, onBeforeUnmount } from 'vue';
 const chatX = ref(74);
 const chatY = ref(200);
 const annualX = ref(8.2);
-const annualY = ref(125);
+const annualY = ref(50);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
 
