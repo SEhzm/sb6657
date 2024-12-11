@@ -4,7 +4,8 @@
             <span @click="handleOpen">
                 <p class="context">2024年度TOP20烂梗评选<span class="pickSum">总提名数：{{ pickSum }}</span>
                 </p>
-                <el-steps :active="1" finish-status="success">
+                <!-- 注意修改阶段active !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
+                <el-steps :active="0" finish-status="success">  
                     <el-step title="提名top100" description="12.11 - 12.17" />
                     <el-step title="提名top50" description="12.18 - 12.24" />
                     <el-step title="评选" description="12.25 - 12. 31" />
@@ -22,8 +23,10 @@
                         </el-button>
                     </template>
                 </el-input>
-                <span @click="isTableVisible=true">
-                <el-button class="loadBtn" type="primary" @click="load(1)">看看提名榜</el-button></span>
+                <span @click="isTableVisible = true">
+                    <el-tooltip class="box-item" content="显示最新提名，投完三票即可看到总的排名"
+                        placement="top">
+                    <el-button class="loadBtn" type="primary" @click="load(1)">看看<span v-if="isFinish">总</span><span v-else>最新</span>提名榜</el-button></el-tooltip></span>
             </div>
         </div>
         <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData"
@@ -31,8 +34,7 @@
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{}">
             <el-table-column width="50" prop="id" label="序号"></el-table-column>
-            <el-table-column prop="barrage" min-width="90"
-                label=" 每人三票，目前的提名榜" />
+            <el-table-column prop="barrage" min-width="90" label=" 每人三票，目前的提名榜" />
             <el-table-column v-if="isQuery" label="" align="center" width="85">
                 <template #default="scope">
                     <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
@@ -83,7 +85,7 @@ const Preloader = () => {
     if (storedPickCnt === null) {
         localStorage.setItem("pickCnt", "3"); //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         pickCnt.value = "3";
-        
+
     }
     if (localStorage.getItem("pickCnt") > 0) { //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         isFinish.value = false
@@ -100,9 +102,9 @@ const data = reactive({
     currentPage: 1, //起始页码
 })
 
-const handleSearchMeme = (pageNum:number = 1) => {
-    if(searchKey.value==null){
-        return 
+const handleSearchMeme = (pageNum: number = 1) => {
+    if (searchKey.value == null) {
+        return
     }
     isQuery.value = true;
     isHot.value = false;
@@ -211,7 +213,8 @@ const load = (pageNum = 1) => {
     httpInstance.get('/machine/hotTop20/loadTop20', {
         params: {
             pageNum: pageNum,
-            pageSize: data.pageSize
+            pageSize: data.pageSize,
+            isFinish: isFinish.value
         }
     }).then(res => {
         data.total = res.data?.total || 0
@@ -286,8 +289,8 @@ const handleOpen = () => {
 
 @media(max-width: 600px) {
     .loadBtn {
-        margin-left: 20px;
-        margin-right: 10px;
+        margin-left: 5px;
+        margin-right: 0px;
     }
 
     .pickSum {
