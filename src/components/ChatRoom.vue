@@ -147,8 +147,11 @@ const send = async () => {
 				userId: userId.value,
 				time: getCurrentTime()
 			}));
+			httpInstance.get('/machine/chatIp').then()
 			message.value = ''; // 清空输入框
 			scrollToBottom(); // 滚动到最底部
+			httpInstance
+
 		} else {
 			ElMessageBox.alert('请输入名字和内容', '☝️🤓', {
 				confirmButtonText: 'OK',
