@@ -3,11 +3,11 @@
 		<div id="online-count">
 			<p>当前在线人数: {{ onlineCount }}</p>
 		</div>
-
+		<p v-if="!isOpen">您已掉线</p>
 		<el-button @click="closeWebSocket">关闭连接</el-button>
 		<el-button @click="reconnectWebSocket"
-			v-if="!websocket.value || websocket.value.readyState !== WebSocket.OPEN">重新连接</el-button>
-		<div id="message-container" ref="messageContainer">
+			v-if="!isOpen" >重新连接</el-button>
+		<!-- <div id="message-container" ref="messageContainer">
 			<div v-for="(msg, index) in messages" :key="index"
 				:class="{ 'message-bubble': true, 'mine': msg.isMine, 'others': !msg.isMine }">
 				<span class="time">{{ msg.time }}</span>
@@ -18,7 +18,7 @@
 			placeholder="请输入您的ID(你只能输入一次，请谨慎)" />
 		<el-input id="text" type="text" v-model="message" maxlength="66.57" show-word-limit placeholder="请输入内容" />
 		<el-button v-loading="ChatRoomLoading" class="btn-animate btn-animate__vibrate" type="primary"
-			@click="send">发送消息</el-button>
+			@click="send">发送消息</el-button> -->
 	</div>
 </template>
 
@@ -39,7 +39,7 @@ interface WebSocketData {
 	userId?: string;
 	count?: number;
 }
-
+const isOpen =ref(true)
 const websocket = ref<WebSocket | null>(null);
 const clientId = ref<string>(Math.random().toString(36).substr(2));
 const userId = ref<string>(''); // 用户输入的ID
@@ -93,6 +93,7 @@ const onWebSocketError = () => {
 
 // 连接成功建立的回调方法
 const onWebSocketOpen = () => {
+	isOpen.value = true
 	if (localStorage.getItem('userId')) {
 		firstIn.value = true;
 		userId.value = localStorage.getItem('userId')!;
@@ -101,29 +102,47 @@ const onWebSocketOpen = () => {
 	messages.value.push({ text: '连接成功：仅显示近20条记录', isMine: false, time: getCurrentTime() });
 };
 
+
+let messageTimer: NodeJS.Timeout | null = null;
+const resetTimer = () => {
+    if (messageTimer) {
+        clearTimeout(messageTimer);
+    }
+    messageTimer = setTimeout(() => {
+        isOpen.value = false;
+    }, 60000); // 1分钟
+};
+
 // 接收到消息的回调方法
 const onWebSocketMessage = (event: MessageEvent) => {
-	try {
-		const data: WebSocketData = JSON.parse(event.data);
-		if (data.type === 'onlineCount' && data.count !== undefined) {
-			onlineCount.value = data.count;
-		} else if (data.type === 'serverMessage' && data.message) {
-			messages.value.push({ text: data.message, isMine: false, time: getCurrentTime() });
-		} else if (data.type === 'clientMessage' && data.message && data.userId) {
-			const isMine = data.userId === userId.value;
-			const userMessage = `${data.userId} ：${data.message}`;
-			messages.value.push({ text: userMessage, isMine, time: getCurrentTime() });
-		} else {
-			console.error('未知的消息类型:', data);
-		}
-	} catch (error) {
-		console.error('解析消息失败:', event.data, error);
-		messages.value.push({ text: '解析消息失败', isMine: false, time: getCurrentTime() });
-	}
+    isOpen.value = true;
+    resetTimer(); // 每次接收到消息时重置定时器
+
+    try {
+        const data: WebSocketData = JSON.parse(event.data);
+        if (data.type === 'onlineCount' && data.count !== undefined) {
+            onlineCount.value = data.count;
+        } else if (data.type === 'serverMessage' && data.message) {
+            messages.value.push({ text: data.message, isMine: false, time: getCurrentTime() });
+        } else if (data.type === 'clientMessage' && data.message && data.userId) {
+            const isMine = data.userId === userId.value;
+            const userMessage = `${data.userId} ：${data.message}`;
+            messages.value.push({ text: userMessage, isMine, time: getCurrentTime() });
+        } else {
+            console.error('未知的消息类型:', data);
+        }
+    } catch (error) {
+        console.error('解析消息失败:', event.data, error);
+        messages.value.push({ text: '解析消息失败', isMine: false, time: getCurrentTime() });
+    }
 };
+
+// 初始化定时器
+resetTimer();
 
 // 连接关闭的回调方法
 const onWebSocketClose = () => {
+	isOpen.value =false
 	messages.value.push({ text: '连接已关闭', isMine: false, time: getCurrentTime() });
 };
 
@@ -168,6 +187,7 @@ const send = async () => {
 
 // 关闭连接
 const closeWebSocket = () => {
+	isOpen.value = false
 	if (websocket.value && websocket.value.readyState === WebSocket.OPEN) {
 		websocket.value.close();
 	}
