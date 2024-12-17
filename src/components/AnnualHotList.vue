@@ -2,58 +2,34 @@
     <div class="card pickHome">
         <div class="step">
             <span @click="handleOpen">
-                <p class="context">2024年度TOP20烂梗评选<span class="pickSum">总提名数：{{ pickSum }}</span>
+                <p class="context">2024年度TOP20烂梗评选🏆<span class="pickSum">第二轮总投票数：{{ pickSum }}</span>
                 </p>
                 <!-- 注意修改阶段active !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
-                <el-steps :active="0" finish-status="success">  
+                <el-steps :active="1" finish-status="success">
                     <el-step title="提名top100" description="12.11 - 12.17" />
                     <el-step title="提名top50" description="12.18 - 12.24" />
                     <el-step title="评选" description="12.25 - 12. 31" />
-                    <el-step title="公布" description="2025.01.01" />
+                    <el-step title="公布" description="2025.01.01" simple="false"></el-step>
                 </el-steps>
             </span>
-            <div style="display: flex;">
-                <el-input v-model="searchKey" placeholder="先在这搜索烂梗再提名" clearable @keydown.enter="handleSearchMeme">
-                    <template #append>
-                        <el-button type="primary" @click="handleSearchMeme(currentPage)">
-                            <el-icon>
-                                <Search />
-                            </el-icon>
-                            搜索
-                        </el-button>
-                    </template>
-                </el-input>
-                <span @click="isTableVisible = true">
-                    <el-tooltip class="box-item" content="显示最新提名，投完三票即可看到总的排名"
-                        placement="top">
-                    <el-button class="loadBtn" type="primary" @click="load(1)">看看<span v-if="isFinish">总</span><span v-else>最新</span>提名榜</el-button></el-tooltip></span>
-            </div>
+            <span class="text" v-if="isTableVisible" @click="isTableVisible = true" >
+                <el-tooltip class="box-item" content="顺序为随机显示，不代表排名" placement="top">
+                    <el-button class="loadBtn" type="primary" @click="load(1)">更换十条</el-button></el-tooltip> 本阶段一共可以投五票，结果会根据<b>评分</b>和<b>票数</b>选定</span>
         </div>
+
         <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData"
             empty-text="你等了这么久,应该是没有这条烂梗,期待投稿" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{}">
-            <el-table-column width="50" prop="id" label="序号"></el-table-column>
-            <el-table-column prop="barrage" min-width="90" label=" 每人三票，目前的提名榜" />
-            <el-table-column v-if="isQuery" label="" align="center" width="85">
-                <template #default="scope">
-                    <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
-                </template>
-            </el-table-column>
+            <!-- <el-table-column width="50" prop="id" label="序号"></el-table-column> -->
+            <el-table-column prop="barrage" min-width="90" label=" 每人三票，顺序为随机显示，不代表排名" />
             <el-table-column v-if="isHot" label="" align="center" width="85">
                 <template #default="scope">
-                    <el-button type="primary" label="" @click="pickHot(scope.row)">提名</el-button>
+                    <el-button type="primary" label="" @click="open(scope.row)">提名</el-button>
                 </template>
             </el-table-column>
-            <el-table-column v-if="isFinish" prop="pickCnt" label="提名次数" width="55" />
         </el-table>
-        <div class="pagination-wrapper" v-if="isTableVisible">
-            <!-- 分页 -->
-            <div v-if="isQuery">
-                <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
-                    :page-size="data.pageSize" @current-change="handleQueryPageChange"></el-pagination>
-            </div>
-        </div>
+
         <div class="pagination-wrapper" v-if="isTableVisible">
             <!-- 分页 -->
             <div v-if="isHot">
@@ -61,6 +37,15 @@
                     :page-size="data.pageSize" @current-change="handleHotPageChange"></el-pagination>
             </div>
         </div>
+        <el-dialog draggable v-model="dialogVisible" title="请为烂梗评分，将作为最后评选的参考部分">
+            <el-rate allow-half v-model="star" size="large" :max="5" show-score text-color="#ff9900" />
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="dialogVisible = false">取 消</el-button>
+                    <el-button type="primary" @click="pickHot">选取</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -75,141 +60,87 @@ const isQuery = ref(false);
 const isHot = ref(true);
 const pickSum = ref(0);
 
-//下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-const pickCnt = ref(localStorage.getItem("pickCnt"));
+const pickCnt = ref(localStorage.getItem("pickCnt-2"));
 const isFinish = ref(true);
 const Preloader = () => {
-    //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    const storedPickCnt = localStorage.getItem("pickCnt");
-    //不存在就设置
+    const storedPickCnt = localStorage.getItem("pickCnt-2");
     if (storedPickCnt === null) {
-        localStorage.setItem("pickCnt", "3"); //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        pickCnt.value = "3";
-
+        localStorage.setItem("pickCnt-2", "5");
+        pickCnt.value = "5";
     }
-    if (localStorage.getItem("pickCnt") > 0) { //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        isFinish.value = false
+    if (localStorage.getItem("pickCnt-2") > 0) {
+        isFinish.value = false;
     }
 }
 Preloader()
-
+const star = ref()
 const loading = ref(true)
-const searchKey = ref()
+
 const data = reactive({
     tableData: [],
     total: 0,
-    pageSize: 10, //每页个数
-    currentPage: 1, //起始页码
+    pageSize: 10,
+    currentPage: 1,
 })
 
-const handleSearchMeme = (pageNum: number = 1) => {
-    if (searchKey.value == null) {
-        return
-    }
-    isQuery.value = true;
-    isHot.value = false;
-    isTableVisible.value = true;
-    httpInstance.post('/machine/hotTop20/Query', {
-        QueryBarrage: searchKey.value,
-        pageNum: pageNum,
-        pageSize: data.pageSize
-    }).then(res => {
-        data.total = res.data?.total || 0;
-        data.tableData = res.data?.list || [];
-        loading.value = false;
-    }).catch(err => {
-        console.error('Error fetching data:', err);
-        loading.value = false;
-    });
+const dialogVisible = ref(false);
+
+const selectedRow = ref(null);
+const open = (row: any) => {
+    star.value = 2.5
+    dialogVisible.value = true
+    selectedRow.value = row;
 }
-const pick = (row: any) => {
-    console.log(row);
+
+
+const pickHot = () => {
 
     if (pickCnt.value <= 0) {
         isFinish.value = true
-        ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
+        ElMessageBox.alert('你已经投过五次票了!', '等待下一轮投票吧!', {
             confirmButtonText: 'OK',
         });
+        dialogVisible.value = false
         return;
     }
 
     httpInstance.post('/machine/hotTop20/pick', {
-        barrageId: row.id,
-        barrage: row.barrage
+        barrageId: selectedRow.value.barrageId,
+        barrage: selectedRow.value.barrage,
+        star: star.value
     }).then(res => {
+        dialogVisible.value = false
         if (res.code == 600) {
             ElMessageBox.alert('你已经提名过这条烂梗!', '换一条提名吧!', {
                 confirmButtonText: 'OK',
             });
-        } else if (res.code == 500) {
-            isFinish.value = true
-            ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
-                confirmButtonText: 'OK',
-            });
-        } else {
-            ElMessageBox.alert(row.barrage, '每人有三票，你刚投了一票，投完票就能看到提名次数啦', {
-                confirmButtonText: 'OK',
-            });
-            pickCnt.value -= 1;
-
-            //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            localStorage.setItem("pickCnt", pickCnt.value.toString());
-        }
-    }).catch(err => {
-        ElMessageBox.alert('慢点哟', '别别别, 你的手速太快辣', {
-            confirmButtonText: 'OK',
-        });
-    });
-}
-const pickHot = (row: any) => {
-    console.log(row);
-
-    if (pickCnt.value <= 0) {
-        isFinish.value = true
-        ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
-            confirmButtonText: 'OK',
-        });
-        return;
-    }
-
-    httpInstance.post('/machine/hotTop20/pick', {
-        barrageId: row.barrageId,
-        barrage: row.barrage
-    }).then(res => {
-        if (res.code == 600) {
-            ElMessageBox.alert('你已经提名过这条烂梗!', '换一条提名吧!', {
-                confirmButtonText: 'OK',
-            });
+            return
         } else if (res.code == 500) {
             isFinish.value = false
             pickCnt.value = 0;
 
             //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            localStorage.setItem("pickCnt", pickCnt.value.toString());
-            ElMessageBox.alert('你已经投过三次票了!', '等待下一轮投票吧!', {
+            localStorage.setItem("pickCnt-2", pickCnt.value.toString());
+            ElMessageBox.alert('你已经投过五次票了!', '等待下一轮投票吧!', {
                 confirmButtonText: 'OK',
             });
-        } else {
-            ElMessageBox.alert(row.barrage, '你投了一票', {
-                confirmButtonText: 'OK',
-            });
-
-
-            pickCnt.value -= 1;
-
-            //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            localStorage.setItem("pickCnt", pickCnt.value.toString());
+            return
         }
-    }).catch(err => {
-        ElMessageBox.alert('慢点哟', '别别别, 你的手速太快辣', {
+        ElMessageBox.alert(selectedRow.value.barrage , '你投了一票,一共可以投五票，结果会根据评分和票数选定', {
             confirmButtonText: 'OK',
         });
-    });
+        pickCnt.value -= 1;
+
+        //下一轮投票记得改localStorage的KeyName!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        localStorage.setItem("pickCnt-2", pickCnt.value.toString());
+
+    })
 }
+
 const load = (pageNum = 1) => {
-    isHot.value = true
-    isQuery.value = false
-    loading.value = true
+    isHot.value = true;
+    isQuery.value = false;
+    loading.value = true;
     httpInstance.get('/machine/hotTop20/loadTop20', {
         params: {
             pageNum: pageNum,
@@ -217,26 +148,21 @@ const load = (pageNum = 1) => {
             isFinish: isFinish.value
         }
     }).then(res => {
-        data.total = res.data?.total || 0
-        data.tableData = res.data?.list || []
-        loading.value = false
+        data.total = res.data?.total || 0;
+        data.tableData = res.data?.list || [];
+        loading.value = false;
     });
     httpInstance.get('/machine/hotTop20/pickSum').then(res => {
-        pickSum.value = res.data
-    })
+        pickSum.value = res.data;
+    });
 }
-load(data.currentPage)
-
+load(data.currentPage);
 
 const handleHotPageChange = (page: number) => {
     data.currentPage = page;
     load(page);
 }
 
-const handleQueryPageChange = (page: number) => {
-    data.currentPage = page;
-    handleSearchMeme(page);
-}
 const handleOpen = () => {
     isTableVisible.value = !isTableVisible.value;
 }
@@ -250,15 +176,16 @@ const handleOpen = () => {
 }
 
 @media(min-width:601px) {
-    .loadBtn {
-        margin-left: 100px;
-        margin-right: 50px;
+    ::v-deep .el-rate__icon {
+        font-size: 35px;
     }
-
+    .text{
+        color: black;font-size: 17px;
+    }
     .pickSum {
         color: black;
         font-size: 15px;
-        margin-left: 60px;
+        margin-left: 5px;
     }
 
     .pickHome {
@@ -288,6 +215,9 @@ const handleOpen = () => {
 }
 
 @media(max-width: 600px) {
+    .text{
+        color: black;font-size: 13px;
+    }
     .loadBtn {
         margin-left: 5px;
         margin-right: 0px;
@@ -296,11 +226,11 @@ const handleOpen = () => {
     .pickSum {
         color: black;
         font-size: 12px;
-        margin-left: 30px;
+        margin-left: 2px;
     }
 
     .context {
-        font-size: 22px;
+        font-size: 21px;
         background-image: linear-gradient(to right, red, yellow, green, yellow, red);
         background-clip: text;
         -webkit-background-clip: text;

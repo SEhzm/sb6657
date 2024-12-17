@@ -20,7 +20,7 @@ export function useIsMobile(): Ref<boolean> {
 
     onMounted(() => {
         mediaQuery = window.matchMedia('(max-width: 600px)');
-        console.log('123', mediaQuery);
+        // console.log('123', mediaQuery);
         mobile.value = mediaQuery.matches;
         mediaQuery.addEventListener('change', update);
     });
