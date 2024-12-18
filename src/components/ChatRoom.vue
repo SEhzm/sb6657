@@ -6,7 +6,7 @@
 		<p v-if="!isOpen">您已掉线</p>
 		<el-button @click="closeWebSocket">关闭连接</el-button>
 		<el-button @click="reconnectWebSocket"
-			v-if="!isOpen" >重新连接</el-button>
+		v-if="!isOpen" >重新连接</el-button>
 		<!-- <div id="message-container" ref="messageContainer">
 			<div v-for="(msg, index) in messages" :key="index"
 				:class="{ 'message-bubble': true, 'mine': msg.isMine, 'others': !msg.isMine }">
@@ -102,43 +102,27 @@ const onWebSocketOpen = () => {
 	messages.value.push({ text: '连接成功：仅显示近20条记录', isMine: false, time: getCurrentTime() });
 };
 
-
-let messageTimer: NodeJS.Timeout | null = null;
-const resetTimer = () => {
-    if (messageTimer) {
-        clearTimeout(messageTimer);
-    }
-    messageTimer = setTimeout(() => {
-        isOpen.value = false;
-    }, 60000); // 1分钟
-};
-
 // 接收到消息的回调方法
 const onWebSocketMessage = (event: MessageEvent) => {
-    isOpen.value = true;
-    resetTimer(); // 每次接收到消息时重置定时器
-
-    try {
-        const data: WebSocketData = JSON.parse(event.data);
-        if (data.type === 'onlineCount' && data.count !== undefined) {
-            onlineCount.value = data.count;
-        } else if (data.type === 'serverMessage' && data.message) {
-            messages.value.push({ text: data.message, isMine: false, time: getCurrentTime() });
-        } else if (data.type === 'clientMessage' && data.message && data.userId) {
-            const isMine = data.userId === userId.value;
-            const userMessage = `${data.userId} ：${data.message}`;
-            messages.value.push({ text: userMessage, isMine, time: getCurrentTime() });
-        } else {
-            console.error('未知的消息类型:', data);
-        }
-    } catch (error) {
-        console.error('解析消息失败:', event.data, error);
-        messages.value.push({ text: '解析消息失败', isMine: false, time: getCurrentTime() });
-    }
+	isOpen.value = true;
+	try {
+		const data: WebSocketData = JSON.parse(event.data);
+		if (data.type === 'onlineCount' && data.count !== undefined) {
+			onlineCount.value = data.count;
+		} else if (data.type === 'serverMessage' && data.message) {
+			messages.value.push({ text: data.message, isMine: false, time: getCurrentTime() });
+		} else if (data.type === 'clientMessage' && data.message && data.userId) {
+			const isMine = data.userId === userId.value;
+			const userMessage = `${data.userId} ：${data.message}`;
+			messages.value.push({ text: userMessage, isMine, time: getCurrentTime() });
+		} else {
+			console.error('未知的消息类型:', data);
+		}
+	} catch (error) {
+		console.error('解析消息失败:', event.data, error);
+		messages.value.push({ text: '解析消息失败', isMine: false, time: getCurrentTime() });
+	}
 };
-
-// 初始化定时器
-resetTimer();
 
 // 连接关闭的回调方法
 const onWebSocketClose = () => {
@@ -168,7 +152,6 @@ const send = async () => {
 			}));
 			message.value = ''; // 清空输入框
 			scrollToBottom(); // 滚动到最底部
-
 		} else {
 			ElMessageBox.alert('请输入名字和内容', '☝️🤓', {
 				confirmButtonText: 'OK',
