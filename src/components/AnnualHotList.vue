@@ -45,12 +45,12 @@
             <br>
             <el-radio-group  v-model="awards" size="large">
                 <!-- 1不显示 0显示 -->
-                <el-radio :disabled="annualMostPromisingDevelopmentPotential" border value="annualMostPromisingDevelopmentPotential" label="年度最具发展力奖🏆"></el-radio>
-                <el-radio style="margin-top: 10px;" :disabled="theMostOutstandingStringOfYear" border value="theMostOutstandingStringOfYear" label="年度最具串子奖🏆"></el-radio>
-                <el-radio style="margin-top: 10px;" :disabled="annualMostInfluential" border value="annualMostInfluential" label="年度最具影响力🏆"></el-radio>
-                <el-radio style="margin-top: 10px;" :disabled="theFunniestOfYear" border value="theFunniestOfYear" label="年度最幽默奖🏆"></el-radio>
-                <el-radio style="margin-top: 10px;" :disabled="theMostPowerfulFormulaOfYear" border value="theMostPowerfulFormulaOfYear" label="年度最具公式奖🏆"></el-radio>
-                <el-radio style="margin-top: 10px;" :disabled="annualMostPhilosophicalAward" border value="annualMostPhilosophicalAward" label="年度最具哲学奖🏆"></el-radio>
+                <el-radio class="elr" :disabled="annualMostPromisingDevelopmentPotential" border value="annualMostPromisingDevelopmentPotential" label="年度最具发展力奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostOutstandingStringOfYear" border value="theMostOutstandingStringOfYear" label="年度最具串子奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostInfluential" border value="annualMostInfluential" label="年度最具影响力🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="theFunniestOfYear" border value="theFunniestOfYear" label="年度最幽默奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostPowerfulFormulaOfYear" border value="theMostPowerfulFormulaOfYear" label="年度最具公式奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostPhilosophicalAward" border value="annualMostPhilosophicalAward" label="年度最具哲学奖🏆"></el-radio>
             </el-radio-group>
             <template #footer>
                 <span class="dialog-footer">
@@ -256,6 +256,10 @@ const handleOpen = () => {
     ::v-deep .el-rate__icon {
         font-size: 35px;
     }
+    ::v-deep .custom-dialog {
+        margin: 0;
+    }
+    
     .text{
         color: black;font-size: 17px;
     }
@@ -298,8 +302,11 @@ const handleOpen = () => {
     }
     ::v-deep .custom-dialog {
         width: 100%; /* 在较小的屏幕上使用百分比宽度 */
+        margin: 0;
     }
-    
+    .elr{
+        margin-left: 100px;
+    }
     .text{
         color: black;font-size: 13px;
     }
