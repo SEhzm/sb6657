@@ -2,7 +2,7 @@
     <div class="footer">
         <div class="content">
             <div class="date-font">距服务器到期还有<span>{{ serverDate }}</span>天</div>
-            <div>基于腾讯云服务器搭建 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></div>
+            <div>本站已完全支持ipv6访问，基于腾讯云服务器搭建 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></div>
         </div>
     </div>
 </template>
