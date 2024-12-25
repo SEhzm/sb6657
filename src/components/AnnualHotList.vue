@@ -39,11 +39,9 @@
             </div>
         </div>
         <el-dialog class="custom-dialog" draggable v-model="dialogVisible" title="请为烂梗评分，将作为最后评选的参考部分">
-            <el-rate allow-half v-model="star" size="large" :max="5" show-score text-color="#ff9900" />
+            <p style="font-size: 16px;">🏆给这条烂梗选择一个奖项🏆 <span>⬆️记得评个分⬆️</span></p>
             <br>
-            <p style="font-size: 16px;">🏆给这条烂梗选择一个奖项🏆</p>
-            <br>
-            <el-radio-group  v-model="awards" size="large">
+            <el-radio-group ref="ref2" v-model="awards" size="large">
                 <!-- 1不显示 0显示 -->
                 <el-radio class="elr" :disabled="annualMostPromisingDevelopmentPotential" border value="annualMostPromisingDevelopmentPotential" label="年度最具发展力奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostOutstandingStringOfYear" border value="theMostOutstandingStringOfYear" label="年度最具串子奖🏆"></el-radio>
@@ -52,6 +50,11 @@
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostPowerfulFormulaOfYear" border value="theMostPowerfulFormulaOfYear" label="年度最具公式奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostPhilosophicalAward" border value="annualMostPhilosophicalAward" label="年度最具哲学奖🏆"></el-radio>
             </el-radio-group>
+            <el-divider />
+            <b ref="ref1" style="font-size: 16px;margin-left: 100px;">记得给这条烂梗评个分</b>
+            <br>
+            <el-rate style="margin-left: 100px;" ref="ref1" allow-half v-model="star" size="large" :max="5" show-score text-color="#ff9900" />
+            
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
@@ -59,6 +62,14 @@
                 </span>
             </template>
         </el-dialog>
+        <el-tour mask show-arrow z-index="10000" v-model="open1">
+            <el-tour-step mask :target="ref1?.$el" title="记得评分喔">
+                <div>记得评分喔</div>
+            </el-tour-step>
+            <el-tour-step mask :target="ref2?.$el" title="记得给颁一个奖喔">
+                <div>记得给颁一个奖喔</div>
+            </el-tour-step>
+        </el-tour>
     </div>
 </template>
 
@@ -73,8 +84,9 @@ const isQuery = ref(false);
 const isHot = ref(true);
 const pickSum = ref(0);
 
-
-
+const open1 = ref(false)
+const ref1 = ref<ButtonInstance>()
+const ref2 = ref<ButtonInstance>()
 
 const awards = ref()
 const pickCnt = ref(localStorage.getItem("pickCnt-final"));
@@ -137,7 +149,11 @@ const data = reactive({
 const dialogVisible = ref(false);
 
 const selectedRow = ref(null);
-const open = (row: any) => {
+const open = async (row: any) => {
+    if(localStorage.getItem("pickCnt-final") > 5){
+        setTimeout(()=>{
+                open1.value = true,1500})
+    }
     awards.value=''
     star.value = 2.5
     dialogVisible.value = true
@@ -256,9 +272,7 @@ const handleOpen = () => {
     ::v-deep .el-rate__icon {
         font-size: 35px;
     }
-    ::v-deep .custom-dialog {
-        margin: 0;
-    }
+     
     
     .text{
         color: black;font-size: 17px;
@@ -301,8 +315,8 @@ const handleOpen = () => {
         font-size: 30px;
     }
     ::v-deep .custom-dialog {
-        width: 100%; /* 在较小的屏幕上使用百分比宽度 */
-        margin: 0;
+        z-index: 100;
+        width: 90%; /* 在较小的屏幕上使用百分比宽度 */
     }
     .elr{
         margin-left: 100px;
