@@ -3,7 +3,7 @@
         <div class="step">
             <span @click="handleOpen">
                 <p class="context">2024年度TOP20烂梗评选🏆 <el-button link ><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%80%E8%BD%AEtop20%E6%8F%90%E5%90%8D%E7%BB%93%E6%9E%9C.xlsx">下载第一轮数据</a></el-button><el-button
-                        link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%BA%8C%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第二轮</a></el-button><el-button link><a href="">下载第三轮</a></el-button>
+                        link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%BA%8C%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第二轮</a></el-button><el-button link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%89%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第三轮</a></el-button>
                         <el-button @click="openTall" link>作者有话说</el-button>
                 </p>
                 <!-- 注意修改阶段active !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! -->
