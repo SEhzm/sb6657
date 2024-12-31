@@ -198,7 +198,7 @@ const closeHot = () => {
 .close-button-1 {
   position: absolute;
   top: 5px;
-  left: 580px;
+  left: 780px;
   background: transparent;
   width: 30px;
   height: 25px;
