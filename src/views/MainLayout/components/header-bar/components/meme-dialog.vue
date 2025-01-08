@@ -7,7 +7,7 @@
             <el-table :data="memeArr" stripe v-loading="loading" :empty-text="emptyText" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
-                        <span class="index">{{ scope.$index + 1 }}</span>
+                        <el-tag round effect="plain">{{ scope.$index + 1 }}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="content">

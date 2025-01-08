@@ -2,14 +2,17 @@
     <div class="memes-view">
         <div class="card-table">
             <div class="top">
-                <div class="submit-tips">想要补充更多烂梗？点击这里投稿！→→</div>
+                <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
+                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision"
+                    color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
+                @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
-                        <span class="index">{{ scope.row.id }}</span>
+                        <el-tag round effect="plain" >{{ scope.row.id }}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="content">
@@ -19,12 +22,15 @@
                 </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 (<flip-num :num="scope.row.copyCount" />)</el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
+                            🎈<flip-num :num="scope.row.copyCount" /></el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination v-if="!loading" background="red" layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
+                <el-pagination v-if="!loading" background="red" layout="prev, pager, next, jumper"
+                    :current-page="currentPage" :total="total" :pager-count="4" :page-size="pageSize"
+                    @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
@@ -41,9 +47,11 @@ import { getMemeList } from '@/apis/getMeme';
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import { API } from '@/constants/backend';
 import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
-
+import httpInstance from '@/apis/httpInstance';
+import { fa } from 'element-plus/es/locales.mjs';
 const route = useRoute();
 const router = useRouter();
 /**
@@ -60,6 +68,7 @@ const memeArr = ref<Meme[]>([]);
 const total = ref(0);
 const pageSize = 50;
 const currentPage = ref(1);
+const isSort = ref(false)
 
 async function refreshMeme(pageNum: number) {
     const category = currentCategory.value?.category;
@@ -76,10 +85,36 @@ async function refreshMeme(pageNum: number) {
 }
 refreshMeme(1);
 
+/** 
+ * 排序功能
+*/
+async function sortMeme(pageNum: number) {
+    httpInstance.get(API.GET_SORTED_ALL_MEME, {
+        params: {
+            pageNum: pageNum,
+            pageSize: pageSize,
+            order: 'desc'
+        }
+    }).then(res => {
+        isSort.value = true
+        memeArr.value = res.data.list.map((item) => {
+            return {
+                total: item.total,
+                content: item.barrage,
+                id: item.id,
+                copyCount: +item.cnt,
+            };
+        });
+    }).catch(err => {
+        memeArr.value = [];
+    })
+}
+
 watch(
     () => route.path,
     () => {
         console.log('当前页面path:', route.path);
+        isSort.value=false
         currentPage.value = 1;
         loading.value = true;
         refreshMeme(1);
@@ -96,7 +131,11 @@ const scrollToTop = () => {
 const handlePageChange = (page: number) => {
     currentPage.value = page;
     scrollToTop();
-    refreshMeme(page);
+    if (isSort.value == false) {
+        refreshMeme(page);
+    } else {
+        sortMeme(page)
+    }
 };
 
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
@@ -107,9 +146,16 @@ async function copyMeme_countPlus1(meme: Meme) {
     const res = copyMeme(memeText);
     if (!res || res === 'limitedSuccess') return;
     copySuccess();
-    if (await copyCountPlus1(meme.category, meme.id, currentPage.value, pageSize)) {
-        await refreshMeme(currentPage.value);
-        return;
+    if (isSort.value == true) {
+        if(await copyCountPlus1('allbarrage', meme.id, currentPage.value, pageSize,'desc')){
+            await sortMeme(currentPage.value);
+            return;
+        }
+    } else {
+        if (await copyCountPlus1(meme.category, meme.id, currentPage.value, pageSize)) {
+            await refreshMeme(currentPage.value);
+            return;
+        }
     }
     plus1Error();
 }
@@ -128,9 +174,11 @@ const handleSubmit = () => {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+
     .card-table {
         width: 100%;
-        max-width: 1200px;
+        max-width: 1400px;
+
         .top {
             display: flex;
             align-items: center;
@@ -138,9 +186,99 @@ const handleSubmit = () => {
             padding-left: 10px;
             gap: 6px;
             background-color: #fff;
+
             .submit-tips {
                 font-size: small;
                 font-weight: bold;
+            }
+
+            .btn-animate {
+                margin: 0;
+                font-size: 16px;
+                border: none;
+                border-radius: 5px;
+                background: #027efb;
+                color: #fff;
+                text-align: center;
+            }
+
+            @keyframes crissCrossLeft {
+                0% {
+                    left: -20px
+                }
+
+                50% {
+                    left: 50%;
+                    width: 20px;
+                    height: 20px;
+                }
+
+                100% {
+                    left: 50%;
+                    width: 375px;
+                    height: 375px;
+                }
+            }
+
+            @keyframes crissCrossRight {
+                0% {
+                    right: -20px
+                }
+
+                50% {
+                    right: 50%;
+                    width: 20px;
+                    height: 20px;
+                }
+
+                100% {
+                    right: 50%;
+                    width: 375px;
+                    height: 375px;
+                }
+            }
+
+
+            .btn-animate__ball-collision {
+                position: relative;
+                overflow: hidden;
+                z-index: 1;
+
+                &::before,
+                &::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    width: 20px;
+                    height: 20px;
+                    background-color: #90cf5b;
+                    border-radius: 50%;
+                    opacity: 0.5;
+                    transition: all 0.6s;
+                    z-index: -1;
+                }
+
+                &::before {
+                    left: -20px;
+                    transform: translate(-50%, -50%);
+                }
+
+                &::after {
+                    right: -20px;
+                    transform: translate(50%, -50%);
+                }
+
+                &:hover {
+                    &::before {
+                        opacity: 1;
+                        animation: crissCrossLeft .8s both;
+                    }
+
+                    &::after {
+                        opacity: 1;
+                        animation: crissCrossRight .8s both;
+                    }
+                }
             }
         }
 
@@ -159,6 +297,7 @@ const handleSubmit = () => {
         .copy-btn {
             width: 90px;
         }
+
         .pagination-wrapper {
             display: flex;
             justify-content: center;
@@ -166,9 +305,15 @@ const handleSubmit = () => {
         }
     }
 }
+
 @media (min-width: 600px) {
-    .main-table{
+    .main-table {
         font-size: large;
+    }
+}
+@media (max-width: 601px) {
+    .main-table {
+        font-size: medium;
     }
 }
 </style>

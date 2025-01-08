@@ -2,7 +2,7 @@
     <div class="footer">
         <div class="content">
             <div class="date-font">距服务器到期还有<span>{{ serverDate }}</span>天</div>
-            <div>本站已完全支持ipv6访问，基于腾讯云服务器搭建 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></div>
+            <div><a href="https://ipw.cn/ipv6webcheck/?site=sb6657.cn" title="" target='_blank' style="color: black;"><img style='display:inline-block;vertical-align:middle' alt="" src="https://static.ipw.cn/icon/ipv6-s5.svg"></a>基于腾讯云服务器搭建 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a></div>
         </div>
     </div>
 </template>
