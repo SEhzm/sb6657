@@ -7,6 +7,7 @@ const httpInstance = axios.create({
     timeout: 60000, // 默认超时时间
 });
 
+export const sbVersion = '25.01.18';
 // axios请求拦截器
 // 可以自请求发送前对请求做一些处理
 httpInstance.interceptors.request.use(

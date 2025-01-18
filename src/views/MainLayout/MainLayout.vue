@@ -27,6 +27,7 @@
         </div>
         <FooterBar></FooterBar>
     </div>
+    <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md"><span class="version">版本: {{ sbVersion }}</span></a>
 </template>
 
 <script setup lang="ts">
@@ -34,7 +35,7 @@ import HeaderBar from '@/views/MainLayout/components/header-bar/header-bar.vue';
 import FooterBar from '@/views/MainLayout/components/footer-bar.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MemeCategory } from '@/constants/backend';
-
+import { sbVersion } from '@/apis/httpInstance'
 const route = useRoute();
 const router = useRouter();
 function navigateTo(path: string) {
@@ -124,6 +125,14 @@ function navigateTo(path: string) {
         width: 0;
         padding: 10px;
     }
+    .version{
+        color: black;
+        position: fixed;
+        right: 10px;
+        bottom: 5px;
+        z-index: 1000;
+        font-size: 10px;
+    }
 }
 
 @media (max-width: 600px) {
@@ -201,6 +210,14 @@ function navigateTo(path: string) {
     .tab::-webkit-scrollbar-thumb {
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
+    }
+    .version{
+        color: black;
+        position: fixed;
+        right: 20px;
+        bottom: 0px;
+        z-index: 1000;
+        font-size: .5rem;
     }
 }
 </style>

@@ -45,7 +45,7 @@ import { onMounted, ref, onBeforeUnmount } from 'vue';
 const chatX = ref(74);
 const chatY = ref(200);
 const annualX = ref(8.2);
-const annualY = ref(50);
+const annualY = ref(120);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
 
@@ -113,7 +113,7 @@ onMounted(() => {
     item.style.transformOrigin = `0 0 ${thisDistance}px`;
     item.style.transform = `
         translate3d(0,0,-${thisDistance}px)
-        rotateY(${Math.random() * 360}deg)
+        rotateY(${Math.random() * 460}deg)
         rotateX(${Math.random() * -50}deg)
         scale(${speed},${speed})`;
   });
@@ -198,7 +198,7 @@ const closeHot = () => {
 .close-button-1 {
   position: absolute;
   top: 5px;
-  left: 780px;
+  left: 460px;
   background: transparent;
   width: 30px;
   height: 25px;

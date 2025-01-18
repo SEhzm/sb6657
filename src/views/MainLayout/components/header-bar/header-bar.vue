@@ -2,7 +2,7 @@
     <div class="header">
         <div class="header-content">
             <a href="https://www.douyu.com/6657" target="_blank" class="logo-link">
-                <img src="/public/favicon.ico" alt="大狗头" class="logo-img" />
+                <img src="/public/favicon.ico" alt="大🐖头" class="logo-img" />
                 <p class="header-title">斗鱼玩机器烂梗收集</p>
             </a>
 
@@ -293,7 +293,8 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
     }
 
     .elinput {
-        width: 180px;
+        margin-left: 20px;
+        width: 90vw;
 
         .el-input__wrapper {
             border-radius: 95px;

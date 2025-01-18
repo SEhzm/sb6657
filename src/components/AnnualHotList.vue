@@ -442,7 +442,7 @@ const copyText = (row) => {
     }
 
     .pickHome {
-        width: 820px;
+        width: 500px;
     }
 
     @keyframes text-style-1 {

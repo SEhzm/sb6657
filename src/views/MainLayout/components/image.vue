@@ -46,7 +46,7 @@
       </div>
     </template>
   </el-dialog>
-  <el-backtop :right="50" :bottom="50" />
+  <el-backtop :right="20" :bottom="50" />
 </template>
 
 
@@ -223,7 +223,7 @@ const saveComment = (Obimage) => {
   }
 
   .image-list {
-    width: 400px;
+    width: 100vw;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

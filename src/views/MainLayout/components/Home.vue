@@ -15,7 +15,7 @@
                         最新推出了油猴TamperMonkey插件，可以在直播间直接搜索进行复制和一键发送，
                         <a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a>
                     </p> -->
-                    <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示，每人每阶段有三票</p>
+                    <!-- <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示，每人每阶段有三票</p> -->
                 </b>
             </div>
         </div>
@@ -45,10 +45,10 @@
 
         <div class="card fourth-card">
             <div>
-                <span style="position: absolute; font-size: 20px; margin-top: -20px; color: blue;">
+                <!-- <span style="position: absolute; font-size: 20px; margin-top: -20px; color: blue;">
                     --------需点击右侧搜索按钮---------
-                </span>
-                <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" clearable class="search-input"
+                </span> -->
+                <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage" clearable class="search-input"
                     @input="onSearchQueryChange">
                     <template #append>
                         <el-button type="primary" @click="queryBarrage">
@@ -92,9 +92,10 @@
             </div>
             <el-backtop :right="50" :bottom="50" />
         </div>
-<ChatRoom class="ChatRoom"></ChatRoom>
+<ChatRoom class="ChatRoom card"></ChatRoom>
         <div class="card sixth-card">
-            友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>
+            友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>&nbsp;&nbsp;&nbsp;
+            <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
     </div>
 </template>
@@ -392,7 +393,7 @@ const onSearchQueryChange = () => {
 
     .search-input {
         font-size: 16px;
-        margin-top: 30px;
+        margin-top: 10px;
     }
 
     .submit-button {
@@ -433,6 +434,8 @@ const onSearchQueryChange = () => {
     .home {
         width: 100%;
     }
-    
+    .ChatRoom{
+    margin:10px 0;
+    }
 }
 </style>
