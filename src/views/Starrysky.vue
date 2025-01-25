@@ -20,7 +20,7 @@
       </svg>
     </el-button>
   </div>
-  <div 
+  <div v-if="route.path === '/home'"
     class="draggable annual-hot-list-draggable" 
     :style="{ left: `${annualX}vw`, top: `${annualY}px` }" 
     @mousedown="startDrag($event, 'annual')"
@@ -40,10 +40,11 @@
 import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
-
+import { useRoute } from 'vue-router';
+const route = useRoute();
 // 用于存储元素X和Y位置的响应性引用
-const chatX = ref(74);
-const chatY = ref(200);
+const chatX = ref(85);
+const chatY = ref(100);
 const annualX = ref(8.2);
 const annualY = ref(120);
 const isChatVisible = ref(true);

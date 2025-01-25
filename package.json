@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview"
   },
@@ -11,7 +11,8 @@
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
-    "element-plus": "^2.8.5",
+    "element-plus": "^2.9.3",
+    "fireworks-js": "^2.10.8",
     "pinia": "^2.2.4",
     "sass": "^1.79.5",
     "vue": "^3.5.12",
