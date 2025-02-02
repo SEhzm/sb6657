@@ -5,24 +5,33 @@
             <div>
                 <a href="https://ipw.cn/ipv6webcheck/?site=sb6657.cn" title="" target='_blank' style="color: black;">
                     <img style='display:inline-block;vertical-align:middle;width: 150px;' alt="" src="https://static.ipw.cn/icon/ipv6-s5.svg"></a>
-                基于腾讯云服务器搭建 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a>
+                本站已运行{{ daysSinceLaunch }}天 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a>
             </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 const serverDate = ref(0);
 const txServerDate = new Date('2025-02-20'); // 服务器到期日期
 const currentDate = new Date();
 serverDate.value = Math.ceil((txServerDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
+
+const launchDate = new Date('2024-02-07');
+// 计算已运行天数
+const daysSinceLaunch = computed(() => {
+  const currentDateTimestamp = new Date().getTime(); // 获取当前时间的时间戳
+  const timeDifference = currentDateTimestamp - launchDate.getTime(); // 使用 getTime() 方法获取时间戳并进行减法运算
+  const dayDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  return dayDifference;
+});
 </script>
 
 <style scoped lang="scss">
 .footer {
-    height: 40px;
+    height: 0px;
     width: 100%;
     font-family: Arial;
     font-size: 12px;
@@ -30,6 +39,7 @@ serverDate.value = Math.ceil((txServerDate.getTime() - currentDate.getTime()) / 
     justify-content: center;
     align-items: center;
     .content {
+        margin-top: -30px;
         display: flex;
         flex-direction: column;
         align-items: center;

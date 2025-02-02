@@ -3,11 +3,11 @@ import { SERVER_ADDRESS } from '@/constants/backend';
 
 const httpInstance = axios.create({
     baseURL: SERVER_ADDRESS,
-    // baseURL: 'http://localhost:9090',
+    // baseURL: 'http://localhost:10086',
     timeout: 60000, // 默认超时时间
 });
 
-export const sbVersion = '25.01.25';
+export const sbVersion = '25.02.03';
 // axios请求拦截器
 // 可以自请求发送前对请求做一些处理
 httpInstance.interceptors.request.use(

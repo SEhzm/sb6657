@@ -3,7 +3,7 @@
         <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
             class="boom6657">
     </div>
-    <AnnualHotList class="AnnualHotList"></AnnualHotList>
+    <!-- <AnnualHotList class="AnnualHotList"></AnnualHotList> -->
     <div class="home">
         <div class="card first-card">
             <div>
@@ -22,7 +22,6 @@
 
         <div class="card second-card">
             <p>
-                你好 <br>
                 这是一个收集6657烂梗的网站:
                 <span class="dgq63136">
                     <a href="https://sb6657.cn">sb6657.cn</a>
@@ -36,7 +35,30 @@
             <div>
                 <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
                 <el-table v-loading="loading" :data="data.tableData" class="barrage-table" @row-click="copyText">
-                    <el-table-column prop="barrage" />
+                    <el-table-column prop="barrage">
+                        <template #default="scope">
+                            <el-popover placement="top" :width="'auto'" trigger="hover">
+                                <template #reference>
+                                    <div style="cursor: pointer;">
+                                        <span class="barrage-text">{{ scope.row.barrage }}</span>
+                                    </div>
+                                </template>
+                                <template #default>
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                        <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
+                                            style="margin-right: 8px;">
+                                            <el-tag round effect="dark"
+                                                :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                                <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                    style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
+                                                {{ item.label }}
+                                            </el-tag>
+                                        </div>
+                                    </div>
+                                </template>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="" align="center" width="85">
                         <el-button type="primary">复制</el-button>
                     </el-table-column>
@@ -46,11 +68,8 @@
 
         <div class="card fourth-card">
             <div>
-                <!-- <span style="position: absolute; font-size: 20px; margin-top: -20px; color: blue;">
-                    --------需点击右侧搜索按钮---------
-                </span> -->
-                <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage" clearable class="search-input"
-                    @input="onSearchQueryChange">
+                <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage" clearable
+                    class="search-input" @input="onSearchQueryChange">
                     <template #append>
                         <el-button type="primary" @click="queryBarrage">
                             <el-icon>
@@ -59,8 +78,33 @@
                         </el-button>
                     </template>
                 </el-input>
-                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText" :cell-style="{ cursor: 'Pointer',fontSize:'large' }">
-                    <el-table-column prop="barrage" label="弹幕"></el-table-column>
+                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
+                    :cell-style="{ cursor: 'Pointer', fontSize: 'large' }">
+                    <el-table-column prop="barrage">
+                        <template #default="scope">
+                            <el-popover placement="top" :width="'auto'" trigger="hover"
+                                :popper-class="customPopoverClass">
+                                <template #reference>
+                                    <div style="cursor: pointer;">
+                                        <span class="barrage-text">{{ scope.row.barrage }}</span>
+                                    </div>
+                                </template>
+                                <template #default>
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                        <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
+                                            style="margin-right: 8px;">
+                                            <el-tag round effect="dark"
+                                                :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                                <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                    style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
+                                                {{ item.label }}
+                                            </el-tag>
+                                        </div>
+                                    </div>
+                                </template>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
                     <el-table-column label="" align="center" width="85">
                         <el-button type="primary">复制</el-button>
                     </el-table-column>
@@ -70,30 +114,63 @@
 
         <div class="card fifth-card">
             <div>
-                <el-form :model="data" label-width="100px" :rules="rules" label-position="right">
-                    <el-form-item label="分栏" :label-width="auto" prop="table">
-                        <el-select v-model="data.table" placeholder="选择上传的分栏">
-                            <el-option label="喷玩机器篇" value="machine_penWJQ" />
-                            <el-option label="木柜子篇" value="machine_mygo" />
-                            <el-option label="直播间互喷篇" value="machine_ZbjHuPen" />
-                            <el-option label="喷选手篇" value="machine_penPlayer" />
-                            <el-option label="+1" value="machine_p1" />
-                            <el-option label="群魔乱舞篇" value="machine_QMLW" />
-                            <el-option label="QUQU" value="machine_QUQU" />
-                        </el-select>
-                    </el-form-item>
-                    <el-form-item label="烂梗内容" prop="barrage">
-                        <el-input maxlength="255" v-model="data.barrage" autocomplete="off" show-word-limit
-                            type="textarea" />
-                    </el-form-item>
-                    <el-button type="primary" @click="saveBarrage" class="submit-button">
-                        投稿
+                <span>可选标签<el-popover :width="300">
+                        <template #reference>
+                            <el-icon size="16">
+                                <Warning />
+                            </el-icon>
+                        </template>
+                        为解决烂梗分栏不足和分类不清晰问题。<br>
+                        <b>点击标签即可添加</b>
+                    </el-popover>
+                    <el-button link type="success" style="margin-left: 50%">投稿标签
+                        <el-popover :width="300">
+                            <template #reference>
+                                <el-icon size="16">
+                                    <QuestionFilled />
+                                </el-icon>
+                            </template>
+                            <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b><br>
+                            <b>审核巨严格，(重复，相似等)将不通过</b>
+                        </el-popover>
                     </el-button>
-                </el-form>
+                </span>
+
+                <div class="preset-tags-container">
+                    <div class="preset-tags">
+                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
+                            @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
+                            style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
+                            {{ tag.label }}
+                        </el-tag>
+                    </div>
+                </div>
+
+                <!-- 已添加标签 -->
+                <span>已选标签
+                    <el-popover :width="250">
+                        <template #reference>
+                            <el-icon size="16">
+                                <Warning />
+                            </el-icon>
+                        </template>
+                        <b>最少一个标签，最多五个标签。</b>
+                    </el-popover>
+                </span>
+
+                <div class="added-tags">
+                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
+                        @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
+                        {{ tag.label }}
+                    </el-tag>
+                </div>
+                <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }"
+                    show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
+                <el-button class="saveBnt" type="primary" @click="saveBarrage">投稿</el-button>
             </div>
             <el-backtop :right="50" :bottom="50" />
         </div>
-<ChatRoom class="ChatRoom card"></ChatRoom>
+        <ChatRoom class="ChatRoom card"></ChatRoom>
         <div class="card sixth-card">
             友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
@@ -111,7 +188,8 @@ import autoExecPng from "@/assets/autoexec.vue";
 
 import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
-
+import { API } from '@/constants/backend';
+const customPopoverClass = 'custom-popover';
 
 const loading = ref(true)
 const isInput = ref(false)
@@ -149,42 +227,106 @@ const autoexec = () => {
 }
 
 autoexec()
+
+
+const dictData = ref([]);
+
+const getDict = () => {
+    httpInstance.get('/machine/dictList').then(res => {
+        if (res.code === '200') {
+            dictData.value = res.data;
+            presetTags.value = res.data.map(item => ({
+                label: item.dictLabel,
+                value: item.dictValue
+            }));
+        }
+    }).catch(err => {
+        console.error('获取字典数据失败', err);
+    });
+};
+const getDictLabel = (tags) => {
+    if (!tags || tags.trim() === '') {
+        return [];
+    }
+    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())));
+    if (!dictData.value) {
+        return tagList.map(() => ({ label: '', iconUrl: '' }));
+    }
+    const dictMap = new Map(
+        dictData.value.map(item => [String(item.dictValue).trim(), item])
+    );
+    const labels = tagList.map(tag => {
+        const dictItem = dictMap.get(tag);
+        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
+    });
+
+    return labels;
+};
+
+
+getDict()
+
 const searchQuery = ref('');
 
-const rules = ({
-    table: [
-        { required: true, message: '请选择分栏', trigger: 'blur' },
-    ],
-    barrage: [
-        { required: true, message: '请输入烂梗', trigger: 'blur' },
-    ]
-})
+const barrage = ref('');
+// 预设标签
+const presetTags = ref([]);
 
-//提交
+// 已添加标签
+const addedTags = ref([]);
+
+// 已添加标签的 dictValue 数组
+const addedDictValues = ref([]);
+// 删除已添加标签
+const removeTag = (tag) => {
+    addedTags.value = addedTags.value.filter(t => t.value !== tag.value);
+    addedDictValues.value = addedDictValues.value.filter(value => value !== tag.value);
+    presetTags.value.push(tag);
+};
+
+// 添加标签的点击事件
+const removeTagFromPreset = (tag) => {
+    if (addedDictValues.value.length >= 5) {
+        ElNotification.info("最多5个标签")
+        return
+    }
+    // 当删除预设标签时，将其移到已添加标签
+    if (!addedTags.value.some(t => t.value === tag.value)) {
+        addedTags.value.push(tag);
+        addedDictValues.value.push(tag.value);
+        presetTags.value = presetTags.value.filter(t => t.value !== tag.value);
+    }
+};
+
 const saveBarrage = () => {
-    if (data.table === '' || data.barrage === '') {
-        ElNotification.error("请选择分栏或输入烂梗");
+    if (addedDictValues.value.length === 0 || barrage.value === '' || barrage.value === null) {
+        ElNotification.error("请选择标签或输入弹幕");
     } else {
-        httpInstance.post('/machine/addUnaudit', {
-            ip: localStorage.getItem('ip'),
-            table: data.table,
-            barrage: data.barrage
+        if (addedDictValues.value.length > 5) {
+            ElNotification.error('最少一个标签，最多五个标签。');
+            return;
+        }
+        httpInstance.post(API.SUBMIT_MEME, {
+            tags: addedDictValues.value.join(','),
+            barrage: barrage.value
         }).then(res => {
-            data.dialogFormVisible = false;
-            data.barrage = '';
+            barrage.value = '';
             if (res.code === '200') {
                 ElNotification.success("投稿成功，待审核(一天内)");
             } else {
                 ElNotification.error("请求失败");
             }
-        })
+        }).catch(err => {
+            console.error('投稿失败', err);
+            ElNotification.error("请求失败");
+        });
     }
-}
+};
 //搜索
 const queryBarrage = () => {
     console.log(searchQuery.value)
     httpInstance.post('/machine/Query', {
-        QueryBarrage: searchQuery.value
+        barrage: searchQuery.value
     }).then(res => {
         isInput.value = true;
         loading.value = false;
@@ -194,19 +336,7 @@ const queryBarrage = () => {
 
 
 var searchBarrageMeg = ref('搜索烂梗...');
-// const load = () => {
-//   httpInstance.get('/machine/allBarrage/Page', {})
-//     .then(res => {
-//       // console.log(res);
-//       data.tableData = res.data || [];
-//       // console.log(data.tableData)
-//       searchBarrageMeg = ref('搜索烂梗...➡️➡️');
-//       loading.value = false;
-//     })
-//     .catch(err => {
-//       console.error('加载数据失败:', err);
-//     });
-// };
+
 
 const getRandOne = () => {
     httpInstance.get('/machine/getRandOne')
@@ -293,11 +423,7 @@ const copyText = (row) => {
         // 复制成功，可以显示提示信息
         open2();
         console.log('内容已复制到剪贴板');
-        httpInstance.post('/machine/addCnt', {
-            PageNum: data.currentPage,
-            table: 'allbarrage',
-            id: row.id
-        }).then(() => {
+        httpInstance.get('/machine/addCnt/'+`${row.id}`).then(() => {
             setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
         });
     } catch (err) {
@@ -320,22 +446,65 @@ const onSearchQueryChange = () => {
 </script>
 
 <style scoped lang="scss">
+/* 预设标签容器 */
+.preset-tags-container {
+    max-height: 75px;
+    overflow-y: auto;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+/* 预设标签按钮的样式 */
+.preset-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.preset-tags .el-tag {
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+::v-deep .preset-tags .el-tag__close {
+    font-size: 30px;
+    transform: rotate(45deg);
+}
+
+.added-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.added-tags .el-tag {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.custom-popover {
+    background-color: #f0f9eb; // 自定义背景色
+    border: 1px solid #e1f3d8; // 自定义边框颜色
+    border-radius: 4px; // 自定义边框圆角
+    padding: 10px; // 自定义内边距
+}
+
 .boomouder {
-    height: 200px;
+    height: 150px;
 
     .boom6657 {
         left: calc(50vw - 153px);
         position: absolute;
-        height: 200px;
+        height: 150px;
         border-radius: 10px;
     }
 }
 
 .home {
+    height: auto;
     width: 90%;
 
     .card {
-        line-height: 30px;
+        line-height: 25px;
 
         &.first-card {
             margin-top: 10px;
@@ -351,20 +520,23 @@ const onSearchQueryChange = () => {
         }
 
         &.fourth-card {
-            line-height: 50px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            min-height: 80px;
+            
+            margin-top: 10px;line-height: 50px;
+            margin-bottom: 0px;
         }
 
         &.fifth-card {
             margin-top: 8px;
-            text-align: center;
+
+            .saveBnt {
+                margin-left: 45%;
+                width: 100px;
+                margin-top: 10px;
+            }
         }
 
         &.sixth-card {
             margin-top: 10px;
-            z-index: 300;
         }
     }
 
@@ -404,25 +576,30 @@ const onSearchQueryChange = () => {
     .dgq63136 {
         font-size: 23px;
         font-weight: bold;
-        a{
+
+        a {
             color: red;
         }
     }
 }
+
 @media (min-width: 601px) {
-    .ChatRoom{
+    .ChatRoom {
         display: none;
     }
-    .AnnualHotList{
+
+    .AnnualHotList {
         display: none;
     }
 }
-@media(max-width :600px){
-    .AnnualHotList{
+
+@media(max-width :600px) {
+    .AnnualHotList {
         margin-bottom: 20px;
     }
+
     .boomouder {
-    height: 150px;
+        height: 150px;
 
         .boom6657 {
             position: absolute;
@@ -432,11 +609,13 @@ const onSearchQueryChange = () => {
             left: 25%;
         }
     }
+
     .home {
         width: 100%;
     }
-    .ChatRoom{
-    margin:10px 0;
+
+    .ChatRoom {
+        margin: 10px 0;
     }
 }
 </style>

@@ -2,6 +2,7 @@ import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { MemeCategory } from '@/constants/backend';
 interface hotMeme_res {
+    tags: string;
     barrage: string;
     barrageId: number;
     cnt: number;
@@ -23,6 +24,7 @@ async function getHotMeme(url: string, tips: string) {
         }
         const memeArr: Meme[] = res.data.map((item) => {
             return {
+                tags: item.tags,
                 content: item.barrage,
                 category: item.tableName,
                 id: `${item.barrageId}`,
@@ -43,6 +45,7 @@ export function getHotMeme7d() {
 }
 
 interface searchMeme_data {
+    tags: string;
     barrage: string;
     cnt: string;
     id: string;
@@ -56,7 +59,7 @@ export async function searchMeme(searchKey: string) {
     console.log(`搜索词: ${searchKey}`);
     try {
         const res: searchMeme_res = await httpInstance.post(API.SEARCH_MEME, {
-            QueryBarrage: searchKey,
+            barrage: searchKey,
         });
         if (res.data.length === 0) {
             console.log('未搜索到烂梗');
@@ -64,6 +67,7 @@ export async function searchMeme(searchKey: string) {
         }
         const memeArr: Meme[] = res.data.map((item) => {
             return {
+                tags: item.tags,
                 content: item.barrage,
                 category: 'allbarrage', // 由于目前搜索不返分类，所以分类写死成所有
                 id: item.id,
@@ -78,6 +82,7 @@ export async function searchMeme(searchKey: string) {
 }
 
 interface getMemeList_meme {
+    tags: string;
     id: string;
     barrage: string;
     cnt: string;
@@ -107,7 +112,7 @@ interface getMemeList_res {
     msg: string;
     data: getMemeList_data;
 }
-export async function getMemeList(category: string, pageIndex: number, pageSize: number) {
+export async function getMemeList(category: string, pageIndex: number, pageSize: number, tags?: string) {
     console.log(`请求烂梗分类: ${category}, 页数: ${pageIndex}, 每页烂梗数: ${pageSize}`);
     try {
         const api = MemeCategory.find((item) => item.category === category)?.api;
@@ -116,6 +121,7 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
         }
         const res: getMemeList_res = await httpInstance.get(api, {
             params: {
+                tags: tags,
                 pageNum: pageIndex,
                 pageSize: pageSize,
             },
@@ -125,6 +131,7 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
         }
         const memeArr: Meme[] = res.data.list.map((item) => {
             return {
+                tags: item.tags,
                 content: item.barrage,
                 id: item.id,
                 category: category,

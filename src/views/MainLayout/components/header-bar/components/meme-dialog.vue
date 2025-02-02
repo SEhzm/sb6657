@@ -12,8 +12,25 @@
                 </el-table-column>
                 <el-table-column prop="content">
                     <template #default="scope">
-                        {{ scope.row.content }}
-                    </template>
+                            <el-popover placement="top" :width="'auto'" trigger="hover" >
+                                <template #reference>
+                                    <div style="cursor: pointer;">
+                                        <span class="barrage-text">{{ scope.row.content }}</span>
+                                    </div>
+                                </template>
+                                <template #default>
+                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                    <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" style="margin-right: 8px;">
+                                        <el-tag round effect="dark"
+                                            :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                            <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
+                                            {{ item.label }}
+                                        </el-tag>
+                                    </div>
+                                </div>
+                            </template>
+                            </el-popover>
+                        </template>
                 </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
@@ -30,6 +47,9 @@ import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
+import httpInstance from '@/apis/httpInstance';
+import { ref } from 'vue';
+
 /**
  * 组件输入:
  * 1.插槽，弹窗头部的内容。主要是描述，标题，切换其他弹窗按钮之类的。(注意，我把对话框的title删了，因为插槽放在header，设置插槽就行，会覆盖title)
@@ -71,6 +91,36 @@ async function copyMeme_countPlus1(meme: Meme) {
     }
     plus1Error();
 }
+const dictData = ref([]);
+
+const getDict = () => {
+    httpInstance.get('/machine/dictList').then(res => {
+        if (res.code === '200') {
+            dictData.value = res.data;
+        }
+    }).catch(err => {
+        console.error('获取字典数据失败', err);
+    });
+};
+const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
+    if (!tags || tags.trim() === '') {
+        return [];
+    }
+    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())));
+    if (!dictData.value) {
+        return tagList.map(() => ({ label: '', iconUrl: '' }));
+    }
+    const dictMap = new Map(
+        dictData.value.map(item => [String(item.dictValue).trim(), item])
+    );
+    const labels = tagList.map(tag => {
+        const dictItem = dictMap.get(tag);
+        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
+    });
+
+    return labels;
+};
+getDict()
 </script>
 
 <style scoped lang="scss">

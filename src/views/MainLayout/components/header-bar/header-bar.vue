@@ -155,7 +155,7 @@ async function handleSearchMeme() {
 
 //定时一小时弹出支持我！！！
 onMounted(() => {
-    setTimeout(() => {
+    setInterval(() => {
         supportMeDialog.value = true;
     }, 60 * 60 * 1000); // 1h
 });

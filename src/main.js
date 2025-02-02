@@ -34,47 +34,69 @@ setInterval(() => {
 
 // 监听鼠标点击事件，触发烟花效果
 document.addEventListener('mousedown', (event) => {
-    // 移除之前的 canvas 容器
-    const previousContainers = document.querySelectorAll('.fireworks-container');
-    previousContainers.forEach(container => {
-        container.remove();
-    });
+    // 移除之前的烟花
+    const existing = document.querySelector('.mini-firework');
+    if (existing) existing.remove();
 
+    // 创建烟花容器
     const container = document.createElement('div');
-    container.className = 'fireworks-container'; // 添加类名以便后续移除
-    container.style.position = 'fixed'; // 使用 fixed 确保覆盖整个屏幕
-    container.style.left = '0';
-    container.style.top = '0';
-    container.style.width = '100%';
-    container.style.height = '100%';
-    container.style.pointerEvents = 'none';
-    container.style.zIndex = '9999';
+    container.className = 'mini-firework';
+    Object.assign(container.style, {
+        position: 'fixed',
+        left: `${event.clientX}px`,
+        top: `${event.clientY-140}px`,
+        width: '300px',   // 控制烟花显示区域
+        height: '300px',
+        transform: 'translate(-50%, -50%)', // 居中定位
+        pointerEvents: 'none',
+        zIndex: 9999
+    });
     document.body.appendChild(container);
 
+    // 小型烟花配置
     const fireworks = new Fireworks(container, {
-        traceLength: 5,              // 烟花轨迹的长度
-        size: 300,                     // 烟花粒子的大小
-        rocketSpeed: 50,             // 烟花火箭的速度
-        rocketAcceleration: 1,    // 烟花火箭的加速度
-        particleFriction: 3.95,      // 烟花粒子的摩擦力
-        particleGravity: 2.9,        // 烟花粒子的重力
-        colors: ['#00f', '#f00', '#0ff', '#ff0', '#f0f'], // 烟花的颜色数组
-        explosionLength: 2,          // 烟花爆炸的长度
-        flickering: 150,             // 烟花闪烁的效果
-        delay: { min: 30, max: 30 },
-        particles: 100
+        autoresize: false,
+        acceleration: 1.02,
+        friction: 0.96,
+        gravity: 1.2,
+        particles: 50,    // 减少粒子数量
+        explosion: 3,     // 减小爆炸强度
+        traceLength: 5,
+        hue: { min: 0, max: 360 },
+        brightness: { min: 60, max: 80 },
+        mouse: { click: false }, // 禁用鼠标追踪
+        boundaries: {
+            x: 50,        // 限制爆炸范围
+            y: 50,
+            width: 200,
+            height: 200
+        },
+        sound: { enable: false },
+        delay: { min: 5, max: 15 },
+        lineWidth: {
+            explosion: { min: 1, max: 2 }, // 更细的线条
+            trace: { min: 1, max: 2 }
+        }
     });
 
     fireworks.start();
+    
+    // 1.5秒后自动清理
     setTimeout(() => {
         fireworks.stop();
-        document.body.removeChild(container);
-    }, 1850);
+        container.remove();
+    }, 1500);
 });
 
-
+//生产环境去除console
+const VITE_NODE_ENV = import.meta.env.VITE_NODE_ENV;
+if (VITE_NODE_ENV !== 'development') {
+    console.log = function () {}
+    console.error = function(){}
+    console.dir = function(){}
+    console.warn = function(){}
+}
 app.mount('#app');
-
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
     app.component(key, component);
 }

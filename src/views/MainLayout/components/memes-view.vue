@@ -1,6 +1,58 @@
 <template>
     <div class="memes-view">
         <div class="card-table">
+            <div class="card" v-if="route.path === '/memes/AllBarrage'">
+                <h4>按标签查看烂梗<el-popover :width="300">
+                        <template #reference>
+                            <el-icon size="16">
+                                <Warning />
+                            </el-icon>
+                        </template>
+                        为解决烂梗分栏不足和分类不清晰问题。<br>
+                        <b>点击标签即可添加</b>
+                    </el-popover>
+                    <el-button link type="success" style="margin-left: 50%">投稿标签
+                        <el-popover :width="300">
+                            <template #reference>
+                                <el-icon size="16">
+                                    <QuestionFilled />
+                                </el-icon>
+                            </template>
+                            <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b><br>
+                            <b>审核巨严格，(重复，相似等)将不通过</b>
+                        </el-popover>
+                    </el-button>
+                </h4>
+
+                <div class="preset-tags-container">
+                    <div class="preset-tags">
+                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
+                            @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
+                            style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
+                            {{ tag.label }}
+                        </el-tag>
+                    </div>
+                </div>
+
+                <!-- 已添加标签 -->
+                <h4>包含标签
+                    <el-popover >
+                        <template #reference>
+                            <el-icon size="16">
+                                <Warning />
+                            </el-icon>
+                        </template>
+                        <b>烂梗包含该标签</b>
+                    </el-popover>
+                </h4>
+
+                <div class="added-tags">
+                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
+                        @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
+                        {{ tag.label }}
+                    </el-tag>
+                </div>
+            </div>
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
@@ -8,16 +60,34 @@
                     color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！"
                 @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
-                        <el-tag round effect="plain" >{{ scope.row.id }}</el-tag>
+                        <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
                     </template>
                 </el-table-column>
                 <el-table-column prop="content">
                     <template #default="scope">
-                        {{ scope.row.content }}
+                        <el-popover placement="top" :width="'auto'" trigger="hover">
+                            <template #reference>
+                                <div style="cursor: pointer;">
+                                    <span class="barrage-text">{{ scope.row.content }}</span>
+                                </div>
+                            </template>
+                            <template #default>
+                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                    <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
+                                        style="margin-right: 8px;">
+                                        <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                            <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
+                                            {{ item.label }}
+                                        </el-tag>
+                                    </div>
+                                </div>
+                            </template>
+                        </el-popover>
                     </template>
                 </el-table-column>
                 <el-table-column align="center" width="100">
@@ -51,7 +121,7 @@ import { API } from '@/constants/backend';
 import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
 import httpInstance from '@/apis/httpInstance';
-import { fa } from 'element-plus/es/locales.mjs';
+
 const route = useRoute();
 const router = useRouter();
 /**
@@ -60,6 +130,7 @@ const router = useRouter();
  * 所以我采取的方法是匹配不到就定位到404页。建议后面用currentCategory的地方都这么处理
  */
 const currentCategory = computed(() => {
+    addedDictValues.value=[]
     return MemeCategory.find((item) => item.path === route.path);
 });
 
@@ -69,15 +140,32 @@ const total = ref(0);
 const pageSize = 50;
 const currentPage = ref(1);
 const isSort = ref(false)
+const dictData = ref([]);
 
+// 预设标签
+const presetTags = ref([]);
+
+// 已添加标签
+const addedTags = ref([]);
+
+// 已添加标签的 dictValue 数组
+const addedDictValues = ref([]);
 async function refreshMeme(pageNum: number) {
     const category = currentCategory.value?.category;
     if (!category) {
         router.push('/404');
         return;
     }
-    const res = await getMemeList(category, pageNum, pageSize);
-    if (!res) return;
+    let res;
+    console.log(addedDictValues.value.join(','));
+    
+    if (addedDictValues.value.length==0) {
+        res = await getMemeList(category, pageNum, pageSize);
+    } else {
+        res = await getMemeList(category, pageNum, pageSize, addedDictValues.value.join(','));
+    }
+
+    // if (!res) return;
 
     memeArr.value = res.memeArr;
     total.value = res.total;
@@ -89,6 +177,7 @@ refreshMeme(1);
  * 排序功能
 */
 async function sortMeme(pageNum: number) {
+    getDict()
     httpInstance.get(API.GET_SORTED_ALL_MEME, {
         params: {
             pageNum: pageNum,
@@ -103,6 +192,7 @@ async function sortMeme(pageNum: number) {
                 content: item.barrage,
                 id: item.id,
                 copyCount: +item.cnt,
+                tags: item.tags,
             };
         });
     }).catch(err => {
@@ -114,7 +204,7 @@ watch(
     () => route.path,
     () => {
         console.log('当前页面path:', route.path);
-        isSort.value=false
+        isSort.value = false
         currentPage.value = 1;
         loading.value = true;
         refreshMeme(1);
@@ -147,7 +237,7 @@ async function copyMeme_countPlus1(meme: Meme) {
     if (!res || res === 'limitedSuccess') return;
     copySuccess();
     if (isSort.value == true) {
-        if(await copyCountPlus1('allbarrage', meme.id, currentPage.value, pageSize,'desc')){
+        if (await copyCountPlus1('allbarrage', meme.id, currentPage.value, pageSize, 'desc')) {
             await sortMeme(currentPage.value);
             return;
         }
@@ -166,9 +256,100 @@ const dialogFormVisible = ref(false);
 const handleSubmit = () => {
     dialogFormVisible.value = true;
 };
+
+const getDict = () => {
+    httpInstance.get('/machine/dictList').then(res => {
+        if (res.code === '200') {
+            dictData.value = res.data;
+            presetTags.value = res.data.map(item => ({
+                label: item.dictLabel,
+                value: item.dictValue
+            }));
+        }
+    }).catch(err => {
+        console.error('获取字典数据失败', err);
+    });
+};
+
+const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
+    if (!tags || tags.trim() === '') {
+        return [];
+    }
+    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())));
+    if (!dictData.value) {
+        return tagList.map(() => ({ label: '', iconUrl: '' }));
+    }
+    const dictMap = new Map(
+        dictData.value.map(item => [String(item.dictValue).trim(), item])
+    );
+    const labels = tagList.map(tag => {
+        const dictItem = dictMap.get(tag);
+        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
+    });
+
+    return labels;
+};
+
+getDict()
+
+
+// 删除已添加标签
+const removeTag = (tag) => {
+    addedTags.value = addedTags.value.filter(t => t.value !== tag.value);
+    addedDictValues.value = addedDictValues.value.filter(value => value !== tag.value);
+    presetTags.value.push(tag);
+    refreshMeme(1);
+};
+
+// 添加标签的点击事件
+const removeTagFromPreset = (tag) => {
+    // 当删除预设标签时，将其移到已添加标签
+    if (!addedTags.value.some(t => t.value === tag.value)) {
+        addedTags.value.push(tag);
+        addedDictValues.value.push(tag.value);
+        presetTags.value = presetTags.value.filter(t => t.value !== tag.value);
+    }
+    console.log(addedDictValues.value);
+    refreshMeme(1);
+};
+
 </script>
 
 <style scoped lang="scss">
+/* 预设标签容器 */
+.preset-tags-container {
+    max-height: 100px;
+    overflow-y: auto;
+}
+
+/* 预设标签按钮的样式 */
+.preset-tags {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.preset-tags .el-tag {
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+::v-deep .preset-tags .el-tag__close {
+    font-size: 30px;
+    transform: rotate(45deg);
+}
+
+.added-tags {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.added-tags .el-tag {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
 .memes-view {
     width: 100%;
     display: flex;
@@ -302,6 +483,7 @@ const handleSubmit = () => {
             display: flex;
             justify-content: center;
             margin-top: 16px;
+            margin-bottom: 40px;
         }
     }
 }
@@ -311,6 +493,7 @@ const handleSubmit = () => {
         font-size: large;
     }
 }
+
 @media (max-width: 601px) {
     .main-table {
         font-size: medium;
