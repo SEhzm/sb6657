@@ -37,3 +37,13 @@ a {
         rgba(0,0,0,0) 70%
     );
 }
+
+/* 新年限定烟花 */
+.mini-firework {
+    overflow: hidden;
+    border-radius: 50%;
+    mask-image: radial-gradient(circle at center, 
+        rgba(0,0,0,1) 40%, 
+        rgba(0,0,0,0) 70%
+    );
+}
