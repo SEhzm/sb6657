@@ -130,6 +130,7 @@ const router = useRouter();
  * 所以我采取的方法是匹配不到就定位到404页。建议后面用currentCategory的地方都这么处理
  */
 const currentCategory = computed(() => {
+    //清空已选标签
     addedDictValues.value=[]
     return MemeCategory.find((item) => item.path === route.path);
 });
@@ -159,13 +160,13 @@ async function refreshMeme(pageNum: number) {
     let res;
     console.log(addedDictValues.value.join(','));
     
-    if (addedDictValues.value.length==0) {
+    if (addedDictValues.value.length==0) {  //没选标签就加载全部烂梗
         res = await getMemeList(category, pageNum, pageSize);
     } else {
         res = await getMemeList(category, pageNum, pageSize, addedDictValues.value.join(','));
     }
 
-    // if (!res) return;
+    // if (!res) return;   //没有就是没有数据
 
     memeArr.value = res.memeArr;
     total.value = res.total;
@@ -177,12 +178,12 @@ refreshMeme(1);
  * 排序功能
 */
 async function sortMeme(pageNum: number) {
-    getDict()
+    getDict();
     httpInstance.get(API.GET_SORTED_ALL_MEME, {
         params: {
             pageNum: pageNum,
             pageSize: pageSize,
-            order: 'desc'
+            tags: `${addedDictValues.value}`
         }
     }).then(res => {
         isSort.value = true

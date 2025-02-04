@@ -153,10 +153,14 @@ async function handleSearchMeme() {
     searchedMeme.value = res;
 }
 
-//定时一小时弹出支持我！！！
 onMounted(() => {
-    setInterval(() => {
+    // 第一次在一小时后弹出
+    setTimeout(() => {
         supportMeDialog.value = true;
+        // 后续每次在两小时后弹出
+        setInterval(() => {
+            supportMeDialog.value = true;
+        }, 2 * 60 * 60 * 1000); // 2h
     }, 60 * 60 * 1000); // 1h
 });
 //上传按钮

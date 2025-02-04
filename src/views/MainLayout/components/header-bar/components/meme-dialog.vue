@@ -120,7 +120,7 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
 
     return labels;
 };
-getDict()
+
 </script>
 
 <style scoped lang="scss">
