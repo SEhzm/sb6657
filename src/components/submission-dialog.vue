@@ -128,6 +128,8 @@ const saveBarrage = () => {
             barrage.value = '';
             if (res.code === '200') {
                 ElNotification.success("投稿成功，待审核(一天内)");
+            }else if (res.code === '500') {
+                ElNotification.error("烂梗已经有了，勿重复提交")
             } else {
                 ElNotification.error("请求失败");
             }

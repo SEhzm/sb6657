@@ -38,8 +38,8 @@ const daysSinceLaunch = computed(() => {
     display: flex;
     justify-content: center;
     align-items: center;
+    
     .content {
-        margin-top: -30px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -48,6 +48,16 @@ const daysSinceLaunch = computed(() => {
             span {
                 color: red;
             }
+        }
+    }
+    @media (max-width: 600px) {
+        .content{
+            margin-top: 35px;
+        }
+    }
+    @media (min-width: 601px) {
+        .content{
+            margin-top: -50px;
         }
     }
 

@@ -96,6 +96,8 @@ function navigateTo(path: string) {
         min-height: calc(100vh - 60px);
 
         .sidebar-el-menu {
+            top: 50px;
+            position: sticky;
             border: none;
             margin-right: auto;
         }

@@ -1,11 +1,12 @@
-export const SERVER_ADDRESS = 'https://dgq63136.icu:10086';
+export const SERVER_ADDRESS = 'https://hguofichp.cn:10086';
 
 export const API = {
     INCREASE_COPY_COUNT: '/machine/addCnt',             // 增加复制次数
+    INCREASE_LIKE_COUNT: '/machine/like',             // 增加复制次数
     GET_HOT_MEME_24h: '/machine/hotBarrageOf24H',       // 获取24小时热门烂梗
     GET_HOT_MEME_7D: '/machine/hotBarrageOf7Day',       // 获取7天热门烂梗
     SEARCH_MEME: '/machine/Query',                      // 根据关键词搜索烂梗
-    GET_ALL_MEME: '/machine/Page?tags=1000',                  // 获取全部烂梗分页
+    GET_ALL_MEME: '/machine/Page?tags=1000',            // 获取全部烂梗分页
     GET_SORTED_ALL_MEME: '/machine/sortAllBarrage',     // 获取排序后的全部烂梗
     GET_FK_WJQ_MEME: '/machine/Page?tags=00',           // 获取喷玩机器篇烂梗
     GET_FK_PLAYER_MEME: '/machine/Page?tags=01',        // 获取喷选手篇烂梗
@@ -48,5 +49,6 @@ declare global {
         category: string; // 分类
         id: string; // ID
         copyCount: number; // 复制次数
+        likes: number; //点赞次数
     };
 }

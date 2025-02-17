@@ -313,7 +313,10 @@ const saveBarrage = () => {
             barrage.value = '';
             if (res.code === '200') {
                 ElNotification.success("投稿成功，待审核(一天内)");
-            } else {
+            } else if (res.code === '500') {
+                ElNotification.error("烂梗已经有了，勿重复提交")
+            }
+            else {
                 ElNotification.error("请求失败");
             }
         }).catch(err => {
@@ -424,7 +427,7 @@ const copyText = (row) => {
         open2();
         console.log('内容已复制到剪贴板');
         httpInstance.get('/machine/addCnt/'+`${row.id}`).then(() => {
-            setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
+            //setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
         });
     } catch (err) {
         // 复制失败，可以显示错误信息
@@ -490,7 +493,6 @@ const onSearchQueryChange = () => {
 
 .boomouder {
     height: 150px;
-
     .boom6657 {
         left: calc(50vw - 153px);
         position: absolute;
@@ -566,7 +568,6 @@ const onSearchQueryChange = () => {
 
     .search-input {
         font-size: 16px;
-        margin-top: 10px;
     }
 
     .submit-button {

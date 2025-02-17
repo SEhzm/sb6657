@@ -86,6 +86,7 @@ interface getMemeList_meme {
     id: string;
     barrage: string;
     cnt: string;
+    likes: string;
 }
 interface getMemeList_data {
     total: number;
@@ -136,6 +137,7 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
                 id: item.id,
                 category: category,
                 copyCount: +item.cnt,
+                likes: +item.likes,
             };
         });
         return {

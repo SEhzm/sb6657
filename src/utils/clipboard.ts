@@ -25,6 +25,14 @@ export function limitedCopy() {
     });
     return 'limitedSuccess';
 }
+export function limitedLike() {
+    ElNotification({
+        title: '请勿刷次数',
+        message: '点赞成功，但次数没有增加',
+        type: 'warning',
+    });
+    return 'limitedSuccess';
+}
 
 export function copyToClipboard(copyText: string): boolean {
     const inputDOM = document.createElement('input');

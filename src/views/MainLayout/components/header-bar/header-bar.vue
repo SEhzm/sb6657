@@ -34,7 +34,7 @@
                     </span>
                 </el-button>
                 <a href="https://sb6657.cn/#/Tampermonkey">
-                    <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="gitee" class="icon-img" />
+                    <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
                 </a>
                 <a href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
                     <img src="@/assets/imgs/douyu.png" alt="douyu" class="icon-img" />
@@ -175,6 +175,9 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 <style scoped lang="scss">
 @media (min-width: 601px) {
     .header {
+        z-index: 1000;
+        top: 0;
+            position: sticky;
         .header-content {
             height: 55px;
             width: 100%;
