@@ -90,12 +90,12 @@
                         </el-popover>
                     </template>
                 </el-table-column>
-                <el-table-column align="center" width="100">
+                <!-- <el-table-column align="center" width="100">
                     <template #default="scope">
                         <el-button type="primary" class="copy-btn" @click.stop="likeMeme_countPlus1(scope.row)">点赞
                             👍<flip-num :num="scope.row.likes" /></el-button>
                     </template>
-                </el-table-column>
+                </el-table-column> -->
                 <el-table-column align="center" width="100">
                     <template #default="scope">
                         <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制

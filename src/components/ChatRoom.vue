@@ -53,7 +53,7 @@ const messageContainer = ref<HTMLElement | null>(null); // 引用消息容器
 
 // 判断当前浏览器是否支持WebSocket
 if ('WebSocket' in window) {
-	websocket.value = new WebSocket(`wss://dgq63136.icu:10086/machine/ws/${clientId.value}`);
+	websocket.value = new WebSocket(`wss://hguofichp.cn:10086/machine/ws/${clientId.value}`);
 } else {
 	ElMessageBox.alert('浏览器不支持在线聊天', '😣', {
 		confirmButtonText: 'OK',
@@ -177,7 +177,7 @@ const closeWebSocket = () => {
 // 重新连接
 const reconnectWebSocket = () => {
 	if (!websocket.value || websocket.value.readyState !== WebSocket.CONNECTING) {
-		websocket.value = new WebSocket(`wss://dgq63136.icu:10086/machine/ws/${clientId.value}`);
+		websocket.value = new WebSocket(`wss://hguofichp.cn:10086/machine/ws/${clientId.value}`);
 		websocket.value.onerror = onWebSocketError;
 		websocket.value.onopen = onWebSocketOpen;
 		websocket.value.onmessage = onWebSocketMessage;
