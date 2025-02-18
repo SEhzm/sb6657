@@ -9,6 +9,7 @@ interface hotMeme_res {
     hotDateTime: null;
     id: null;
     tableName: string;
+    likes: number;
 }
 interface getHotMeme_res {
     code: string;
@@ -29,6 +30,7 @@ async function getHotMeme(url: string, tips: string) {
                 category: item.tableName,
                 id: `${item.barrageId}`,
                 copyCount: item.cnt,
+                likes: item.likes,
             };
         });
         return memeArr;
@@ -49,6 +51,7 @@ interface searchMeme_data {
     barrage: string;
     cnt: string;
     id: string;
+    likes: string;
 }
 interface searchMeme_res {
     code: string;
@@ -72,6 +75,7 @@ export async function searchMeme(searchKey: string) {
                 category: 'allbarrage', // 由于目前搜索不返分类，所以分类写死成所有
                 id: item.id,
                 copyCount: +item.cnt,
+                likes: +item.likes
             };
         });
         return memeArr;

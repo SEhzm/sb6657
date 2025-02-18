@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog v-model="showDialog" class="dialog-main">
+        <el-dialog draggable v-model="showDialog" class="dialog-main">
             <template #header>
                 <slot></slot>
             </template>
@@ -12,31 +12,31 @@
                 </el-table-column>
                 <el-table-column prop="content">
                     <template #default="scope">
-                            <el-popover placement="top" :width="'auto'" trigger="hover" >
+                            <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                                 <template #reference>
-                                    <div style="cursor: pointer;">
+                                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
                                         <span class="barrage-text">{{ scope.row.content }}</span>
                                     </div>
                                 </template>
                                 <template #default>
-                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                                    <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" style="margin-right: 8px;">
-                                        <el-tag round effect="dark"
-                                            :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                            <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                            {{ item.label }}
-                                        </el-tag>
+                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                                        <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" style="margin-right: 8px;">
+                                            <el-tag round effect="dark"
+                                                :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                                <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
+                                                {{ item.label }}
+                                            </el-tag>
+                                        </div>
                                     </div>
-                                </div>
-                            </template>
+                                </template>
                             </el-popover>
                         </template>
                 </el-table-column>
-                <!-- <el-table-column align="center" width="100">
+                <el-table-column align="center" width="40">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="likeMeme_countPlus1(scope.row)">点赞👍(<flip-num :num="scope.row.likes" />)</el-button>
+                        <LikeNum :likeCount="scope.row.likes" @click.stop="likeMeme_countPlus1(scope.row)"/>
                     </template>
-                </el-table-column> -->
+                </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
                         <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 (<flip-num :num="scope.row.copyCount" />)</el-button>
@@ -49,11 +49,12 @@
 
 <script setup lang="ts">
 import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
+import { copyToClipboard, copySuccess, limitedCopy ,likeSuccess} from '@/utils/clipboard';
 import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import httpInstance from '@/apis/httpInstance';
 import { ref } from 'vue';
+import LikeNum from '@/components/like-num.vue';
 
 /**
  * 组件输入:
@@ -100,18 +101,12 @@ async function copyMeme_countPlus1(meme: Meme) {
 }
 //like复用copy
 async function likeMeme_countPlus1(meme: Meme) {
+    console.log(meme);
+    
     const memeText = meme.content;
-    /**
-     * 三种返回值情况
-     * 1. false，代表错误了，用户没能正确复制到剪贴板
-     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
-     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
-     *    由第二个回调函数limitedCopy里出弹窗提醒
-     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
-     */
     const res = likeMeme(memeText);
     if (!res || res === 'limitedSuccess') return;
-    // copySuccess();
+    likeSuccess();
     if (await likeCountPlus1(meme.id)) {
         emit('refresh');
         return;
@@ -148,6 +143,20 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
     return labels;
 };
 getDict()
+//移动端的触摸展示
+const handleTouchStart = (row: any) => {
+    row.touchStartTime = Date.now();
+};
+
+const handleTouchEnd = (row: any) => {
+    const touchEndTime = Date.now();
+    if (touchEndTime - row.touchStartTime > 200) { //200ms 长按时长
+        row.popoverVisible = true;
+        setTimeout(()=>{
+            row.popoverVisible=false
+        },1500)
+    }
+};
 </script>
 
 <style scoped lang="scss">

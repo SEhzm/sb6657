@@ -16,6 +16,12 @@ export function copySuccess() {
         type: 'success',
     });
 }
+export function likeSuccess() {
+    ElNotification({
+        message: '点赞成功',
+        type: 'success',
+    });
+}
 
 export function limitedCopy() {
     ElNotification({

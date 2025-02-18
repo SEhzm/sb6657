@@ -50,16 +50,15 @@ const daysSinceLaunch = computed(() => {
             }
         }
     }
-    @media (max-width: 600px) {
-        .content{
-            margin-top: 35px;
-        }
-    }
     @media (min-width: 601px) {
         .content{
             margin-top: -50px;
         }
     }
-
+    @media (max-width: 600px) {
+        .content{
+            margin-top: 45px;
+        }
+    }
 }
 </style>

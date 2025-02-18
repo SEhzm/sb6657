@@ -44,7 +44,7 @@ import { useRoute } from 'vue-router';
 const route = useRoute();
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
-const chatY = ref(100);
+const chatY = ref(110);
 const annualX = ref(8.2);
 const annualY = ref(120);
 const isChatVisible = ref(true);
@@ -215,8 +215,8 @@ const closeHot = () => {
 
 .body {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   margin: 0;
   padding: 0;
   background: radial-gradient(200% 100% at bottom center,

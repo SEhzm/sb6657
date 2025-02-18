@@ -37,6 +37,7 @@ declare module 'vue' {
     ElTour: typeof import('element-plus/es')['ElTour']
     ElTourStep: typeof import('element-plus/es')['ElTourStep']
     FlipNum: typeof import('./src/components/flip-num.vue')['default']
+    LikeNum: typeof import('./src/components/like-num.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SubmissionDialog: typeof import('./src/components/submission-dialog.vue')['default']

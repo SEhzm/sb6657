@@ -177,11 +177,11 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
     .header {
         z-index: 1000;
         top: 0;
-            position: sticky;
+        position: sticky;
         .header-content {
+            backdrop-filter: saturate(100%) blur(4px);   
             height: 55px;
             width: 100%;
-            min-width: 1270px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -194,6 +194,7 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
                     border-radius: 5px;
                 }
                 .header-title {
+                    max-height: 50px;
                     color: #ff552e;
                     font-size: 30px;
                 }

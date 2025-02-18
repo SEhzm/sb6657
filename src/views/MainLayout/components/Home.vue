@@ -37,9 +37,9 @@
                 <el-table v-loading="loading" :data="data.tableData" class="barrage-table" @row-click="copyText">
                     <el-table-column prop="barrage">
                         <template #default="scope">
-                            <el-popover placement="top" :width="'auto'" trigger="hover">
+                            <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                                 <template #reference>
-                                    <div style="cursor: pointer;">
+                                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
                                         <span class="barrage-text">{{ scope.row.barrage }}</span>
                                     </div>
                                 </template>
@@ -105,8 +105,16 @@
                             </el-popover>
                         </template>
                     </el-table-column>
-                    <el-table-column label="" align="center" width="85">
-                        <el-button type="primary">复制</el-button>
+                    <el-table-column align="center" width="40">
+                        <template #default="scope">
+                            <LikeNum :likeCount="scope.row.likes" @click.stop="likeMeme_countPlus1(scope.row)"/>
+                        </template>
+                    </el-table-column>
+                    <el-table-column align="center" width="100">
+                        <template #default="scope">
+                            <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
+                                🎈<flip-num :num="scope.row.cnt" /></el-button>
+                        </template>
                     </el-table-column>
                 </el-table>
             </div>
@@ -172,7 +180,7 @@
         </div>
         <ChatRoom class="ChatRoom card"></ChatRoom>
         <div class="card sixth-card">
-            友情链接 <a href="https://dgq63136.icu" target="_blank">dgq63136.icu</a>&nbsp;&nbsp;&nbsp;
+            友情链接 <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
     </div>
@@ -185,9 +193,12 @@ import httpInstance from "@/apis/httpInstance";
 import { ElMessage, ElNotification } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
-
+import { throttle } from '@/utils/throttle';
+import { copyToClipboard, copySuccess, limitedCopy, limitedLike} from '@/utils/clipboard';
+import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/apis/setMeme';
+import flipNum from '@/components/flip-num.vue';
+import LikeNum from '@/components/like-num.vue';
 import ChatRoom from '@/components/ChatRoom.vue';
-import AnnualHotList from '@/components/AnnualHotList.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
@@ -214,7 +225,7 @@ const autoexec = () => {
             <p>
                 欢迎来自<b>${resData.location || '地球'}</b>的朋友<br/>  
                 ${resData.system || '外星操作系统'} ${resData.browser || '牛逼浏览器'}<br/>
-                IP: ${resData.ip || '地球'} 
+                IP: ${resData.ip || '地球'}
             </p>
             `,
                     offset: 50,
@@ -446,6 +457,54 @@ const onSearchQueryChange = () => {
     data.filteredItems = [];
     isInput.value = false;
 };
+//移动端的触摸展示
+const handleTouchStart = (row) => {
+    row.touchStartTime = Date.now();
+};
+
+const handleTouchEnd = (row) => {
+    const touchEndTime = Date.now();
+    if (touchEndTime - row.touchStartTime > 200) { //200ms 长按时长
+        row.popoverVisible = true;
+        setTimeout(()=>{
+            row.popoverVisible=false
+        },1500)
+    }
+};
+// 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
+//like复用copy
+const likeMeme = throttle(copyToClipboard, limitedLike, 2000);
+
+async function copyMeme_countPlus1(meme) {
+    const memeText = meme.content;
+    const res = copyMeme(memeText);
+    if (!res || res === 'limitedSuccess') return;
+    copySuccess();
+        await queryBarrage();
+        return;
+    plus1Error();
+}
+//like复用copy
+async function likeMeme_countPlus1(meme) {
+    const memeText = meme.content;
+    /**
+     * 三种返回值情况
+     * 1. false，代表错误了，用户没能正确复制到剪贴板
+     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
+     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
+     *    由第二个回调函数limitedCopy里出弹窗提醒
+     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
+     */
+    const res = likeMeme(memeText);
+    if (!res || res === 'limitedSuccess') return;
+    // copySuccess();
+    if (await likeCountPlus1(meme.id)) {
+        await queryBarrage();
+        return;
+    }
+    likePlus1Error();
+}
 </script>
 
 <style scoped lang="scss">
@@ -531,7 +590,7 @@ const onSearchQueryChange = () => {
             margin-top: 8px;
 
             .saveBnt {
-                margin-left: 45%;
+                margin-left: 40%;
                 width: 100px;
                 margin-top: 10px;
             }

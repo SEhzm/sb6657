@@ -69,9 +69,9 @@
                 </el-table-column>
                 <el-table-column prop="content">
                     <template #default="scope">
-                        <el-popover placement="top" :width="'auto'" trigger="hover">
+                        <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
-                                <div style="cursor: pointer;">
+                                <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
                                     <span class="barrage-text">{{ scope.row.content }}</span>
                                 </div>
                             </template>
@@ -90,12 +90,11 @@
                         </el-popover>
                     </template>
                 </el-table-column>
-                <!-- <el-table-column align="center" width="100">
+                <el-table-column align="center" width="40">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="likeMeme_countPlus1(scope.row)">点赞
-                            👍<flip-num :num="scope.row.likes" /></el-button>
+                        <LikeNum :likeCount="scope.row.likes" @click.stop="likeMeme_countPlus1(scope.row)"/>
                     </template>
-                </el-table-column> -->
+                </el-table-column>
                 <el-table-column align="center" width="100">
                     <template #default="scope">
                         <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
@@ -126,6 +125,7 @@ import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/api
 import { API } from '@/constants/backend';
 import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
+import LikeNum from '@/components/like-num.vue';
 import httpInstance from '@/apis/httpInstance';
 
 const route = useRoute();
@@ -340,7 +340,20 @@ const removeTagFromPreset = (tag) => {
     console.log(addedDictValues.value);
     refreshMeme(1);
 };
+//移动端的触摸展示
+const handleTouchStart = (row: any) => {
+    row.touchStartTime = Date.now();
+};
 
+const handleTouchEnd = (row: any) => {
+    const touchEndTime = Date.now();
+    if (touchEndTime - row.touchStartTime > 200) { //200ms 长按时长
+        row.popoverVisible = true;
+        setTimeout(()=>{
+            row.popoverVisible=false
+        },1500)
+    }
+};
 </script>
 
 <style scoped lang="scss">

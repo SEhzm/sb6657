@@ -86,7 +86,6 @@ function navigateTo(path: string) {
     }
 
     .main-content {
-        position: relative;
         display: flex;
     }
 
