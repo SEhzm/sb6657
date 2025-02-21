@@ -28,9 +28,13 @@
                 </span>
                 尽情欣赏你们的烂梗吧。
                 另寻几位玩神老观众(21级牌子或3000h观看时长)，获得后台审核和记录的资格！！
+                <br><b>为了更深入了解用户的需求以及作者需编写论文，特开展玩机器sb6657.cn 用户调研 <span style="cursor: pointer;color:slateblue;" @click="dialogVisible=true">点击我参加</span>
+                为了感谢您抽出宝贵的时间参与调研，会在结束时抽取三个后台审核资格。</b>
             </p>
         </div>
-
+        <el-dialog v-model="dialogVisible" title="用户调研" width="800">
+            <iframe src='https://www.wjx.cn/vm/OEMMMbD.aspx?width=750&source=iframe&s=t' width='789' height='750' frameborder='0' style='overflow:auto'></iframe>
+        </el-dialog>
         <div class="card third-card">
             <div>
                 <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
@@ -202,6 +206,7 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
+const dialogVisible =ref(false)
 const loading = ref(true)
 const isInput = ref(false)
 const data = reactive({

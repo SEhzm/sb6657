@@ -1,7 +1,5 @@
 <template>
-    <div>
-        <LikeButton :likeCount="likeCount" />
-    </div>
+    <iframe src='https://www.wjx.cn/vm/OEMMMbD.aspx?width=750&source=iframe&s=t' width='789' height='750' frameborder='0' style='overflow:auto'></iframe>
 </template>
 
 <script setup>

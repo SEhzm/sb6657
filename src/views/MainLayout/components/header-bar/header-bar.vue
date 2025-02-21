@@ -42,9 +42,17 @@
                 <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
+                
                 <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/zfb.jpg']" :initial-index="4" fit="cover" />
-                <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
-            </div>
+                <el-tooltip
+                    class="box-item"
+                    effect="light"
+                    content="接程序设计,(计算机,软件)毕设，作业，包文档，详情联系右上角"
+                    placement="bottom"
+                >
+                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.dgq63136.icu/wx.jpg']" :initial-index="4" fit="cover" />
+                </el-tooltip>
+                </div>
         </div>
 
         <!-- 24h热门弹幕对话框 -->

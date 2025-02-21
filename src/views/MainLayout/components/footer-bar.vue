@@ -15,7 +15,7 @@
 import { ref, computed } from 'vue';
 
 const serverDate = ref(0);
-const txServerDate = new Date('2025-02-20'); // 服务器到期日期
+const txServerDate = new Date('2026-02-16'); // 服务器到期日期
 const currentDate = new Date();
 serverDate.value = Math.ceil((txServerDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
 
