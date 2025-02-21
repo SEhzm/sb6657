@@ -3,7 +3,6 @@
         <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
             class="boom6657">
     </div>
-    <!-- <AnnualHotList class="AnnualHotList"></AnnualHotList> -->
     <div class="home">
         <div class="card first-card">
             <div>
@@ -11,11 +10,6 @@
                     <p class="announcement">
                         新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册
                     </p>
-                    <!-- <p class="announcement-highlight">
-                        最新推出了油猴TamperMonkey插件，可以在直播间直接搜索进行复制和一键发送，
-                        <a href="https://sb6657.cn/#/Tampermonkey" target="_blank">点我安装！</a>
-                    </p> -->
-                    <!-- <p class="announcement-highlight">左上角新加2024年度TOP20烂梗评选，具体时间如弹框所示，每人每阶段有三票</p> -->
                 </b>
             </div>
         </div>
@@ -28,13 +22,11 @@
                 </span>
                 尽情欣赏你们的烂梗吧。
                 另寻几位玩神老观众(21级牌子或3000h观看时长)，获得后台审核和记录的资格！！
-                <br><b>为了更深入了解用户的需求以及作者需编写论文，特开展玩机器sb6657.cn 用户调研 <span style="cursor: pointer;color:slateblue;" @click="dialogVisible=true">点击我参加</span>
+                <br><b>为了更深入了解用户的需求以及作者需编写论文，特开展玩机器sb6657.cn 用户调研 <a style="color: blue;cursor: pointer;" @click="simulateClick">点击我参加</a>
                 为了感谢您抽出宝贵的时间参与调研，会在结束时抽取三个后台审核资格。</b>
             </p>
         </div>
-        <el-dialog v-model="dialogVisible" title="用户调研" width="800">
-            <iframe src='https://www.wjx.cn/vm/OEMMMbD.aspx?width=750&source=iframe&s=t' width='789' height='750' frameborder='0' style='overflow:auto'></iframe>
-        </el-dialog>
+        
         <div class="card third-card">
             <div>
                 <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
@@ -206,7 +198,14 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
-const dialogVisible =ref(false)
+const simulateClick = () => {
+  const diaochaButton = document.getElementById('diaocha');
+  if (diaochaButton) {
+    diaochaButton.click();
+  } else {
+    console.error('Element with id "diaocha" not found');
+  }
+};
 const loading = ref(true)
 const isInput = ref(false)
 const data = reactive({

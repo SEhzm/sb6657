@@ -1,4 +1,19 @@
 <template>
+  <el-popover
+    placement="left"
+    title="参加调研,非常感谢您！"
+    :width="200"
+    trigger="hover" 
+    :visible="diaochaSetTime"
+    content="急需了解用户的需求以及作者需编写论文，完成后抽奖"
+  >
+    <template #reference>
+      <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime=1000"  @click="dialogVisible='true'" style="position: fixed;top: 60%;right: 0;writing-mode: vertical-rl;text-orientation: upright;white-space: nowrap;height: 70px;width: 30px;z-index: 1000;">用户调研</el-button>
+    </template>
+  </el-popover>
+    <el-dialog v-model="dialogVisible" style="position: fixed;bottom: 0;right: 0;" draggable="true" title="用户调研" width="100%">
+      <iframe src='https://f.wps.cn/g/GLeSOK3F/' width='100%' height='650' frameborder='0'></iframe>
+    </el-dialog>
   <div id="bg">
     <div class="body" id="bodyId">
       <div class="stars" ref="starsRef">
@@ -49,10 +64,14 @@ const annualX = ref(8.2);
 const annualY = ref(120);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
-
+const dialogVisible =ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
+const diaochaSetTime = ref(true)
+setTimeout(()=>{
+  diaochaSetTime.value = false
+},5 * 1000)
 
 // 开始拖动的函数
 const startDrag = (event, component) => {
