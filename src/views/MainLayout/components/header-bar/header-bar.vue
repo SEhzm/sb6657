@@ -42,17 +42,15 @@
                 <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
-                
-                <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/zfb.jpg']" :initial-index="4" fit="cover" />
                 <el-tooltip
                     class="box-item"
                     effect="light"
-                    content="接程序设计,(计算机,软件)毕设，作业，包文档，详情联系右上角"
+                    content="接程序设计,(计算机,软件)毕设，作业，包文档，详情联系邮箱 he20020928@foxmail.com"
                     placement="bottom"
                 >
-                    <el-image class="icon-img-rounded" :src="wxurl" :hide-on-click-modal="true" :zoom-rate="1.2" lazy :max-scale="7" :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/wx.jpg']" :initial-index="4" fit="cover" />
+                    <img src="@/assets/imgs/mail.png" alt="github" class="icon-img" />
                 </el-tooltip>
-                </div>
+            </div>
         </div>
 
         <!-- 24h热门弹幕对话框 -->
@@ -175,9 +173,6 @@ onMounted(() => {
 const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
-
-const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
-const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
 </script>
 
 <style scoped lang="scss">
@@ -251,11 +246,13 @@ const wxurl = 'https://pic.imgdb.cn/item/66dd952dd9c307b7e9321a73.png';
             }
 
             .icon-img {
-                width: 31px;
+                position: sticky;
+                width: 32px;
                 margin-right: 15px;
             }
 
             .icon-img-rounded {
+                position: sticky;
                 width: 31px;
                 height: 31px;
                 margin-right: 15px;
