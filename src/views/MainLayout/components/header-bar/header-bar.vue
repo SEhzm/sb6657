@@ -42,6 +42,8 @@
                 <a href="https://github.com/SEhzm/sb6657/" target="_blank">
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
+
+                <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/zfb.jpg']" :initial-index="4" fit="cover" />
                 <el-tooltip
                     class="box-item"
                     effect="light"
@@ -158,6 +160,7 @@ async function handleSearchMeme() {
     }
     searchedMeme.value = res;
 }
+const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
 
 onMounted(() => {
     // 第一次在一小时后弹出
@@ -246,17 +249,19 @@ const complaintButton = () => {
             }
 
             .icon-img {
-                position: sticky;
                 width: 32px;
                 margin-right: 15px;
             }
 
             .icon-img-rounded {
-                position: sticky;
                 width: 31px;
                 height: 31px;
                 margin-right: 15px;
                 border-radius: 5px;
+            }
+            ::v-deep .el-image-viewer__wrapper{
+                position: fixed;
+                height: 100vh;
             }
         }
     }
