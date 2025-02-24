@@ -12,7 +12,7 @@
         <el-button style="width: 230px; font-size: 16px;  white-space: normal; word-break: break-word;">{{ image.date }}</el-button>
       </div>
       <el-button @click="toggleComments(image)" style=" font-size: 18px; margin-left: 15px; box-sizing: border-box;">{{
-        image.showComments ? '隐藏评论' : '显示评论'
+        image.showComments ? '隐藏评论' : '显示评论('+  image.comments.length+ ')' 
       }}
       </el-button>
       <div v-if="image.showComments" class="comment-list">
