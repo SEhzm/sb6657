@@ -175,11 +175,11 @@
             <el-backtop :right="50" :bottom="50" />
         </div>
         <ChatRoom class="ChatRoom card"></ChatRoom>
-        <div style="position: fixed;bottom: 10px;right: 10px;"><span>搜索词云</span><wordCloud></wordCloud></div>
         <div class="card sixth-card">
             友情链接 <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
+        <div class="wordCloudDiv"><span style="background-color: white;border-radius: 25px;padding: 5px;">搜索词云</span><wordCloud></wordCloud></div>
     </div>
 </template>
 
@@ -651,9 +651,17 @@ async function likeMeme_countPlus1(meme) {
             color: red;
         }
     }
+    
 }
 
 @media (min-width: 601px) {
+    .home{
+        .wordCloudDiv{
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+        }
+    }
     .ChatRoom {
         display: none;
     }
@@ -682,6 +690,10 @@ async function likeMeme_countPlus1(meme) {
 
     .home {
         width: 100%;
+
+        .wordCloudDiv{
+            margin-top: 10px;
+        }
     }
 
     .ChatRoom {

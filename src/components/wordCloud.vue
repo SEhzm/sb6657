@@ -61,7 +61,7 @@ function getWordCloudList() {
                         fontFamily: 'PingFangSC-Semibold',
                         fontWeight: 600,
                         color: function (params) {
-                            let colors = ['#fe9a8bb3', '#fe9a8bb3', '#fe9a8b03', '#9E87FFb3', '#9E87FFb3', '#9E87FFb3', '#fe9a8bb3', '#fe9a8bb3', '#fe9a8bb3', '#73DDFF', '#58D5FF']
+                            let colors = ['#9E87FFb3', '#58D5FF', '#9E87FFb3', '#9E87FFb3', '#9E87FFb3', '#9E87FFb3', '#73DDFF', '#58D5FF']
                             return colors[parseInt(Math.random() * 10)];
                         },
                     },
@@ -77,4 +77,8 @@ function getWordCloudList() {
 
 </script>
 
-<style lang='scss' scoped></style>
+<style lang='scss' scoped>
+h1{
+    color:#58D5FF;
+}
+</style>
