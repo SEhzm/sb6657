@@ -1,5 +1,5 @@
 <template>
-    <div ref="wordCloud" style="height: 250px;width: 250px;"></div>
+    <div ref="wordCloud" style="height: 270px;width: 300px;"></div>
 
 </template>
 
@@ -14,7 +14,6 @@ onMounted(() => {
     httpInstance.get('/machine/WordCloud')
         .then(res => {
             list.value = res;
-            console.log(list.value);
             getWordCloudList(); 
         })
         .catch(error => {
@@ -36,7 +35,7 @@ function getWordCloudList() {
                     color: 'hotpink',
                     lineHeight: 16
                 },
-                extraCssText: 'box-shadow: 0 4px 20px -4px rgba(199, 206, 215, .7);border-radius: 4px;'
+                extraCssText: 'box-shadow: 0 4px 20px -4px rgba(199, 206, 215, 1);border-radius: 4px;'
             },
             series: [
                 {
@@ -50,10 +49,10 @@ function getWordCloudList() {
                     bottom: null,
 
                     sizeRange: [16, 30],
-                    rotationRange: [0, 0],
-                    rotationStep: 0,
+                    rotationRange: [-20, 20],
+                    rotationStep: 25,
 
-                    gridSize: 23,
+                    gridSize: 15,
                     drawOutOfBound: false,
                     layoutAnimation: true,
 
@@ -61,8 +60,8 @@ function getWordCloudList() {
                         fontFamily: 'PingFangSC-Semibold',
                         fontWeight: 600,
                         color: function (params) {
-                            let colors = ['#9E87FFb3', '#58D5FF', '#9E87FFb3', '#9E87FFb3', '#9E87FFb3', '#9E87FFb3', '#73DDFF', '#58D5FF']
-                            return colors[parseInt(Math.random() * 10)];
+                            let colors = ['#0d3555', '#58D5FF', '#0093c4', '#0d3555', '#0093c4', '#0d3555', '#73DDFF', '#58D5FF','#ff0000','#00ff00','#ff0000','#00ff00','#1a721a','#1a721a','#1a721a']
+                            return colors[parseInt(Math.random() * 15)];
                         },
                     },
                     emphasis: {
@@ -74,11 +73,14 @@ function getWordCloudList() {
         })
     }
 }
-
+// 暴露 getWordCloudList 方法
+defineExpose({
+    getWordCloudList
+});
 </script>
 
 <style lang='scss' scoped>
 h1{
-    color:#58D5FF;
+    color:#1a721a;
 }
 </style>

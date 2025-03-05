@@ -179,7 +179,7 @@
             友情链接 <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
-        <div class="wordCloudDiv"><span style="background-color: white;border-radius: 25px;padding: 5px;">搜索词云</span><wordCloud></wordCloud></div>
+        <div class="wordCloudDiv"><span style="background-color: white;border-radius: 25px;padding: 5px;">搜索词云<el-icon size="20" style="cursor: pointer;animation: rotating 4s linear infinite reverse;" @click="refreshWordCloud()"><Refresh /></el-icon></span><wordCloud ref="wordCloudRef"></wordCloud></div>
     </div>
 </template>
 
@@ -514,6 +514,13 @@ async function likeMeme_countPlus1(meme) {
         return;
     }
     likePlus1Error();
+}
+const wordCloudRef = ref(null);
+
+function refreshWordCloud() {
+    if (wordCloudRef.value) {
+        wordCloudRef.value.getWordCloudList();
+    }
 }
 </script>
 
