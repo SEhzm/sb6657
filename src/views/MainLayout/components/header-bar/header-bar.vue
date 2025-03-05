@@ -151,6 +151,7 @@ async function handleSearchMeme() {
     searchDialogLoading.value = false;
     if (!res) {
         searchedMeme.value = [];
+        searchEmptyText.value = "请输入搜索词..."
         return;
     }
     if (res === 'notfound') {

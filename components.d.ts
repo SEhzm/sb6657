@@ -42,6 +42,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SubmissionDialog: typeof import('./src/components/submission-dialog.vue')['default']
+    WordCloud: typeof import('./src/components/wordCloud.vue')['default']
   }
   export interface ComponentCustomProperties {
     vLoading: typeof import('element-plus/es')['ElLoadingDirective']

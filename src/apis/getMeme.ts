@@ -60,6 +60,9 @@ interface searchMeme_res {
 }
 export async function searchMeme(searchKey: string) {
     console.log(`搜索词: ${searchKey}`);
+    if(searchKey==null || searchKey==''){
+        return false;
+    }
     try {
         const res: searchMeme_res = await httpInstance.post(API.SEARCH_MEME, {
             barrage: searchKey,

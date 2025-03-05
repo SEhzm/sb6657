@@ -74,7 +74,7 @@
                         </el-button>
                     </template>
                 </el-input>
-                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
+                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText" :empty-text="emptyText"
                     :cell-style="{ cursor: 'Pointer', fontSize: 'large' }">
                     <el-table-column prop="barrage">
                         <template #default="scope">
@@ -175,6 +175,7 @@
             <el-backtop :right="50" :bottom="50" />
         </div>
         <ChatRoom class="ChatRoom card"></ChatRoom>
+        <div style="position: fixed;bottom: 10px;right: 10px;"><span>搜索词云</span><wordCloud></wordCloud></div>
         <div class="card sixth-card">
             友情链接 <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
@@ -195,6 +196,7 @@ import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/api
 import flipNum from '@/components/flip-num.vue';
 import LikeNum from '@/components/like-num.vue';
 import ChatRoom from '@/components/ChatRoom.vue';
+import wordCloud from '@/components/wordCloud.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
@@ -208,6 +210,7 @@ const simulateClick = () => {
 };
 const loading = ref(true)
 const isInput = ref(false)
+const emptyText = ref("数据为空")
 const data = reactive({
     getRandOne: [],
     filteredItems: [],
@@ -343,6 +346,9 @@ const saveBarrage = () => {
 //搜索
 const queryBarrage = () => {
     console.log(searchQuery.value)
+    if(searchQuery==null||searchQuery.value==""){
+        emptyText.value="请输入搜索词..."
+    }
     httpInstance.post('/machine/Query', {
         barrage: searchQuery.value
     }).then(res => {
@@ -566,7 +572,7 @@ async function likeMeme_countPlus1(meme) {
 
 .home {
     height: auto;
-    width: 90%;
+    width: 80%;
 
     .card {
         line-height: 25px;
