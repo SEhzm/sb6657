@@ -519,7 +519,7 @@ const wordCloudRef = ref(null);
 
 function refreshWordCloud() {
     if (wordCloudRef.value) {
-        wordCloudRef.value.getWordCloudList();
+        wordCloudRef.value.getData();
     }
 }
 </script>

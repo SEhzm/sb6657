@@ -10,7 +10,10 @@ import 'echarts-wordcloud';
 import httpInstance from '@/apis/httpInstance';
 const wordCloud = ref(null)
 const list = []
-onMounted(() => {
+onMounted(()=>{
+    getData()
+})
+function getData(){
     httpInstance.get('/machine/WordCloud')
         .then(res => {
             list.value = res;
@@ -19,7 +22,7 @@ onMounted(() => {
         .catch(error => {
             console.error(error);
         });
-})
+}
 function getWordCloudList() {
     if (wordCloud.value) {
         const myc = echarts.init(wordCloud.value, "macarons")
@@ -75,7 +78,7 @@ function getWordCloudList() {
 }
 // 暴露 getWordCloudList 方法
 defineExpose({
-    getWordCloudList
+    getData
 });
 </script>
 
