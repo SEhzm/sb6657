@@ -68,21 +68,21 @@ const dialogVisible =ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
-const diaochaSetTime = ref(true)
-onMounted(() => {
-  if (!localStorage.getItem('diaochawenjuan')) {
-    localStorage.setItem('diaochawenjuan', '2')
-  }
-})
+const diaochaSetTime = ref(false)
+// onMounted(() => {
+//   if (!localStorage.getItem('diaochawenjuan')) {
+//     localStorage.setItem('diaochawenjuan', '2')
+//   }
+// })
 
 setTimeout(()=>{
   diaochaSetTime.value = false
-  if(localStorage.getItem('diaochawenjuan')>0){
-    setTimeout(() => {
-      localStorage.setItem('diaochawenjuan',localStorage.getItem('diaochawenjuan')-1)
-      document.getElementById('diaocha').click();
-    },30 * 1000);
-  }
+  // if(localStorage.getItem('diaochawenjuan')>0){
+  //   setTimeout(() => {
+  //     localStorage.setItem('diaochawenjuan',localStorage.getItem('diaochawenjuan')-1)
+  //     document.getElementById('diaocha').click();
+  //   },30 * 1000);
+  // }
 },5 * 1000)
 
 // 开始拖动的函数
