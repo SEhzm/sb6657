@@ -17,27 +17,11 @@ export async function copyCountPlus1(category: string, memeId: string, pageNum?:
         return false;
     }
 }
-export async function likeCountPlus1( memeId: string, category?: string, pageNum?: number, PageSize?: number, sortOrder?: string) {
-    try {
-        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_LIKE_COUNT+`/${memeId}`);
-        console.log('弹幕点赞次数+1成功', res);
-        return true;
-    } catch (err: any) {
-        console.error('弹幕点赞次数+1失败', err);
-        return false;
-    }
-}
+
 export function plus1Error() {
     ElNotification({
         title: '复制成功',
         message: '但是复制次数没有增加，可能是网络有问题',
-        type: 'warning',
-    });
-}
-export function likePlus1Error() {
-    ElNotification({
-        title: '点赞成功👍',
-        message: '但是点赞次数没有增加，可能是网络有问题',
         type: 'warning',
     });
 }

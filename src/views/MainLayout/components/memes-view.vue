@@ -121,7 +121,7 @@ import { MemeCategory } from '@/constants/backend';
 import { getMemeList } from '@/apis/getMeme';
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy, limitedLike} from '@/utils/clipboard';
-import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/apis/setMeme';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import { API } from '@/constants/backend';
 import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
@@ -258,26 +258,7 @@ async function copyMeme_countPlus1(meme: Meme) {
     }
     plus1Error();
 }
-//like复用copy
-async function likeMeme_countPlus1(meme: Meme) {
-    const memeText = meme.content;
-    /**
-     * 三种返回值情况
-     * 1. false，代表错误了，用户没能正确复制到剪贴板
-     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
-     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
-     *    由第二个回调函数limitedCopy里出弹窗提醒
-     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
-     */
-    const res = likeMeme(memeText);
-    if (!res || res === 'limitedSuccess') return;
-    // copySuccess();
-    if (await likeCountPlus1(meme.id)) {
-        await refreshMeme(currentPage.value);
-        return;
-    }
-    likePlus1Error();
-}
+
 const dialogFormVisible = ref(false);
 
 // 弹出投稿弹窗按钮

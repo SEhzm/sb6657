@@ -22,8 +22,7 @@
                 </span>
                 尽情欣赏你们的烂梗吧。
                 另寻几位玩神老观众(21级牌子或3000h观看时长)，获得后台审核和记录的资格！！
-                <br><b>为了更深入了解用户的需求以及作者需编写论文，特开展玩机器sb6657.cn 用户调研 <a style="color: blue;cursor: pointer;" @click="simulateClick">点击我参加</a>
-                为了感谢您抽出宝贵的时间参与调研，会在结束时抽取三个后台审核资格。</b>
+                <b>锐意创新：<span style="color: blue;cursor: pointer;"  @click="simulateClick">用户调研</span></b>
             </p>
         </div>
         
@@ -101,11 +100,7 @@
                             </el-popover>
                         </template>
                     </el-table-column>
-                    <!-- <el-table-column align="center" width="40">
-                        <template #default="scope">
-                            <LikeNum :likeCount="scope.row.likes" @click.stop="likeMeme_countPlus1(scope.row)"/>
-                        </template>
-                    </el-table-column> -->
+                    
                     <el-table-column align="center" width="100">
                         <template #default="scope">
                             <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
@@ -191,8 +186,8 @@ import { ElMessage, ElNotification } from 'element-plus';
 import { Search } from '@element-plus/icons-vue'
 import autoExecPng from "@/assets/autoexec.vue";
 import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy, limitedLike} from '@/utils/clipboard';
-import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/apis/setMeme';
+import { copyToClipboard, copySuccess, limitedCopy} from '@/utils/clipboard';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import LikeNum from '@/components/like-num.vue';
 import ChatRoom from '@/components/ChatRoom.vue';
@@ -483,37 +478,17 @@ const handleTouchEnd = (row) => {
 };
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-//like复用copy
-const likeMeme = throttle(copyToClipboard, limitedLike, 2000);
+
 
 async function copyMeme_countPlus1(meme) {
-    const memeText = meme.content;
+    const memeText = meme.barrage;
     const res = copyMeme(memeText);
     if (!res || res === 'limitedSuccess') return;
+    httpInstance.get(API.INCREASE_COPY_COUNT+`/` +meme.id)
     copySuccess();
-        await queryBarrage();
-        return;
+    queryBarrage();
+    return;
     plus1Error();
-}
-//like复用copy
-async function likeMeme_countPlus1(meme) {
-    const memeText = meme.content;
-    /**
-     * 三种返回值情况
-     * 1. false，代表错误了，用户没能正确复制到剪贴板
-     *    由第一个回调函数copyToClipboard里自行捕获到错误并且出弹窗提醒
-     * 2. 'limitedSuccess'，表示byd在连续点击，被节流函数制裁了
-     *    由第二个回调函数limitedCopy里出弹窗提醒
-     * 3. true，这是正常复制，自行处理，这里出个弹窗提醒并且向后端发请求让复制次数+1
-     */
-    const res = likeMeme(memeText);
-    if (!res || res === 'limitedSuccess') return;
-    // copySuccess();
-    if (await likeCountPlus1(meme.id)) {
-        await queryBarrage();
-        return;
-    }
-    likePlus1Error();
 }
 const wordCloudRef = ref(null);
 

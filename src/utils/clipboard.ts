@@ -1,5 +1,6 @@
+import httpInstance from '@/apis/httpInstance';
 import { ElMessage, ElNotification } from 'element-plus';
-
+import { API } from '@/constants/backend';
 export function copyError(err: any) {
     ElNotification({
         title: '复制失败',
@@ -41,6 +42,7 @@ export function limitedLike() {
 }
 
 export function copyToClipboard(copyText: string): boolean {
+    console.log(111+copyText)
     const inputDOM = document.createElement('input');
     inputDOM.value = copyText;
     document.body.appendChild(inputDOM);
@@ -52,5 +54,7 @@ export function copyToClipboard(copyText: string): boolean {
         return false;
     }
     document.body.removeChild(inputDOM);
+    console.log("复制成功: "+copyText);
+    
     return true;
 }

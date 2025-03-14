@@ -1,18 +1,18 @@
 <template>
   <el-popover
     placement="left"
-    title="参加调研,非常感谢您！"
+    title=""
     :width="200"
     trigger="hover" 
     :visible="diaochaSetTime"
-    content="急需了解用户的需求以及作者需编写论文，完成后抽奖"
+    content="说说你还想要什么功能？🤔"
   >
     <template #reference>
-      <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime=1000"  @click="dialogVisible='true'" style="position: fixed;top: 60%;right: 0;writing-mode: vertical-rl;text-orientation: upright;white-space: nowrap;height: 70px;width: 30px;z-index: 1000;">用户调研</el-button>
+      <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime=1000"  @click="dialogVisible='true'">用户调研</el-button>
     </template>
   </el-popover>
     <el-dialog v-model="dialogVisible" style="position: fixed;bottom: 0;right: 0;" draggable="true" title="用户调研" width="100%">
-      <iframe src='https://f.wps.cn/g/GLeSOK3F/' width='100%' height='650' frameborder='0'></iframe>
+      <iframe src='https://f.wps.cn/g/H1CiodIz/' width='100%' height='650' frameborder='0'></iframe>
     </el-dialog>
   <div id="bg">
     <div class="body" id="bodyId">
@@ -68,7 +68,7 @@ const dialogVisible =ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
-const diaochaSetTime = ref(false)
+const diaochaSetTime = ref(true)
 // onMounted(() => {
 //   if (!localStorage.getItem('diaochawenjuan')) {
 //     localStorage.setItem('diaochawenjuan', '2')
@@ -305,7 +305,17 @@ const closeHot = () => {
   /* 设置鼠标样式为可移动状态 */
   z-index: 100;
 }
-
+#diaocha {
+  position: fixed;
+  top: 55%;
+  right: 0;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap;
+  height: 70px;
+  width: 30px;
+  z-index: 1000;
+}
 @media (max-width: 600px) {
   .draggable {
     margin-top: 50px;

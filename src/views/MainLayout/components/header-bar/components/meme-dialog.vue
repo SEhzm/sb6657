@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy ,likeSuccess} from '@/utils/clipboard';
-import { copyCountPlus1, likeCountPlus1, plus1Error ,likePlus1Error} from '@/apis/setMeme';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import httpInstance from '@/apis/httpInstance';
 import { ref } from 'vue';
@@ -99,20 +99,7 @@ async function copyMeme_countPlus1(meme: Meme) {
     }
     plus1Error();
 }
-//like复用copy
-async function likeMeme_countPlus1(meme: Meme) {
-    console.log(meme);
-    
-    const memeText = meme.content;
-    const res = likeMeme(memeText);
-    if (!res || res === 'limitedSuccess') return;
-    likeSuccess();
-    if (await likeCountPlus1(meme.id)) {
-        emit('refresh');
-        return;
-    }
-    likePlus1Error();
-}
+
 const dictData = ref([]);
 
 const getDict = () => {

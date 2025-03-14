@@ -3,7 +3,7 @@
         <div class="header-content">
             <a href="https://www.douyu.com/6657" target="_blank" class="logo-link">
                 <img src="/public/favicon.ico" alt="大🐖头" class="logo-img" />
-                <p class="header-title">斗鱼玩机器烂梗收集</p>
+                <p class="header-title">斗鱼玩机器烂梗库</p>
             </a>
 
             <div class="header-actions">
@@ -201,7 +201,7 @@ const complaintButton = () => {
                     border-radius: 5px;
                 }
                 .header-title {
-                    max-height: 50px;
+                    width: 300px;
                     color: #ff552e;
                     font-size: 30px;
                 }
