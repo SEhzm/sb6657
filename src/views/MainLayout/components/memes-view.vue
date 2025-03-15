@@ -24,12 +24,14 @@
                     </el-button>
                 </h4>
 
+                <!-- 预设标签 -->
                 <div class="preset-tags-container">
                     <div class="preset-tags">
                         <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                             @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
                             style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            {{ tag.label }}
+                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 25px; object-fit: cover;vertical-align: middle;" />
+                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
                         </el-tag>
                     </div>
                 </div>
@@ -49,7 +51,8 @@
                 <div class="added-tags">
                     <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
                         @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
-                        {{ tag.label }}
+                        <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                        <span style="vertical-align: middle;"> {{ tag.label }}</span>
                     </el-tag>
                 </div>
             </div>
@@ -81,8 +84,8 @@
                                         style="margin-right: 8px;">
                                         <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
                                             <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                            {{ item.label }}
+                                                style=" width: 16px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
                                         </el-tag>
                                     </div>
                                 </div>
@@ -271,6 +274,7 @@ const getDict = () => {
         if (res.code === '200') {
             dictData.value = res.data;
             presetTags.value = res.data.map(item => ({
+                iconUrl: item.iconUrl,
                 label: item.dictLabel,
                 value: item.dictValue
             }));
@@ -312,6 +316,7 @@ const removeTag = (tag) => {
 
 // 添加标签的点击事件
 const removeTagFromPreset = (tag) => {
+    
     // 当删除预设标签时，将其移到已添加标签
     if (!addedTags.value.some(t => t.value === tag.value)) {
         addedTags.value.push(tag);

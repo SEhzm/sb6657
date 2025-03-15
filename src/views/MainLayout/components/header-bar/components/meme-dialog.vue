@@ -24,7 +24,7 @@
                                             <el-tag round effect="dark"
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
                                                 <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                                {{ item.label }}
+                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
                                     </div>

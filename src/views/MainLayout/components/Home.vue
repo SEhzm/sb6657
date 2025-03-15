@@ -45,8 +45,8 @@
                                             <el-tag round effect="dark"
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
                                                 <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                    style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                                {{ item.label }}
+                                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
                                     </div>
@@ -91,8 +91,8 @@
                                             <el-tag round effect="dark"
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
                                                 <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                    style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                                {{ item.label }}
+                                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
                                     </div>
@@ -140,7 +140,8 @@
                         <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                             @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
                             style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            {{ tag.label }}
+                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
                         </el-tag>
                     </div>
                 </div>
@@ -249,6 +250,7 @@ const getDict = () => {
         if (res.code === '200') {
             dictData.value = res.data;
             presetTags.value = res.data.map(item => ({
+                iconUrl: item.iconUrl,
                 label: item.dictLabel,
                 value: item.dictValue
             }));
