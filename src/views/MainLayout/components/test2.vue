@@ -6,10 +6,12 @@
         </div>
         <template #dropdown>
             <el-dropdown-menu>
+              <router-link to="/user/profile">
                 <el-dropdown-item>个人中心</el-dropdown-item>
-                <el-dropdown-item>
-                    <span>退出登录</span>
-                </el-dropdown-item>
+              </router-link>
+              <el-dropdown-item divided command="logout">
+                <span>退出登录</span>
+              </el-dropdown-item>
             </el-dropdown-menu>
         </template>
     </el-dropdown>

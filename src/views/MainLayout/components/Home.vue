@@ -22,19 +22,21 @@
                 </span>
                 尽情欣赏你们的烂梗吧。
                 另寻几位玩神老观众(21级牌子或3000h观看时长)，获得后台审核和记录的资格！！
-                <b>锐意创新：<span style="color: blue;cursor: pointer;"  @click="simulateClick">用户调研</span></b>
+                <b>锐意创新：<span style="color: blue;cursor: pointer;" @click="simulateClick">用户调研</span></b>
             </p>
         </div>
-        
+
         <div class="card third-card">
             <div>
                 <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
                 <el-table v-loading="loading" :data="data.tableData" class="barrage-table" @row-click="copyText">
                     <el-table-column prop="barrage">
                         <template #default="scope">
-                            <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
+                            <el-popover placement="top" :width="'auto'" trigger="hover"
+                                :visible="scope.row.popoverVisible">
                                 <template #reference>
-                                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)"
+                                        @touchend="handleTouchEnd(scope.row)">
                                         <span class="barrage-text">{{ scope.row.barrage }}</span>
                                     </div>
                                 </template>
@@ -46,7 +48,7 @@
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
                                                 <img v-if="item.iconUrl" :src="item.iconUrl"
                                                     style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
                                     </div>
@@ -63,18 +65,47 @@
 
         <div class="card fourth-card">
             <div>
-                <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage" clearable
-                    class="search-input" @input="onSearchQueryChange">
-                    <template #append>
-                        <el-button type="primary" @click="queryBarrage">
-                            <el-icon>
-                                <Search />
-                            </el-icon>
-                        </el-button>
-                    </template>
-                </el-input>
-                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText" :empty-text="emptyText"
-                    :cell-style="{ cursor: 'Pointer', fontSize: 'large' }">
+                <div style="display: flex;">
+                    <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage"
+                        clearable class="search-input" @input="onSearchQueryChange">
+                        <template #append>
+                            <el-button type="primary" @click="queryBarrage">
+                                <el-icon>
+                                    <Search />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-input>
+                    <el-checkbox v-model="SearchMaxPro" label="高级检索 >" @change="reSet" style="margin-left: 10px;" />
+                </div>
+                <div v-show="SearchMaxPro">
+                    <div>
+                        <span style="display: block;color: var(--el-text-color-secondary);font-size: 14px;">烂梗收集时间范围(可选)</span>
+                        <el-date-picker v-model="submitTime" type="daterange" range-separator="到" value-format="YYYY-MM-DD" start-placeholder="起始" end-placeholder="结束" :disabled-date="disabledDate" />
+                        <span style="display: block;color: var(--el-text-color-secondary);font-size: 14px;">烂梗包含标签(可选)</span>
+                        <div class="added-tags">
+                            <el-tag round v-for="(tag, index) in addedQueryTags" :key="index" closable
+                                @click="removeQueryTag(tag)" @close="removeQueryTag(tag)"
+                                style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
+                                {{ tag.label }}
+                            </el-tag>
+                        </div>
+                    </div>
+                    
+                    <div class="preset-tags-container">
+                        <div class="preset-tags">
+                            <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
+                                @close="removeQueryTagFromPreset(tag)" @click="removeQueryTagFromPreset(tag)"
+                                style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
+                                <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            </el-tag>
+                        </div>
+                    </div>
+                </div>
+                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
+                    :empty-text="emptyText" :cell-style="{ cursor: 'Pointer', fontSize: 'large' }">
                     <el-table-column prop="barrage">
                         <template #default="scope">
                             <el-popover placement="top" :width="'auto'" trigger="hover"
@@ -92,7 +123,7 @@
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
                                                 <img v-if="item.iconUrl" :src="item.iconUrl"
                                                     style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
                                     </div>
@@ -100,7 +131,7 @@
                             </el-popover>
                         </template>
                     </el-table-column>
-                    
+
                     <el-table-column align="center" width="100">
                         <template #default="scope">
                             <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
@@ -140,8 +171,9 @@
                         <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                             @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
                             style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                                style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
                         </el-tag>
                     </div>
                 </div>
@@ -175,7 +207,13 @@
             友情链接 <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>&nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
-        <div class="wordCloudDiv"><span style="background-color: white;border-radius: 25px;padding: 5px;">搜索词云<el-icon size="20" style="cursor: pointer;animation: rotating 4s linear infinite reverse;" @click="refreshWordCloud()"><Refresh /></el-icon></span><wordCloud ref="wordCloudRef"></wordCloud></div>
+        <div class="wordCloudDiv"><span style="background-color: white;border-radius: 25px;padding: 5px;">搜索词云<el-icon
+                    size="20" style="cursor: pointer;animation: rotating 4s linear infinite reverse;"
+                    @click="refreshWordCloud()">
+                    <Refresh />
+                </el-icon></span>
+            <wordCloud ref="wordCloudRef"></wordCloud>
+        </div>
     </div>
 </template>
 
@@ -282,24 +320,34 @@ const getDictLabel = (tags) => {
 getDict()
 
 const searchQuery = ref('');
+//高级检索
+const SearchMaxPro = ref(false)
+//投稿时间范围
+const submitTime = ref('')
 
 const barrage = ref('');
-// 预设标签
+// 所有预设标签
 const presetTags = ref([]);
 
-// 已添加标签
+// 已添加投稿标签
 const addedTags = ref([]);
 
-// 已添加标签的 dictValue 数组
+// 已添加搜索标签
+const addedQueryTags = ref([]);
+
+// 已添加的投稿标签数组
 const addedDictValues = ref([]);
-// 删除已添加标签
+
+// 已添加的高级搜索标签数组
+const queryDictValues = ref([]);
+// 删除已添加投稿标签
 const removeTag = (tag) => {
     addedTags.value = addedTags.value.filter(t => t.value !== tag.value);
     addedDictValues.value = addedDictValues.value.filter(value => value !== tag.value);
     presetTags.value.push(tag);
 };
 
-// 添加标签的点击事件
+// 添加投稿标签的点击事件
 const removeTagFromPreset = (tag) => {
     if (addedDictValues.value.length >= 5) {
         ElNotification.info("最多5个标签")
@@ -322,7 +370,7 @@ const saveBarrage = () => {
             return;
         }
         httpInstance.post(API.SUBMIT_MEME, {
-            tags: addedDictValues.value.join(','),
+            tags: queryDictValues.value.join(','),
             barrage: barrage.value
         }).then(res => {
             barrage.value = '';
@@ -340,14 +388,47 @@ const saveBarrage = () => {
         });
     }
 };
+
+// 删除已添加搜索标签
+const removeQueryTag = (tag) => {
+    addedQueryTags.value = addedQueryTags.value.filter(t => t.value !== tag.value);
+    queryDictValues.value = queryDictValues.value.filter(value => value !== tag.value);
+    presetTags.value.push(tag);
+};
+
+// 添加搜索标签的点击事件
+const removeQueryTagFromPreset = (tag) => {
+    if (queryDictValues.value.length >= 5) {
+        ElNotification.info("最多5个标签")
+        return
+    }
+    // 当删除预设标签时，将其移到已添加标签
+    if (!addedQueryTags.value.some(t => t.value === tag.value)) {
+        addedQueryTags.value.push(tag);
+        queryDictValues.value.push(tag.value);
+        presetTags.value = presetTags.value.filter(t => t.value !== tag.value);
+    }
+};
+function reSet() {
+    submitTime.value=[];
+    while (addedQueryTags.value.length > 0) {
+        removeQueryTag(addedQueryTags.value[0]);
+    }
+}
+//限制开始时间为系统收集开始时间2024-09-25
+const disabledDate = (time) => {
+    return time.getTime() < new Date('2024-09-24').getTime();
+};
 //搜索
 const queryBarrage = () => {
-    console.log(searchQuery.value)
+    // console.log(submitTime.value)
     if(searchQuery==null||searchQuery.value==""){
         emptyText.value="请输入搜索词..."
     }
-    httpInstance.post('/machine/Query', {
-        barrage: searchQuery.value
+    httpInstance.post(API.SEARCH_MEME, {
+        tags: queryDictValues.value.join(','),
+        barrage: searchQuery.value,
+        submitTime: submitTime.value
     }).then(res => {
         isInput.value = true;
         loading.value = false;
@@ -360,7 +441,7 @@ var searchBarrageMeg = ref('搜索烂梗...');
 
 
 const getRandOne = () => {
-    httpInstance.get('/machine/getRandOne')
+    httpInstance.get(API.GET_RAND_ONE_MEME)
         .then(res => {
             data.tableData = [res.data];
             // console.log(res)
@@ -576,7 +657,7 @@ function refreshWordCloud() {
 
         &.fourth-card {
             
-            margin-top: 10px;line-height: 50px;
+            margin-top: 10px; 
             margin-bottom: 0px;
         }
 

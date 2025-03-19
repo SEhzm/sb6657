@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { SERVER_ADDRESS } from '@/constants/backend';
 import { getCookie, setCookie } from '@/utils/cookieUtils';
-
+import { ElMessageBox ,ElMessage} from 'element-plus'
 const httpInstance = axios.create({
     baseURL: SERVER_ADDRESS,
     // baseURL: "http://127.0.0.1:10086",
@@ -49,8 +49,15 @@ httpInstance.interceptors.request.use(
 httpInstance.interceptors.response.use(
     (res) => res.data,
     (error) => {
-        console.log('err', error);
-        return Promise.reject(error);
+        if (error.response.status === 4000) {
+            ElMessageBox.alert(error.response.data,'你的操作太快啦', {
+                confirmButtonText: 'OK',
+            });
+        }else{
+            console.log('err', error);
+            return Promise.reject(error); 
+        }
+        
     }
 );
 
