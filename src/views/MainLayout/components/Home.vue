@@ -370,7 +370,7 @@ const saveBarrage = () => {
             return;
         }
         httpInstance.post(API.SUBMIT_MEME, {
-            tags: queryDictValues.value.join(','),
+            tags: addedDictValues.value.join(','),
             barrage: barrage.value
         }).then(res => {
             barrage.value = '';
