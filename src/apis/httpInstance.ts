@@ -3,8 +3,8 @@ import { SERVER_ADDRESS } from '@/constants/backend';
 import { getToken, setSiteToken, getSiteToken } from '@/utils/cookieUtils';
 import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
 const httpInstance = axios.create({
-    // baseURL: SERVER_ADDRESS,
-    baseURL: "http://127.0.0.1:10086",
+    baseURL: SERVER_ADDRESS,
+    // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
 
@@ -128,9 +128,7 @@ httpInstance.interceptors.response.use(
       ElMessage({ message: msg, type: 'warning' })
       return Promise.reject(new Error(msg))
     } else if (code !== 200) {
-      ElNotification.success({ title: msg })
-      console.log(1111);
-      
+      ElNotification.error({ title: msg })
       return Promise.reject('error')
     } else {
       return  Promise.resolve(res.data)
@@ -139,6 +137,14 @@ httpInstance.interceptors.response.use(
   error => {
     console.log('err' + error)
     let { message } = error;
+    if (error.response.status === 4000) {
+      ElMessageBox.alert(error.response.data,'你的操作太快啦', {
+          confirmButtonText: 'OK',
+      });
+  }else{
+      console.log('err', error);
+      return Promise.reject(error); 
+  }
     if (message == "Network Error") {
       message = "接口连接异常";
     } else if (message.includes("timeout")) {
