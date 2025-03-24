@@ -8,7 +8,7 @@
             <div>
                 <b>
                     <p class="announcement">
-                        新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册
+                        新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册。<b>锐意创新：<span style="color: blue;cursor: pointer;" @click="simulateClick">用户调研</span></b>
                     </p>
                 </b>
             </div>
@@ -21,8 +21,8 @@
                     <a href="https://sb6657.cn">sb6657.cn</a>
                 </span>
                 尽情欣赏你们的烂梗吧。
-                另寻几位玩神老观众(21级牌子或3000h观看时长)，获得后台审核和记录的资格！！
-                <b>锐意创新：<span style="color: blue;cursor: pointer;" @click="simulateClick">用户调研</span></b>
+                <b>开放注册功能(内测)，可能会出现收不到邮件的情况。</b>
+                
             </p>
         </div>
 
@@ -285,7 +285,7 @@ const dictData = ref([]);
 
 const getDict = () => {
     httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === '200') {
+        if (res.code === 200) {
             dictData.value = res.data;
             presetTags.value = res.data.map(item => ({
                 iconUrl: item.iconUrl,
@@ -323,7 +323,7 @@ const searchQuery = ref('');
 //高级检索
 const SearchMaxPro = ref(false)
 //投稿时间范围
-const submitTime = ref('')
+const submitTime = ref([])
 
 const barrage = ref('');
 // 所有预设标签
@@ -374,9 +374,9 @@ const saveBarrage = () => {
             barrage: barrage.value
         }).then(res => {
             barrage.value = '';
-            if (res.code === '200') {
+            if (res.code === 200) {
                 ElNotification.success("投稿成功，待审核(一天内)");
-            } else if (res.code === '500') {
+            } else if (res.code === 500) {
                 ElNotification.error("烂梗已经有了，勿重复提交")
             }
             else {

@@ -1,12 +1,23 @@
-// 获取 cookie
-export function getCookie(name: string): string | null {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift() || null;
-    return null;
+import Cookies from 'js-cookie'
+
+const TokenKey = 'Admin-Token'
+
+export function getToken() {
+    return Cookies.get(TokenKey)
+}
+export function setToken(token: string) {
+    console.log(1123);
+    
+    return Cookies.set(TokenKey, token)
+}
+export function setSiteToken(token: string) {
+    const expires = new Date()
+    expires.setDate(expires.getDate() + 365)
+    return Cookies.set('siteToken', token, { expires })}
+export function getSiteToken() {
+    return Cookies.get('siteToken')
 }
 
-// 设置 cookie
-export function setCookie(name: string, value: string, maxAge: number): void {
-    document.cookie = `${name}=${value}; max-age=${maxAge}; path=/`;
+export function removeToken() {
+    return Cookies.remove(TokenKey)
 }

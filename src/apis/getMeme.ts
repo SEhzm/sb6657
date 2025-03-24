@@ -12,7 +12,7 @@ interface hotMeme_res {
     likes: number;
 }
 interface getHotMeme_res {
-    code: string;
+    code: number;
     msg: string;
     data: hotMeme_res[];
 }
@@ -54,7 +54,7 @@ interface searchMeme_data {
     likes: string;
 }
 interface searchMeme_res {
-    code: string;
+    code: number;
     data: searchMeme_data[];
     msg: string;
 }
@@ -116,7 +116,7 @@ interface getMemeList_data {
     navigateLastPage: number;
 }
 interface getMemeList_res {
-    code: string;
+    code: number;
     msg: string;
     data: getMemeList_data;
 }

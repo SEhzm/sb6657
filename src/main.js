@@ -36,7 +36,7 @@ setInterval(() => {
 const VITE_NODE_ENV = import.meta.env.VITE_NODE_ENV;
 if (VITE_NODE_ENV !== 'development') {
     console.log = function () {}
-    console.error = function(){}
+    //console.error = function(){}
     console.dir = function(){}
     console.warn = function(){}
 }

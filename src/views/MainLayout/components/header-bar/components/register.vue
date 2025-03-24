@@ -1,5 +1,5 @@
 <template>
-  <div class="register">
+  <div>
     <el-form ref="registerRef" :model="registerForm" :rules="registerRules" class="register-form">
       <h3 class="title">注册</h3>
       <el-form-item prop="username">
@@ -184,14 +184,7 @@ getCode();
 </script>
 
 <style lang='scss' scoped>
-.register {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-image: url("../assets/images/login-background.jpg");
-  background-size: cover;
-}
+
 
 .title {
   margin: 0px auto 30px auto;
@@ -200,11 +193,7 @@ getCode();
 }
 
 .register-form {
-  border-radius: 6px;
-  background: #ffffff;
-  width: 400px;
-  padding: 25px 25px 5px 25px;
-
+  width: 100%;
   .el-input {
     height: 40px;
 

@@ -52,6 +52,7 @@
                 >
                     <img src="@/assets/imgs/mail.png" alt="github" class="icon-img" />
                 </el-tooltip>
+                <userHome style="margin-left:20px; width: 50px;"></userHome>
             </div>
         </div>
 
@@ -85,6 +86,7 @@ import { ref, computed, onMounted } from 'vue';
 import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
 import { Search } from '@element-plus/icons-vue';
 import memeDialog from './components/meme-dialog.vue';
+import userHome from './components/userHome.vue';
 import { useIsMobile } from '@/utils/common';
 import { useRoute } from 'vue-router';
 const isMobile = useIsMobile();

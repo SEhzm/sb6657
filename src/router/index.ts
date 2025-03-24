@@ -17,6 +17,7 @@ const router = createRouter({
                 { path: 'test2', name: 'test2', component: () => import('@/views/MainLayout/components/test2.vue') },
                 { path: 'Starrysky', name: 'Starrysky', component: () => import('@/views/Starrysky.vue') },
                 { path: 'Tampermonkey', name: 'Tampermonkey', component: () => import('@/views/MainLayout/components/Tampermonkey.vue') },
+                { path: 'UserInfo', name: 'UserInfo', component: () => import('@/views/MainLayout/components/user/components/index.vue') },
 
                 { path: 'memes/:category', name: 'memes', component: () => import('@/views/MainLayout/components/memes-view.vue') },
             ],

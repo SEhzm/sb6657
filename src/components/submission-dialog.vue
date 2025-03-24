@@ -82,7 +82,7 @@ const addedDictValues = ref([]);
 // 获取字典数据
 function getDict() {
     httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === '200') {
+        if (res.code === 200) {
             presetTags.value = res.data.map(item => ({
                 iconUrl: item.iconUrl,
                 label: item.dictLabel,
@@ -128,9 +128,9 @@ const saveBarrage = () => {
             barrage: barrage.value
         }).then(res => {
             barrage.value = '';
-            if (res.code === '200') {
+            if (res.code === 200) {
                 ElNotification.success("投稿成功，待审核(一天内)");
-            }else if (res.code === '500') {
+            }else if (res.code === 500) {
                 ElNotification.error("烂梗已经有了，勿重复提交")
             } else {
                 ElNotification.error("请求失败");

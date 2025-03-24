@@ -271,7 +271,7 @@ const handleSubmit = () => {
 
 const getDict = () => {
     httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === '200') {
+        if (res.code === 200) {
             dictData.value = res.data;
             presetTags.value = res.data.map(item => ({
                 iconUrl: item.iconUrl,

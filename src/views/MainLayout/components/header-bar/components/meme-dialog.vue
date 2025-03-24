@@ -54,7 +54,6 @@ import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import httpInstance from '@/apis/httpInstance';
 import { ref } from 'vue';
-import LikeNum from '@/components/like-num.vue';
 
 /**
  * 组件输入:
@@ -104,7 +103,7 @@ const dictData = ref([]);
 
 const getDict = () => {
     httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === '200') {
+        if (res.code === 200) {
             dictData.value = res.data;
         }
     }).catch(err => {

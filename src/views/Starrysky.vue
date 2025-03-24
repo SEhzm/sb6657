@@ -56,7 +56,8 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
-const route = useRoute();
+import httpInstance from '@/apis/httpInstance';
+
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
 const chatY = ref(110);
@@ -83,7 +84,7 @@ setTimeout(()=>{
   //     document.getElementById('diaocha').click();
   //   },30 * 1000);
   // }
-},5 * 1000)
+},2 * 1000)
 
 // 开始拖动的函数
 const startDrag = (event, component) => {
@@ -207,6 +208,8 @@ onBeforeUnmount(() => {
 });
 
 const closeChat = () => {
+  httpInstance.get('/machine/chat/status').then(res => {
+  });
   isChatVisible.value = false;
 };
 const closeHot = () => {
