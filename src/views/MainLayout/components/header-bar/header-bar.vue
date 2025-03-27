@@ -52,7 +52,7 @@
                 >
                     <img src="@/assets/imgs/mail.png" alt="github" class="icon-img" />
                 </el-tooltip>
-                <userHome style="margin-left:20px; width: 50px;"></userHome>
+                <userHome style="margin-left:20px;" class="icon-img"></userHome>
             </div>
         </div>
 

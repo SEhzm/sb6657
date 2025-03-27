@@ -136,7 +136,7 @@ const handleTouchStart = (row: any) => {
 
 const handleTouchEnd = (row: any) => {
     const touchEndTime = Date.now();
-    if (touchEndTime - row.touchStartTime > 200) { //200ms 长按时长
+    if (touchEndTime - row.touchStartTime > 100) { //100ms 长按时长
         row.popoverVisible = true;
         setTimeout(()=>{
             row.popoverVisible=false

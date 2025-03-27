@@ -69,7 +69,7 @@
                     <el-input v-model="searchQuery" :placeholder="searchBarrageMeg" @keydown.enter="queryBarrage"
                         clearable class="search-input" @input="onSearchQueryChange">
                         <template #append>
-                            <el-button type="primary" @click="queryBarrage">
+                            <el-button :loading="queryLoading" type="primary" @click="queryBarrage">
                                 <el-icon>
                                     <Search />
                                 </el-icon>
@@ -104,7 +104,7 @@
                         </div>
                     </div>
                 </div>
-                <el-table v-loading="loading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
+                <el-table v-loading="queryLoading" v-if="isInput" :data="data.filteredItems" stripe @row-click="copyText"
                     :empty-text="emptyText" :cell-style="{ cursor: 'Pointer', fontSize: 'large' }">
                     <el-table-column prop="barrage">
                         <template #default="scope">
@@ -135,7 +135,7 @@
                     <el-table-column align="center" width="100">
                         <template #default="scope">
                             <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
-                                🎈<flip-num :num="scope.row.cnt" /></el-button>
+                                🌈<flip-num :num="scope.row.cnt" /></el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -161,7 +161,6 @@
                                 </el-icon>
                             </template>
                             <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b><br>
-                            <b>审核巨严格，(重复，相似等)将不通过</b>
                         </el-popover>
                     </el-button>
                 </span>
@@ -243,6 +242,7 @@ const simulateClick = () => {
   }
 };
 const loading = ref(true)
+const queryLoading = ref(false)
 const isInput = ref(false)
 const emptyText = ref("数据为空")
 const data = reactive({
@@ -421,6 +421,7 @@ const disabledDate = (time) => {
 };
 //搜索
 const queryBarrage = () => {
+    queryLoading.value = true;
     // console.log(submitTime.value)
     if(searchQuery==null||searchQuery.value==""){
         emptyText.value="请输入搜索词..."
@@ -431,9 +432,12 @@ const queryBarrage = () => {
         submitTime: submitTime.value
     }).then(res => {
         isInput.value = true;
-        loading.value = false;
+        queryLoading.value = false;
         data.filteredItems = res.data || [];
-    })
+    }).catch(err => {
+        console.error('搜索失败', err);
+        queryLoading.value = false;
+    });
 }
 
 
@@ -552,7 +556,7 @@ const handleTouchStart = (row) => {
 
 const handleTouchEnd = (row) => {
     const touchEndTime = Date.now();
-    if (touchEndTime - row.touchStartTime > 200) { //200ms 长按时长
+    if (touchEndTime - row.touchStartTime > 100) { //100ms 长按时长
         row.popoverVisible = true;
         setTimeout(()=>{
             row.popoverVisible=false
