@@ -4,7 +4,9 @@
         <div class="tab">
             <!-- 移动端 -->
             <div class="tab-container">
-                <div v-for="(item, index) in MemeCategory" :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" :key="item.path" @click="navigateTo(item.path)">
+                <div v-for="(item, index) in MemeCategory"
+                    :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" :key="item.path"
+                    @click="navigateTo(item.path)">
                     {{ item.text }}
                 </div>
             </div>
@@ -13,7 +15,8 @@
         <div class="main-content">
             <div class="sidebar">
                 <el-menu router class="sidebar-el-menu" :default-active="$route.path">
-                    <el-menu-item v-for="(category, index) in MemeCategory" v-bind:key="category.path" :index="category.path">
+                    <el-menu-item v-for="(category, index) in MemeCategory" v-bind:key="category.path"
+                        :index="category.path">
                         <div class="sidebar-icon">
                             <img :src="category.icon" alt="" />
                         </div>
@@ -27,7 +30,12 @@
         </div>
         <FooterBar></FooterBar>
     </div>
-    <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md"><span class="version">版本: {{ sbVersion }}</span></a>
+    <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md"><span
+            class="version">版本: {{ sbVersion }}</span></a>
+  <div class="GuangGaoWei"> 
+    <img  src="https://pic1.imgdb.cn/item/67ee15fe0ba3d5a1d7eb91d2.png" alt="">
+    <span style="display: flex;font-size: small;">广告位招租</span>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,6 +53,7 @@ function navigateTo(path: string) {
 
 <style lang="scss" scoped>
 @media (min-width: 601px) {
+
     .tab {
         display: none;
     }
@@ -126,13 +135,21 @@ function navigateTo(path: string) {
         width: 0;
         padding: 10px;
     }
-    .version{
+
+    .version {
         color: black;
         position: fixed;
         right: 10px;
         bottom: 5px;
         z-index: 1000;
         font-size: 10px;
+    }
+
+    .GuangGaoWei {
+        position: fixed;
+        top: 30%;
+        right: 0px;
+        z-index: -1;
     }
 }
 
@@ -212,13 +229,17 @@ function navigateTo(path: string) {
         background-color: rgba(0, 0, 0, 0.2);
         border-radius: 10px;
     }
-    .version{
+
+    .version {
         color: black;
         position: fixed;
         right: 20px;
         bottom: 0px;
         z-index: 1000;
         font-size: .5rem;
+    }
+    .GuangGaoWei{
+        display: none;
     }
 }
 </style>

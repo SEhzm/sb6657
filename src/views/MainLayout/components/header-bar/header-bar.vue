@@ -47,13 +47,22 @@
                 <el-tooltip
                     class="box-item"
                     effect="light"
-                    content="接程序设计,(计算机,软件)毕设，作业，包文档，详情联系邮箱 he20020928@foxmail.com"
+                    content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com"
                     placement="bottom"
                 >
                     <img src="@/assets/imgs/mail.png" alt="github" class="icon-img" />
                 </el-tooltip>
                 <userHome style="margin-left:20px;" class="icon-img"></userHome>
+                    <!-- <img src="https://pic1.imgdb.cn/item/67ee13c60ba3d5a1d7eb9157.png" alt=""> -->
+                <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button>
             </div>
+            <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
+                <h2>店长5年观龄玩神脑残粉</h2>
+                <h4>女陪玩全部视频验证保真 <b style="color: red;">+v：weifucsgo</b></h4>
+                <h4>男陪玩最低1.3rating魔王S <b style="color: red;">女客服：J34-126</b></h4>
+                <h4>纯绿色，店长线下见过所有陪玩</h4>
+            </el-dialog>
+            
         </div>
 
         <!-- 24h热门弹幕对话框 -->
@@ -76,8 +85,8 @@
         </memeDialog>
     </div>
     <!-- 支持我弹出框 -->
-    <el-dialog v-model="supportMeDialog" title="谢谢你" width="1100">
-        <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width="1000" />
+    <el-dialog v-model="supportMeDialog" title="谢谢你" :width=lightWidth>
+        <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width='100%' />
     </el-dialog>
 </template>
 
@@ -164,8 +173,12 @@ async function handleSearchMeme() {
     searchedMeme.value = res;
 }
 const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
-
+let lightWidth = '75%'
 onMounted(() => {
+    if(isMobile.value){
+        lightWidth = '100%';
+    }
+
     // 第一次在一小时后弹出
     setTimeout(() => {
         supportMeDialog.value = true;
@@ -179,6 +192,12 @@ onMounted(() => {
 const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
+
+const AdDialog = ref(false)
+
+function openAd(){
+    AdDialog.value=!AdDialog.value
+}
 </script>
 
 <style scoped lang="scss">
@@ -235,6 +254,9 @@ const complaintButton = () => {
                         opacity: 0;
                     }
                 }
+                .GuangGaoHead{
+                   display: none;
+                }
             }
 
             .elinput {
@@ -268,6 +290,7 @@ const complaintButton = () => {
             }
         }
     }
+    
 }
 
 @media (max-width: 600px) {
@@ -351,6 +374,12 @@ const complaintButton = () => {
         display: flex;
         align-items: center;
         border-bottom: 1px solid #ddd;
+    }
+    .GuangGaoHead {
+        width: 90px;
+        font-size: 11px;
+        padding: 0px;
+        color: #000;
     }
 }
 

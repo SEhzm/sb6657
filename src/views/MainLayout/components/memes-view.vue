@@ -378,7 +378,7 @@ const handleTouchEnd = (row: any) => {
 }
 
 .memes-view {
-    width: 100%;
+    width: 93%;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -522,6 +522,9 @@ const handleTouchEnd = (row: any) => {
 }
 
 @media (max-width: 601px) {
+    .memes-view {
+        width: 100%;
+    }
     .main-table {
         font-size: medium;
     }

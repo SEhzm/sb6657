@@ -7,8 +7,7 @@ import {
     defineConfig
 } from 'vite'
 import vue from '@vitejs/plugin-vue'
-//Gzip文件压缩
-import viteCompression from 'vite-plugin-compression'
+
 // 导入对应包
 
 import AutoImport from 'unplugin-auto-import/vite'
