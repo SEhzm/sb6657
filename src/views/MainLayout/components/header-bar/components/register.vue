@@ -12,7 +12,7 @@
         </el-input>
       </el-form-item>
       <el-form-item>
-        <el-input v-model="registerForm.nikeName" type="text" maxlength="10" size="large" clearable
+        <el-input v-model="registerForm.nickName" type="text" maxlength="10" size="large" clearable
           placeholder="昵称--平台昵称--后续不可更改">
         </el-input>
       </el-form-item>
@@ -59,7 +59,7 @@ import httpInstance from "@/apis/httpInstance";
 const registerRef = ref()
 const registerForm = ref({
   username: "",
-  nikeName: "",
+  nickName: "",
   password: "",
   confirmPassword: "",
   code: "",
