@@ -17,6 +17,16 @@ export async function copyCountPlus1(category: string, memeId: string, pageNum?:
         return false;
     }
 }
+export async function postCopy(memeId: string,category?: string,  pageNum?: number, PageSize?: number, sortOrder?: string) {
+    try {
+        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_COPY_COUNT+`/${memeId}`);
+        console.log('弹幕复制次数+1成功', res);
+        return true;
+    } catch (err: any) {
+        console.error('弹幕复制次数+1失败', err);
+        return false;
+    }
+}
 
 export function plus1Error() {
     ElNotification({

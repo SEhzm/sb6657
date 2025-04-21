@@ -7,10 +7,12 @@
             </a>
 
             <div class="header-actions">
-                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
+                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img"
+                    @click="openHotMeme24h" />
                 <div v-if="showHotMeme" @click="openHotMeme24h" class="hot-barrage">
                     <transition name="fade">
-                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
+                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content
+                            || '' }}</span>
                     </transition>
                 </div>
 
@@ -33,6 +35,10 @@
                         建议/提交BUG
                     </span>
                 </el-button>
+                <el-tooltip class="box-item" effect="light" content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com"
+                    placement="bottom">
+                    <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-img" />
+                </el-tooltip>
                 <a href="https://sb6657.cn/#/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
                 </a>
@@ -43,17 +49,37 @@
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
 
-                <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2" :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/zfb.jpg']" :initial-index="4" fit="cover" />
-                <el-tooltip
-                    class="box-item"
-                    effect="light"
-                    content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com"
-                    placement="bottom"
-                >
-                    <img src="@/assets/imgs/mail.png" alt="github" class="icon-img" />
-                </el-tooltip>
+                <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2"
+                    :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/zfb.jpg']"
+                    :initial-index="4" fit="cover" />
+
+
+                <el-dropdown trigger="hover">
+                    <div style="display: flex; font-size: 12px; height: 25px; color: #e3d5b8ff; position: relative;">
+                        <span>
+                            <img src="@/assets/icons/msg.svg" alt="msg" class="icon-img" />
+                            <span v-if="totalUnreadMessages > 0" class="unread-badge">{{ totalUnreadMessages }}</span>
+                            <span v-else-if="totalUnreadMessages === 0" class="unread-badge">0</span>
+                            <br>消息
+                        </span>
+                    </div>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <router-link to="/me-msg">
+                                <el-dropdown-item>
+                                    评论 ({{ commentNum }})
+                                </el-dropdown-item>
+                                <el-dropdown-item>
+                                    赞和表态 ({{ likeAndStatementNum }})
+                                </el-dropdown-item>
+                            </router-link>
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+
+
                 <userHome style="margin-left:20px;" class="icon-img"></userHome>
-                    <!-- <img src="https://pic1.imgdb.cn/item/67ee13c60ba3d5a1d7eb9157.png" alt=""> -->
+                <!-- <img src="https://pic1.imgdb.cn/item/67ee13c60ba3d5a1d7eb9157.png" alt=""> -->
                 <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button>
             </div>
             <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
@@ -62,25 +88,28 @@
                 <h4>男陪玩最低1.3rating魔王S <b style="color: red;">女客服：J34-126</b></h4>
                 <h4>纯绿色，店长线下见过所有陪玩</h4>
             </el-dialog>
-            
+
         </div>
 
         <!-- 24h热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips" @refresh="refreshHotMeme24h">
+        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme24h">
             <div class="dialog-header">
                 <div>24h热门烂梗</div>
                 <div><el-button @click="openHotMeme7d">查看近七天热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 7天热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips" @refresh="refreshHotMeme7d">
+        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme7d">
             <div class="dialog-header">
                 <div>七天热门烂梗</div>
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 搜索结果框 -->
-        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading" :emptyText="searchEmptyText" @refresh="handleSearchMeme">
+        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading"
+            :emptyText="searchEmptyText" @refresh="handleSearchMeme">
             <div class="search-tips">烂梗搜索结果:</div>
         </memeDialog>
     </div>
@@ -98,6 +127,8 @@ import memeDialog from './components/meme-dialog.vue';
 import userHome from './components/userHome.vue';
 import { useIsMobile } from '@/utils/common';
 import { useRoute } from 'vue-router';
+import httpInstance from '@/apis/httpInstance';
+import { isRelogin } from '@/apis/httpInstance';
 const isMobile = useIsMobile();
 const route = useRoute();
 
@@ -174,8 +205,38 @@ async function handleSearchMeme() {
 }
 const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
 let lightWidth = '75%'
+
+// 消息数量
+const likeAndStatementNum = ref(0);
+const commentNum = ref(0);
+const totalUnreadMessages = computed(() => {
+    return likeAndStatementNum.value + commentNum.value;
+});
+const readFlag = ref(false);
+async function fetchMsgNum() {
+    try {
+        const res = await httpInstance.get('/machine/SysMessage/getMsgNum');
+        if (res.code === 200) {
+            likeAndStatementNum.value = res.data.likeAndStatementNum;
+            commentNum.value = res.data.commentNum;
+            readFlag.value = res.data.readFlag;
+        }
+    } catch (error) {
+        console.error('获取消息数量失败:', error);
+    }
+}
+
 onMounted(() => {
-    if(isMobile.value){
+
+    if (isRelogin.show) {z``
+        fetchMsgNum();
+        setInterval(() => {
+            fetchMsgNum();
+        }, 10 * 60 * 1000); // 10min
+    }
+
+
+    if (isMobile.value) {
         lightWidth = '100%';
     }
 
@@ -195,8 +256,8 @@ const complaintButton = () => {
 
 const AdDialog = ref(false)
 
-function openAd(){
-    AdDialog.value=!AdDialog.value
+function openAd() {
+    AdDialog.value = !AdDialog.value
 }
 </script>
 
@@ -206,33 +267,40 @@ function openAd(){
         z-index: 1000;
         top: 0;
         position: sticky;
+
         .header-content {
-            backdrop-filter: saturate(100%) blur(4px);   
+            backdrop-filter: saturate(100%) blur(4px);
             height: 55px;
             width: 100%;
             display: flex;
             align-items: center;
             justify-content: space-between;
+
             .logo-link {
                 display: flex;
                 margin-left: 10px;
+
                 .logo-img {
                     height: 40px;
                     margin: 5px;
                     border-radius: 5px;
                 }
+
                 .header-title {
                     width: 300px;
                     color: #ff552e;
                     font-size: 30px;
                 }
             }
+
             .header-actions {
                 display: flex;
+
                 .hot-barrage-img {
                     width: 26px;
                     height: 26px;
                 }
+
                 .hot-barrage {
                     cursor: pointer;
                     width: 300px;
@@ -240,10 +308,12 @@ function openAd(){
                     text-overflow: ellipsis;
                     color: #e4d6b8;
                     white-space: nowrap;
+
                     .hot-barrage-span {
                         color: #e4d6b8;
                         border-bottom: 1px solid #e4d6b8;
                     }
+
                     .fade-enter-active,
                     .fade-leave-active {
                         transition: opacity 0.5s;
@@ -254,14 +324,32 @@ function openAd(){
                         opacity: 0;
                     }
                 }
-                .GuangGaoHead{
-                   display: none;
+
+                .GuangGaoHead {
+                    display: none;
+                }
+
+                .unread-badge {
+                    position: absolute;
+                    bottom: -20px;
+                    right: 0px;
+                    background-color: red;
+                    color: white;
+                    border-radius: 50%;
+                    width: 18px;
+                    height: 18px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 13px;
+                    font-weight: bold;
                 }
             }
 
             .elinput {
                 width: 180px;
                 margin-right: 20px;
+
                 .el-input__wrapper {
                     border-radius: 95px;
                     border: 0;
@@ -284,13 +372,14 @@ function openAd(){
                 margin-right: 15px;
                 border-radius: 5px;
             }
-            ::v-deep .el-image-viewer__wrapper{
+
+            ::v-deep .el-image-viewer__wrapper {
                 position: fixed;
                 height: 100vh;
             }
         }
     }
-    
+
 }
 
 @media (max-width: 600px) {
@@ -375,11 +464,28 @@ function openAd(){
         align-items: center;
         border-bottom: 1px solid #ddd;
     }
+
     .GuangGaoHead {
         width: 90px;
         font-size: 11px;
         padding: 0px;
         color: #000;
+    }
+
+    .unread-badge {
+        position: absolute;
+        bottom: 0px;
+        right: -5px;
+        background-color: red;
+        color: white;
+        border-radius: 50%;
+        width: 13px;
+        height: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        font-weight: bold;
     }
 }
 

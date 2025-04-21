@@ -7,6 +7,7 @@ import {
     defineConfig
 } from 'vite'
 import vue from '@vitejs/plugin-vue'
+import viteCompression from 'vite-plugin-compression';
 
 // 导入对应包
 
@@ -53,7 +54,13 @@ export default defineConfig({
         // 按需定制主题配置
         ElementPlus({
             useSource: true,
-        })
+        }),
+        viteCompression({
+            algorithm: 'gzip', // 使用 gzip 压缩算法
+            ext: '.gz',        // 生成的文件扩展名
+            threshold: 10240,  // 只有文件大小超过 10KB 才会被压缩
+            deleteOriginFile: false, // 是否删除原始文件，默认为 false
+        }),
     ],
     resolve: {
         alias: {

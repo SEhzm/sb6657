@@ -1,33 +1,42 @@
 <template>
   <div>
-      <div class="login-box">
-        <div class="title">登 录</div>
-        <el-form :model="loginForm" ref="formRef" :rules="rules">
-          <el-form-item prop="username">
-            <el-input prefix-icon="Avatar" size="large" clearable v-model="loginForm.username" placeholder="请输入邮箱" />
-          </el-form-item>
-          <el-form-item prop="password">
-            <el-input show-password size="large" prefix-icon="Lock" v-model="loginForm.password" placeholder="请输入密码" />
-          </el-form-item>
-          <el-form-item prop="code">
-            <el-input v-model="loginForm.code" size="large" clearable auto-complete="off" placeholder="请输入验证码" style="width: 63%">
-              <template #prefix><img src="@/assets/icons/validCode.svg" style="width: 16px;"></template>
-            </el-input>
-            <div class="login-code">
-              <img :src="codeUrl" @click="getCode" class="login-code-img" @keyup.enter="login" />
-            </div>
-          </el-form-item>
-          <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 5px 0px;">记住密码</el-checkbox>
-          <span style="margin-left: 35%;cursor: pointer;color: blue;" @click="reg">还没有账号？去注册 ></span>
-          <el-form-item>
-            <el-button :loading="loading" type="primary" style="width: 100%" @click="login">
-              <span v-if="!loading">登 录</span>
-              <span v-else>登 录 中...</span>
-            </el-button>
-          </el-form-item>
-        </el-form>
-      </div>
+    <div class="login-box">
+      <div class="title">登 录</div>
+      <el-form :model="loginForm" ref="formRef" :rules="rules">
+        <el-form-item prop="username">
+          <el-input prefix-icon="Avatar" size="large" clearable v-model="loginForm.username" placeholder="请输入邮箱" />
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input show-password size="large" prefix-icon="Lock" v-model="loginForm.password" placeholder="请输入密码" />
+        </el-form-item>
+        <el-form-item prop="code">
+          <el-input v-model="loginForm.code" size="large" clearable auto-complete="off" placeholder="请输入验证码"
+            style="width: 63%">
+            <template #prefix><img src="@/assets/icons/validCode.svg" style="width: 16px;"></template>
+          </el-input>
+          <div class="login-code">
+            <img :src="codeUrl" @click="getCode" class="login-code-img" @keyup.enter="login" />
+          </div>
+        </el-form-item>
+        <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 5px 0px;">记住密码</el-checkbox>
+        <span style="margin-left: 35%;cursor: pointer;color: blue;" @click="reg">还没有账号？去注册 ></span>
+        <br>
+        <el-popover placement="top-start" width="auto" trigger="hover"
+          content="请使用登陆邮箱发送邮件至邮箱 he20020928@foxmail.com，申请重置密码~">
+          <template #reference>
+            <span>🔔忘记密码？</span>
+          </template>
+        </el-popover>
+        
+        <el-form-item>
+          <el-button :loading="loading" type="primary" style="width: 100%" @click="login">
+            <span v-if="!loading">登 录</span>
+            <span v-else>登 录 中...</span>
+          </el-button>
+        </el-form-item>
+      </el-form>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -134,7 +143,7 @@ function reg() {
   }
 }
 
-function closeDialog(){
+function closeDialog() {
   props.closeDialog();
 }
 </script>
@@ -160,6 +169,4 @@ function closeDialog(){
     vertical-align: middle;
   }
 }
-
-
 </style>

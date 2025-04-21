@@ -5,7 +5,7 @@
     :width="200"
     trigger="hover" 
     :visible="diaochaSetTime"
-    content="说说你还想要什么功能？🤔"
+    content=""
   >
     <template #reference>
       <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime=1000"  @click="dialogVisible='true'">用户调研</el-button>

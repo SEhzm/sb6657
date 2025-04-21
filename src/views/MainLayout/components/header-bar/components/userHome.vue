@@ -8,15 +8,18 @@
         </div>
         <template #dropdown>
             <el-dropdown-menu>
-                <el-dropdown-item divided>
-                    <span>—内测中—</span>
-                </el-dropdown-item>
-                <el-dropdown-item command="login" v-show="!isRelogin">
+                <router-link divided to="/me-post">
+                    <el-dropdown-item>我的帖子</el-dropdown-item>
+                </router-link>
+                <el-dropdown-item command="login" divided v-show="!isRelogin">
                     <span @click="loginAndReg">登录/注册</span>
                 </el-dropdown-item>
                 <router-link to="/userInfo">
                     <el-dropdown-item>个人中心</el-dropdown-item>
                 </router-link>
+                <el-dropdown-item command="login">
+                    <span @click="ysCommunityNorms=true">隐私政策</span>
+                </el-dropdown-item>
                 <el-dropdown-item divided command="logout" v-show="isRelogin">
                     <span @click="logout">退出登录</span>
                 </el-dropdown-item>
@@ -30,6 +33,9 @@
         <register v-show="registerView"></register>
     </el-dialog>
 
+    <el-dialog v-model="ysCommunityNorms" title="社区规范与隐私政策" style="position: fixed;top: 0; left: 0; right: 0; bottom: 0; margin: auto;" :width=dialogWidth :modal="false" append-to-body="true">
+        <div v-html="CommunityNorms" ></div>
+    </el-dialog>
 </template>
 
 <script setup>
@@ -38,6 +44,7 @@ import { ref } from 'vue'
 import { removeToken } from '@/utils/cookieUtils';
 import httpInstance from "@/apis/httpInstance";
 import login from './login.vue';
+import { CommunityNorms } from '@/common/CommunityNorms'
 import register from './register.vue';
 import { useIsMobile } from '@/utils/common';
 import isRelogin from '@/apis/httpInstance';
@@ -45,6 +52,8 @@ const loginView = ref(false)
 const registerView = ref(false)
 const isMobile = useIsMobile();
 
+
+const ysCommunityNorms = ref(false)
 function loginAndReg() {
     console.log(isRelogin.show);
     loginView.value = true

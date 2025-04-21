@@ -4,11 +4,16 @@
       <h3 class="title">注册</h3>
       <el-form-item prop="username">
         <el-input v-model="registerForm.username" type="text" size="large" clearable prefix-icon="Avatar"
-          auto-complete="off" placeholder="邮箱">
+          auto-complete="off" placeholder="邮箱-用于登录">
           <template #append>
             <el-button type="primary" size="small" style="padding: 0;font-weight: 500;"
               @click="getEmailCode">发送邮箱验证码</el-button>
           </template>
+        </el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-input v-model="registerForm.nikeName" type="text" maxlength="10" size="large" clearable
+          placeholder="昵称--平台昵称--后续不可更改">
         </el-input>
       </el-form-item>
       <!-- 邮箱验证码输入框 -->
@@ -54,6 +59,7 @@ import httpInstance from "@/apis/httpInstance";
 const registerRef = ref()
 const registerForm = ref({
   username: "",
+  nikeName: "",
   password: "",
   confirmPassword: "",
   code: "",

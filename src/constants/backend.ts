@@ -20,6 +20,7 @@ export const API = {
 } as const;
 
 import home_icon from '@/assets/icons/home_icon.svg';
+import post_icon from '@/assets/icons/post-bar.svg';
 import all_icon from '@/assets/icons/all_icon.svg';
 import image_icon from '@/assets/icons/image_icon.svg';
 import wjq_icon from '@/assets/icons/wjq_icon.svg';
@@ -31,6 +32,7 @@ import QMLW_icon from '@/assets/icons/QMLW_icon.svg';
 import Z_icon from '@/assets/icons/Z_icon.png';
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
+    { path: '/post-bar', text: '玩机吧(鱼吧)', icon: post_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },

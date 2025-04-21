@@ -34,7 +34,7 @@
             class="version">版本: {{ sbVersion }}</span></a>
   <div class="GuangGaoWei"> 
     <img  src="https://pic1.imgdb.cn/item/67ee15fe0ba3d5a1d7eb91d2.png" alt="">
-    <span style="display: flex;font-size: small;">广告位招租</span>
+    <span style="display: flex;font-size:large;">广告位招租</span>
   </div>
 </template>
 
