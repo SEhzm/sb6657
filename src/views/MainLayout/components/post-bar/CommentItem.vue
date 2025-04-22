@@ -55,9 +55,35 @@ const props = defineProps<{
 
 const emit = defineEmits(['refresh'])
 
+const userImgList = [
+    'https://pic1.imgdb.cn/item/6806fcac58cb8da5c8bdab62.jpg',
+    'https://pic1.imgdb.cn/item/6806fcac58cb8da5c8bdab65.png',
+    'https://pic1.imgdb.cn/item/6806fcac58cb8da5c8bdab66.png',
+    'https://pic1.imgdb.cn/item/6806fcac58cb8da5c8bdab66.png',
+    'https://pic1.imgdb.cn/item/6806fcac58cb8da5c8bdab64.png',
+    'https://pic1.imgdb.cn/item/6807007258cb8da5c8bdbbbc.png',
+    'https://pic1.imgdb.cn/item/680700ab58cb8da5c8bdbce4.png',
+    'https://pic1.imgdb.cn/item/680700ab58cb8da5c8bdbce7.png',
+    'https://pic1.imgdb.cn/item/680700ab58cb8da5c8bdbce3.png',
+    'https://pic1.imgdb.cn/item/680700aa58cb8da5c8bdbce1.png',
+    'https://pic1.imgdb.cn/item/680700d458cb8da5c8bdbdd7.png',
+    'https://pic1.imgdb.cn/item/680700d458cb8da5c8bdbdd6.png',
+    'https://pic1.imgdb.cn/item/680700d458cb8da5c8bdbdd1.png',
+    'https://pic1.imgdb.cn/item/680700d458cb8da5c8bdbdd5.png',
+    'https://pic1.imgdb.cn/item/680700d458cb8da5c8bdbdd3.png',
+    'https://pic1.imgdb.cn/item/680700f858cb8da5c8bdbe94.png',
+    'https://pic1.imgdb.cn/item/6807011a58cb8da5c8bdbf61.png',
+    'https://pic1.imgdb.cn/item/6807011b58cb8da5c8bdbf64.png',
+    'https://pic1.imgdb.cn/item/6807011b58cb8da5c8bdbf62.png',
+    'https://pic1.imgdb.cn/item/6807011b58cb8da5c8bdbf63.png',
+]
+const getUserImgSrc = (userName: string) => {
+    const randomNumber = Math.floor(Math.random() * 20)
+    return userImgList[randomNumber]
+}
 const getAvatar = (userId: number) => {
-    const randomNumber = Math.floor(Math.random() * 5)
-    return `/src/assets/imgs/user-img-${randomNumber}.png`
+    const randomNumber = Math.floor(Math.random() * 20)
+    return userImgList[randomNumber]
 }
 
 const formatTime = (time: string) => new Date(time).toLocaleString()
