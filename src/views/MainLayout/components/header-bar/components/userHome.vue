@@ -18,7 +18,7 @@
                     <el-dropdown-item>个人中心</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item command="login">
-                    <span @click="ysCommunityNorms=true">隐私政策</span>
+                    <span @click="ysCommunityNorms = true">隐私政策</span>
                 </el-dropdown-item>
                 <el-dropdown-item divided command="logout" v-show="isRelogin">
                     <span @click="logout">退出登录</span>
@@ -26,21 +26,25 @@
             </el-dropdown-menu>
         </template>
     </el-dropdown>
-    <el-dialog align-center="true" v-model="loginView" draggable="true" :width=dialogWidth :modal="false" append-to-body="true">
+    <el-dialog align-center="true" v-model="loginView" draggable="true" :width=dialogWidth :modal="false"
+        append-to-body="true">
         <login v-show="loginView" :onRegister="handleRegister" :closeDialog="closeDialog"></login>
     </el-dialog>
-    <el-dialog align-center="true" v-model="registerView" draggable="true" :width=dialogWidth :modal="false" append-to-body="true" >
+    <el-dialog align-center="true" v-model="registerView" draggable="true" :width=dialogWidth :modal="false"
+        append-to-body="true">
         <register v-show="registerView"></register>
     </el-dialog>
 
-    <el-dialog v-model="ysCommunityNorms" title="社区规范与隐私政策" style="position: fixed;top: 0; left: 0; right: 0; bottom: 0; margin: auto;" :width=dialogWidth :modal="false" append-to-body="true">
-        <div v-html="CommunityNorms" ></div>
+    <el-dialog v-model="ysCommunityNorms" title="社区规范与隐私政策"
+        style="position: fixed;top: 0; left: 0; right: 0; bottom: 0; margin: auto;" :width=dialogWidth :modal="false"
+        append-to-body="true">
+        <div v-html="CommunityNorms"></div>
     </el-dialog>
 </template>
 
 <script setup>
 import { ElMessageBox } from 'element-plus'
-import { ref } from 'vue'
+import { ref, onMounted, onBeforeUnmount, } from 'vue'
 import { removeToken } from '@/utils/cookieUtils';
 import httpInstance from "@/apis/httpInstance";
 import login from './login.vue';
@@ -48,6 +52,9 @@ import { CommunityNorms } from '@/common/CommunityNorms'
 import register from './register.vue';
 import { useIsMobile } from '@/utils/common';
 import isRelogin from '@/apis/httpInstance';
+import eventBus from '@/utils/eventBus'
+
+
 const loginView = ref(false)
 const registerView = ref(false)
 const isMobile = useIsMobile();
@@ -62,8 +69,8 @@ function loginAndReg() {
 
 const dialogWidth = '400px'
 
-function getDialogWidth(){
-    if(isMobile){
+function getDialogWidth() {
+    if (isMobile) {
         dialogWidth = '95%'
     }
 }
@@ -81,9 +88,22 @@ function handleRegister() {
     loginView.value = false;
     registerView.value = true;
 }
-function closeDialog(){
+function closeDialog() {
     loginView.value = false
 }
+
+function showLoginView() {
+    console.log('showLoginView')
+    loginView.value = true
+}
+
+onMounted(() => {
+    eventBus.on('showLogin', showLoginView)
+})
+
+onBeforeUnmount(() => {
+    eventBus.off('showLogin', showLoginView)
+})
 </script>
 
 <style lang='scss' scoped>
@@ -94,10 +114,12 @@ function closeDialog(){
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
     .avatar-wrapper {
         display: block;
     }
 }
+
 :deep(.dialog-main) {
     width: 95%;
 }

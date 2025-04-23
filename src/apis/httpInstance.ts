@@ -2,6 +2,7 @@ import axios from 'axios';
 import { SERVER_ADDRESS } from '@/constants/backend';
 import { getToken, setSiteToken, getSiteToken } from '@/utils/cookieUtils';
 import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
+import eventBus from '@/utils/eventBus'
 const httpInstance = axios.create({
     baseURL: SERVER_ADDRESS,
     // baseURL: "http://127.0.0.1:10086",
@@ -115,7 +116,7 @@ httpInstance.interceptors.response.use(
         isRelogin.show = true;
         ElMessageBox.confirm('请先登录再使用该功能，或您的登录状态已过期，您可以继续留在该页面，或者重新登录', '请您先登录~', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
           isRelogin.show = false;
-          
+          eventBus.emit('showLogin')
       }).catch(() => {
         isRelogin.show = false;
       });

@@ -65,7 +65,7 @@
                         <img src="/src/assets/icons/postIsLike.svg"><span>&nbsp;{{ post.postLike }}</span>
                     </span>
                     <span v-else style="cursor:pointer;" @click="likePost(post)">
-                        <img src="/src/assets/icons/postNotLike.svg">&nbsp;赞
+                        <img src="/src/assets/icons/postNotLike.svg">&nbsp;{{ post.postLike }}
                     </span>
                 </div>
                 <div v-if="showComments.get(post.id)">
@@ -73,6 +73,7 @@
                 </div>
             </div>
         </div>
+        <div class="card post-card-main" style="text-align: center;cursor: pointer;color: orangered;" @click="getPosts()">加载更多<el-icon><ArrowDownBold /></el-icon></div>
     </div>
 </template>
 
@@ -128,11 +129,6 @@ interface Comment {
     createTime: string
     isDelete: string
     children: Comment[] | null
-}
-
-function cp() {
-    console.log(11111);
-
 }
 const commentMap = ref<Map<number, Comment[]>>(new Map())
 const showComments = ref<Map<number, boolean>>(new Map())
