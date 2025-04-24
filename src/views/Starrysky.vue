@@ -1,19 +1,14 @@
 <template>
-  <el-popover
-    placement="left"
-    title=""
-    :width="200"
-    trigger="hover" 
-    :visible="diaochaSetTime"
-    content=""
-  >
+  <el-popover placement="left" title="" :width="200" trigger="hover" :visible="diaochaSetTime"
+    content="官方交流群:327113203">
     <template #reference>
-      <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime=1000"  @click="dialogVisible='true'">用户调研</el-button>
+      <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime = 1000"
+        @click="dialogVisible = 'true'">官方交流群</el-button>
     </template>
   </el-popover>
-    <el-dialog v-model="dialogVisible" style="position: fixed;bottom: 0;right: 0;" draggable="true" title="用户调研" width="100%">
-      <iframe src='https://f.wps.cn/g/H1CiodIz/' width='100%' height='650' frameborder='0'></iframe>
-    </el-dialog>
+  <el-dialog v-model="dialogVisible" style="" draggable="true" title="官方交流群" width="410px">
+    <img src="https://cdn.hguofichp.cn/qrcode_1745479143567%20(1).jpg" alt="" style="width: 385px;height: 685px;">
+  </el-dialog>
   <div id="bg">
     <div class="body" id="bodyId">
       <div class="stars" ref="starsRef">
@@ -21,17 +16,16 @@
       </div>
     </div>
   </div>
-  <div 
-    class="draggable chat-room-draggable" 
-    :style="{ left: `${chatX}vw`, top: `${chatY}px` }" 
-    @mousedown="startDrag($event, 'chat')"
-    v-show="isChatVisible"
-  >
+  <div class="draggable chat-room-draggable" :style="{ left: `${chatX}vw`, top: `${chatY}px` }"
+    @mousedown="startDrag($event, 'chat')" v-show="isChatVisible">
     <ChatRoom></ChatRoom>
     <el-button class="close-button" @click="closeChat" type="primary">
-      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
+      <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
+        p-id="4538" width="16" height="16">
         <path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path>
-        <path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#ff0505" p-id="4540"></path>
+        <path
+          d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
+          fill="#ff0505" p-id="4540"></path>
       </svg>
     </el-button>
   </div>
@@ -65,7 +59,7 @@ const annualX = ref(8.2);
 const annualY = ref(120);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
-const dialogVisible =ref(false)
+const dialogVisible = ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
@@ -76,7 +70,7 @@ const diaochaSetTime = ref(true)
 //   }
 // })
 
-setTimeout(()=>{
+setTimeout(() => {
   diaochaSetTime.value = false
   // if(localStorage.getItem('diaochawenjuan')>0){
   //   setTimeout(() => {
@@ -84,7 +78,7 @@ setTimeout(()=>{
   //     document.getElementById('diaocha').click();
   //   },30 * 1000);
   // }
-},2 * 1000)
+}, 2 * 1000)
 
 // 开始拖动的函数
 const startDrag = (event, component) => {
@@ -230,6 +224,7 @@ const closeHot = () => {
   width: 30px;
   height: 25px;
 }
+
 .close-button-1 {
   position: absolute;
   top: 5px;
@@ -238,6 +233,7 @@ const closeHot = () => {
   width: 30px;
   height: 25px;
 }
+
 #bg {
   position: fixed;
   top: 0;
@@ -308,6 +304,7 @@ const closeHot = () => {
   /* 设置鼠标样式为可移动状态 */
   z-index: 100;
 }
+
 #diaocha {
   position: fixed;
   top: 55%;
@@ -319,18 +316,36 @@ const closeHot = () => {
   width: 30px;
   z-index: 1000;
 }
+
 @media (max-width: 600px) {
   .draggable {
     margin-top: 50px;
   }
+
   .close-button {
     display: none;
   }
-  .chat-room-draggable{
+
+  .chat-room-draggable {
     display: none;
   }
-  .annual-hot-list-draggable{
+
+  .annual-hot-list-draggable {
     display: none;
+  }
+
+  #diaocha {
+    position: fixed;
+    top: 55%;
+    right: 0;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    white-space: nowrap;
+    height: 60px;
+    width: 13px;
+    font-size: 11px;
+    z-index: 1000;
+    padding: 8px 10px;
   }
 }
 </style>

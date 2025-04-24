@@ -8,7 +8,7 @@
             <div>
                 <b>
                     <p class="announcement">
-                        新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册。<b>锐意创新：<span style="color: blue;cursor: pointer;" @click="simulateClick">用户调研</span></b>
+                        新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册。
                     </p>
                 </b>
             </div>
@@ -21,7 +21,7 @@
                     <a href="https://sb6657.cn">sb6657.cn</a>
                 </span>
                 尽情欣赏你们的烂梗吧。
-                <b>开放注册功能(内测)，可能会出现收不到邮件的情况。</b>
+                <b>开放注册功能，可能会出现收不到邮件的情况。</b>
                 
             </p>
         </div>
@@ -233,14 +233,7 @@ import wordCloud from '@/components/wordCloud.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
-const simulateClick = () => {
-  const diaochaButton = document.getElementById('diaocha');
-  if (diaochaButton) {
-    diaochaButton.click();
-  } else {
-    console.error('Element with id "diaocha" not found');
-  }
-};
+
 const loading = ref(true)
 const queryLoading = ref(false)
 const isInput = ref(false)

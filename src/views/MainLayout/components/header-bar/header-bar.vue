@@ -203,7 +203,7 @@ async function handleSearchMeme() {
     }
     searchedMeme.value = res;
 }
-const lightningUrl = 'https://pic.imgdb.cn/item/66992905d9c307b7e9f0136e.png';
+const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
 let lightWidth = '75%'
 
 // 消息数量
@@ -228,7 +228,7 @@ async function fetchMsgNum() {
 
 onMounted(() => {
 
-    if (isRelogin.show) {z``
+    if (isRelogin.show) {
         fetchMsgNum();
         setInterval(() => {
             fetchMsgNum();
