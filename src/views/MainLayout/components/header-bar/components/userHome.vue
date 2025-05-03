@@ -52,7 +52,9 @@ import { CommunityNorms } from '@/common/CommunityNorms'
 import register from './register.vue';
 import { useIsMobile } from '@/utils/common';
 import isRelogin from '@/apis/httpInstance';
-import eventBus from '@/utils/eventBus'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+const authStore = useAuthStore()
 
 
 const loginView = ref(false)
@@ -97,13 +99,12 @@ function showLoginView() {
     loginView.value = true
 }
 
-onMounted(() => {
-    eventBus.on('showLogin', showLoginView)
-})
-
-onBeforeUnmount(() => {
-    eventBus.off('showLogin', showLoginView)
-})
+watch(
+  () => authStore.loginVisible,
+  (newVal) => {
+    loginView.value = newVal
+  }
+)
 </script>
 
 <style lang='scss' scoped>

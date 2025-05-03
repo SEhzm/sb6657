@@ -2,15 +2,16 @@ import axios from 'axios';
 import { SERVER_ADDRESS } from '@/constants/backend';
 import { getToken, setSiteToken, getSiteToken } from '@/utils/cookieUtils';
 import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
-import eventBus from '@/utils/eventBus'
+import { useAuthStore } from '@/stores/useAuthStore'
+
 const httpInstance = axios.create({
     baseURL: SERVER_ADDRESS,
     // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
 
-export const sbVersion = '25.04.22';
-
+export const sbVersion = '25.05.03';
+let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 
  * @param length 
@@ -55,54 +56,16 @@ const errorCode: Record<string, string> = {
     '404': '访问资源不存在',
     'default': '系统未知错误，请反馈给管理员'
 };
-// axios 响应拦截器
-// httpInstance.interceptors.response.use(
-    
-//     (res) => res.data,
-//     (res) => {
-//         console.log(1123);
-//         const response = res.response;
-//         if (response) {
-//             const { data, status } = response;
-//             const code = data?.code || status;
-
-//             switch (code) {
-//                 case 401:
-                        
-                        
-//                         ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示')
-//                             .then(() => {
-                                
-//                             })
-//                             .catch(() => {
-                                
-//                             });
-                    
-//                     return Promise.reject(new Error('无效的会话，或者会话已过期，请重新登录。'));
-//                 case 4000:
-//                     ElMessageBox.alert(data.msg || '你的操作太快啦', '提示', {
-//                         confirmButtonText: 'OK',
-//                     });
-//                     break;
-//                 case 500:
-//                     ElMessage({ message: errorCode[code] || errorCode['default'], type: 'error' });
-//                     return Promise.reject(new Error(errorCode[code] || errorCode['default']));
-//                 case 601:
-//                     ElMessage({ message: errorCode[code] || errorCode['default'], type: 'warning' });
-//                     return Promise.reject(new Error(errorCode[code] || errorCode['default']));
-//                 default:
-//                     ElNotification.error({ title: errorCode[code] || errorCode['default'] });
-//                     return Promise.reject(new Error(errorCode[code] || errorCode['default']));
-//             }
-//         } else {
-//             console.error('请求失败:', res.message);
-//             return Promise.reject(new Error('网络错误'));
-//         }
-//     }
-// );
 export let isRelogin = { show: false };
 httpInstance.interceptors.response.use(
     res => {
+      if (!authStore) {
+        try {
+          authStore = useAuthStore()
+        } catch (e) {
+          console.warn('Pinia 尚未初始化，无法获取 authStore')
+        }
+      }
     // 未设置状态码则默认成功状态
     const code = res.data.code || 200;
     // 获取错误信息
@@ -116,7 +79,15 @@ httpInstance.interceptors.response.use(
         isRelogin.show = true;
         ElMessageBox.confirm('请先登录再使用该功能，或您的登录状态已过期，您可以继续留在该页面，或者重新登录', '请您先登录~', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
           isRelogin.show = false;
-          eventBus.emit('showLogin')
+          if (authStore) {
+            authStore.showLogin()
+          } else {
+            try {
+                const store = useAuthStore();
+                store.showLogin();
+            } catch (e) {
+            }
+          }
       }).catch(() => {
         isRelogin.show = false;
       });

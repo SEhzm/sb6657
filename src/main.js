@@ -1,4 +1,5 @@
 import { createApp } from 'vue';
+import { createPinia } from 'pinia'
 import App from './App.vue';
 import router from './router';
 import ElementPlus from 'element-plus';
@@ -8,7 +9,7 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import '@/assets/css/global.css';
 
 const app = createApp(App);
-
+const pinia = createPinia()
 /**
  * 统一命名
  * allbarrage
@@ -25,6 +26,7 @@ app.use(router);
 app.use(ElementPlus, {
     locale: zhCn,
 });
+app.use(pinia)
 
 // 设置全局定时器
 setInterval(() => {

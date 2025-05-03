@@ -32,10 +32,12 @@
     </div>
     <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md" target="_blank"><span
             class="version">版本: {{ sbVersion }}</span></a>
-  <div class="GuangGaoWei"> 
+    <div class="GuangGaoWei">
+        <img  src="https://pic1.imgdb.cn/item/67ee15fe0ba3d5a1d7eb91d2.png" alt="">
 
-    <span style="display: flex;font-size:large;color: white;">广告位招租</span>
-  </div>
+        <span style="display: flex;font-size:large;color: white;">广告位招租</span>
+    </div>
+    <div class="GuiBin">当前直播间贵宾数:{{ OniValue }}</div>
 </template>
 
 <script setup lang="ts">
@@ -44,8 +46,21 @@ import FooterBar from '@/views/MainLayout/components/footer-bar.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { MemeCategory } from '@/constants/backend';
 import { sbVersion } from '@/apis/httpInstance'
+import { useGuiBinStore } from '@/stores/GuiBinStore';
+import DouyuWebSocket from '@/utils/douyuWebSocket';
+import { computed, onMounted, ref } from 'vue';
+import { handleDanmu } from '@/utils/douyuWebSocket';
 const route = useRoute();
 const router = useRouter();
+
+const guiBinStore = useGuiBinStore();
+
+const OniValue = computed(() => guiBinStore.Oni);
+
+const socket = ref();
+onMounted(() => {
+    socket.value = new DouyuWebSocket(6979222, handleDanmu);
+});
 function navigateTo(path: string) {
     router.push(path);
 }
@@ -151,6 +166,14 @@ function navigateTo(path: string) {
         right: 0px;
         z-index: -1;
     }
+
+    .GuiBin {
+        font-size: 10px;
+        position: fixed;
+        bottom: 0;
+        left: 0px;
+        z-index: -1;
+    }
 }
 
 @media (max-width: 600px) {
@@ -238,8 +261,16 @@ function navigateTo(path: string) {
         z-index: 1000;
         font-size: .5rem;
     }
-    .GuangGaoWei{
+
+    .GuangGaoWei {
         display: none;
+    }
+    .GuiBin {
+        font-size: .5rem;
+        position: fixed;
+        bottom: 0;
+        left: 0px;
+        z-index: 100;
     }
 }
 </style>

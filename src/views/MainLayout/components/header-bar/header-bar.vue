@@ -79,8 +79,15 @@
 
 
                 <userHome style="margin-left:20px;" class="icon-img"></userHome>
-            </div>
+                <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button>
 
+            </div>
+            <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
+                <h2>店长5年观龄玩神脑残粉</h2>
+                <h4>女陪玩全部视频验证保真 <b style="color: red;">+v：weifucsgo</b></h4>
+                <h4>男陪玩最低1.3rating魔王S <b style="color: red;">女客服：J34-126</b></h4>
+                <h4>纯绿色，店长线下见过所有陪玩</h4>
+            </el-dialog>
 
         </div>
 
