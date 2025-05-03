@@ -5,8 +5,7 @@
 		</div>
 		<p v-if="!isOpen">您已掉线</p>
 		<el-button @click="closeWebSocket">关闭连接</el-button>
-		<el-button @click="reconnectWebSocket"
-		v-if="!isOpen" >重新连接</el-button>
+		<el-button @click="reconnectWebSocket" v-if="!isOpen">重新连接</el-button>
 		<!-- <div id="message-container" ref="messageContainer">
 			<div v-for="(msg, index) in messages" :key="index"
 				:class="{ 'message-bubble': true, 'mine': msg.isMine, 'others': !msg.isMine }">
@@ -39,7 +38,7 @@ interface WebSocketData {
 	userId?: string;
 	count?: number;
 }
-const isOpen =ref(true)
+const isOpen = ref(true)
 const websocket = ref<WebSocket | null>(null);
 const clientId = ref<string>(Math.random().toString(36).substr(2));
 const userId = ref<string>(''); // 用户输入的ID
@@ -126,7 +125,7 @@ const onWebSocketMessage = (event: MessageEvent) => {
 
 // 连接关闭的回调方法
 const onWebSocketClose = () => {
-	isOpen.value =false
+	isOpen.value = false
 	messages.value.push({ text: '连接已关闭', isMine: false, time: getCurrentTime() });
 };
 
@@ -175,14 +174,23 @@ const closeWebSocket = () => {
 };
 
 // 重新连接
-const reconnectWebSocket = () => {
-	if (!websocket.value || websocket.value.readyState !== WebSocket.CONNECTING) {
-		websocket.value = new WebSocket(`wss://hguofichp.cn:10086/machine/ws/${clientId.value}`);
-		websocket.value.onerror = onWebSocketError;
-		websocket.value.onopen = onWebSocketOpen;
-		websocket.value.onmessage = onWebSocketMessage;
-		websocket.value.onclose = onWebSocketClose;
-	}
+const reconnectWebSocket = (): boolean => {
+  if (websocket.value && websocket.value.readyState === WebSocket.CONNECTING) {
+    return false; // 正在连接中，不重复连接
+  }
+
+  try {
+    websocket.value = new WebSocket(`wss://hguofichp.cn:10086/machine/ws/${clientId.value}`);
+    websocket.value.onerror = onWebSocketError;
+    websocket.value.onopen = onWebSocketOpen;
+    websocket.value.onmessage = onWebSocketMessage;
+    websocket.value.onclose = onWebSocketClose;
+
+    return true; // 成功触发连接
+  } catch (error) {
+    console.error('重连失败', error);
+    return false;
+  }
 };
 
 // 获取当前时间
@@ -222,6 +230,22 @@ onMounted(() => {
 		websocket.value.onmessage = onWebSocketMessage;
 		websocket.value.onclose = onWebSocketClose;
 	}
+	// 每5秒检查一次连接状态
+	setInterval(() => {
+    console.log('当前连接状态:', isOpen.value);
+
+    if (!isOpen.value) {
+      console.log('检测到断开，正在尝试重新连接...');
+      closeWebSocket(); // 确保旧连接已关闭
+      const isReconnected = reconnectWebSocket();
+
+      if (isReconnected) {
+        console.log('重连请求已发出');
+      } else {
+        console.log('当前正在连接中，跳过重复连接');
+      }
+    }
+  }, 1000 * 10); // 每10秒执行一次
 });
 </script>
 
