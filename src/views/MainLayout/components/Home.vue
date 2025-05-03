@@ -52,6 +52,7 @@
                                                 <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
+                                        <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</span>
                                     </div>
                                 </template>
                             </el-popover>
@@ -127,6 +128,7 @@
                                                 <span style="vertical-align: middle;"> {{ item.label }}</span>
                                             </el-tag>
                                         </div>
+                                        <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</span>
                                     </div>
                                 </template>
                             </el-popover>
@@ -578,6 +580,11 @@ function refreshWordCloud() {
         wordCloudRef.value.getData();
     }
 }
+// 处理投稿时间格式
+const formatSubmitTime = (timeString) => {
+  if (!timeString) return '';
+  return timeString.replace('T', ' ').split('.')[0];
+};
 </script>
 
 <style scoped lang="scss">

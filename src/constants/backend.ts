@@ -52,5 +52,6 @@ declare global {
         id: string; // ID
         copyCount: number; // 复制次数
         likes: number; //点赞次数
+        submitTime: string; // 投稿时间
     };
 }

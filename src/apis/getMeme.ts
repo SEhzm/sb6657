@@ -10,6 +10,7 @@ interface hotMeme_res {
     id: null;
     tableName: string;
     likes: number;
+    submitTime: string;
 }
 interface getHotMeme_res {
     code: number;
@@ -52,6 +53,7 @@ interface searchMeme_data {
     cnt: string;
     id: string;
     likes: string;
+    submitTime: string;
 }
 interface searchMeme_res {
     code: number;
@@ -78,7 +80,8 @@ export async function searchMeme(searchKey: string) {
                 category: 'allbarrage', // 由于目前搜索不返分类，所以分类写死成所有
                 id: item.id,
                 copyCount: +item.cnt,
-                likes: +item.likes
+                likes: +item.likes,
+                submitTime: item.submitTime,
             };
         });
         return memeArr;
@@ -94,6 +97,7 @@ interface getMemeList_meme {
     barrage: string;
     cnt: string;
     likes: string;
+    submitTime: string;
 }
 interface getMemeList_data {
     total: number;
@@ -145,6 +149,7 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
                 category: category,
                 copyCount: +item.cnt,
                 likes: +item.likes,
+                submitTime: item.submitTime,
             };
         });
         return {

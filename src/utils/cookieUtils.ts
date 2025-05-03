@@ -6,8 +6,7 @@ export function getToken() {
     return Cookies.get(TokenKey)
 }
 export function setToken(token: string) {
-    console.log(1123);
-    
+
     return Cookies.set(TokenKey, token)
 }
 export function setSiteToken(token: string) {

@@ -88,6 +88,7 @@
                                                 <span style="vertical-align: middle;"> {{ item.label }}</span>
                                         </el-tag>
                                     </div>
+                                    <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</span>
                                 </div>
                             </template>
                         </el-popover>
@@ -178,6 +179,8 @@ async function refreshMeme(pageNum: number) {
     // if (!res) return;   //没有就是没有数据
 
     memeArr.value = res.memeArr;
+    console.log(memeArr.value);
+    
     total.value = res.total;
     loading.value = false;
 }
@@ -339,6 +342,11 @@ const handleTouchEnd = (row: any) => {
             row.popoverVisible=false
         },1500)
     }
+};
+// 处理投稿时间格式
+const formatSubmitTime = (timeString: string): string => {
+  if (!timeString) return '';
+  return timeString.replace('T', ' ').split('.')[0];
 };
 </script>
 
