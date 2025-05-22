@@ -1,6 +1,6 @@
 <template>
   <div class="outer">
-    <span>时光相册</span><span style="font-size: 16px;">(点击放大图片)</span>
+    <span>主播相册</span><span style="font-size: 16px;">(点击放大图片)</span>
     <em style="font-size: 14px;">如侵权，请右上角联系删除</em>
   </div>
   <div class="image-list">
@@ -30,9 +30,9 @@
 
   <el-dialog v-model="image.dialogFormVisible" draggable title="评论">
     <el-form :model="image" label-width="100px" :rules="rules" label-position="right">
-      <el-form-item label="你的斗鱼id" prop="douyuID">
+      <!-- <el-form-item label="用户昵称" prop="douyuID">
         <el-input v-model="image.douyuID" autocomplete="off" />
-      </el-form-item>
+      </el-form-item> -->
       <el-form-item label="评论内容" prop="Commentname">
         <el-input v-model="image.Commentname" autocomplete="off" />
       </el-form-item>
@@ -96,9 +96,9 @@ const formatDate = (date) => {
 }
 
 const rules = ({
-  douyuId: [
-    { required: true, message: '请输入你的斗鱼ID', trigger: 'blur' },
-  ],
+  // douyuId: [
+  //   { required: true, message: '请输入你的斗鱼ID', trigger: 'blur' },
+  // ],
   Commentname: [
     { required: true, message: '请输入评论', trigger: 'blur' },
   ]
@@ -118,9 +118,9 @@ const addComment = (image2) => {
 }
 
 const saveComment = (Obimage) => {
-  console.log(Obimage)
-  if (Obimage.douyuID === '' || Obimage.Commentname === '') {
-    ElNotification.error("请输入斗鱼id或输入评论");
+  // console.log(Obimage)
+  if (Obimage.Commentname === '') {
+    ElNotification.error("请输入评论");
   } else {
     httpInstance.post('/machine/addCommentname', {
       id: '',

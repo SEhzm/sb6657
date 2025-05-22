@@ -241,13 +241,13 @@ onMounted(() => {
     }
 
     // 第一次在一小时后弹出
-    setTimeout(() => {
-        supportMeDialog.value = true;
-        // 后续每次在两小时后弹出
-        setInterval(() => {
-            supportMeDialog.value = true;
-        }, 2 * 60 * 60 * 1000); // 2h
-    }, 60 * 60 * 1000); // 1h
+    // setTimeout(() => {
+    //     supportMeDialog.value = true;
+    //     // 后续每次在两小时后弹出
+    //     setInterval(() => {
+    //         supportMeDialog.value = true;
+    //     }, 2 * 60 * 60 * 1000); // 2h
+    // }, 60 * 60 * 1000); // 1h
 });
 //上传按钮
 const complaintButton = () => {
