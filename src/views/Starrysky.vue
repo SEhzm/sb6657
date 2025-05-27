@@ -1,12 +1,12 @@
 <template>
   <el-popover placement="left" title="" :width="200" trigger="hover" :visible="diaochaSetTime"
-    content="官方交流群:327113203">
+    content="官方交流🐧:327113203">
     <template #reference>
       <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime = 1000"
-        @click="dialogVisible = 'true'">官方交流群</el-button>
+        @click="dialogVisible = 'true'">官方交流🐧</el-button>
     </template>
   </el-popover>
-  <el-dialog v-model="dialogVisible" style="" draggable="true" title="官方交流群" width="410px">
+  <el-dialog v-model="dialogVisible" style="" draggable="true" title="官方交流🐧" width="410px">
     <img src="https://cdn.hguofichp.cn/qrcode_1745479143567%20(1).jpg" alt="" style="width: 385px;height: 685px;">
   </el-dialog>
   <div id="bg">

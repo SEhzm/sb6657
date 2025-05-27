@@ -11,7 +11,7 @@
     "@element-plus/icons-vue": "^2.3.1",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
-    "element-plus": "^2.9.3",
+    "element-plus": "^2.9.10",
     "js-cookie": "^3.0.5",
     "jsencrypt": "^3.3.2",
     "mitt": "^3.0.1",
