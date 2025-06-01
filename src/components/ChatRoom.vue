@@ -232,7 +232,7 @@ onMounted(() => {
 	}
 	// 每5秒检查一次连接状态
 	setInterval(() => {
-    console.log('当前连接状态:', isOpen.value);
+    // console.log('当前连接状态:', isOpen.value);
 
     if (!isOpen.value) {
       console.log('检测到断开，正在尝试重新连接...');

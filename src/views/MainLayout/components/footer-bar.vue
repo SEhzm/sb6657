@@ -31,13 +31,13 @@ const daysSinceLaunch = computed(() => {
 
 <style scoped lang="scss">
 .footer {
-    height: 0px;
     width: 100%;
     font-family: Arial;
     font-size: 12px;
     display: flex;
     justify-content: center;
     align-items: center;
+    box-sizing: border-box;
     
     .content {
         display: flex;

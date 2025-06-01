@@ -89,7 +89,6 @@ function login() {
         Cookies.set("password", encrypt(loginForm.value.password), { expires: 525600 });
         Cookies.set("rememberMe", loginForm.value.rememberMe, { expires: 525600 });
       } else {
-        // 否则移除
         Cookies.remove("username");
         Cookies.remove("password");
         Cookies.remove("rememberMe");
@@ -97,7 +96,7 @@ function login() {
       httpInstance.post('/login', loginForm.value).then(res => {
         if (res.code === 200) {
           ElMessage.success('登录成功')
-          setToken(res.token);
+          setToken(res.token, res.refreshToken, 15 * 24 * 60 * 60)
           closeDialog();
         } else {
           loading.value = false;

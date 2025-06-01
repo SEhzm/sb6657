@@ -30,9 +30,12 @@ import penPlayer_icon from '@/assets/icons/penPlayer_icon.svg';
 import p1_icon from '@/assets/icons/p1_icon.svg';
 import QMLW_icon from '@/assets/icons/QMLW_icon.svg';
 import Z_icon from '@/assets/icons/Z_icon.png';
+import cs2_icon from '@/assets/icons/cs2_icon.svg';
+
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
+    { path: '/cs2-major', text: 'Major竞猜', icon: cs2_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },

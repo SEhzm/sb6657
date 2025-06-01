@@ -69,13 +69,14 @@ function loginAndReg() {
     registerView.value = false
 }
 
-const dialogWidth = '400px'
+let dialogWidth = '400px'
 
 function getDialogWidth() {
     if (isMobile) {
         dialogWidth = '95%'
     }
 }
+getDialogWidth()
 function logout() {
     ElMessageBox.confirm('确定退出登录吗？', '提示', {
         confirmButtonText: '确定',
