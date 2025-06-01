@@ -33,30 +33,30 @@
 
             <div v-if="currentTab === 'onePhase'" class="major-section">
                 <div class="time-info">
-                    <p>竞猜时间：{{ matchInfo ? `${formatDateTime(matchInfo.predictStartTime)} - ${formatDateTime(matchInfo.predictEndTime)}` : '加载中...' }}</p>
+                    <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
                 </div>
-                <Major1Phase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId" />
+                <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId" phase="onePhase" />
             </div>
 
             <div v-if="currentTab === 'twoPhase'" class="major-section">
                 <div class="time-info">
                     <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
                 </div>
-                <Major2Phase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId" />
+                <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId" phase="twoPhase" />
             </div>
 
             <div v-if="currentTab === 'threePhase'" class="major-section">
                 <div class="time-info">
                     <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
                 </div>
-                <Major3Phase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId" />
+                <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId" phase="threePhase" />
             </div>
 
             <div v-if="currentTab === 'champion'" class="major-section">
                 <div class="time-info">
                     <p>竞猜时间：{{ formatTimeRange('champion') }}</p>
                 </div>
-                <MajorChampion ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" />
+                <MajorPhase ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" phase="champion" />
             </div>
         </template>
         <div v-else class="no-match">
@@ -67,10 +67,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import Major1Phase from './Major1Phase.vue'
-import Major2Phase from './Major2Phase.vue'
-import Major3Phase from './Major3Phase.vue'
-import MajorChampion from './MajorChampion.vue'
+import MajorPhase from './MajorPhase.vue'
 import { useRoute } from 'vue-router'
 import httpInstance from '@/apis/httpInstance'
 import { ElMessage } from 'element-plus'

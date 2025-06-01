@@ -1,6 +1,6 @@
 <template>
-    <div class="major-first" v-loading="isLoading" element-loading-text="加载队伍数据中...">
-        <h2 class="title">第一阶段竞猜</h2>
+    <div class="major-phase" v-loading="isLoading" element-loading-text="加载队伍数据中...">
+        <h2 class="title">{{ phaseTitle }}竞猜</h2>
         <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0" second-label="0-3"
             advance-label="3-2或3-1晋级的7支队伍" :max-advance="7" :isTimeValid="isTimeValid"
             @update:firstTeam="firstTeam = $event"
@@ -13,17 +13,29 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import type { Team } from './Base.vue'
 import MatchPredictionBase from './Base.vue'
-import { matchAPI, type PredictionRecord } from '@/apis/match'
+import { matchAPI } from '@/apis/match'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const props = defineProps<{
     isTimeValid: boolean,
-    matchId: number
+    matchId: number,
+    phase: 'onePhase' | 'twoPhase' | 'threePhase' | 'champion'  // 添加阶段属性
 }>()
+
+// 计算阶段标题
+const phaseTitle = computed(() => {
+    const titles = {
+        onePhase: '第一阶段',
+        twoPhase: '第二阶段',
+        threePhase: '第三阶段',
+        champion: '冠军组'
+    }
+    return titles[props.phase]
+})
 
 const authStore = useAuthStore()
 const predictRef = ref()
@@ -32,7 +44,7 @@ const secondTeam = ref<Team[]>([])
 const advanceTeams = ref<Team[]>([])
 const teams = ref<Team[]>([])
 const isLoading = ref(false)
-const isInitialLoading = ref(false) // 添加初始加载标志位
+const isInitialLoading = ref(false)
 
 // 添加防抖函数
 const debounce = (fn: Function, delay: number) => {
@@ -52,7 +64,7 @@ const debouncedSave = debounce(() => {
         console.log('触发防抖保存...');
         savePrediction();
     }
-}, 300); // 300ms 的防抖延迟
+}, 300);
 
 // 使用 watch 监听 predictRef 中暴露的预测数据变化
 watch(predictRef, (newPredictRef) => {
@@ -84,16 +96,16 @@ watch(predictRef, (newPredictRef) => {
 const fetchTeams = async () => {
     try {
         isLoading.value = true
-        // console.log("获取队伍数据，matchId:", props.matchId);
-        const response = await matchAPI.getMatchTeams(props.matchId,'onePhase')
-        // console.log("获取到的原始数据:", response.data);
+        console.log(`获取${phaseTitle.value}队伍数据，matchId:`, props.matchId);
+        const response = await matchAPI.getMatchTeams(props.matchId, props.phase)
+        console.log("获取到的原始数据:", response.data);
         
         teams.value = response.data.map((team: any) => ({
             id: team.id,
             name: team.teamName,
             logo: team.teamImgUrl
         }))
-        // console.log("处理后的队伍数据:", teams.value);
+        console.log("处理后的队伍数据:", teams.value);
         
     } catch (error) {
         console.error('获取队伍数据失败:', error)
@@ -122,20 +134,15 @@ const fetchUserPrediction = async () => {
             await fetchTeams();
         }
 
-        const response = await matchAPI.getUserPredictions({ matchId: props.matchId, phase: 'onePhase', userId: authStore.userId })
+        const response = await matchAPI.getUserPredictions({ 
+            matchId: props.matchId, 
+            phase: props.phase, 
+            userId: authStore.userId 
+        })
         
         if (response.data) {
             // 确保我们有一个有效的预测记录
-            let prediction: PredictionRecord;
-            if (Array.isArray(response.data)) {
-                if (response.data.length === 0) {
-                    console.log('未找到用户之前的预测数据');
-                    return;
-                }
-                prediction = response.data[0];
-            } else {
-                prediction = response.data;
-            }
+            let prediction = Array.isArray(response.data) ? response.data[0] : response.data;
             
             // 用于存储已选队伍的ID
             const selectedTeamIds = new Set<string>();
@@ -194,7 +201,7 @@ const savePrediction = async () => {
     try {
         const predictionData = {
             matchId: props.matchId,
-            phase: 'onePhase',
+            phase: props.phase,
             s_l: firstTeam.value[0]?.id?.toString() || '',
             l_s: secondTeam.value[0]?.id?.toString() || '',
             advance: advanceTeams.value.map(t => t.id)
@@ -204,16 +211,6 @@ const savePrediction = async () => {
     } catch (error) {
         console.error('保存预测数据失败:', error)
         ElMessage.error('保存预测数据失败')
-    }
-}
-
-// 监听预测数据变化 (保留此函数，但现在主要通过 watch 来更新本地 ref)
-const updatePredictData = () => {
-    const ref = predictRef.value
-    if (ref) {
-        firstTeam.value = [...ref.firstTeam]
-        secondTeam.value = [...ref.secondTeam]
-        advanceTeams.value = [...ref.advanceTeams]
     }
 }
 
@@ -228,7 +225,6 @@ onMounted(async () => {
 // 暴露数据给父组件
 defineExpose({
     getPredictData() {
-        updatePredictData()
         return {
             firstTeam: firstTeam.value,
             secondTeam: secondTeam.value,
@@ -245,12 +241,12 @@ defineExpose({
 import { defineComponent } from 'vue';
 
 export default defineComponent({
-  name: 'MajorFirst',
+    name: 'MajorPhase',
 });
 </script>
 
 <style lang="scss" scoped>
-.major-first {
+.major-phase {
     .title {
         text-align: center;
         color: white;
@@ -266,7 +262,7 @@ export default defineComponent({
 }
 
 @media screen and (max-width: 768px) {
-    .major-first {
+    .major-phase {
         .title {
             font-size: 20px;
             margin-bottom: 16px;
