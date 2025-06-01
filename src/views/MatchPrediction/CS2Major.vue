@@ -3,60 +3,95 @@
         <div v-if="isLoading" class="loading-container">
             <el-skeleton :rows="3" animated />
         </div>
+        
         <template v-else-if="matchId">
-            <div class="tab-buttons">
-                <button :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
-                    第一阶段
-                    <div class="countdown" v-if="currentTab === 'onePhase'">
-                        {{ getCountdown('onePhase') }}
+            <div class="major-content">
+                <!-- 左侧赛事信息 -->
+                <div class="match-info-panel">
+                    <div class="match-header">
+                        <img :src="matchInfo?.matchesImg" :alt="matchInfo?.matchesName" class="match-logo">
+                        <h2 class="match-name">{{ matchInfo?.matchesName }}</h2>
                     </div>
-                </button>
-                <button :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
-                    第二阶段
-                    <div class="countdown" v-if="currentTab === 'twoPhase'">
-                        {{ getCountdown('twoPhase') }}
+                    <div class="match-details">
+                        <div class="info-item">
+                            <span class="label">赛事等级：</span>
+                            <span class="value">{{ matchInfo?.level }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">比赛地点：</span>
+                            <span class="value">{{ matchInfo?.matchesLocation }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">比赛时间：</span>
+                            <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{ formatDateTime(matchInfo?.endTime) }}日</span>
+                        </div>
                     </div>
-                </button>
-                <button :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
-                    第三阶段
-                    <div class="countdown" v-if="currentTab === 'threePhase'">
-                        {{ getCountdown('threePhase') }}
+                    <div class="match-footer">
+                        <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
+                        <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
+                            <el-icon><Share /></el-icon>
+                            截图分享预测
+                        </el-button>
                     </div>
-                </button>
-                <button :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
-                    冠军组
-                    <div class="countdown" v-if="currentTab === 'champion'">
-                        {{ getCountdown('champion') }}
+                </div>
+
+                <!-- 右侧预测内容 -->
+                <div class="prediction-content">
+                    <div class="tab-buttons">
+                        <button :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
+                            第一阶段
+                            <div class="countdown" v-if="currentTab === 'onePhase'">
+                                {{ getCountdown('onePhase') }}
+                            </div>
+                        </button>
+                        <button :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
+                            第二阶段
+                            <div class="countdown" v-if="currentTab === 'twoPhase'">
+                                {{ getCountdown('twoPhase') }}
+                            </div>
+                        </button>
+                        <button :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
+                            第三阶段
+                            <div class="countdown" v-if="currentTab === 'threePhase'">
+                                {{ getCountdown('threePhase') }}
+                            </div>
+                        </button>
+                        <button :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
+                            冠军组
+                            <div class="countdown" v-if="currentTab === 'champion'">
+                                {{ getCountdown('champion') }}
+                            </div>
+                        </button>
                     </div>
-                </button>
-            </div>
 
-            <div v-if="currentTab === 'onePhase'" class="major-section">
-                <div class="time-info">
-                    <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
-                </div>
-                <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId" phase="onePhase" />
-            </div>
+                    <div v-if="currentTab === 'onePhase'" class="major-section">
+                        <div class="time-info">
+                            <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
+                        </div>
+                        <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId" phase="onePhase" />
+                    </div>
 
-            <div v-if="currentTab === 'twoPhase'" class="major-section">
-                <div class="time-info">
-                    <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
-                </div>
-                <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId" phase="twoPhase" />
-            </div>
+                    <div v-if="currentTab === 'twoPhase'" class="major-section">
+                        <div class="time-info">
+                            <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
+                        </div>
+                        <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId" phase="twoPhase" />
+                    </div>
 
-            <div v-if="currentTab === 'threePhase'" class="major-section">
-                <div class="time-info">
-                    <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
-                </div>
-                <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId" phase="threePhase" />
-            </div>
+                    <div v-if="currentTab === 'threePhase'" class="major-section">
+                        <div class="time-info">
+                            <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
+                        </div>
+                        <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId" phase="threePhase" />
+                    </div>
 
-            <div v-if="currentTab === 'champion'" class="major-section">
-                <div class="time-info">
-                    <p>竞猜时间：{{ formatTimeRange('champion') }}</p>
+                    <div v-if="currentTab === 'champion'" class="major-section">
+                        <div class="time-info">
+                            <p>竞猜时间：{{ formatTimeRange('champion') }}</p>
+                        </div>
+                        <MajorChampion ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" />
+                    </div>
                 </div>
-                <MajorPhase ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" phase="champion" />
             </div>
         </template>
         <div v-else class="no-match">
@@ -68,9 +103,12 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import MajorPhase from './MajorPhase.vue'
+import MajorChampion from './MajorChampion.vue'
 import { useRoute } from 'vue-router'
 import httpInstance from '@/apis/httpInstance'
 import { ElMessage } from 'element-plus'
+import { Share } from '@element-plus/icons-vue'
+import html2canvas from 'html2canvas'
 
 const route = useRoute()
 const matchId = ref<number | null>(null)
@@ -82,6 +120,7 @@ const threePhaseRef = ref()
 const championRef = ref()
 const countdownTimer = ref<number | null>(null)
 const matchInfo = ref<any>(null)
+const isCapturing = ref(false)
 
 // 定义各阶段的时间限制
 const timeLimits = ref({
@@ -110,17 +149,14 @@ const formatDateTime = (dateStr: string) => {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
         timeZone: 'Asia/Shanghai'
-    }).replace(/\//g, '年').replace(',', '日 ')
+    }).replace(/\//g, '年').replace(',', '日')
 }
 
-// 格式化时间范围显示
+// 格式化时间范围显示（用于预测时间显示）
 const formatTimeRange = (phase: keyof typeof timeLimits.value) => {
     const { start, end } = timeLimits.value[phase]
-    return `${formatDateTime(start.toISOString())} - ${formatDateTime(end.toISOString())}`
+    return `${formatDateTime(start.toISOString())}日 ${start.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${formatDateTime(end.toISOString())}日 ${end.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })}`
 }
 
 // 获取赛事信息
@@ -129,56 +165,32 @@ const fetchMatchId = async () => {
         isLoading.value = true
         const response = await httpInstance.get('/machine/matches')
         if (response.data && response.data.length > 0) {
-            const match = response.data[0]
-            matchId.value = match.id
-            matchInfo.value = match
+            // 找到当前比赛的所有阶段数据
+            const matchPhases = response.data.filter((match: any) => 
+                match.matchesName === "cs2 奥斯汀major"
+            )
             
-            // 设置各阶段的时间限制
-            const predictStartTime = new Date(match.predictStartTime)
-            const predictEndTime = new Date(match.predictEndTime)
-            const startTime = new Date(match.startTime)
-            const endTime = new Date(match.endTime)
-            
-            // 根据比赛时间设置各阶段的时间限制
-            // 第一阶段：预测开始时间到第一阶段结束
-            timeLimits.value.onePhase = {
-                start: predictStartTime,
-                end: predictEndTime // 使用后端返回的预测结束时间
+            if (matchPhases.length > 0) {
+                // 使用第一个阶段的matchId
+                matchId.value = matchPhases[0].id
+                matchInfo.value = matchPhases[0]
+                
+                // 根据每个阶段的数据设置时间限制
+                matchPhases.forEach((phase: any) => {
+                    const phaseKey = phase.phase as keyof typeof timeLimits.value
+                    if (phaseKey in timeLimits.value) {
+                        timeLimits.value[phaseKey] = {
+                            start: new Date(phase.predictStartTime),
+                            end: new Date(phase.predictEndTime)
+                        }
+                    }
+                })
+                
+                console.log('比赛信息:', matchPhases)
+                console.log('时间限制设置:', timeLimits.value)
+            } else {
+                ElMessage.error('未找到可用赛事')
             }
-            
-            // 第二阶段：比赛开始后到第二阶段结束
-            const twoPhaseStart = new Date(startTime)
-            twoPhaseStart.setHours(8, 0, 0, 0) // 设置为当天8:00
-            const twoPhaseEnd = new Date(startTime)
-            twoPhaseEnd.setDate(twoPhaseEnd.getDate() + 1) // 设置为第二天
-            twoPhaseEnd.setHours(23, 0, 0, 0) // 设置为23:00
-            
-            timeLimits.value.twoPhase = {
-                start: twoPhaseStart,
-                end: twoPhaseEnd
-            }
-            
-            // 第三阶段：第二阶段结束后到第三阶段结束
-            const threePhaseStart = new Date(twoPhaseEnd)
-            threePhaseStart.setDate(threePhaseStart.getDate() + 3) // 第二阶段结束后3天
-            threePhaseStart.setHours(8, 0, 0, 0) // 设置为8:00
-            const threePhaseEnd = new Date(threePhaseStart)
-            threePhaseEnd.setDate(threePhaseEnd.getDate() + 1) // 设置为第二天
-            threePhaseEnd.setHours(23, 0, 0, 0) // 设置为23:00
-            
-            timeLimits.value.threePhase = {
-                start: threePhaseStart,
-                end: threePhaseEnd
-            }
-            
-            // 冠军组：第三阶段结束后到比赛结束
-            timeLimits.value.champion = {
-                start: new Date(threePhaseEnd),
-                end: endTime // 使用比赛结束时间
-            }
-            
-            console.log('比赛信息:', match)
-            console.log('时间限制设置:', timeLimits.value)
         } else {
             ElMessage.error('未找到可用赛事')
         }
@@ -292,6 +304,85 @@ defineExpose({
         }
     }
 })
+
+// 添加水印函数
+const addWatermark = (canvas: HTMLCanvasElement) => {
+    // 创建新的画布，高度增加以容纳水印
+    const newCanvas = document.createElement('canvas')
+    newCanvas.width = canvas.width
+    newCanvas.height = canvas.height + 60  // 增加60px高度用于水印
+    const ctx = newCanvas.getContext('2d')
+    if (!ctx) return canvas
+
+    // 先绘制原图
+    ctx.drawImage(canvas, 0, 0)
+
+    // 设置水印样式
+    ctx.font = 'bold 36px Microsoft YaHei'
+    ctx.textAlign = 'center'  // 居中对齐
+    ctx.textBaseline = 'bottom'
+
+    // 在底部添加水印
+    const text = '竞猜作业来源：sb6657.cn'
+    const x = newCanvas.width / 2  // 水平居中
+    const y = newCanvas.height - 20  // 距离底部20px
+
+    // 先画一个半透明背景
+    const textWidth = ctx.measureText(text).width
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
+    ctx.fillRect(x - textWidth/2 - 10, y - 40, textWidth + 20, 40)
+
+    // 再画文字
+    ctx.fillStyle = '#ffffff'
+    ctx.fillText(text, x, y)
+
+    return newCanvas
+}
+
+// 截图并分享
+const captureAndShare = async () => {
+    //剪切板复制竞猜地址
+    const shareUrl = '玩机器烂梗库官方比赛作业，地址sb6657.cn'
+    try {
+        await navigator.clipboard.writeText(shareUrl)
+    } catch (err) {
+        console.error('复制失败:', err)
+    }
+
+    try {
+        isCapturing.value = true
+        const element = document.querySelector('.major-section') as HTMLElement
+        if (!element) {
+            throw new Error('未找到要截图的元素')
+        }
+
+        // 创建截图
+        const canvas = await html2canvas(element, {
+            backgroundColor: '#ffffff',
+            scale: 1.5,
+            logging: false,
+            useCORS: true,
+            allowTaint: true
+        })
+
+        // 添加水印
+        const watermarkedCanvas = addWatermark(canvas)
+
+        // 转换为图片并下载
+        const link = document.createElement('a')
+        link.download = `sb6657.cn_CS2Major预测_${new Date().toLocaleDateString()}.jpg`
+        link.href = watermarkedCanvas.toDataURL('image/jpeg', 1.0)
+        link.click()
+
+        ElMessage.success('截图已保存')
+        httpInstance.get("/machine/shareMatch")
+    } catch (error) {
+        console.error('截图失败:', error)
+        ElMessage.error('截图失败，请重试')
+    } finally {
+        isCapturing.value = false
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -304,7 +395,6 @@ defineExpose({
         left: 0;
         right: 0;
         bottom: 0;
-        // background: rgba(0, 0, 0, 0.6);
         z-index: 1;
     }
 
@@ -312,6 +402,68 @@ defineExpose({
         position: relative;
         z-index: 2;
     }
+}
+
+.major-content {
+    display: flex;
+    gap: 24px;
+    padding: 20px;
+}
+
+.match-info-panel {
+    width: 300px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 10px;
+    backdrop-filter: blur(4px);
+    flex-shrink: 0;
+
+    .match-header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .match-logo {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+
+        .match-name {
+            color: white;
+            font-size: 20px;
+            text-align: center;
+            margin: 0;
+        }
+    }
+
+    .match-details {
+        .info-item {
+            margin-bottom: 16px;
+            color: white;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+
+            .label {
+                color: #3fa7ff;
+                margin-right: 8px;
+            }
+
+            .value {
+                color: #fff;
+            }
+        }
+    }
+}
+
+.prediction-content {
+    flex: 1;
+    min-width: 0; // 防止内容溢出
 }
 
 .tab-buttons {
@@ -349,7 +501,6 @@ defineExpose({
 }
 
 .major-section {
-
     background: rgba(255, 255, 255, 0);
     border-radius: 12px;
     padding: 20px;
@@ -375,10 +526,42 @@ defineExpose({
     }
 }
 
+@media screen and (max-width: 1200px) {
+    .major-content {
+        flex-direction: column;
+    }
+
+    .match-info-panel {
+        width: 100%;
+        margin-bottom: -10px;
+    }
+}
+
 @media screen and (max-width: 768px) {
-    .major-container {
-        min-height: 100%;
+    .major-content {
         padding: 12px;
+    }
+
+    .match-info-panel {
+        padding: 16px;
+
+        .match-header {
+            .match-logo {
+                width: 80px;
+                height: 80px;
+            }
+
+            .match-name {
+                font-size: 18px;
+            }
+        }
+
+        .match-details {
+            .info-item {
+                margin-bottom: 12px;
+                font-size: 14px;
+            }
+        }
     }
 
     .tab-buttons {
@@ -410,5 +593,39 @@ defineExpose({
     background: rgba(255, 255, 255, 0.1);
     border-radius: 8px;
     margin: 20px;
+}
+
+.match-footer {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+
+    .reward-info {
+        color: #fff;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .el-button {
+        width: 100%;
+        background: linear-gradient(45deg, #3fa7ff, #6bc1ff);
+        border: none;
+        color: white;
+        font-weight: bold;
+        transition: all 0.3s ease;
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(63, 167, 255, 0.3);
+        }
+
+        .el-icon {
+            margin-right: 4px;
+        }
+    }
 }
 </style>

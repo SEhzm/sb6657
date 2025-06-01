@@ -12,6 +12,7 @@
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "element-plus": "^2.9.10",
+    "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
     "jsencrypt": "^3.3.2",
     "mitt": "^3.0.1",

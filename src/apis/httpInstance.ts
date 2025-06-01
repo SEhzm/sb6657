@@ -5,8 +5,8 @@ import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const httpInstance = axios.create({
-    // baseURL: SERVER_ADDRESS,
-    baseURL: "http://127.0.0.1:10086",
+    baseURL: SERVER_ADDRESS,
+    // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
 

@@ -1,13 +1,13 @@
 <template>
     <div class="major-phase" v-loading="isLoading" element-loading-text="加载队伍数据中...">
-        <h2 class="title">{{ phaseTitle }}竞猜</h2>
+        <h2 class="title">{{ phaseTitle }}竞猜作业</h2>
         <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0" second-label="0-3"
             advance-label="3-2或3-1晋级的7支队伍" :max-advance="7" :isTimeValid="isTimeValid"
             @update:firstTeam="firstTeam = $event"
             @update:secondTeam="secondTeam = $event"
             @update:advanceTeams="advanceTeams = $event" />
         <div class="save-button">
-            <el-button @click="savePrediction">保存预测</el-button>
+            <el-button @click="validateAndSavePrediction" :disabled="!isTimeValid">保存预测</el-button>
         </div>
     </div>
 </template>
@@ -19,11 +19,12 @@ import MatchPredictionBase from './Base.vue'
 import { matchAPI } from '@/apis/match'
 import { ElMessage } from 'element-plus'
 import { useAuthStore } from '@/stores/useAuthStore'
+import { isRelogin } from '@/apis/httpInstance'
 
 const props = defineProps<{
     isTimeValid: boolean,
     matchId: number,
-    phase: 'onePhase' | 'twoPhase' | 'threePhase' | 'champion'  // 添加阶段属性
+    phase: 'onePhase' | 'twoPhase' | 'threePhase'  // 移除champion阶段
 }>()
 
 // 计算阶段标题
@@ -31,8 +32,7 @@ const phaseTitle = computed(() => {
     const titles = {
         onePhase: '第一阶段',
         twoPhase: '第二阶段',
-        threePhase: '第三阶段',
-        champion: '冠军组'
+        threePhase: '第三阶段'
     }
     return titles[props.phase]
 })
@@ -62,7 +62,7 @@ const debounce = (fn: Function, delay: number) => {
 const debouncedSave = debounce(() => {
     if (props.isTimeValid) {
         console.log('触发防抖保存...');
-        savePrediction();
+        validateAndSavePrediction();
     }
 }, 300);
 
@@ -121,17 +121,12 @@ const fetchUserPrediction = async () => {
         console.warn('matchId未设置，跳过获取预测数据')
         return
     }
-    
-    if (!authStore || authStore.userId === null) {
-        console.warn('用户信息未加载，跳过获取预测数据');
-        return;
-    }
 
     try {
-        isInitialLoading.value = true;
-        isLoading.value = true;
+        isInitialLoading.value = true
+        isLoading.value = true
         if (teams.value.length === 0) {
-            await fetchTeams();
+            await fetchTeams()
         }
 
         const response = await matchAPI.getUserPredictions({ 
@@ -184,20 +179,52 @@ const fetchUserPrediction = async () => {
         } else {
             console.log('未找到用户之前的预测数据');
         }
-    } catch (error) {
+    } catch (error: any) {
+        // 如果是401错误，说明用户未登录，静默处理
+        if (error.response?.status === 401) {
+            console.log('用户未登录，跳过获取预测数据')
+            return
+        }
         console.error('获取预测数据失败:', error)
         ElMessage.error('获取预测数据失败')
     } finally {
-        isLoading.value = false;
-        // 延迟清除初始加载标志，确保数据更新完成
+        isLoading.value = false
         setTimeout(() => {
-            isInitialLoading.value = false;
-        }, 100);
+            isInitialLoading.value = false
+        }, 100)
     }
 }
 
-// 保存预测数据
-const savePrediction = async () => {
+// 添加校验函数
+const validatePrediction = () => {
+    const errors: string[] = []
+    
+    // 检查3-0队伍是否已选择
+    if (!firstTeam.value.length) {
+        errors.push('请选择3-0队伍')
+    }
+    
+    // 检查0-3队伍是否已选择
+    if (!secondTeam.value.length) {
+        errors.push('请选择0-3队伍')
+    }
+    
+    // 检查晋级队伍是否已选择7支
+    if (advanceTeams.value.length !== 7) {
+        errors.push('请选择7支晋级队伍')
+    }
+    
+    return errors
+}
+
+// 修改保存预测函数
+const validateAndSavePrediction = async () => {
+    // 检查预测数据，但只显示提示不阻止保存
+    const errors = validatePrediction()
+    if (errors.length > 0) {
+        ElMessage.warning(errors.join('\n'))
+    }
+    
     try {
         const predictionData = {
             matchId: props.matchId,
@@ -206,18 +233,24 @@ const savePrediction = async () => {
             l_s: secondTeam.value[0]?.id?.toString() || '',
             advance: advanceTeams.value.map(t => t.id)
         }
-        await matchAPI.submitPrediction(predictionData)
+        const response = await matchAPI.submitPrediction(predictionData)
         ElMessage.success('预测数据保存成功')
-    } catch (error) {
+    } catch (error: any) {
+        // 检查是否是401未授权错误
+        if (error.response?.status === 401) {
+            ElMessage.warning('请先登录后再进行预测')
+            return
+        }
         console.error('保存预测数据失败:', error)
         ElMessage.error('保存预测数据失败')
     }
 }
 
-// 组件挂载时获取数据
+// 修改组件挂载逻辑
 onMounted(async () => {
     if (props.matchId) {
         await fetchTeams()
+        // 直接尝试获取预测数据，让请求处理登录状态
         await fetchUserPrediction()
     }
 })
@@ -233,7 +266,7 @@ defineExpose({
     },
     fetchTeams,
     fetchUserPrediction,
-    savePrediction
+    validateAndSavePrediction
 })
 </script>
 

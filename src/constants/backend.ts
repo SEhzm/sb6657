@@ -35,7 +35,7 @@ import cs2_icon from '@/assets/icons/cs2_icon.svg';
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
-    { path: '/cs2-major', text: 'Major竞猜', icon: cs2_icon },
+    { path: '/matchPrediction', text: 'Major竞猜', icon: cs2_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },
