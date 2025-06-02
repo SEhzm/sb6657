@@ -1,8 +1,8 @@
 <template>
     <div class="major-phase" v-loading="isLoading" element-loading-text="加载队伍数据中...">
         <h2 class="title">{{ phaseTitle }}竞猜作业</h2>
-        <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0" second-label="0-3"
-            advance-label="3-2或3-1晋级的7支队伍" :max-advance="7" :isTimeValid="isTimeValid"
+        <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0（选择2支）" second-label="0-3（选择2支）"
+            advance-label="3-2或3-1晋级的6支队伍" :max-advance="6" :isTimeValid="isTimeValid"
             @update:firstTeam="firstTeam = $event"
             @update:secondTeam="secondTeam = $event"
             @update:advanceTeams="advanceTeams = $event" />
@@ -144,18 +144,20 @@ const fetchUserPrediction = async () => {
             
             // 根据预测数据填充队伍，使用ID匹配
             if (prediction.sl) {
-                const team = teams.value.find(t => t.id.toString() === prediction.sl)
-                if (team) {
-                    firstTeam.value = [team]
-                    selectedTeamIds.add(team.id.toString())
-                }
+                const teamIds = prediction.sl.split(',')
+                const matchedTeams = teams.value.filter(t => 
+                    teamIds.includes(t.id.toString())
+                )
+                firstTeam.value = matchedTeams
+                matchedTeams.forEach(team => selectedTeamIds.add(team.id.toString()))
             }
             if (prediction.ls) {
-                const team = teams.value.find(t => t.id.toString() === prediction.ls)
-                if (team) {
-                    secondTeam.value = [team]
-                    selectedTeamIds.add(team.id.toString())
-                }
+                const teamIds = prediction.ls.split(',')
+                const matchedTeams = teams.value.filter(t => 
+                    teamIds.includes(t.id.toString())
+                )
+                secondTeam.value = matchedTeams
+                matchedTeams.forEach(team => selectedTeamIds.add(team.id.toString()))
             }
             if (prediction.advance) {
                 const advanceTeamIds = prediction.advance.split(',')
@@ -163,7 +165,6 @@ const fetchUserPrediction = async () => {
                     advanceTeamIds.includes(t.id.toString())
                 )
                 advanceTeams.value = matchedTeams
-                // 将晋级队伍ID添加到已选集合中
                 matchedTeams.forEach(team => selectedTeamIds.add(team.id.toString()))
             }
             
@@ -199,19 +200,19 @@ const fetchUserPrediction = async () => {
 const validatePrediction = () => {
     const errors: string[] = []
     
-    // 检查3-0队伍是否已选择
-    if (!firstTeam.value.length) {
-        errors.push('请选择3-0队伍')
+    // 检查3-0队伍是否已选择2支
+    if (firstTeam.value.length !== 2) {
+        errors.push('请选择2支3-0队伍')
     }
     
-    // 检查0-3队伍是否已选择
-    if (!secondTeam.value.length) {
-        errors.push('请选择0-3队伍')
+    // 检查0-3队伍是否已选择2支
+    if (secondTeam.value.length !== 2) {
+        errors.push('请选择2支0-3队伍')
     }
     
-    // 检查晋级队伍是否已选择7支
-    if (advanceTeams.value.length !== 7) {
-        errors.push('请选择7支晋级队伍')
+    // 检查晋级队伍是否已选择6支
+    if (advanceTeams.value.length !== 6) {
+        errors.push('请选择6支晋级队伍')
     }
     
     return errors
@@ -229,8 +230,8 @@ const validateAndSavePrediction = async () => {
         const predictionData = {
             matchId: props.matchId,
             phase: props.phase,
-            s_l: firstTeam.value[0]?.id?.toString() || '',
-            l_s: secondTeam.value[0]?.id?.toString() || '',
+            s_l: firstTeam.value.map(t => t.id.toString()).join(','),  // 修改为保存两个3-0队伍
+            l_s: secondTeam.value.map(t => t.id.toString()).join(','), // 修改为保存两个0-3队伍
             advance: advanceTeams.value.map(t => t.id)
         }
         const response = await matchAPI.submitPrediction(predictionData)

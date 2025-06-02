@@ -28,7 +28,7 @@
                             </div>
                         </template>
                         <template #footer>
-                            <div v-if="firstTeam.length === 0" class="empty-slot big">?</div>
+                            <div v-for="i in (2 - firstTeam.length)" :key="i" class="empty-slot big">?</div>
                         </template>
                     </draggable>
                 </div>
@@ -44,7 +44,7 @@
                             </div>
                         </template>
                         <template #footer>
-                            <div v-if="secondTeam.length === 0" class="empty-slot big">?</div>
+                            <div v-for="i in (2 - secondTeam.length)" :key="i" class="empty-slot big">?</div>
                         </template>
                     </draggable>
                 </div>
@@ -134,7 +134,7 @@ function isTeamSelected(id: number) {
 function onChangeFirst(e: any) {
     if (e.added) {
         const addedTeam = e.added.element
-        if (firstTeam.value.length > 1) {
+        if (firstTeam.value.length > 2) {
             const removed = firstTeam.value.splice(0, 1)
             teamPool.value.push(...removed)
         }
@@ -147,7 +147,7 @@ function onChangeFirst(e: any) {
 function onChangeSecond(e: any) {
     if (e.added) {
         const addedTeam = e.added.element
-        if (secondTeam.value.length > 1) {
+        if (secondTeam.value.length > 2) {
             const removed = secondTeam.value.splice(0, 1)
             teamPool.value.push(...removed)
         }
@@ -333,6 +333,7 @@ export default defineComponent({
     &:first-child {
         justify-content: center;
         gap: 40px;
+        flex-wrap: nowrap;
     }
 
     &.advance-row {
@@ -348,7 +349,7 @@ export default defineComponent({
     align-items: center;
     gap: 8px;
     width: 100%;
-    max-width: 300px;
+    max-width: 400px;
 }
 
 .predict-label {
@@ -371,13 +372,14 @@ export default defineComponent({
     justify-content: center;
     flex-wrap: wrap;
 
+
     &.multi {
         min-width: 100%;
         max-width: 100%;
     }
 
     &.big {
-        min-width: 110px;
+        min-width: 220px;
         min-height: 110px;
     }
 }
@@ -461,6 +463,7 @@ export default defineComponent({
 
         &:first-child {
             gap: 20px;
+            flex-wrap: wrap;
         }
 
         &.advance-row {
@@ -479,6 +482,10 @@ export default defineComponent({
     .predict-slot {
         padding: 8px;
         gap: 6px;
+
+        &.big {
+            min-width: 110px;
+        }
     }
 
     .empty-slot {

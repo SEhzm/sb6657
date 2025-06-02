@@ -3,86 +3,94 @@
         <div v-if="isLoading" class="loading-container">
             <el-skeleton :rows="3" animated />
         </div>
-        
-        <template v-else-if="matchId">
-            <div class="major-content">
-                <!-- 左侧赛事信息 -->
-                <div class="match-info-panel">
-                    <div class="match-header">
-                        <img :src="matchInfo?.matchesImg" :alt="matchInfo?.matchesName" class="match-logo">
-                        <h2 class="match-name">{{ matchInfo?.matchesName }}</h2>
-                    </div>
-                    <div class="match-details">
-                        <div class="info-item">
-                            <span class="label">赛事等级：</span>
-                            <span class="value">{{ matchInfo?.level }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">比赛地点：</span>
-                            <span class="value">{{ matchInfo?.matchesLocation }}</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="label">比赛时间：</span>
-                            <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{ formatDateTime(matchInfo?.endTime) }}日</span>
-                        </div>
-                    </div>
-                    <div class="match-footer">
-                        <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
-                        <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
-                            <el-icon><Share /></el-icon>
-                            截图分享预测
-                        </el-button>
-                    </div>
-                </div>
 
-                <!-- 右侧预测内容 -->
-                <div class="prediction-content">
-                    <div class="tab-buttons">
-                        <button :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
-                            第一阶段
-                            <div class="countdown" v-if="currentTab === 'onePhase'">
-                                {{ getCountdown('onePhase') }}
+        <template v-else-if="matchId">
+
+
+            <!-- 右侧预测内容 -->
+            <div class="prediction-content">
+                <div class="tab-buttons">
+                    <button :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
+                        第一阶段
+                        <div class="countdown" v-if="currentTab === 'onePhase'">
+                            {{ getCountdown('onePhase') }}
+                        </div>
+                    </button>
+                    <button :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
+                        第二阶段
+                        <div class="countdown" v-if="currentTab === 'twoPhase'">
+                            {{ getCountdown('twoPhase') }}
+                        </div>
+                    </button>
+                    <button :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
+                        第三阶段
+                        <div class="countdown" v-if="currentTab === 'threePhase'">
+                            {{ getCountdown('threePhase') }}
+                        </div>
+                    </button>
+                    <button :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
+                        冠军组
+                        <div class="countdown" v-if="currentTab === 'champion'">
+                            {{ getCountdown('champion') }}
+                        </div>
+                    </button>
+                </div>
+                <div class="major-content">
+
+                    <!-- 左侧赛事信息 -->
+                    <div class="match-info-panel">
+                        <div class="match-header">
+                            <img :src="matchInfo?.matchesImg" :alt="matchInfo?.matchesName" class="match-logo">
+                            <h2 class="match-name">{{ matchInfo?.matchesName }}</h2>
+                        </div>
+                        <div class="match-details">
+                            <div class="info-item">
+                                <span class="label">赛事等级：</span>
+                                <span class="value">{{ matchInfo?.level }}</span>
                             </div>
-                        </button>
-                        <button :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
-                            第二阶段
-                            <div class="countdown" v-if="currentTab === 'twoPhase'">
-                                {{ getCountdown('twoPhase') }}
+                            <div class="info-item">
+                                <span class="label">比赛地点：</span>
+                                <span class="value">{{ matchInfo?.matchesLocation }}</span>
                             </div>
-                        </button>
-                        <button :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
-                            第三阶段
-                            <div class="countdown" v-if="currentTab === 'threePhase'">
-                                {{ getCountdown('threePhase') }}
+                            <div class="info-item">
+                                <span class="label">比赛时间：</span>
+                                <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{
+                                    formatDateTime(matchInfo?.endTime) }}日</span>
                             </div>
-                        </button>
-                        <button :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
-                            冠军组
-                            <div class="countdown" v-if="currentTab === 'champion'">
-                                {{ getCountdown('champion') }}
-                            </div>
-                        </button>
+                        </div>
+                        <div class="match-footer">
+                            <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
+                            <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
+                                <el-icon>
+                                    <Share />
+                                </el-icon>
+                                截图分享预测
+                            </el-button>
+                        </div>
                     </div>
 
                     <div v-if="currentTab === 'onePhase'" class="major-section">
                         <div class="time-info">
                             <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
                         </div>
-                        <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId" phase="onePhase" />
+                        <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId"
+                            phase="onePhase" />
                     </div>
 
                     <div v-if="currentTab === 'twoPhase'" class="major-section">
                         <div class="time-info">
                             <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
                         </div>
-                        <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId" phase="twoPhase" />
+                        <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId"
+                            phase="twoPhase" />
                     </div>
 
                     <div v-if="currentTab === 'threePhase'" class="major-section">
                         <div class="time-info">
                             <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
                         </div>
-                        <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId" phase="threePhase" />
+                        <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId"
+                            phase="threePhase" />
                     </div>
 
                     <div v-if="currentTab === 'champion'" class="major-section">
@@ -166,15 +174,15 @@ const fetchMatchId = async () => {
         const response = await httpInstance.get('/machine/matches')
         if (response.data && response.data.length > 0) {
             // 找到当前比赛的所有阶段数据
-            const matchPhases = response.data.filter((match: any) => 
+            const matchPhases = response.data.filter((match: any) =>
                 match.matchesName === "cs2 奥斯汀major"
             )
-            
+
             if (matchPhases.length > 0) {
                 // 使用第一个阶段的matchId
                 matchId.value = matchPhases[0].id
                 matchInfo.value = matchPhases[0]
-                
+
                 // 根据每个阶段的数据设置时间限制
                 matchPhases.forEach((phase: any) => {
                     const phaseKey = phase.phase as keyof typeof timeLimits.value
@@ -185,7 +193,7 @@ const fetchMatchId = async () => {
                         }
                     }
                 })
-                
+
                 console.log('比赛信息:', matchPhases)
                 console.log('时间限制设置:', timeLimits.value)
             } else {
@@ -213,7 +221,7 @@ const isTimeValid = (phase: keyof typeof timeLimits.value) => {
 const getCountdown = (phase: keyof typeof timeLimits.value) => {
     const now = new Date()
     const { start, end } = timeLimits.value[phase]
-    
+
     if (now < start) {
         const diff = start.getTime() - now.getTime()
         return `距离开始还有 ${formatCountdown(diff)}`
@@ -231,7 +239,7 @@ const formatCountdown = (ms: number) => {
     const hours = Math.floor((ms % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
     const minutes = Math.floor((ms % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((ms % (1000 * 60)) / 1000)
-    
+
     return `${days}天${hours}小时${minutes}分${seconds}秒`
 }
 
@@ -330,7 +338,7 @@ const addWatermark = (canvas: HTMLCanvasElement) => {
     // 先画一个半透明背景
     const textWidth = ctx.measureText(text).width
     ctx.fillStyle = 'rgba(0, 0, 0, 0.5)'
-    ctx.fillRect(x - textWidth/2 - 10, y - 40, textWidth + 20, 40)
+    ctx.fillRect(x - textWidth / 2 - 10, y - 40, textWidth + 20, 40)
 
     // 再画文字
     ctx.fillStyle = '#ffffff'
@@ -388,6 +396,7 @@ const captureAndShare = async () => {
 <style lang="scss" scoped>
 .major-container {
     position: relative;
+
     &::before {
         content: '';
         position: absolute;
@@ -405,6 +414,7 @@ const captureAndShare = async () => {
 }
 
 .major-content {
+    justify-content: center;
     display: flex;
     gap: 24px;
     padding: 20px;
@@ -519,7 +529,7 @@ const captureAndShare = async () => {
     margin-bottom: 16px;
     color: #fff;
     text-align: center;
-    
+
     p {
         margin: 0;
         font-size: 14px;
