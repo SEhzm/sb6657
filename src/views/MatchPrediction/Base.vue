@@ -353,10 +353,12 @@ export default defineComponent({
 }
 
 .predict-label {
-    color: white;
+    color: #000 !important;
     font-size: 18px;
     text-align: center;
     margin-bottom: 4px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
 .predict-slot {
@@ -404,10 +406,18 @@ export default defineComponent({
 }
 
 .advance-label {
-    color: white;
+    color: #000 !important;
     font-size: 18px;
     text-align: center;
     margin-bottom: 4px;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.team-name {
+    color: #000 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
 }
 
 .ghost {

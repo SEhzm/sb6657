@@ -283,9 +283,23 @@ export default defineComponent({
 .major-phase {
     .title {
         text-align: center;
-        color: white;
+        color: #000 !important;  // 强制黑色
         font-size: 24px;
         margin-bottom: 24px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    :deep(.predict-label) {
+        color: #000 !important;  // 强制黑色
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    :deep(.advance-label) {
+        color: #000 !important;  // 强制黑色
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 
     /* 添加保存按钮样式 */
