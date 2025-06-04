@@ -1,7 +1,7 @@
 <template>
     <div class="major-phase" v-loading="isLoading" element-loading-text="加载队伍数据中...">
         <h2 class="title">{{ phaseTitle }}竞猜作业</h2>
-        <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0（选择2支）" second-label="0-3（选择2支）"
+        <MatchPredictionBase ref="predictRef" :teams="teams" first-label="3-0" second-label="0-3"
             advance-label="3-2或3-1晋级的6支队伍" :max-advance="6" :isTimeValid="isTimeValid"
             @update:firstTeam="firstTeam = $event"
             @update:secondTeam="secondTeam = $event"

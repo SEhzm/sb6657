@@ -4,31 +4,29 @@
             <el-skeleton :rows="3" animated />
         </div>
 
-        <template v-else-if="matchId">
-
-
+        <template v-else-if="hasAvailablePhases">
             <!-- 右侧预测内容 -->
             <div class="prediction-content">
                 <div class="tab-buttons">
-                    <button :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
+                    <button v-if="matchPhases.onePhase" :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
                         第一阶段
                         <div class="countdown" v-if="currentTab === 'onePhase'">
                             {{ getCountdown('onePhase') }}
                         </div>
                     </button>
-                    <button :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
+                    <button v-if="matchPhases.twoPhase" :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
                         第二阶段
                         <div class="countdown" v-if="currentTab === 'twoPhase'">
                             {{ getCountdown('twoPhase') }}
                         </div>
                     </button>
-                    <button :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
+                    <button v-if="matchPhases.threePhase" :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
                         第三阶段
                         <div class="countdown" v-if="currentTab === 'threePhase'">
                             {{ getCountdown('threePhase') }}
                         </div>
                     </button>
-                    <button :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
+                    <button v-if="matchPhases.champion" :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
                         冠军组
                         <div class="countdown" v-if="currentTab === 'champion'">
                             {{ getCountdown('champion') }}
@@ -109,7 +107,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import MajorPhase from './MajorPhase.vue'
 import MajorChampion from './MajorChampion.vue'
 import { useRoute } from 'vue-router'
@@ -119,7 +117,7 @@ import { Share } from '@element-plus/icons-vue'
 import html2canvas from 'html2canvas'
 
 const route = useRoute()
-const matchId = ref<number | null>(null)
+const matchId = ref<number>(0)
 const isLoading = ref(true)
 const currentTab = ref('onePhase')
 const onePhaseRef = ref()
@@ -129,6 +127,7 @@ const championRef = ref()
 const countdownTimer = ref<number | null>(null)
 const matchInfo = ref<any>(null)
 const isCapturing = ref(false)
+const matchPhases = ref<Record<string, any>>({})
 
 // 定义各阶段的时间限制
 const timeLimits = ref({
@@ -148,6 +147,11 @@ const timeLimits = ref({
         start: new Date(),
         end: new Date()
     }
+})
+
+// 添加计算属性判断是否有可用阶段
+const hasAvailablePhases = computed(() => {
+    return Object.keys(matchPhases.value).length > 0
 })
 
 // 格式化日期时间显示
@@ -173,18 +177,24 @@ const fetchMatchId = async () => {
         isLoading.value = true
         const response = await httpInstance.get('/machine/matches')
         if (response.data && response.data.length > 0) {
-            // 找到当前比赛的所有阶段数据
-            const matchPhases = response.data.filter((match: any) =>
-                match.matchesName === "cs2 奥斯汀major"
-            )
+            // 直接使用接口返回的数据，不做过滤
+            const allPhases = response.data
 
-            if (matchPhases.length > 0) {
-                // 使用第一个阶段的matchId
-                matchId.value = matchPhases[0].id
-                matchInfo.value = matchPhases[0]
+            if (allPhases.length > 0) {
+                // 将每个阶段的数据存储到matchPhases中
+                allPhases.forEach((phase: any) => {
+                    matchPhases.value[phase.phase] = phase
+                })
+
+                // 设置当前阶段的matchId和matchInfo
+                // 如果当前选中的阶段不可用，则选择第一个可用的阶段
+                if (!matchPhases.value[currentTab.value]) {
+                    currentTab.value = Object.keys(matchPhases.value)[0]
+                }
+                updateCurrentPhaseInfo(currentTab.value)
 
                 // 根据每个阶段的数据设置时间限制
-                matchPhases.forEach((phase: any) => {
+                allPhases.forEach((phase: any) => {
                     const phaseKey = phase.phase as keyof typeof timeLimits.value
                     if (phaseKey in timeLimits.value) {
                         timeLimits.value[phaseKey] = {
@@ -194,7 +204,7 @@ const fetchMatchId = async () => {
                     }
                 })
 
-                console.log('比赛信息:', matchPhases)
+                console.log('比赛信息:', allPhases)
                 console.log('时间限制设置:', timeLimits.value)
             } else {
                 ElMessage.error('未找到可用赛事')
@@ -207,6 +217,18 @@ const fetchMatchId = async () => {
         ElMessage.error('获取赛事ID失败')
     } finally {
         isLoading.value = false
+    }
+}
+
+// 添加更新当前阶段信息的函数
+const updateCurrentPhaseInfo = (phase: string) => {
+    const phaseInfo = matchPhases.value[phase]
+    if (phaseInfo) {
+        matchId.value = phaseInfo.id || 0
+        matchInfo.value = phaseInfo
+    } else {
+        matchId.value = 0
+        matchInfo.value = null
     }
 }
 
@@ -248,31 +270,13 @@ const updateCountdown = () => {
     currentTab.value = currentTab.value // 触发重新渲染
 }
 
-// 监听matchId变化，重新获取数据
-watch(matchId, (newId) => {
-    if (newId) {
-        // 根据当前标签页重新获取数据
-        switch (currentTab.value) {
-            case 'onePhase':
-                onePhaseRef.value?.fetchTeams()
-                break
-            case 'twoPhase':
-                twoPhaseRef.value?.fetchTeams()
-                break
-            case 'threePhase':
-                threePhaseRef.value?.fetchTeams()
-                break
-            case 'champion':
-                championRef.value?.fetchTeams()
-                break
-        }
-    }
-})
-
 // 监听标签页变化
 watch(currentTab, (newTab) => {
+    // 更新当前阶段的赛事ID和信息
+    updateCurrentPhaseInfo(newTab)
+    
+    // 切换标签页时重新获取数据
     if (matchId.value) {
-        // 切换标签页时重新获取数据
         switch (newTab) {
             case 'onePhase':
                 onePhaseRef.value?.fetchTeams()

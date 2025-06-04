@@ -8,7 +8,7 @@
             <div>
                 <b>
                     <p class="announcement">
-                        新增时光相册(可评论)，新增在线投稿弹幕。玩神照片可以在上方上传照片上传至相册。
+                        <p>因为GreasyFork被墙，你可以<a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击我下载最新的油猴插件</a>，你只需要将下载的文件拖入油猴管理面板即可</p>
                     </p>
                 </b>
             </div>

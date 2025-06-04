@@ -28,7 +28,7 @@
                             </div>
                         </template>
                         <template #footer>
-                            <div v-for="i in (2 - firstTeam.length)" :key="i" class="empty-slot big">?</div>
+                            <div v-for="i in Math.max(0, 2 - firstTeam.length)" :key="i" class="empty-slot big">?</div>
                         </template>
                     </draggable>
                 </div>
@@ -44,7 +44,7 @@
                             </div>
                         </template>
                         <template #footer>
-                            <div v-for="i in (2 - secondTeam.length)" :key="i" class="empty-slot big">?</div>
+                            <div v-for="i in Math.max(0, 2 - secondTeam.length)" :key="i" class="empty-slot big">?</div>
                         </template>
                     </draggable>
                 </div>
@@ -61,7 +61,7 @@
                         </div>
                     </template>
                     <template #footer>
-                        <div v-for="i in (maxAdvance - advanceTeams.length)" :key="i" class="empty-slot big">?</div>
+                        <div v-for="i in Math.max(0, maxAdvance - advanceTeams.length)" :key="i" class="empty-slot big">?</div>
                     </template>
                 </draggable>
             </div>
@@ -102,19 +102,38 @@ watch(() => props.teams, (newTeams) => {
 // 移动规则
 function moveFirst(e: any) {
     const t: Team = e.draggedContext.element
-    if (fromIsPool(e.from) && isTeamSelected(t.id)) return false
+    // 如果是从其他区域拖入，且目标位置已有队伍，则允许替换
+    if (e.from && !e.from.classList.contains('team-list') && e.to.classList.contains('predict-slot')) {
+        return true
+    }
+    // 如果队伍已被选中，则阻止
+    if (isTeamSelected(t.id)) return false
+    // 如果已有两支队伍，则阻止
+    if (firstTeam.value.length >= 2) return false
     return true
 }
 
 function moveSecond(e: any) {
     const t: Team = e.draggedContext.element
-    if (fromIsPool(e.from) && isTeamSelected(t.id)) return false
+    // 如果是从其他区域拖入，且目标位置已有队伍，则允许替换
+    if (e.from && !e.from.classList.contains('team-list') && e.to.classList.contains('predict-slot')) {
+        return true
+    }
+    // 如果队伍已被选中，则阻止
+    if (isTeamSelected(t.id)) return false
+    // 如果已有两支队伍，则阻止
+    if (secondTeam.value.length >= 2) return false
     return true
 }
 
 function moveAdvance(e: any) {
     const t: Team = e.draggedContext.element
-    if (fromIsPool(e.from) && isTeamSelected(t.id)) return false
+    // 如果是从其他区域拖入，且目标位置已有队伍，则允许替换
+    if (!fromIsPool(e.from) && e.to.classList.contains('predict-slot')) {
+        return true
+    }
+    // 如果队伍已被选中，则阻止
+    if (isTeamSelected(t.id)) return false
     return true
 }
 
@@ -134,10 +153,37 @@ function isTeamSelected(id: number) {
 function onChangeFirst(e: any) {
     if (e.added) {
         const addedTeam = e.added.element
+        const targetIndex = e.added.newIndex ?? 0
+        
+        // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
+        if (e.from && !e.from.classList.contains('team-list')) {
+            const replacedTeam = firstTeam.value[targetIndex]
+            if (replacedTeam) {
+                firstTeam.value.splice(targetIndex, 1, addedTeam)
+                teamPool.value.push(replacedTeam)
+            }
+        } else {
+            // 如果是从队伍池拖入
+            if (firstTeam.value.length >= 2) {
+                // 如果已有两支队伍，则替换目标位置的队伍
+                const replacedTeam = firstTeam.value[targetIndex]
+                if (replacedTeam) {
+                    firstTeam.value.splice(targetIndex, 1, addedTeam)
+                    teamPool.value.push(replacedTeam)
+                }
+            } else {
+                // 如果未满两支队伍，则直接添加
+                firstTeam.value.splice(targetIndex, 0, addedTeam)
+            }
+        }
+        
+        // 确保最多只有两支队伍
         if (firstTeam.value.length > 2) {
-            const removed = firstTeam.value.splice(0, 1)
+            const removed = firstTeam.value.splice(2)
             teamPool.value.push(...removed)
         }
+        
+        // 从其他区域移除该队伍
         secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id)
         advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id)
     }
@@ -147,10 +193,37 @@ function onChangeFirst(e: any) {
 function onChangeSecond(e: any) {
     if (e.added) {
         const addedTeam = e.added.element
+        const targetIndex = e.added.newIndex ?? 0
+        
+        // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
+        if (e.from && !e.from.classList.contains('team-list')) {
+            const replacedTeam = secondTeam.value[targetIndex]
+            if (replacedTeam) {
+                secondTeam.value.splice(targetIndex, 1, addedTeam)
+                teamPool.value.push(replacedTeam)
+            }
+        } else {
+            // 如果是从队伍池拖入
+            if (secondTeam.value.length >= 2) {
+                // 如果已有两支队伍，则替换目标位置的队伍
+                const replacedTeam = secondTeam.value[targetIndex]
+                if (replacedTeam) {
+                    secondTeam.value.splice(targetIndex, 1, addedTeam)
+                    teamPool.value.push(replacedTeam)
+                }
+            } else {
+                // 如果未满两支队伍，则直接添加
+                secondTeam.value.splice(targetIndex, 0, addedTeam)
+            }
+        }
+        
+        // 确保最多只有两支队伍
         if (secondTeam.value.length > 2) {
-            const removed = secondTeam.value.splice(0, 1)
+            const removed = secondTeam.value.splice(2)
             teamPool.value.push(...removed)
         }
+        
+        // 从其他区域移除该队伍
         firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id)
         advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id)
     }
@@ -160,10 +233,23 @@ function onChangeSecond(e: any) {
 function onChangeAdvance(e: any) {
     if (e.added) {
         const addedTeam = e.added.element
-        if (advanceTeams.value.length > props.maxAdvance) {
-            const removed = advanceTeams.value.splice(0, 1)
-            teamPool.value.push(...removed)
+        // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
+        if (!e.from.classList.contains('team-list') && e.added.newIndex !== undefined) {
+            const replacedTeam = advanceTeams.value[e.added.newIndex]
+            if (replacedTeam) {
+                advanceTeams.value.splice(e.added.newIndex, 1, addedTeam)
+                teamPool.value.push(replacedTeam)
+            }
+        } else if (advanceTeams.value.length > props.maxAdvance) {
+            // 如果是从队伍池拖入，且队伍已满，则替换目标位置的队伍
+            const targetIndex = e.added.newIndex ?? 0
+            const replacedTeam = advanceTeams.value[targetIndex]
+            if (replacedTeam) {
+                advanceTeams.value.splice(targetIndex, 1, addedTeam)
+                teamPool.value.push(replacedTeam)
+            }
         }
+        // 从其他区域移除该队伍
         firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id)
         secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id)
     }

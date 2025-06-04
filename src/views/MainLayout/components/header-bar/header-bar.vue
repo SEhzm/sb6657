@@ -204,7 +204,7 @@ async function handleSearchMeme() {
     searchedMeme.value = res;
 }
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
-let lightWidth = '75%'
+let lightWidth = '35%'
 
 // 消息数量
 const likeAndStatementNum = ref(0);
@@ -227,27 +227,23 @@ async function fetchMsgNum() {
 }
 
 onMounted(() => {
-
-    if (isRelogin.show) {
-        fetchMsgNum();
+fetchMsgNum();
         setInterval(() => {
             fetchMsgNum();
         }, 10 * 60 * 1000); // 10min
-    }
-
 
     if (isMobile.value) {
         lightWidth = '100%';
     }
 
-    // 第一次在一小时后弹出
-    // setTimeout(() => {
-    //     supportMeDialog.value = true;
-    //     // 后续每次在两小时后弹出
-    //     setInterval(() => {
-    //         supportMeDialog.value = true;
-    //     }, 2 * 60 * 60 * 1000); // 2h
-    // }, 60 * 60 * 1000); // 1h
+    //第一次在一小时后弹出
+    setTimeout(() => {
+        supportMeDialog.value = true;
+        // 后续每次在两小时后弹出
+        setInterval(() => {
+            supportMeDialog.value = true;
+        }, 2 * 60 * 60 * 1000); // 2h
+    }, 60 * 60 * 1000); // 1h  60 * 60 * 1000
 });
 //上传按钮
 const complaintButton = () => {

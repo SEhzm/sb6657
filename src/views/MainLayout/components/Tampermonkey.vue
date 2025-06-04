@@ -1,13 +1,14 @@
 <template>
     <div class="card" v-if="page == 1">
-        <h1>
+        <h1>因为GreasyFork被墙，你可以<a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击我下载最新的插件</a>，你只需要将下载的文件拖入油猴管理面板即可</h1>
+        
+        <br><h1>
             这是Edge浏览器安装油猴脚本的教程   &nbsp;&nbsp;&nbsp;&nbsp;
             
             <el-button type="success" v-if="page == 1" @click="changePage(2)">切换谷歌Chrome内核浏览器教程</el-button>
             <el-button type="success" v-if="page !== 1" @click="changePage(1)">切换Edge浏览器教程</el-button>
             <el-button type="success" v-if="page != 3" @click="changePage(3)">以上教程都不能安装！</el-button>
         </h1><h2><br>如果你已经有了油猴可以直接跳到第 4 步</h2>
-        <h2><br>因为GreasyFork被墙，你可以<a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击我下载最新的插件</a>，你只需要将下载的文件拖入油猴管理面板即可</h2>
         <h3><br>1、进入油猴脚本官网：<a href="https://www.tampermonkey.net/" target="_blank"> www.tampermonkey.net</a></h3>
         <img src="https://pic.imgdb.cn/item/670503ddd29ded1a8c7f249b.jpg" alt="1">
         <h3><br>2、进入微软edge商店，点击获取</h3>
