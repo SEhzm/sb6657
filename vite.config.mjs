@@ -8,6 +8,7 @@ import {
 } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import viteCompression from 'vite-plugin-compression';
+import checker from 'vite-plugin-checker'
 
 // 导入对应包
 
@@ -61,6 +62,9 @@ export default defineConfig({
             threshold: 10240,  // 只有文件大小超过 10KB 才会被压缩
             deleteOriginFile: false, // 是否删除原始文件，默认为 false
         }),
+        checker({
+            typescript: true,
+          }),
     ],
     resolve: {
         alias: {
