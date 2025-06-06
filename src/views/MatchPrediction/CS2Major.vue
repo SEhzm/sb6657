@@ -1,108 +1,119 @@
 <template>
-    <div class="major-container">
-        <div v-if="isLoading" class="loading-container">
-            <el-skeleton :rows="3" animated />
-        </div>
-
-        <template v-else-if="hasAvailablePhases">
-            <!-- 右侧预测内容 -->
-            <div class="prediction-content">
-                <div class="tab-buttons">
-                    <button v-if="matchPhases.onePhase" :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
-                        第一阶段
-                        <div class="countdown" v-if="currentTab === 'onePhase'">
-                            {{ getCountdown('onePhase') }}
-                        </div>
-                    </button>
-                    <button v-if="matchPhases.twoPhase" :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
-                        第二阶段
-                        <div class="countdown" v-if="currentTab === 'twoPhase'">
-                            {{ getCountdown('twoPhase') }}
-                        </div>
-                    </button>
-                    <button v-if="matchPhases.threePhase" :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
-                        第三阶段
-                        <div class="countdown" v-if="currentTab === 'threePhase'">
-                            {{ getCountdown('threePhase') }}
-                        </div>
-                    </button>
-                    <button v-if="matchPhases.champion" :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
-                        冠军组
-                        <div class="countdown" v-if="currentTab === 'champion'">
-                            {{ getCountdown('champion') }}
-                        </div>
-                    </button>
-                </div>
-                <div class="major-content">
-
-                    <!-- 左侧赛事信息 -->
-                    <div class="match-info-panel">
-                        <div class="match-header">
-                            <img :src="matchInfo?.matchesImg" :alt="matchInfo?.matchesName" class="match-logo">
-                            <h2 class="match-name">{{ matchInfo?.matchesName }}</h2>
-                        </div>
-                        <div class="match-details">
-                            <div class="info-item">
-                                <span class="label">赛事等级：</span>
-                                <span class="value">{{ matchInfo?.level }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">比赛地点：</span>
-                                <span class="value">{{ matchInfo?.matchesLocation }}</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="label">比赛时间：</span>
-                                <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{
-                                    formatDateTime(matchInfo?.endTime) }}日</span>
-                            </div>
-                        </div>
-                        <div class="match-footer">
-                            <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
-                            <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
-                                <el-icon>
-                                    <Share />
-                                </el-icon>
-                                截图分享预测
-                            </el-button>
-                        </div>
-                    </div>
-
-                    <div v-if="currentTab === 'onePhase'" class="major-section">
-                        <div class="time-info">
-                            <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
-                        </div>
-                        <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId"
-                            phase="onePhase" />
-                    </div>
-
-                    <div v-if="currentTab === 'twoPhase'" class="major-section">
-                        <div class="time-info">
-                            <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
-                        </div>
-                        <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId"
-                            phase="twoPhase" />
-                    </div>
-
-                    <div v-if="currentTab === 'threePhase'" class="major-section">
-                        <div class="time-info">
-                            <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
-                        </div>
-                        <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId"
-                            phase="threePhase" />
-                    </div>
-
-                    <div v-if="currentTab === 'champion'" class="major-section">
-                        <div class="time-info">
-                            <p>竞猜时间：{{ formatTimeRange('champion') }}</p>
-                        </div>
-                        <MajorChampion ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" />
-                    </div>
-                </div>
+    <div class="cs2-major-root">
+        <div class="major-container">
+            <div v-if="isLoading" class="loading-container">
+                <el-skeleton :rows="3" animated />
             </div>
-        </template>
-        <div v-else class="no-match">
-            <el-empty description="暂无可用赛事" />
+
+            <template v-else-if="hasAvailablePhases">
+                <!-- 右侧预测内容 -->
+                <div class="prediction-content">
+                    <div class="tab-buttons">
+                        <button v-if="matchPhases.onePhase" :class="{ active: currentTab === 'onePhase' }" @click="currentTab = 'onePhase'">
+                            第一阶段
+                            <div class="countdown" v-if="currentTab === 'onePhase'">
+                                {{ getCountdown('onePhase') }}
+                            </div>
+                        </button>
+                        <button v-if="matchPhases.twoPhase" :class="{ active: currentTab === 'twoPhase' }" @click="currentTab = 'twoPhase'">
+                            第二阶段
+                            <div class="countdown" v-if="currentTab === 'twoPhase'">
+                                {{ getCountdown('twoPhase') }}
+                            </div>
+                        </button>
+                        <button v-if="matchPhases.threePhase" :class="{ active: currentTab === 'threePhase' }" @click="currentTab = 'threePhase'">
+                            第三阶段
+                            <div class="countdown" v-if="currentTab === 'threePhase'">
+                                {{ getCountdown('threePhase') }}
+                            </div>
+                        </button>
+                        <button v-if="matchPhases.champion" :class="{ active: currentTab === 'champion' }" @click="currentTab = 'champion'">
+                            冠军组
+                            <div class="countdown" v-if="currentTab === 'champion'">
+                                {{ getCountdown('champion') }}
+                            </div>
+                        </button>
+                    </div>
+                    <div class="major-content">
+
+                        <!-- 左侧赛事信息 -->
+                        <div class="match-info-panel">
+                            <div class="match-header">
+                                <img :src="matchInfo?.matchesImg" :alt="matchInfo?.matchesName" class="match-logo">
+                                <h2 class="match-name">{{ matchInfo?.matchesName }}</h2>
+                            </div>
+                            <div class="match-details">
+                                <div class="info-item">
+                                    <span class="label">赛事等级：</span>
+                                    <span class="value">{{ matchInfo?.level }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">比赛地点：</span>
+                                    <span class="value">{{ matchInfo?.matchesLocation }}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="label">比赛时间：</span>
+                                    <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{
+                                        formatDateTime(matchInfo?.endTime) }}日</span>
+                                </div>
+                            </div>
+                            <div class="match-footer">
+                                <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
+                                <div class="button-group">
+                                    <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
+                                        <el-icon><Share /></el-icon>
+                                        截图分享预测
+                                    </el-button>
+                                    <el-button type="success" @click="showCoinViewer = true">
+                                        <el-icon><View /></el-icon>
+                                        预览3D奖章
+                                    </el-button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div v-if="currentTab === 'onePhase'" class="major-section">
+                            <div class="time-info">
+                                <p>竞猜时间：{{ formatTimeRange('onePhase') }}</p>
+                            </div>
+                            <MajorPhase ref="onePhaseRef" :isTimeValid="isTimeValid('onePhase')" :matchId="matchId"
+                                phase="onePhase" />
+                        </div>
+
+                        <div v-if="currentTab === 'twoPhase'" class="major-section">
+                            <div class="time-info">
+                                <p>竞猜时间：{{ formatTimeRange('twoPhase') }}</p>
+                            </div>
+                            <MajorPhase ref="twoPhaseRef" :isTimeValid="isTimeValid('twoPhase')" :matchId="matchId"
+                                phase="twoPhase" />
+                        </div>
+
+                        <div v-if="currentTab === 'threePhase'" class="major-section">
+                            <div class="time-info">
+                                <p>竞猜时间：{{ formatTimeRange('threePhase') }}</p>
+                            </div>
+                            <MajorPhase ref="threePhaseRef" :isTimeValid="isTimeValid('threePhase')" :matchId="matchId"
+                                phase="threePhase" />
+                        </div>
+
+                        <div v-if="currentTab === 'champion'" class="major-section">
+                            <div class="time-info">
+                                <p>竞猜时间：{{ formatTimeRange('champion') }}</p>
+                            </div>
+                            <MajorChampion ref="championRef" :isTimeValid="isTimeValid('champion')" :matchId="matchId" />
+                        </div>
+                    </div>
+                </div>
+            </template>
+            <div v-else class="no-match">
+                <el-empty description="暂无可用赛事" />
+            </div>
         </div>
+
+        <!-- 添加币种预览对话框 -->
+        <CoinPreviewDialog
+            v-model="showCoinViewer"
+        />
     </div>
 </template>
 
@@ -113,8 +124,9 @@ import MajorChampion from './MajorChampion.vue'
 import { useRoute } from 'vue-router'
 import httpInstance from '@/apis/httpInstance'
 import { ElMessage } from 'element-plus'
-import { Share } from '@element-plus/icons-vue'
+import { Share, View } from '@element-plus/icons-vue'
 import html2canvas from 'html2canvas'
+import CoinPreviewDialog from '@/components/CoinPreviewDialog.vue'
 
 const route = useRoute()
 const matchId = ref<number>(0)
@@ -395,9 +407,18 @@ const captureAndShare = async () => {
         isCapturing.value = false
     }
 }
+
+// 币种预览控制
+const showCoinViewer = ref(false)
 </script>
 
 <style lang="scss" scoped>
+.cs2-major-root {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
 .major-container {
     position: relative;
 
@@ -613,32 +634,25 @@ const captureAndShare = async () => {
     margin-top: 20px;
     padding-top: 20px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    align-items: center;
 
     .reward-info {
-        color: #fff;
+        color: #3fa7ff;
+        margin-bottom: 16px;
         text-align: center;
-        font-size: 14px;
     }
 
-    .el-button {
-        width: 100%;
-        background: linear-gradient(45deg, #3fa7ff, #6bc1ff);
-        border: none;
-        color: white;
-        font-weight: bold;
-        transition: all 0.3s ease;
+    .button-group {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
 
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(63, 167, 255, 0.3);
-        }
-
-        .el-icon {
-            margin-right: 4px;
+        @media screen and (max-width: 768px) {
+            flex-direction: column;
+            width: 100%;
+            
+            .el-button {
+                width: 100%;
+            }
         }
     }
 }

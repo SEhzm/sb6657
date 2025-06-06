@@ -159,8 +159,14 @@ function onChangeFirst(e: any) {
         if (e.from && !e.from.classList.contains('team-list')) {
             const replacedTeam = firstTeam.value[targetIndex]
             if (replacedTeam) {
-                firstTeam.value.splice(targetIndex, 1, addedTeam)
-                teamPool.value.push(replacedTeam)
+                // 先移除被替换的队伍
+                firstTeam.value.splice(targetIndex, 1)
+                // 添加新队伍
+                firstTeam.value.splice(targetIndex, 0, addedTeam)
+                // 将被替换的队伍添加到队伍池
+                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                    teamPool.value.push(replacedTeam)
+                }
             }
         } else {
             // 如果是从队伍池拖入
@@ -168,8 +174,14 @@ function onChangeFirst(e: any) {
                 // 如果已有两支队伍，则替换目标位置的队伍
                 const replacedTeam = firstTeam.value[targetIndex]
                 if (replacedTeam) {
-                    firstTeam.value.splice(targetIndex, 1, addedTeam)
-                    teamPool.value.push(replacedTeam)
+                    // 先移除被替换的队伍
+                    firstTeam.value.splice(targetIndex, 1)
+                    // 添加新队伍
+                    firstTeam.value.splice(targetIndex, 0, addedTeam)
+                    // 将被替换的队伍添加到队伍池
+                    if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                        teamPool.value.push(replacedTeam)
+                    }
                 }
             } else {
                 // 如果未满两支队伍，则直接添加
@@ -180,7 +192,11 @@ function onChangeFirst(e: any) {
         // 确保最多只有两支队伍
         if (firstTeam.value.length > 2) {
             const removed = firstTeam.value.splice(2)
-            teamPool.value.push(...removed)
+            removed.forEach(team => {
+                if (!teamPool.value.some(t => t.id === team.id)) {
+                    teamPool.value.push(team)
+                }
+            })
         }
         
         // 从其他区域移除该队伍
@@ -199,8 +215,14 @@ function onChangeSecond(e: any) {
         if (e.from && !e.from.classList.contains('team-list')) {
             const replacedTeam = secondTeam.value[targetIndex]
             if (replacedTeam) {
-                secondTeam.value.splice(targetIndex, 1, addedTeam)
-                teamPool.value.push(replacedTeam)
+                // 先移除被替换的队伍
+                secondTeam.value.splice(targetIndex, 1)
+                // 添加新队伍
+                secondTeam.value.splice(targetIndex, 0, addedTeam)
+                // 将被替换的队伍添加到队伍池
+                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                    teamPool.value.push(replacedTeam)
+                }
             }
         } else {
             // 如果是从队伍池拖入
@@ -208,8 +230,14 @@ function onChangeSecond(e: any) {
                 // 如果已有两支队伍，则替换目标位置的队伍
                 const replacedTeam = secondTeam.value[targetIndex]
                 if (replacedTeam) {
-                    secondTeam.value.splice(targetIndex, 1, addedTeam)
-                    teamPool.value.push(replacedTeam)
+                    // 先移除被替换的队伍
+                    secondTeam.value.splice(targetIndex, 1)
+                    // 添加新队伍
+                    secondTeam.value.splice(targetIndex, 0, addedTeam)
+                    // 将被替换的队伍添加到队伍池
+                    if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                        teamPool.value.push(replacedTeam)
+                    }
                 }
             } else {
                 // 如果未满两支队伍，则直接添加
@@ -220,7 +248,11 @@ function onChangeSecond(e: any) {
         // 确保最多只有两支队伍
         if (secondTeam.value.length > 2) {
             const removed = secondTeam.value.splice(2)
-            teamPool.value.push(...removed)
+            removed.forEach(team => {
+                if (!teamPool.value.some(t => t.id === team.id)) {
+                    teamPool.value.push(team)
+                }
+            })
         }
         
         // 从其他区域移除该队伍
@@ -237,16 +269,28 @@ function onChangeAdvance(e: any) {
         if (!e.from.classList.contains('team-list') && e.added.newIndex !== undefined) {
             const replacedTeam = advanceTeams.value[e.added.newIndex]
             if (replacedTeam) {
-                advanceTeams.value.splice(e.added.newIndex, 1, addedTeam)
-                teamPool.value.push(replacedTeam)
+                // 先移除被替换的队伍
+                advanceTeams.value.splice(e.added.newIndex, 1)
+                // 添加新队伍
+                advanceTeams.value.splice(e.added.newIndex, 0, addedTeam)
+                // 将被替换的队伍添加到队伍池
+                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                    teamPool.value.push(replacedTeam)
+                }
             }
         } else if (advanceTeams.value.length > props.maxAdvance) {
             // 如果是从队伍池拖入，且队伍已满，则替换目标位置的队伍
             const targetIndex = e.added.newIndex ?? 0
             const replacedTeam = advanceTeams.value[targetIndex]
             if (replacedTeam) {
-                advanceTeams.value.splice(targetIndex, 1, addedTeam)
-                teamPool.value.push(replacedTeam)
+                // 先移除被替换的队伍
+                advanceTeams.value.splice(targetIndex, 1)
+                // 添加新队伍
+                advanceTeams.value.splice(targetIndex, 0, addedTeam)
+                // 将被替换的队伍添加到队伍池
+                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
+                    teamPool.value.push(replacedTeam)
+                }
             }
         }
         // 从其他区域移除该队伍

@@ -1,11 +1,11 @@
 <template>
-    
-</template>
 
-<script setup lang="ts">
+  </template>
+  
+  <script setup lang="ts">
 
-</script>
+  </script>
+  
+  <style scoped>
 
-<style scoped>
-
-</style>
+  </style>
