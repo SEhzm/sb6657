@@ -85,10 +85,10 @@ export default defineConfig({
     build: {
         chunkSizeWarningLimit: 1000, // 调整包的大小
         rollupOptions: {
-            external: [
-                'three',
-                'three/examples/jsm/controls/OrbitControls.js'
-            ], // 将 three 和 OrbitControls 设置为外部依赖
+            // external: [
+            //     'three',
+            //     'three/examples/jsm/controls/OrbitControls.js'
+            // ], // 将 three 和 OrbitControls 设置为外部依赖
             output: {
                 // 最小化拆分包
                 manualChunks(id) {
