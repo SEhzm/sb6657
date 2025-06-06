@@ -81,6 +81,7 @@ export default defineConfig({
     build: {
         chunkSizeWarningLimit: 1000, // 调整包的大小
         rollupOptions: {
+            external: ['three'], // 将 three 设置为外部依赖
             output: {
                 // 最小化拆分包
                 manualChunks(id) {
