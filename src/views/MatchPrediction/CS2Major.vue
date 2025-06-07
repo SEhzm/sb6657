@@ -64,7 +64,7 @@
                                         <el-icon><Share /></el-icon>
                                         截图分享预测
                                     </el-button>
-                                    <el-button type="success" @click="showCoinViewer = true">
+                                    <el-button type="success" @click="showCoinViewerfun">
                                         <el-icon><View /></el-icon>
                                         预览3D奖章
                                     </el-button>
@@ -410,6 +410,10 @@ const captureAndShare = async () => {
 
 // 币种预览控制
 const showCoinViewer = ref(false)
+function showCoinViewerfun() {
+    showCoinViewer.value=true
+    httpInstance.get("/machine/matchCoin")
+}
 </script>
 
 <style lang="scss" scoped>
