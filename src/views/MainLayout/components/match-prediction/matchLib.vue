@@ -1,0 +1,501 @@
+<template>
+  <div class="match-library">
+    <div class="card">
+        <span>投稿时勾选关联赛事库将加入某一赛事创作的烂梗，目前只收录大型赛事</span>
+    </div>
+    <div class="match-list">
+        <el-card 
+          v-for="match in matchList" 
+          :key="match.id" 
+          class="match-card" 
+          :body-style="{ padding: '0px' }"
+          @click="handleMatchClick(match)"
+        >
+          <div class="card-content">
+            <div class="image-container">
+              <img :src="match.matchesImg" class="match-image" />
+            </div>
+            <div class="match-info">
+              <div class="match-header">
+                <h3 class="match-name">{{ match.matchesName }}</h3>
+                <el-tag size="small" type="success" class="match-level">{{ match.level }}</el-tag>
+              </div>
+              <div class="match-details">
+                <div class="match-location">
+                  <el-icon><Location /></el-icon>
+                  <span>{{ match.matchesLocation }}</span>
+                </div>
+                <div class="match-time">
+                  <div class="time-item">
+                    <el-icon><Calendar /></el-icon>
+                    <span>开始：{{ match.startTime }}</span>
+                  </div>
+                  <div class="time-item">
+                    <el-icon><Calendar /></el-icon>
+                    <span>结束：{{ match.endTime }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </el-card>
+    </div>
+    
+    <div class="pagination-container">
+      <el-pagination
+        v-model:current-page="currentPage"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30, 50]"
+        :total="total"
+        layout="total, sizes, prev, pager, next, jumper"
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+      />
+    </div>
+
+    <!-- 赛事详情弹窗 -->
+    <el-dialog
+      v-model="dialogVisible"
+      :title="currentMatch?.matchesName"
+      width="80%"
+      class="match-dialog"
+      destroy-on-close
+    >
+      <div class="memes-view">
+        <div class="card-table">
+          <el-table 
+            :data="matchBarrageList" 
+            stripe 
+            v-loading="barrageLoading" 
+            cell-class-name="hover-pointer"
+            empty-text="暂无烂梗，快来投稿吧！"
+            @row-click="copyMeme_countPlus1"
+          >
+            <el-table-column align="center" width="60">
+              <template #default="scope">
+                <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
+              </template>
+            </el-table-column>
+            <el-table-column prop="barrage">
+              <template #default="scope">
+                <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
+                  <template #reference>
+                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                      <span class="barrage-text">{{ scope.row.barrage }}</span>
+                    </div>
+                  </template>
+                  <template #default>
+                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
+                      <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" style="margin-right: 8px;">
+                        <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
+                          <img v-if="item.iconUrl" :src="item.iconUrl" style="width: 16px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                          <span style="vertical-align: middle;">{{ item.label }}</span>
+                        </el-tag>
+                      </div>
+                      <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">
+                        投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}
+                      </span>
+                    </div>
+                  </template>
+                </el-popover>
+              </template>
+            </el-table-column>
+            <el-table-column align="center" width="100">
+              <template #default="scope">
+                <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">
+                  复制 🌈<flip-num :num="scope.row.cnt" />
+                </el-button>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          <div class="pagination-wrapper">
+            <el-pagination
+              v-if="!barrageLoading"
+              background
+              layout="prev, pager, next, jumper"
+              :current-page="barrageCurrentPage"
+              :total="barrageTotal"
+              :pager-count="4"
+              :page-size="barragePageSize"
+              @current-change="handleBarragePageChange"
+            />
+          </div>
+        </div>
+      </div>
+    </el-dialog>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { ElMessage } from 'element-plus'
+import { Location, Calendar } from '@element-plus/icons-vue'
+import httpInstance from '@/apis/httpInstance'
+import flipNum from '@/components/flip-num.vue'
+import { copyToClipboard, copySuccess } from '@/utils/clipboard'
+
+interface MatchItem {
+  id: number
+  matchesName: string
+  matchesImg: string
+  matchesLocation: string
+  level: string
+  startTime: string
+  endTime: string
+  barrageNum: number | null
+}
+
+interface MatchResponse {
+  code: number
+  msg: string
+  data: {
+    total: number
+    list: MatchItem[]
+    pageNum: number
+    pageSize: number
+  }
+}
+
+interface BarrageItem {
+  id: number
+  barrage: string
+  cnt: string
+  tags: string
+  submitTime: string
+}
+
+interface BarrageResponse {
+  code: number
+  msg: string
+  data: {
+    total: number
+    list: BarrageItem[]
+    pageNum: number
+    pageSize: number
+  }
+}
+
+const matchList = ref<MatchItem[]>([])
+const total = ref(0)
+const currentPage = ref(1)
+const pageSize = ref(10)
+const dialogVisible = ref(false)
+const currentMatch = ref<MatchItem | null>(null)
+const matchBarrageList = ref<BarrageItem[]>([])
+const barrageLoading = ref(false)
+const barrageTotal = ref(0)
+const barragePageSize = ref(50)
+const barrageCurrentPage = ref(1)
+const dictData = ref([])
+
+const getMatchList = async () => {
+  try {
+    const res = await httpInstance.get<MatchResponse>('/machine/getMatchList', {
+      params: {
+        pageNum: currentPage.value,
+        pageSize: pageSize.value
+      }
+    })
+    
+    if (res.code === 200) {
+      matchList.value = res.data.list
+      total.value = res.data.total
+    } else {
+      ElMessage.error(res.msg || '获取赛事列表失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取赛事列表失败')
+    console.error('获取赛事列表失败:', error)
+  }
+}
+
+const handleSizeChange = (val: number) => {
+  pageSize.value = val
+  getMatchList()
+}
+
+const handleCurrentChange = (val: number) => {
+  currentPage.value = val
+  getMatchList()
+}
+
+// 点击赛事卡片
+const handleMatchClick = (match: MatchItem) => {
+  currentMatch.value = match
+  dialogVisible.value = true
+  barrageCurrentPage.value = 1
+  getMatchBarrageList(1)
+}
+
+// 获取赛事烂梗列表
+const getMatchBarrageList = async (pageNum: number) => {
+  if (!currentMatch.value) return
+  
+  barrageLoading.value = true
+  try {
+    const res = await httpInstance.get<BarrageResponse>('/machine/matchPageList', {
+      params: {
+        pageNum,
+        pageSize: barragePageSize.value,
+        matchId: currentMatch.value.id
+      }
+    })
+    
+    if (res.code === 200) {
+      matchBarrageList.value = res.data.list
+      barrageTotal.value = res.data.total
+    } else {
+      ElMessage.error(res.msg || '获取烂梗列表失败')
+    }
+  } catch (error) {
+    ElMessage.error('获取烂梗列表失败')
+    console.error('获取烂梗列表失败:', error)
+  } finally {
+    barrageLoading.value = false
+  }
+}
+
+// 复制烂梗
+const copyMeme_countPlus1 = async (item: BarrageItem) => {
+  const res = copyToClipboard(item.barrage)
+  if (!res) return
+  copySuccess()
+  // TODO: 调用复制次数+1的接口
+}
+
+// 处理分页
+const handleBarragePageChange = (page: number) => {
+  barrageCurrentPage.value = page
+  getMatchBarrageList(page)
+}
+
+// 获取字典标签
+const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
+  if (!tags || tags.trim() === '') {
+    return []
+  }
+  const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())))
+  if (!dictData.value) {
+    return tagList.map(() => ({ label: '', iconUrl: '' }))
+  }
+  const dictMap = new Map(
+    dictData.value.map(item => [String(item.dictValue).trim(), item])
+  )
+  const labels = tagList.map(tag => {
+    const dictItem = dictMap.get(tag)
+    return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' }
+  })
+  return labels
+}
+
+// 获取字典数据
+const getDict = () => {
+  httpInstance.get('/machine/dictList').then(res => {
+    if (res.code === 200) {
+      dictData.value = res.data
+    }
+  }).catch(err => {
+    console.error('获取字典数据失败', err)
+  })
+}
+
+// 移动端触摸处理
+const handleTouchStart = (row: any) => {
+  row.touchStartTime = Date.now()
+}
+
+const handleTouchEnd = (row: any) => {
+  const touchEndTime = Date.now()
+  if (touchEndTime - row.touchStartTime > 100) {
+    row.popoverVisible = true
+    setTimeout(() => {
+      row.popoverVisible = false
+    }, 1500)
+  }
+}
+
+// 格式化提交时间
+const formatSubmitTime = (timeString: string): string => {
+  if (!timeString) return ''
+  return timeString.replace('T', ' ').split('.')[0]
+}
+
+onMounted(() => {
+  getDict()
+  getMatchList()
+})
+</script>
+
+<style scoped>
+.match-library {
+  padding: 20px;
+}
+
+.match-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.match-card {
+  transition: all 0.3s;
+  cursor: pointer;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.match-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.8) !important;
+}
+
+.card-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.image-container {
+  width: 100%;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.4);
+  padding: 15px;
+}
+
+.match-image {
+  width: auto;
+  height: 150px;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+.match-info {
+  padding: 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.match-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.match-name {
+  margin: 0;
+  font-size: 16px;
+  font-weight: bold;
+  color: #303133;
+  flex: 1;
+  line-height: 1.4;
+}
+
+.match-level {
+  flex-shrink: 0;
+}
+
+.match-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.match-location {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #606266;
+  font-size: 14px;
+}
+
+.match-time {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.time-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #606266;
+  font-size: 14px;
+}
+
+.el-icon {
+  font-size: 16px;
+  color: #909399;
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.match-dialog {
+  :deep(.el-dialog__body) {
+    padding: 20px;
+  }
+}
+
+.memes-view {
+  width: 100%;
+}
+
+.card-table {
+  width: 100%;
+}
+
+.barrage-text {
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.copy-btn {
+  width: 90px;
+}
+
+.pagination-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+:deep(.hover-pointer) {
+  cursor: pointer;
+}
+
+@media screen and (max-width: 768px) {
+  .match-grid {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .match-dialog {
+    :deep(.el-dialog) {
+      width: 95% !important;
+      margin: 10px auto;
+    }
+  }
+  
+  .barrage-text {
+    font-size: 14px;
+  }
+}
+</style>

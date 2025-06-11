@@ -4,7 +4,7 @@
 			<p>当前在线人数: {{ onlineCount }}</p>
 		</div>
 		<p v-if="!isOpen">您已掉线</p>
-		<el-button @click="closeWebSocket">关闭连接</el-button>
+		<!-- <el-button @click="closeWebSocket">关闭连接</el-button> -->
 		<el-button @click="reconnectWebSocket" v-if="!isOpen">重新连接</el-button>
 		<!-- <div id="message-container" ref="messageContainer">
 			<div v-for="(msg, index) in messages" :key="index"
@@ -311,6 +311,7 @@ onMounted(() => {
 #online-count {
 	user-select: none;
 	color: black;
+	padding: 10px;
 }
 
 #message-container {

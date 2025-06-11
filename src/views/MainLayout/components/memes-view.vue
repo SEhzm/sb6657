@@ -168,7 +168,7 @@ async function refreshMeme(pageNum: number) {
         return;
     }
     let res;
-    console.log(addedDictValues.value.join(','));
+    // console.log(addedDictValues.value.join(','));
     
     if (addedDictValues.value.length==0) {  //没选标签就加载全部烂梗
         res = await getMemeList(category, pageNum, pageSize);
@@ -179,7 +179,7 @@ async function refreshMeme(pageNum: number) {
     // if (!res) return;   //没有就是没有数据
 
     memeArr.value = res.memeArr;
-    console.log(memeArr.value);
+    // console.log(memeArr.value);
     
     total.value = res.total;
     loading.value = false;

@@ -6,7 +6,7 @@
         <el-input v-model="registerForm.username" type="text" size="large" clearable prefix-icon="Avatar"
           auto-complete="off" placeholder="邮箱-用于登录">
           <template #append>
-            <el-button type="primary" size="small" style="padding: 0;font-weight: 500;"
+            <el-button type="primary" :disabled="emailCodeButtonDisabled" size="small" style="padding: 0;font-weight: 500;"
               @click="getEmailCode">发送邮箱验证码</el-button>
           </template>
         </el-input>
@@ -34,8 +34,8 @@
         </el-input>
       </el-form-item>
       <el-form-item prop="code" v-if="captchaEnabled">
-        <el-input size="large" v-model="registerForm.code" auto-complete="off" clearable
-          placeholder="请输入右侧验证码" style="width: 63%" @keyup.enter="handleRegister">
+        <el-input size="large" v-model="registerForm.code" auto-complete="off" clearable placeholder="请输入右侧验证码"
+          style="width: 63%" @keyup.enter="handleRegister">
           <template #prefix><img src="@/assets/icons/validCode.svg" style="width: 16px;"></template>
         </el-input>
         <div class="register-code">
@@ -122,7 +122,7 @@ function getEmailCode() {
       emailCodeButtonText.value = `邮箱中已有验证码，或请 ${count}分钟 后重试`;
     }
   }, 1000 * 60 * 10);
-  console.log(registerForm.value.username);
+  // console.log(registerForm.value.username);
 
   // 发送请求
   httpInstance.get("/login/getMailCode", {
@@ -133,7 +133,9 @@ function getEmailCode() {
     if (res.code === 200) {
       ElMessage.success("验证码已发送，请查收邮箱");
     } else {
-      ElMessage.error(res.msg);
+      ElMessageBox.alert(res.msg || '邮箱不存在！ 或其他错误，请联系开发者', '系统提示', {
+        confirmButtonText: 'OK'
+      });
       clearInterval(emailCodeTimer);
       emailCodeButtonDisabled.value = false;
       emailCodeButtonText.value = "发送邮箱验证码";
@@ -190,8 +192,6 @@ getCode();
 </script>
 
 <style lang='scss' scoped>
-
-
 .title {
   margin: 0px auto 30px auto;
   text-align: center;
@@ -200,6 +200,7 @@ getCode();
 
 .register-form {
   width: 100%;
+
   .el-input {
     height: 40px;
 

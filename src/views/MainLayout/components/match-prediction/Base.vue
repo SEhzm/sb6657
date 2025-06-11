@@ -96,7 +96,9 @@ const advanceTeams = ref<Team[]>([])
 
 // 使用 watch 监听 props.teams 的变化并更新 teamPool
 watch(() => props.teams, (newTeams) => {
-    teamPool.value = [...newTeams];
+    // 确保 teamPool 在初始化时就包含唯一的队伍 (基于 id)
+    const uniqueTeams = Array.from(new Map(newTeams.map(team => [team.id, team])).values());
+    teamPool.value = [...uniqueTeams];
 }, { immediate: true }); // immediate: true 会在组件初始化时立即执行一次
 
 // 移动规则
@@ -106,8 +108,8 @@ function moveFirst(e: any) {
     if (e.from && !e.from.classList.contains('team-list') && e.to.classList.contains('predict-slot')) {
         return true
     }
-    // 如果队伍已被选中，则阻止
-    if (isTeamSelected(t.id)) return false
+    // 如果队伍已被选中 (ID 或名称重复)，则阻止
+    if (isTeamSelected(t.id, t.name)) return false
     // 如果已有两支队伍，则阻止
     if (firstTeam.value.length >= 2) return false
     return true
@@ -119,8 +121,8 @@ function moveSecond(e: any) {
     if (e.from && !e.from.classList.contains('team-list') && e.to.classList.contains('predict-slot')) {
         return true
     }
-    // 如果队伍已被选中，则阻止
-    if (isTeamSelected(t.id)) return false
+    // 如果队伍已被选中 (ID 或名称重复)，则阻止
+    if (isTeamSelected(t.id, t.name)) return false
     // 如果已有两支队伍，则阻止
     if (secondTeam.value.length >= 2) return false
     return true
@@ -132,8 +134,8 @@ function moveAdvance(e: any) {
     if (!fromIsPool(e.from) && e.to.classList.contains('predict-slot')) {
         return true
     }
-    // 如果队伍已被选中，则阻止
-    if (isTeamSelected(t.id)) return false
+    // 如果队伍已被选中 (ID 或名称重复)，则阻止
+    if (isTeamSelected(t.id, t.name)) return false
     return true
 }
 
@@ -141,163 +143,116 @@ function fromIsPool(from: HTMLElement) {
     return from && from.classList && from.classList.contains('team-list')
 }
 
-function isTeamSelected(id: number) {
+function isTeamSelected(id: number, name: string) {
     return (
-        firstTeam.value.some(t => t.id === id) ||
-        secondTeam.value.some(t => t.id === id) ||
-        advanceTeams.value.some(t => t.id === id)
+        firstTeam.value.some(t => t.id === id || t.name === name) ||
+        secondTeam.value.some(t => t.id === id || t.name === name) ||
+        advanceTeams.value.some(t => t.id === id || t.name === name)
     )
 }
 
 // 变更处理
 function onChangeFirst(e: any) {
     if (e.added) {
-        const addedTeam = e.added.element
-        const targetIndex = e.added.newIndex ?? 0
-        
-        // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
-        if (e.from && !e.from.classList.contains('team-list')) {
-            const replacedTeam = firstTeam.value[targetIndex]
-            if (replacedTeam) {
-                // 先移除被替换的队伍
-                firstTeam.value.splice(targetIndex, 1)
-                // 添加新队伍
-                firstTeam.value.splice(targetIndex, 0, addedTeam)
-                // 将被替换的队伍添加到队伍池
-                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                    teamPool.value.push(replacedTeam)
-                }
-            }
-        } else {
-            // 如果是从队伍池拖入
-            if (firstTeam.value.length >= 2) {
-                // 如果已有两支队伍，则替换目标位置的队伍
-                const replacedTeam = firstTeam.value[targetIndex]
-                if (replacedTeam) {
-                    // 先移除被替换的队伍
-                    firstTeam.value.splice(targetIndex, 1)
-                    // 添加新队伍
-                    firstTeam.value.splice(targetIndex, 0, addedTeam)
-                    // 将被替换的队伍添加到队伍池
-                    if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                        teamPool.value.push(replacedTeam)
-                    }
-                }
-            } else {
-                // 如果未满两支队伍，则直接添加
-                firstTeam.value.splice(targetIndex, 0, addedTeam)
-            }
-        }
-        
-        // 确保最多只有两支队伍
-        if (firstTeam.value.length > 2) {
-            const removed = firstTeam.value.splice(2)
-            removed.forEach(team => {
-                if (!teamPool.value.some(t => t.id === team.id)) {
-                    teamPool.value.push(team)
-                }
-            })
-        }
-        
+        const addedTeam = e.added.element;
         // 从其他区域移除该队伍
-        secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id)
-        advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id)
+        secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id);
+        advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id);
     }
-    syncTeamPool()
+
+    if (e.removed) { // 处理从当前列表移除的队伍 (例如被替换或拖出)
+        const removedTeam = e.removed.element;
+        if (!teamPool.value.some(t => t.id === removedTeam.id)) {
+            teamPool.value.push(removedTeam);
+        }
+    }
+
+    // 确保列表中的队伍是唯一的，并就地更新数组
+    const uniqueFirstTeams = Array.from(new Map(firstTeam.value.map(team => [team.id, team])).values());
+    firstTeam.value.splice(0, firstTeam.value.length, ...uniqueFirstTeams);
+
+    // 确保最多只有两支队伍
+    if (firstTeam.value.length > 2) {
+        const removed = firstTeam.value.splice(2);
+        removed.forEach(team => {
+            if (!teamPool.value.some(t => t.id === team.id)) {
+                teamPool.value.push(team);
+            }
+        });
+    }
+    
+    syncTeamPool();
 }
 
 function onChangeSecond(e: any) {
     if (e.added) {
-        const addedTeam = e.added.element
-        const targetIndex = e.added.newIndex ?? 0
-        
-        // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
-        if (e.from && !e.from.classList.contains('team-list')) {
-            const replacedTeam = secondTeam.value[targetIndex]
-            if (replacedTeam) {
-                // 先移除被替换的队伍
-                secondTeam.value.splice(targetIndex, 1)
-                // 添加新队伍
-                secondTeam.value.splice(targetIndex, 0, addedTeam)
-                // 将被替换的队伍添加到队伍池
-                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                    teamPool.value.push(replacedTeam)
-                }
-            }
-        } else {
-            // 如果是从队伍池拖入
-            if (secondTeam.value.length >= 2) {
-                // 如果已有两支队伍，则替换目标位置的队伍
-                const replacedTeam = secondTeam.value[targetIndex]
-                if (replacedTeam) {
-                    // 先移除被替换的队伍
-                    secondTeam.value.splice(targetIndex, 1)
-                    // 添加新队伍
-                    secondTeam.value.splice(targetIndex, 0, addedTeam)
-                    // 将被替换的队伍添加到队伍池
-                    if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                        teamPool.value.push(replacedTeam)
-                    }
-                }
-            } else {
-                // 如果未满两支队伍，则直接添加
-                secondTeam.value.splice(targetIndex, 0, addedTeam)
-            }
-        }
-        
-        // 确保最多只有两支队伍
-        if (secondTeam.value.length > 2) {
-            const removed = secondTeam.value.splice(2)
-            removed.forEach(team => {
-                if (!teamPool.value.some(t => t.id === team.id)) {
-                    teamPool.value.push(team)
-                }
-            })
-        }
+        const addedTeam = e.added.element;
         
         // 从其他区域移除该队伍
-        firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id)
-        advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id)
+        firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id);
+        advanceTeams.value = advanceTeams.value.filter(t => t.id !== addedTeam.id);
     }
-    syncTeamPool()
+
+    if (e.removed) { // 处理从当前列表移除的队伍 (例如被替换或拖出)
+        const removedTeam = e.removed.element;
+        if (!teamPool.value.some(t => t.id === removedTeam.id)) {
+            teamPool.value.push(removedTeam);
+        }
+    }
+
+    // 确保列表中的队伍是唯一的，并就地更新数组
+    const uniqueSecondTeams = Array.from(new Map(secondTeam.value.map(team => [team.id, team])).values());
+    secondTeam.value.splice(0, secondTeam.value.length, ...uniqueSecondTeams);
+
+    // 确保最多只有两支队伍
+    if (secondTeam.value.length > 2) {
+        const removed = secondTeam.value.splice(2);
+        removed.forEach(team => {
+            if (!teamPool.value.some(t => t.id === team.id)) {
+                teamPool.value.push(team);
+            }
+        });
+    }
+
+    syncTeamPool();
 }
 
 function onChangeAdvance(e: any) {
     if (e.added) {
-        const addedTeam = e.added.element
+        const addedTeam = e.added.element;
         // 如果是从其他区域拖入，且目标位置已有队伍，则替换该位置的队伍
         if (!e.from.classList.contains('team-list') && e.added.newIndex !== undefined) {
-            const replacedTeam = advanceTeams.value[e.added.newIndex]
-            if (replacedTeam) {
-                // 先移除被替换的队伍
-                advanceTeams.value.splice(e.added.newIndex, 1)
-                // 添加新队伍
-                advanceTeams.value.splice(e.added.newIndex, 0, addedTeam)
-                // 将被替换的队伍添加到队伍池
-                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                    teamPool.value.push(replacedTeam)
+            // 如果是替换操作，将旧队伍返回队伍池
+            if (e.removed) {
+                const removedTeam = e.removed.element;
+                if (!teamPool.value.some(t => t.id === removedTeam.id)) {
+                    teamPool.value.push(removedTeam);
                 }
             }
         } else if (advanceTeams.value.length > props.maxAdvance) {
             // 如果是从队伍池拖入，且队伍已满，则替换目标位置的队伍
-            const targetIndex = e.added.newIndex ?? 0
-            const replacedTeam = advanceTeams.value[targetIndex]
-            if (replacedTeam) {
-                // 先移除被替换的队伍
-                advanceTeams.value.splice(targetIndex, 1)
-                // 添加新队伍
-                advanceTeams.value.splice(targetIndex, 0, addedTeam)
-                // 将被替换的队伍添加到队伍池
-                if (!teamPool.value.some(t => t.id === replacedTeam.id)) {
-                    teamPool.value.push(replacedTeam)
+            if (e.removed) {
+                const removedTeam = e.removed.element;
+                if (!teamPool.value.some(t => t.id === removedTeam.id)) {
+                    teamPool.value.push(removedTeam);
                 }
             }
         }
         // 从其他区域移除该队伍
-        firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id)
-        secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id)
+        firstTeam.value = firstTeam.value.filter(t => t.id !== addedTeam.id);
+        secondTeam.value = secondTeam.value.filter(t => t.id !== addedTeam.id);
+    } else if (e.removed) {
+        // 处理从当前列表移除的队伍 (例如拖出或点击移除按钮)
+        const removedTeam = e.removed.element;
+        if (!teamPool.value.some(t => t.id === removedTeam.id)) {
+            teamPool.value.push(removedTeam);
+        }
     }
-    syncTeamPool()
+    // 确保列表中的队伍是唯一的，并就地更新数组
+    const uniqueAdvanceTeams = Array.from(new Map(advanceTeams.value.map(team => [team.id, team])).values());
+    advanceTeams.value.splice(0, advanceTeams.value.length, ...uniqueAdvanceTeams);
+    
+    syncTeamPool();
 }
 
 // 移除处理

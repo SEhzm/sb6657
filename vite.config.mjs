@@ -103,20 +103,5 @@ export default defineConfig({
             }
         }
     },
-    // devServer: {
-    //     proxy: {
-    //         '/api': {
-    //             target: 'https://s5k.cn',
-    //             changeOrigin: true,
-    //             secure: false,
-    //             ws: true,
-    //             logLevel: 'debug',
-    //             pathRewrite: {
-    //                 '^/api': ''
-    //             },
-    //             credentials: true // 允许携带凭据
-    //         }
-    //     }
-    // },
 
 })

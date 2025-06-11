@@ -5,7 +5,7 @@
             <div>
                 <a href="https://ipw.cn/ipv6webcheck/?site=sb6657.cn" title="" target='_blank' style="color: black;">
                     <img style='display:inline-block;vertical-align:middle;width: 150px;' alt="" src="https://static.ipw.cn/icon/ipv6-s5.svg"></a>
-                本站已运行{{ daysSinceLaunch }}天 域名所有: <a href="https://yuba.douyu.com/member/LW7rKJ9qVVwG/main/news" target="_blank">@陈苏何</a>
+                本站已运行{{ daysSinceLaunch }}天 
             </div>
         </div>
     </div>

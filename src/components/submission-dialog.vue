@@ -17,8 +17,7 @@
                             <QuestionFilled />
                         </el-icon>
                     </template>
-                    <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b><br>
-                    <b>审核巨严格，(重复，相似等)将不通过</b>
+                    <b>请在上方(建议/提交)问卷投稿。</b><br>
                 </el-popover>
             </el-button>
         </h4>
@@ -28,7 +27,8 @@
                 <el-tag round v-for="(tag, index) in presetTags" :key="index" closable @close="removeTagFromPreset(tag)"
                     @click="removeTagFromPreset(tag)" style=" padding:15px; cursor: pointer;font-size: 16px;"
                     type="primary">
-                    <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                    <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                        style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
                     <span style="vertical-align: middle;"> {{ tag.label }}</span>
                 </el-tag>
             </div>
@@ -55,9 +55,29 @@
         <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }"
             show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
         <template #footer>
-
-            <el-button type="plain" @click="dialogFormVisible=false">关闭</el-button>
-            <el-button type="primary" @click="saveBarrage">投稿</el-button>
+            <div class="footer-container">
+                <div class="match-section">
+                    <el-checkbox v-model="isMatchSelected" :disabled="!matchData" class="match-checkbox">
+                        关联赛事库
+                    </el-checkbox>
+                    <div v-if="matchData" class="match-details-box">
+                        <div class="match-info-row">
+                            <img :src="matchData.matchesImg" class="match-image" :alt="matchData.matchesName">
+                            <span class="match-name">{{ matchData.matchesName }}</span>
+                        </div>
+                        <div class="match-time">
+                            {{ matchData.startTime }} 至 {{ matchData.endTime }}
+                        </div>
+                    </div>
+                    <div v-else class="no-match-info">
+                        当前无正在进行的大型赛事
+                    </div>
+                </div>
+                <div class="button-group">
+                    <el-button type="plain" @click="dialogFormVisible = false">关闭</el-button>
+                    <el-button type="primary" @click="saveBarrage">投稿</el-button>
+                </div>
+            </div>
         </template>
     </el-dialog>
 
@@ -68,7 +88,6 @@ import { ElMessage, ElNotification } from 'element-plus';
 import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { ref } from 'vue';
-
 const barrage = ref('');
 // 预设标签
 const presetTags = ref([]);
@@ -91,8 +110,21 @@ function getDict() {
         }
     });
 }
-
 getDict();
+
+const matchData = ref(null);
+function getMatch() {
+    httpInstance.get('/machine/InProgressMatch').then(res => {
+        // 检查 res.data 是否为 null 或空，以确保 matchData 正确赋值
+        if (res.code === 200 && res.data) {
+            matchData.value = res.data;
+        } else {
+            matchData.value = null; // 确保 matchData 为 null 当没有正在进行的赛事时
+        }
+        console.log(matchData);
+    });
+}
+getMatch();
 
 // 删除已添加标签
 const removeTag = (tag) => {
@@ -123,14 +155,21 @@ const saveBarrage = () => {
             ElNotification.error('最少一个标签，最多五个标签。');
             return;
         }
-        httpInstance.post(API.SUBMIT_MEME, {
+        const submitData = {
             tags: addedDictValues.value.join(','),
             barrage: barrage.value
-        }).then(res => {
+        };
+
+        if (isMatchSelected.value && matchData.value) {
+            submitData.matchId = matchData.value.id;
+        }
+
+        httpInstance.post(API.SUBMIT_MEME, submitData).then(res => {
             barrage.value = '';
+            isMatchSelected.value = false;
             if (res.code === 200) {
                 ElNotification.success("投稿成功，待审核(一天内)");
-            }else if (res.code === 500) {
+            } else if (res.code === 500) {
                 ElNotification.error("烂梗已经有了，勿重复提交")
             } else {
                 ElNotification.error("请求失败");
@@ -142,6 +181,8 @@ const saveBarrage = () => {
     }
 };
 const dialogFormVisible = defineModel();
+const isMatchSelected = ref(false);
+
 </script>
 
 <style scoped>
@@ -184,5 +225,129 @@ h3 {
 .added-tags .el-tag {
     margin-right: 10px;
     margin-bottom: 10px;
+}
+
+/* 底部容器 */
+.footer-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    background-color: #f5f7fa;
+    padding: 12px;
+    border-radius: 4px;
+    margin-top: 10px;
+    box-sizing: border-box;
+}
+
+.match-section {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* Checkbox specific style */
+.match-checkbox {
+    margin-right: 10px;
+    white-space: nowrap;
+}
+
+/* 比赛详情框 (绿色背景部分) */
+.match-details-box {
+    display: flex;
+    flex-direction: column;
+    background-color: #e6f5f2ff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+.match-info-row {
+    display: flex;
+    align-items: center;
+}
+
+/* 比赛图片 */
+.match-image {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    object-fit: contain;
+}
+
+/* 比赛名称 */
+.match-name {
+    font-size: 14px;
+    color: #303133;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 150px;
+}
+
+/* 比赛时间 */
+.match-time {
+    font-size: 12px;
+    color: #606266;
+    margin-top: 4px;
+}
+
+/* 无赛事提示 */
+.no-match-info {
+    color: #909399;
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: #f5f7fa;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+/* 按钮组 */
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-left: 10px;
+}
+
+/* 移动端适配 */
+@media screen and (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 8px;
+    }
+
+    .match-time {
+        font-size: 12px;
+        color: #606266;
+        margin-top: 4px;
+    }
+
+    .match-section {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+        gap: 8px;
+    }
+
+    .match-details-box,
+    .no-match-info {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .button-group {
+        width: 100%;
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+
+    .el-dialog {
+        width: 95% !important;
+        margin: 10px auto !important;
+    }
 }
 </style>

@@ -168,7 +168,7 @@ function navigateTo(path: string) {
     }
 
     .GuiBin {
-        font-size: 10px;
+        font-size: 11px;
         position: fixed;
         bottom: 0;
         left: 0px;

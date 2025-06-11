@@ -202,8 +202,6 @@ onBeforeUnmount(() => {
 });
 
 const closeChat = () => {
-  httpInstance.get('/machine/chat/status').then(res => {
-  });
   isChatVisible.value = false;
 };
 const closeHot = () => {

@@ -34,18 +34,19 @@ import cs2_icon from '@/assets/icons/cs2_icon.svg';
 
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
+    { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
     { path: '/matchPrediction', text: 'Major竞猜', icon: cs2_icon },
-    { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
+    { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
     { path: '/image', text: '时光相册', icon: image_icon },
-    { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },
-    { path: '/memes/mygo', text: '木柜子篇', icon: mygo_icon, api: API.GET_MYGO_MEME, category: 'mygo' },
-    { path: '/memes/ZbjHuPen', text: '直播间互喷篇', icon: ZbjHuPen_icon, api: API.GET_FK_EACHOTHER_MEME, category: 'ZbjHuPen' },
-    { path: '/memes/penPlayer', text: '喷选手篇', icon: penPlayer_icon, api: API.GET_FK_PLAYER_MEME, category: 'penPlayer' },
-    { path: '/memes/p1', text: '+1', icon: p1_icon, api: API.GET_P1_MEME, category: 'p1' },
-    { path: '/memes/QMLW', text: '群魔乱舞篇', icon: QMLW_icon, api: API.GET_SHOWTIME_MEME, category: 'QMLW' },
-    { path: '/memes/QUQU', text: 'QUQU篇', icon: Z_icon, api: API.GET_QUQU_MEME, category: 'QUQU' },
-];
+    // { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },
+    // { path: '/memes/mygo', text: '木柜子篇', icon: mygo_icon, api: API.GET_MYGO_MEME, category: 'mygo' },
+    // { path: '/memes/ZbjHuPen', text: '直播间互喷篇', icon: ZbjHuPen_icon, api: API.GET_FK_EACHOTHER_MEME, category: 'ZbjHuPen' },
+    // { path: '/memes/penPlayer', text: '喷选手篇', icon: penPlayer_icon, api: API.GET_FK_PLAYER_MEME, category: 'penPlayer' },
+    // { path: '/memes/p1', text: '+1', icon: p1_icon, api: API.GET_P1_MEME, category: 'p1' },
+    // { path: '/memes/QMLW', text: '群魔乱舞篇', icon: QMLW_icon, api: API.GET_SHOWTIME_MEME, category: 'QMLW' },
+    // { path: '/memes/QUQU', text: 'QUQU篇', icon: Z_icon, api: API.GET_QUQU_MEME, category: 'QUQU' },
+    ];
 
 declare global {
     type Meme = {

@@ -41,7 +41,7 @@
   
   <script setup lang="ts">
   import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
-  import MatchCoinBase from '../views/MatchPrediction/MatchCoinBase.vue'
+  import MatchCoinBase from '../views/MainLayout/components/match-prediction/MatchCoinBase.vue'
   import { ElProgress } from 'element-plus'
   
   const props = defineProps<{
