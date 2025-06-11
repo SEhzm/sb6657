@@ -217,6 +217,9 @@
                     <div class="match-section-home">
                         <el-checkbox v-model="isMatchSelected" :disabled="!matchData" class="match-checkbox-home">
                             关联赛事库
+                            <el-icon color="#3db302ff" size="16">
+                                <QuestionFilled />
+                            </el-icon>
                         </el-checkbox>
                         <div v-if="matchData" class="match-details-box-home">
                             <div class="match-info-row-home">
@@ -860,17 +863,7 @@ const formatSubmitTime = (timeString) => {
         margin-bottom: 20px;
     }
 
-    .boomouder {
-        height: 150px;
 
-        .boom6657 {
-            position: absolute;
-            border-radius: 10px;
-            width: 192px;
-            height: 108px;
-            left: 25%;
-        }
-    }
 
     .home {
         width: 100%;
@@ -888,6 +881,18 @@ const formatSubmitTime = (timeString) => {
                     width: 100px;
                     margin-top: 10px;
                 }
+            }
+        }
+
+        .boomouder {
+            height: 150px;
+
+            .boom6657 {
+                position: absolute;
+                border-radius: 10px;
+                width: 192px;
+                height: 118px;
+                left: 25%;
             }
         }
 

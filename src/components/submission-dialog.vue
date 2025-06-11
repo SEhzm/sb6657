@@ -59,6 +59,9 @@
                 <div class="match-section">
                     <el-checkbox v-model="isMatchSelected" :disabled="!matchData" class="match-checkbox">
                         关联赛事库
+                        <el-icon color="#3db302ff" size="16">
+                            <QuestionFilled />
+                        </el-icon>
                     </el-checkbox>
                     <div v-if="matchData" class="match-details-box">
                         <div class="match-info-row">
