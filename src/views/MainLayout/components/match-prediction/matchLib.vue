@@ -133,7 +133,9 @@ import { ElMessage } from 'element-plus'
 import { Location, Calendar } from '@element-plus/icons-vue'
 import httpInstance from '@/apis/httpInstance'
 import flipNum from '@/components/flip-num.vue'
-import { copyToClipboard, copySuccess } from '@/utils/clipboard'
+import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard'
+import { throttle } from '@/utils/throttle'
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme'
 
 interface MatchItem {
   id: number
@@ -188,6 +190,9 @@ const barrageTotal = ref(0)
 const barragePageSize = ref(50)
 const barrageCurrentPage = ref(1)
 const dictData = ref([])
+
+// 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000)
 
 const getMatchList = async () => {
   try {
@@ -258,10 +263,20 @@ const getMatchBarrageList = async (pageNum: number) => {
 
 // 复制烂梗
 const copyMeme_countPlus1 = async (item: BarrageItem) => {
-  const res = copyToClipboard(item.barrage)
-  if (!res) return
+  const memeText = item.barrage
+  const res = copyMeme(memeText)
+  if (!res || res === 'limitedSuccess') return
   copySuccess()
-  // TODO: 调用复制次数+1的接口
+  
+  try {
+    if (await copyCountPlus1('match', item.id, barrageCurrentPage.value, barragePageSize.value)) {
+      await getMatchBarrageList(barrageCurrentPage.value)
+      return
+    }
+  } catch (error) {
+    console.error('复制次数+1失败:', error)
+  }
+  plus1Error()
 }
 
 // 处理分页
