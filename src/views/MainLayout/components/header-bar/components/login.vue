@@ -20,13 +20,8 @@
         </el-form-item>
         <el-checkbox v-model="loginForm.rememberMe" style="margin:0px 0px 5px 0px;">记住密码</el-checkbox>
         <span style="margin-left: 35%;cursor: pointer;color: blue;" @click="reg">还没有账号？去注册 ></span>
-        <br>
-        <el-popover placement="top-start" width="auto" trigger="hover"
-          content="请使用登陆邮箱发送邮件至邮箱 he20020928@foxmail.com，申请重置密码~">
-          <template #reference>
-            <span>🔔忘记密码？</span>
-          </template>
-        </el-popover>
+
+        <span style="margin-left: 75%;cursor: pointer;color: blue;" @click="showResetPassword">重置密码 ></span>
         
         <el-form-item>
           <el-button :loading="loading" type="primary" style="width: 100%" @click="login">
@@ -36,6 +31,10 @@
         </el-form-item>
       </el-form>
     </div>
+    <el-dialog align-center="true" v-model="resetPasswordView" draggable="true" :width="dialogWidth" :modal="false"
+      append-to-body="true">
+      <reset-password v-show="resetPasswordView" :closeDialog="closeResetPassword"></reset-password>
+    </el-dialog>
   </div>
 </template>
 
@@ -46,6 +45,8 @@ import { ElMessage } from "element-plus";
 import Cookies from "js-cookie";
 import { setToken } from "@/utils/cookieUtils"
 import { decrypt, encrypt } from "@/utils/jsencrypt";
+import resetPassword from './resetPassword.vue';
+import { useIsMobile } from '@/utils/common';
 
 const props = defineProps({
   onRegister: {
@@ -79,6 +80,17 @@ const rules = reactive({
   ]
 })
 const formRef = ref()
+
+const resetPasswordView = ref(false);
+const isMobile = useIsMobile();
+const dialogWidth = ref('400px');
+
+function getDialogWidth() {
+  if (isMobile.value) {
+    dialogWidth.value = '95%';
+  }
+}
+getDialogWidth();
 
 function login() {
   formRef.value.validate((valid) => {
@@ -144,6 +156,14 @@ function reg() {
 
 function closeDialog() {
   props.closeDialog();
+}
+
+function showResetPassword() {
+  resetPasswordView.value = true;
+}
+
+function closeResetPassword() {
+  resetPasswordView.value = false;
 }
 </script>
 

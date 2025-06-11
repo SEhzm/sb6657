@@ -64,7 +64,7 @@ const isMobile = useIsMobile();
 
 const ysCommunityNorms = ref(false)
 function loginAndReg() {
-    console.log(isRelogin.show);
+    // console.log(isRelogin.show);
     loginView.value = true
     registerView.value = false
 }
@@ -72,7 +72,7 @@ function loginAndReg() {
 let dialogWidth = '400px'
 
 function getDialogWidth() {
-    if (isMobile) {
+    if (isMobile.value) {
         dialogWidth = '95%'
     }
 }

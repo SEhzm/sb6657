@@ -170,7 +170,7 @@ httpInstance.interceptors.response.use(
         }
         return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
       } else if (code === 500) {
-        ElMessage({ message: msg, type: 'error' })
+        ElMessage({ message: msg, type: 'error',duration: 15000,showClose: true })
         return Promise.reject(new Error(msg))
       } else if (code === 601) {
         ElMessage({ message: msg, type: 'warning' })
