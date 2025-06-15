@@ -31,11 +31,13 @@ import p1_icon from '@/assets/icons/p1_icon.svg';
 import QMLW_icon from '@/assets/icons/QMLW_icon.svg';
 import Z_icon from '@/assets/icons/Z_icon.png';
 import cs2_icon from '@/assets/icons/cs2_icon.svg';
+import chat_icon from '@/assets/icons/chat_icon.svg';
 
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
+    { path: '/aichat', text: 'AI造梗', icon: chat_icon },
     { path: '/matchPrediction', text: 'Major竞猜', icon: cs2_icon },
     { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
     { path: '/image', text: '时光相册', icon: image_icon },
@@ -46,7 +48,7 @@ export const MemeCategory = [
     { path: '/memes/p1', text: '+1', icon: p1_icon, api: API.GET_P1_MEME, category: 'p1' },
     { path: '/memes/QMLW', text: '群魔乱舞篇', icon: QMLW_icon, api: API.GET_SHOWTIME_MEME, category: 'QMLW' },
     { path: '/memes/QUQU', text: 'QUQU篇', icon: Z_icon, api: API.GET_QUQU_MEME, category: 'QUQU' },
-    ];
+];
 
 declare global {
     type Meme = {

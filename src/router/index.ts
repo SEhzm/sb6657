@@ -12,6 +12,7 @@ const router = createRouter({
                 // 路由映射
                 { path: 'home', name: 'Home', component: () => import('@/views/MainLayout/components/Home.vue') },
                 { path: 'ChatRoom', name: 'ChatRoom', component: () => import('@/components/ChatRoom.vue') },
+                { path: 'aichat', name: 'AIChat', component: () => import('@/views/MainLayout/components/AiGenerateMemes/AIChat.vue') },
                 { path: 'image', name: 'image', component: () => import('@/views/MainLayout/components/image.vue') },
                 { path: 'test', name: 'test', component: () => import('@/views/MainLayout/components/test.vue') },
                 { path: 'test2', name: 'test2', component: () => import('@/views/MainLayout/components/test2.vue') },

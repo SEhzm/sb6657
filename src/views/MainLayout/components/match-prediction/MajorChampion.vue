@@ -1,334 +1,225 @@
 <template>
-    <div class="major-champion">
+    <div class="major-champion" v-loading="isLoading" element-loading-text="加载队伍数据中...">
         <h2 class="title">冠军竞猜</h2>
 
         <div class="bracket-container">
-            <!-- 四分之一决赛 -->
+            <!-- 冠军组队伍 -->
             <div class="bracket-stage">
-                <div class="stage-title">四分之一决赛</div>
+                <div class="stage-title">冠军组队伍</div>
                 <div class="matches">
                     <div class="match">
-                        <draggable id="quarters1" :list="quarters1" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters1')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
+                        <draggable 
+                            :list="teams" 
+                            :group="dragGroup" 
+                            item-key="id" 
+                            class="slot teams-grid"
+                            ghost-class="ghost" 
+                            :disabled="!isTimeValid"
+                        >
                             <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
+                                <div class="team-card" :class="{ 'disabled': !isTimeValid }">
                                     <img :src="element.logo" :alt="element.name" class="team-logo" />
                                     <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters1', element.id)" :disabled="!isTimeValid">×</button>
                                 </div>
                             </template>
                             <template #footer>
-                                <div v-if="quarters1.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                        
-                        <draggable id="quarters2" :list="quarters2" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters2')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters2', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters2.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                    </div>
-                    <div class="match">
-                        <draggable id="quarters3" :list="quarters3" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters3')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters3', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters3.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                        
-                        <draggable id="quarters4" :list="quarters4" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters4')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters4', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters4.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                    </div>
-                    <div class="match">
-                         <draggable id="quarters5" :list="quarters5" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters5')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters5', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters5.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                        
-                        <draggable id="quarters6" :list="quarters6" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters6')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters6', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters6.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                    </div>
-                     <div class="match">
-                         <draggable id="quarters7" :list="quarters7" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters7')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters7', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters7.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                        
-                        <draggable id="quarters8" :list="quarters8" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'quarters8')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('quarters8', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="quarters8.length === 0" class="empty-slot">待定</div>
+                                <div v-if="teams.length === 0" class="empty-slot">暂无队伍</div>
                             </template>
                         </draggable>
                     </div>
                 </div>
             </div>
 
-            <!-- 连接线到半决赛 -->
-             <div class="connector-column">
-               
-                 <div class="connector-gap"></div>
-                 
-            </div>
-
-            <!-- 半决赛 -->
-            <div class="bracket-stage">
-                 <div class="stage-title">半决赛</div>
-                <div class="matches">
-                     <div class="match">
-                        <draggable id="semis1" :list="semis1" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'semis1')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('semis1', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="semis1.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                         
-                        <draggable id="semis2" :list="semis2" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'semis2')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('semis2', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="semis2.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                    </div>
-                     <div class="match">
-                        <draggable id="semis3" :list="semis3" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'semis3')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('semis3', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="semis3.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                         
-                        <draggable id="semis4" :list="semis4" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'semis4')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('semis4', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="semis4.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                    </div>
-                </div>
-            </div>
-
-             <!-- 连接线到总决赛 -->
-             <div class="connector-column  ">
-                <div ></div>
-            </div>
-
-            <!-- 总决赛 -->
-            <div class="bracket-stage">
-                 <div class="stage-title">总决赛</div>
-                 <div class="matches">
-                     <div class="match">
-                         <draggable id="finals1" :list="finals1" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'finals1')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('finals1', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="finals1.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                         
-                         <draggable id="finals2" :list="finals2" :group="dragGroup" item-key="id" class="slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'finals2')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('finals2', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="finals2.length === 0" class="empty-slot">待定</div>
-                            </template>
-                        </draggable>
-                     </div>
-                 </div>
-            </div>
-
-             <!-- 连接线到冠军 -->
-             <div class="connector-column third">
-                
-            </div>
+            <!-- 连接线到冠军 -->
+            <div class="connector-column third"></div>
 
             <!-- 冠军 -->
             <div class="bracket-stage champion-stage">
-                 <div class="stage-title">冠军</div>
-                 <div class="matches">
-                      <draggable id="champion" :list="champion" :group="dragGroup" item-key="id" class="slot champion-slot" ghost-class="ghost" @change="(e) => handleBracketChange(e, 'champion')" :move="moveTeamToSlot" :max="1" :disabled="!isTimeValid">
-                            <template #item="{ element }">
-                                <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
-                                    <img :src="element.logo" :alt="element.name" class="team-logo" />
-                                    <div class="team-name">{{ element.name }}</div>
-                                    <button class="remove-btn" @click.stop="removeTeam('champion', element.id)" :disabled="!isTimeValid">×</button>
-                                </div>
-                            </template>
-                            <template #footer>
-                                <div v-if="champion.length === 0" class="empty-slot champion-empty">待定</div>
-                            </template>
-                        </draggable>
-                 </div>
+                <div class="stage-title">冠军</div>
+                <div class="matches">
+                    <draggable 
+                        id="champion" 
+                        :list="champion" 
+                        :group="dragGroup" 
+                        item-key="id" 
+                        class="slot champion-slot" 
+                        ghost-class="ghost" 
+                        @change="(e) => handleBracketChange(e, 'champion')" 
+                        :move="moveTeamToSlot" 
+                        :max="1" 
+                        :disabled="!isTimeValid"
+                    >
+                        <template #item="{ element }">
+                            <div class="team-card selected" :class="{ 'disabled': !isTimeValid }">
+                                <img :src="element.logo" :alt="element.name" class="team-logo" />
+                                <div class="team-name">{{ element.name }}</div>
+                                <button class="remove-btn" @click.stop="removeTeam('champion', element.id)" :disabled="!isTimeValid">×</button>
+                            </div>
+                        </template>
+                        <template #footer>
+                            <div v-if="champion.length === 0" class="empty-slot champion-empty">？</div>
+                        </template>
+                    </draggable>
+                </div>
             </div>
+        </div>
+
+        <div class="save-button">
+            <el-button @click="saveChampionPrediction" :disabled="!isTimeValid">保存预测</el-button>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import draggable from 'vuedraggable'
 import type { Team } from './Base.vue'
 import MatchPredictionBase from './Base.vue'
+import { matchAPI } from '@/apis/match'
+import { ElMessage } from 'element-plus'
+import { useAuthStore } from '@/stores/useAuthStore'
+
+interface PredictionRecord {
+    sl?: string;
+    ls?: string;
+    advance?: string;
+    champion?: string;
+}
 
 const props = defineProps<{
-    isTimeValid: boolean
+    isTimeValid: boolean,
+    matchId: number
 }>()
+
+const authStore = useAuthStore()
+const isLoading = ref(false)
+const teams = ref<Team[]>([])
+
+// 添加防抖函数
+const debounce = (fn: Function, delay: number) => {
+    let timer: number | null = null;
+    return function(this: any, ...args: any[]) {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => {
+            fn.apply(this, args);
+            timer = null;
+        }, delay);
+    };
+};
+
+// 创建防抖后的保存函数
+const debouncedSave = debounce(() => {
+    if (props.isTimeValid) {
+        console.log('触发防抖保存冠军预测...');
+        saveChampionPrediction();
+    }
+}, 300);
+
+// 获取队伍池数据
+const fetchTeams = async () => {
+    try {
+        isLoading.value = true
+        console.log('获取冠军组队伍数据，matchId:', props.matchId)
+        const response = await matchAPI.getMatchTeams(props.matchId, 'champion')
+        console.log("获取到的原始数据:", response.data)
+        
+        teams.value = response.data.map((team: any) => ({
+            id: team.id,
+            name: team.teamName,
+            logo: team.teamImgUrl
+        }))
+        console.log("处理后的队伍数据:", teams.value)
+        
+    } catch (error) {
+        console.error('获取队伍数据失败:', error)
+        ElMessage.error('获取队伍数据失败')
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// 获取用户之前的预测数据
+const fetchUserPrediction = async () => {
+    if (!props.matchId) {
+        console.warn('matchId未设置，跳过获取预测数据')
+        return
+    }
+
+    try {
+        isLoading.value = true
+        if (teams.value.length === 0) {
+            await fetchTeams()
+        }
+
+        const response = await matchAPI.getUserPredictions({ 
+            matchId: props.matchId, 
+            phase: 'champion', 
+            userId: authStore.userId 
+        })
+        
+        if (response.data) {
+            // 确保我们有一个有效的预测记录
+            let prediction: PredictionRecord = Array.isArray(response.data) ? response.data[0] : response.data; // Explicitly type prediction
+            
+            // 用于存储已选队伍的ID
+            const selectedTeamIds = new Set<string>()
+            
+            // 根据预测数据填充队伍，使用ID匹配
+            if (prediction.advance) {
+                const championTeamId = prediction.advance.split(',')
+                const matchedTeams = teams.value.filter(t => 
+                    championTeamId.includes(t.id.toString())
+                )
+                champion.value = matchedTeams
+                matchedTeams.forEach(team => selectedTeamIds.add(team.id.toString()))
+            }
+            
+            // 从队伍池中移除已选的队伍
+            teams.value = teams.value.filter(team => !selectedTeamIds.has(team.id.toString()))
+        } else {
+            console.log('未找到用户之前的预测数据')
+        }
+    } catch (error: any) {
+        // 如果是401错误，说明用户未登录，静默处理
+        if (error.response?.status === 401) {
+            console.log('用户未登录，跳过获取预测数据')
+            return
+        }
+        console.error('获取预测数据失败:', error)
+        ElMessage.error('获取预测数据失败')
+    } finally {
+        isLoading.value = false
+    }
+}
+
+// 修改组件挂载逻辑
+onMounted(async () => {
+    if (props.matchId) {
+        await fetchTeams()
+        // 直接尝试获取预测数据，让请求处理登录状态
+        await fetchUserPrediction()
+    }
+})
 
 const dragGroup = { name: 'teams' }
 
-const predictRef = ref()
-const firstTeam = ref<Team[]>([])
-const secondTeam = ref<Team[]>([])
-const advanceTeams = ref<Team[]>([])
-
-// 队伍假数据 (实际应替换为晋级淘汰赛的队伍)
-const allTeams: Team[] = [
-    { id: 1, name: 'Team A', logo: 'https://img-cdn.hltv.org/teamlogo/4411.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 2, name: 'Team B', logo: 'https://img-cdn.hltv.org/teamlogo/4608.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 3, name: 'Team C', logo: 'https://img-cdn.hltv.org/teamlogo/9565.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 4, name: 'Team D', logo: 'https://img-cdn.hltv.org/teamlogo/5995.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 5, name: 'Team E', logo: 'https://img-cdn.hltv.org/teamlogo/4869.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 6, name: 'Team F', logo: 'https://img-cdn.hltv.org/teamlogo/4494.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 7, name: 'Team G', logo: 'https://img-cdn.hltv.org/teamlogo/10603.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 8, name: 'Team H', logo: 'https://img-cdn.hltv.org/teamlogo/10603.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 9, name: 'Team I', logo: 'https://img-cdn.hltv.org/teamlogo/4411.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 10, name: 'Team J', logo: 'https://img-cdn.hltv.org/teamlogo/4608.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 11, name: 'Team K', logo: 'https://img-cdn.hltv.org/teamlogo/9565.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 12, name: 'Team L', logo: 'https://img-cdn.hltv.org/teamlogo/5995.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 13, name: 'Team M', logo: 'https://img-cdn.hltv.org/teamlogo/4869.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 14, name: 'Team N', logo: 'https://img-cdn.hltv.org/teamlogo/4494.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 15, name: 'Team O', logo: 'https://img-cdn.hltv.org/teamlogo/10603.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' },
-    { id: 16, name: 'Team P', logo: 'https://img-cdn.hltv.org/teamlogo/10603.thumb.png?ixlib=java-2.1.0&s=9c1c8c5c5c5c5c5c5c5c5c5c5c5c5c5c5' }
-];
-
 // 淘汰赛阶段列表 - 初始为空数组
-const quarters1 = ref<Team[]>([]);
-const quarters2 = ref<Team[]>([]);
-const quarters3 = ref<Team[]>([]);
-const quarters4 = ref<Team[]>([]);
-const quarters5 = ref<Team[]>([]);
-const quarters6 = ref<Team[]>([]);
-const quarters7 = ref<Team[]>([]);
-const quarters8 = ref<Team[]>([]);
-const semis1 = ref<Team[]>([]);
-const semis2 = ref<Team[]>([]);
-const semis3 = ref<Team[]>([]);
-const semis4 = ref<Team[]>([]);
-const finals1 = ref<Team[]>([]);
-const finals2 = ref<Team[]>([]);
-const champion = ref<Team[]>([]);
+const champion = ref<Team[]>([])
+
+// 使用 watch 监听冠军队伍数据变化以触发防抖保存
+watch(champion, () => {
+    debouncedSave();
+}, { deep: true });
 
 // 根据阶段名称获取对应的列表
 const getStageList = (stage: string) => {
     switch (stage) {
-        case 'quarters1': return quarters1;
-        case 'quarters2': return quarters2;
-        case 'quarters3': return quarters3;
-        case 'quarters4': return quarters4;
-        case 'quarters5': return quarters5;
-        case 'quarters6': return quarters6;
-        case 'quarters7': return quarters7;
-        case 'quarters8': return quarters8;
-        case 'semis1': return semis1;
-        case 'semis2': return semis2;
-        case 'semis3': return semis3;
-        case 'semis4': return semis4;
-        case 'finals1': return finals1;
-        case 'finals2': return finals2;
         case 'champion': return champion;
         default: return ref([]);
     }
 }
 
-// 允许队伍拖拽到下一个阶段或四分之一决赛
+// 允许队伍拖拽到冠军槽位
 const moveTeamToSlot = (e: any) => {
     const dragListId = e.from.parentElement.id; // 队伍拖拽来源列表的 ID
     const dropListId = e.to.parentElement.id; // 队伍放置目标列表的 ID
@@ -336,59 +227,37 @@ const moveTeamToSlot = (e: any) => {
     // 防止从无效位置拖拽或拖拽到无效位置
      if (!dragListId || !dropListId) return false;
 
-    // 允许在同一个列表中重新排序
-    if (dragListId === dropListId) return true;
-
-    // 允许从四分之一决赛拖拽到半决赛
-    if (dragListId.startsWith('quarters') && dropListId.startsWith('semis')) {
-        const quarterIndex = parseInt(dragListId.replace('quarters', ''));
-        const semiIndex = parseInt(dropListId.replace('semis', ''));
-        // 检查是否拖拽到正确的下一个阶段槽位
-        if (Math.ceil(quarterIndex / 2) === semiIndex) return true;
-    }
-
-    // 允许从半决赛拖拽到总决赛
-     if (dragListId.startsWith('semis') && dropListId.startsWith('finals')) {
-        const semiIndex = parseInt(dragListId.replace('semis', ''));
-        const finalIndex = parseInt(dropListId.replace('finals', ''));
-         // 检查是否拖拽到正确的下一个阶段槽位
-         if (Math.ceil(semiIndex / 2) === finalIndex) return true;
-    }
-
-    // 允许从总决赛拖拽到冠军槽位
-     if (dragListId.startsWith('finals') && dropListId === 'champion') return true;
-
-    // 允许从任何位置拖拽到四分之一决赛槽位（作为起始点）
-     if (dropListId.startsWith('quarters')) return true;
+    // 允许从冠军组队伍拖拽到冠军槽位
+     if (dropListId === 'champion') return true;
 
     return false; // 阻止其他所有移动
 };
 
 // 处理淘汰赛阶段列表的变化 (队伍被添加/移除)
 const handleBracketChange = (e: any, stage: string) => {
-    const targetList = getStageList(stage);
+    if (stage === 'champion') {
+        if (e.added) {
+            const addedTeam = e.added.element;
 
-    if (e.added) {
-        const addedTeam = e.added.element;
-
-        // 从任何其他淘汰赛槽位中移除被添加的队伍，确保唯一性
-        const allBracketLists = [
-            quarters1, quarters2, quarters3, quarters4, quarters5, quarters6, quarters7, quarters8,
-            semis1, semis2, semis3, semis4,
-            finals1, finals2,
-            champion
-        ];
-        allBracketLists.forEach(listRef => {
-            if (listRef !== targetList) {
-                const index = listRef.value.findIndex(t => t.id === addedTeam.id);
-                if (index !== -1) {
-                    listRef.value.splice(index, 1);
+            // 如果冠军槽位已经有队伍，则将现有队伍移回可选队伍列表，并只保留新拖入的队伍
+            if (champion.value.length > 1) {
+                const oldChampionIndex = champion.value.findIndex(t => t.id !== addedTeam.id);
+                if (oldChampionIndex !== -1) {
+                    const oldChampion = champion.value.splice(oldChampionIndex, 1)[0];
+                    teams.value.push(oldChampion);
+                    teams.value.sort((a, b) => a.id - b.id);
                 }
             }
-        });
+        } else if (e.removed) {
+            // 如果一个队伍从冠军槽位中被移除（例如，被拖出或明确移除）
+            // 确保它被返回到主队伍列表（如果它不在那里）
+            const removedTeam = e.removed.element;
+            if (!teams.value.some(t => t.id === removedTeam.id)) {
+                teams.value.push(removedTeam);
+                teams.value.sort((a, b) => a.id - b.id);
+            }
+        }
     }
-
-    // 队伍不会回到队伍池，所以移除时不需要特殊处理
 };
 
 // 从槽位中移除队伍
@@ -396,30 +265,55 @@ function removeTeam(stage: string, teamId: number) {
     const targetList = getStageList(stage);
     const index = targetList.value.findIndex(t => t.id === teamId);
     if (index !== -1) {
-        targetList.value.splice(index, 1);
+        const removedTeam = targetList.value.splice(index, 1)[0];
+        // 如果是从冠军槽位移除，将其重新添加到可选队伍列表
+        if (stage === 'champion') {
+            teams.value.push(removedTeam);
+            // 按照ID排序，保持一致性
+            teams.value.sort((a, b) => a.id - b.id);
+        }
     }
 }
 
-// 监听预测数据变化
-const updatePredictData = () => {
-    const ref = predictRef.value
-    if (ref) {
-        firstTeam.value = [...ref.firstTeam]
-        secondTeam.value = [...ref.secondTeam]
-        advanceTeams.value = [...ref.advanceTeams]
+// 添加保存预测函数
+const saveChampionPrediction = async () => {
+    if (champion.value.length !== 1) {
+        ElMessage.warning('请选择一支冠军队伍！');
+        return;
     }
-}
+
+    try {
+        const predictionData = {
+            matchId: props.matchId,
+            phase: 'champion',
+            // 冠军竞猜只提交champion，其他阶段为空
+            s_l: '', 
+            l_s: '',
+            advance: [champion.value[0].id], // 将 champion ID 放入 advance 数组
+            champion: '', // 将 champion 字段设置为空字符串
+        };
+        const response = await matchAPI.submitPrediction(predictionData);
+        ElMessage.success('冠军预测保存成功！');
+    } catch (error: any) {
+        if (error.response?.status === 401) {
+            ElMessage.warning('请先登录后再进行预测！');
+            return;
+        }
+        console.error('保存冠军预测失败:', error);
+        ElMessage.error('保存冠军预测失败！');
+    }
+};
 
 // 暴露数据给父组件
 defineExpose({
     getPredictData() {
-        updatePredictData()
         return {
-            firstTeam: firstTeam.value,
-            secondTeam: secondTeam.value,
-            advanceTeams: advanceTeams.value
+            champion: champion.value
         }
-    }
+    },
+    fetchTeams,
+    fetchUserPrediction,
+    saveChampionPrediction // Expose the save function
 })
 
 </script>
@@ -449,7 +343,8 @@ export default defineComponent({
 
     .team-card {
         width: 100%;
-        height: 100%;
+        height: auto; /* Ensure height is auto */
+        /* height: 100%; */ /* Removed fixed height */
         border-radius: 4px;
         background: rgba(255, 255, 255, 0.15);
         color: #eee;
@@ -469,6 +364,7 @@ export default defineComponent({
 
         &.selected {
             border-color: #3fa7ff;
+            background: rgba(63, 167, 255, 0.2); // Add background for selected state
         }
 
         &.disabled {
@@ -478,16 +374,17 @@ export default defineComponent({
         }
 
         .team-logo {
-            width: 24px;
-            height: 24px;
+            width: 44px;
+            height: 44px;
             margin-right: 8px;
             object-fit: contain;
         }
 
         .team-name {
+            font-size: large;
             flex-grow: 1;
             overflow: hidden;
-            text-overflow: ellipsis;
+            // text-overflow: ellipsis;
             white-space: nowrap;
         }
 
@@ -510,7 +407,7 @@ export default defineComponent({
 .bracket-container {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start; /* Set align-items to flex-start */
     gap: 0;
     padding: 20px 0;
     overflow-x: auto;
@@ -541,28 +438,40 @@ export default defineComponent({
         position: relative;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
-        justify-content: center;
-        min-height: 100px; /* 保证成对对战有可视空间 */
+        align-items: flex-start; /* Ensure items start from the top */
+        justify-content: flex-start;
+        /* flex-grow: 1; */ /* Removed flex-grow */
     }
 
     .slot {
         z-index: 2;
         width: 180px;
-        height: 40px;
+        /* height: 40px; */ /* Removed fixed height */
         border: 1px dashed rgba(255, 255, 255, 0.4);
         border-radius: 4px;
         background: rgba(255, 255, 255, 0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
         position: relative;
-        overflow: hidden;
+        /* overflow: hidden; */ /* Removed overflow: hidden */
         margin-bottom: 4px;
+
+        &.teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 16px;
+            width: 100%;
+            min-height: unset; /* Ensure no minimum height constraint */
+            height: auto; /* Allow height to adjust based on content */
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
 
         &.champion-slot {
             width: 200px;
             height: 50px;
+            display: flex; /* Added display flex */
+            align-items: center; /* Added align-items center */
+            justify-content: center; /* Added justify-content center */
             .empty-slot {
                 font-size: 32px;
             }
@@ -655,7 +564,7 @@ export default defineComponent({
             margin-bottom: 20px;
         }
         .team-card {
-            width: 80px;
+            width: auto;
             height: 35px;
             font-size: 11px;
             .team-logo {
@@ -687,20 +596,27 @@ export default defineComponent({
         }
         .match {
             margin-bottom: 0;
-            min-height: 60px;
+            /* min-height: 60px; */ /* Removed fixed min-height */
         }
         .slot {
             width: 100%;
-            height: 35px;
+            /* height: 35px; */ /* Removed fixed height */
             border-radius: 4px;
+            &.teams-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 12px;
+                padding: 12px;
+                min-height: unset; /* Ensure no minimum height constraint */
+                height: auto; /* Allow height to adjust based on content */
+            }
             .team-card {
                 padding: 0 5px;
                 .team-logo {
-                    width: 20px;
-                    height: 20px;
+                    width: 28px;
+                    height: 28px;
                 }
                 .team-name {
-                    font-size: 10px;
+                    font-size: 13px;
                 }
                 .remove-btn {
                     font-size: 12px;
@@ -779,7 +695,14 @@ export default defineComponent({
             gap: 10px;
         }
         .slot {
-            height: 30px;
+            /* height: 30px; */ /* Removed fixed height */
+            &.teams-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+                gap: 8px;
+                padding: 8px;
+                min-height: unset; /* Ensure no minimum height constraint */
+                height: auto; /* Allow height to adjust based on content */
+            }
             &.champion-slot {
                 height: 40px;
                 .empty-slot {
@@ -814,5 +737,11 @@ export default defineComponent({
             width: 20px;
         }
     }
+}
+
+/* Save button style */
+.save-button {
+    margin-top: 20px;
+    text-align: center;
 }
 </style>

@@ -58,7 +58,7 @@
                                 </div>
                             </div>
                             <div class="match-footer">
-                                <div class="reward-info">竞猜会获得平台虚拟奖章，目前正在做</div>
+                                <div class="reward-info">竞猜会获得平台虚拟奖章，所获奖章在比赛结束后统计</div>
                                 <div class="button-group">
                                     <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
                                         <el-icon><Share /></el-icon>

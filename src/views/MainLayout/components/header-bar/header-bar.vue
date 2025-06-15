@@ -79,7 +79,7 @@
 
 
                 <userHome style="margin-left:20px;" class="icon-img"></userHome>
-                <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button>
+                <!-- <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button> -->
 
             </div>
             <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">

@@ -33,7 +33,7 @@
     <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md" target="_blank"><span
             class="version">版本: {{ sbVersion }}</span></a>
     <div class="GuangGaoWei">
-        <img  src="https://pic1.imgdb.cn/item/67ee15fe0ba3d5a1d7eb91d2.png" alt="">
+        <!-- <img  src="https://pic1.imgdb.cn/item/67ee15fe0ba3d5a1d7eb91d2.png" alt=""> -->
 
         <span style="display: flex;font-size:large;color: white;">广告位招租</span>
     </div>
