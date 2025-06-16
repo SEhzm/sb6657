@@ -20,7 +20,43 @@
     <script type="text/javascript" src="//api.tongjiniao.com/c?_=699409175462318080" defer></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.6.0/echarts.min.js" defer></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/echarts-wordcloud/2.1.0/echarts-wordcloud.js" defer></script>
+    <script>
+        if (import.meta.env.VITE_APP_ENV === 'prod') {
 
+
+            // 屏蔽F12 右键
+            document.onkeydown = function () {
+
+                if (window.event && window.event.keyCode == 123) {
+                    alert("F12被禁用");
+                    event.keyCode = 0;
+                    event.returnValue = false;
+                }
+                if (window.event && window.event.keyCode == 13) {
+                    window.event.keyCode = 505;
+                }
+                if (window.event && window.event.keyCode == 8) {
+                    alert(str + "\n请使用Del键进行字符的删除操作！");
+                    window.event.returnValue = false;
+                }
+
+            }
+
+            document.oncontextmenu = function (event) {
+                if (window.event) {
+                    event = window.event;
+                } try {
+                    var the = event.srcElement;
+                    if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")) {
+                        return false;
+                    }
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>

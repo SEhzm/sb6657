@@ -2,7 +2,7 @@
   <div class="chatgpt-container">
     <div class="chat-window" ref="chatWindow">
       <div class="ai-welcome-message">
-        AI造梗助手Demo（32B模型，算力一般，第一条可以流畅回复，第二条慢）<span style="font-size: small;">每天50次.</span><b>卡了可以刷新</b>
+        AI造梗助手Demo（32B模型，算力一般）<span style="font-size: small;">每天50次<span style="font-size: smaller;">(成本不低..)</span></span><b>卡了可以刷新</b>
         <button class="refresh-button" @click="refreshComponent">
           刷新
         </button>
@@ -34,6 +34,7 @@
         需要查看思考过程
       </label>
     </form>
+    <span style="font-size: small;text-align: center;user-select: none;">服务生成的所有内容均由人工智能模型生成，其生成内容的准确性和完整性无法保证，不代表我们的态度或观点。</span>
     <div class="controls-container">
       <div class="control-item">
         <label for="memesNum">造梗数量:</label>
@@ -105,22 +106,22 @@ const formatAIResponse = (text: string): string => {
   // 并且移除因这些 data: 行而产生的多余空行
   cleanedText = cleanedText.replace(/^data:.*\n?/gm, '');
 
-  // 4. 合并被分割的markdown序号（如 "1\n.\n内容" => "1. 内容"）
-  cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*\n?\s*/g, '$1. ');
-  cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*/g, '$1. ');
-  cleanedText = cleanedText.replace(/(\d+)\s*\.\s*/g, '$1. ');
+  // // 4. 合并被分割的markdown序号（如 "1\n.\n内容" => "1. 内容"）
+  // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*\n?\s*/g, '$1. ');
+  // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*/g, '$1. ');
+  // cleanedText = cleanedText.replace(/(\d+)\s*\.\s*/g, '$1. ');
 
-  // 5. 去除开头所有空白行
-  cleanedText = cleanedText.replace(/^\s+/, '');
+  // // 5. 去除开头所有空白行
+  // cleanedText = cleanedText.replace(/^\s+/, '');
 
-  // 6. 合并多余空白行（3行及以上变为1行）
-  cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
+  // // 6. 合并多余空白行（3行及以上变为1行）
+  // cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
 
-  // 7. 每行trim
-  cleanedText = cleanedText
-    .split('\n')
-    .map(line => line.trim())
-    .join('\n');
+  // // 7. 每行trim
+  // cleanedText = cleanedText
+  //   .split('\n')
+  //   .map(line => line.trim())
+  //   .join('\n');
 
   // 8. 去除整体首尾空行
   cleanedText = cleanedText.replace(/^\s+|\s+$/g, '');

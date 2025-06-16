@@ -625,14 +625,7 @@ const formatSubmitTime = (timeString) => {
     return timeString.replace('T', ' ').split('.')[0];
 };
 onMounted(() => {
-    ElNotification({
-        title: '来自sb6657.cn',
-        dangerouslyUseHTMLString: true,
-        message: "现已推出造梗Ai（Demo），欢迎使用<br><b>Ai费用不低，请酌情使用~</b>",
-        position: 'bottom-left',
-        type: 'success',
-        duration: 20000,
-    })
+    
 }
 )
 </script>
