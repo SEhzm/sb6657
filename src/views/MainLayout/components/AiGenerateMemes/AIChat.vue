@@ -2,7 +2,8 @@
   <div class="chatgpt-container">
     <div class="chat-window" ref="chatWindow">
       <div class="ai-welcome-message">
-        AI造梗助手Demo（32B模型，算力一般）<span style="font-size: small;">每天50次<span style="font-size: smaller;">(成本不低..)</span></span><b>卡了可以刷新</b>
+        AI造梗助手Demo（32B模型，算力一般）<span style="font-size: small;">每天50次<span
+            style="font-size: smaller;">(成本不低..)</span></span><b>卡了可以刷新</b>
         <button class="refresh-button" @click="refreshComponent">
           刷新
         </button>
@@ -34,7 +35,8 @@
         需要查看思考过程
       </label>
     </form>
-    <span style="font-size: small;text-align: center;user-select: none;">服务生成的所有内容均由人工智能模型生成，其生成内容的准确性和完整性无法保证，不代表我们的态度或观点。</span>
+    <span
+      style="font-size: small;text-align: center;user-select: none;">服务生成的所有内容均由人工智能模型生成，其生成内容的准确性和完整性无法保证，不代表我们的态度或观点。</span>
     <div class="controls-container">
       <div class="control-item">
         <label for="memesNum">造梗数量:</label>
@@ -99,29 +101,29 @@ const formatAIResponse = (text: string): string => {
   let cleanedText = text;
 
   // 移除 <think> 和 </think> 标签
-  // cleanedText = cleanedText.replace(/<think>/g, '');
-  // cleanedText = cleanedText.replace(/<\/think>/g, '');
+  cleanedText = cleanedText.replace(/<think>/g, '');
+  cleanedText = cleanedText.replace(/<\/think>/g, '');
 
   // 移除所有 data: 开头的行，无论是否有后续字符或换行符
   // 并且移除因这些 data: 行而产生的多余空行
-  // cleanedText = cleanedText.replace(/^data:.*\n?/gm, '');
+  // cleanedText = cleanedText.replace(/^data:.*\n?/gm, ''); // 已经由sendMessage处理，此行冗余
 
-  // // 4. 合并被分割的markdown序号（如 "1\n.\n内容" => "1. 内容"）
-  // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*\n?\s*/g, '$1. ');
-  // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*/g, '$1. ');
-  // cleanedText = cleanedText.replace(/(\d+)\s*\.\s*/g, '$1. ');
+  // 4. 合并被分割的markdown序号（如 "1\n.\n内容" => "1. 内容"）
+  cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*\n?\s*/g, '$1. ');
+  // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*/g, '$1. '); // 与上一条重复
+  cleanedText = cleanedText.replace(/(\d+)\s*\.\s*/g, '$1. ');
 
-  // // 5. 去除开头所有空白行
-  // cleanedText = cleanedText.replace(/^\s+/, '');
+  // 5. 去除开头所有空白行
+  cleanedText = cleanedText.replace(/^\s+/, '');
 
-  // // 6. 合并多余空白行（3行及以上变为1行）
-  // cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
+  // 6. 合并多余空白行（3行及以上变为1行）
+  cleanedText = cleanedText.replace(/\n{3,}/g, '\n\n');
 
-  // // 7. 每行trim
-  // cleanedText = cleanedText
-  //   .split('\n')
-  //   .map(line => line.trim())
-  //   .join('\n');
+  // 7. 每行trim
+  cleanedText = cleanedText
+    .split('\n')
+    .map(line => line.trim())
+    .join('\n');
 
   // 8. 去除整体首尾空行
   cleanedText = cleanedText.replace(/^\s+|\s+$/g, '');
@@ -167,55 +169,39 @@ const sendMessage = async () => {
       if (selectedTag.value !== '') {
         params.append('tag', selectedTag.value);
       }
-      const resp = await fetch(`${httpInstance.defaults.baseURL}`+'/suanli/stream', {
+      const resp = await fetch(`${httpInstance.defaults.baseURL}` + '/suanli/stream', {
         method: 'POST',
         headers: {
           'Authorization': token,
         },
         body: params,
       })
-      if(resp.code===401){
+      if (resp.code === 401) {
         ElMessage.warning('请先登录！');
         loading.value = false;
         return;
       }
       if (!resp.body) throw new Error('响应流为空')
-      const reader = resp.body.getReader()
-      const decoder = new TextDecoder('utf-8')
-      let done = false
-
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-        timeoutId = null;
-      }
-
-      while (!done) {
-        const { value, done: doneReading } = await reader.read()
-        if (value) {
-          const chunk = decoder.decode(value, { stream: true })
-          const lines = chunk.split('\n')
-          for (const line of lines) {
-            if (line.startsWith('data:')) {
-              const data = line.replace(/^data:\s*/, '')
-              if (data === '[DONE]') {
-                done = true
-                break
-              }
-              try {
-                const obj = JSON.parse(data)
-                const delta = obj.choices?.[0]?.delta?.content
-                if (delta !== undefined) {
-                  streamingContent.value += delta
-                  await nextTick()
-                  scrollToBottom()
-                }
-              } catch (e) {
-                // 不是合法JSON, 忽略
-              }
+      let allContent = '';
+      const decoder = new TextDecoder('utf-8');
+      const reader = resp.body.getReader();
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const text = decoder.decode(value, { stream: true });
+        // 拆分多条 data
+        text.split('data:').forEach(line => {
+          if (!line.trim()) return;
+          try {
+            const chunk = JSON.parse(line.trim());
+            if (chunk.choices?.[0]?.delta?.content) {
+              allContent += chunk.choices[0].delta.content;
+              streamingContent.value = allContent;
             }
+          } catch (e) {
+            // 可能不是JSON，忽略
           }
-        }
-        done = done || doneReading
+        });
       }
       messages.value.push({ role: 'ai', content: formatAIResponse(streamingContent.value) })
       streamingContent.value = ''
