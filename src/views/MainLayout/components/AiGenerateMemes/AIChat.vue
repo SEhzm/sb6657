@@ -99,12 +99,12 @@ const formatAIResponse = (text: string): string => {
   let cleanedText = text;
 
   // 移除 <think> 和 </think> 标签
-  cleanedText = cleanedText.replace(/<think>/g, '');
-  cleanedText = cleanedText.replace(/<\/think>/g, '');
+  // cleanedText = cleanedText.replace(/<think>/g, '');
+  // cleanedText = cleanedText.replace(/<\/think>/g, '');
 
   // 移除所有 data: 开头的行，无论是否有后续字符或换行符
   // 并且移除因这些 data: 行而产生的多余空行
-  cleanedText = cleanedText.replace(/^data:.*\n?/gm, '');
+  // cleanedText = cleanedText.replace(/^data:.*\n?/gm, '');
 
   // // 4. 合并被分割的markdown序号（如 "1\n.\n内容" => "1. 内容"）
   // cleanedText = cleanedText.replace(/(\d+)\s*\n\s*\.\s*\n?\s*/g, '$1. ');
