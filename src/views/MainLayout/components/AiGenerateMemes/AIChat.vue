@@ -3,7 +3,7 @@
     <div class="chat-window" ref="chatWindow">
       <div class="ai-welcome-message">
         AI造梗助手Demo（32B模型，算力一般）<span style="font-size: small;">每天50次<span
-            style="font-size: smaller;">(成本不低..)</span></span><b>卡了可以刷新</b>
+            style="font-size: smaller;">(成本不低..)</span></span><b>等待两分钟卡了可以刷新</b>
         <button class="refresh-button" @click="refreshComponent">
           刷新
         </button>
@@ -21,7 +21,8 @@
       <div v-if="loading" class="message ai">
         <div class="bubble ai-bubble">
           <img class="avatar" src="@/assets/imgs/user-img-0.png" alt="AI" />
-          <div class="bubble-content">{{ streamingContent }}<span class="cursor">|</span></div>
+          <div v-if="streamingContent" class="bubble-content">{{ streamingContent }}<span class="cursor">|</span></div>
+          <div v-else class="bubble-content">{{ streamingContent }}<span class="cursor-wait">(排队中，耐心等待一分钟左右,毕竟算力有限🥺)|</span></div>
         </div>
       </div>
     </div>
@@ -370,8 +371,12 @@ onMounted(() => {
 }
 
 .cursor {
-  color: #409eff;
+  color: #000000;
   animation: blink 1.1s steps(1) infinite;
+}
+.cursor-wait {
+  color: #000000;
+  animation: blink 1.2s steps(1) infinite;
 }
 
 @keyframes blink {
