@@ -252,7 +252,14 @@
                     @click="refreshWordCloud()">
                     <Refresh />
                 </el-icon></span>
-            <wordCloud ref="wordCloudRef"></wordCloud>
+            <Suspense>
+                <template #default>
+                    <WordCloud ref="wordCloudRef" />
+                </template>
+                <template #fallback>
+                    <div style="height: 270px; width: 300px;">词云加载中...</div>
+                </template>
+            </Suspense>
         </div>
     </div>
 </template>
@@ -269,7 +276,6 @@ import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import LikeNum from '@/components/like-num.vue';
 import ChatRoom from '@/components/ChatRoom.vue';
-import wordCloud from '@/components/wordCloud.vue';
 import { API } from '@/constants/backend';
 const customPopoverClass = 'custom-popover';
 
@@ -612,12 +618,14 @@ async function copyMeme_countPlus1(meme) {
     return;
     plus1Error();
 }
-const wordCloudRef = ref(null);
 
+const wordCloudRef = ref(null);
+// 懒加载 wordCloud 组件
+const WordCloud = defineAsyncComponent(() =>
+    import('@/components/wordCloud.vue')
+)
 function refreshWordCloud() {
-    if (wordCloudRef.value) {
-        wordCloudRef.value.getData();
-    }
+    wordCloudRef.value?.getData?.()
 }
 // 处理投稿时间格式
 const formatSubmitTime = (timeString) => {

@@ -59,6 +59,19 @@ const OniValue = computed(() => guiBinStore.Oni);
 
 const socket = ref();
 onMounted(() => {
+    /**
+     * ================================================================
+     * 首屏加载完之后去除loading页
+     */
+    const loadingDOM = document.querySelector('#global-loading');
+    if (loadingDOM) {
+        loadingDOM.classList.add('fade-out');
+        setTimeout(() => loadingDOM.remove(), 500);
+    }
+    /**
+     * ================================================================
+     */
+
     socket.value = new DouyuWebSocket(6979222, handleDanmu);
     ElNotification({
         title: '来自sb6657.cn',

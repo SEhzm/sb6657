@@ -7,7 +7,65 @@
     <!--    <meta name="viewport" content=" width=720,initial-scale=1.0">-->
     <meta name="viewport" content="initial-scale=1.0">
     <title>玩机器烂梗收集</title>
+    <style>
+        #global-loading {
+            position: fixed;
+            height: 100%;
+            width: 100%;
+            z-index: 9999;
+            background-color: #fff;
+            transition: opacity 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+    
+        #global-loading.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+    
+        .loading-spin {
+            animation: loading-spin 8s linear infinite;
+        }
+    
+        @keyframes loading-spin {
+            0% {
+                transform: rotate(0deg);
+            }
+    
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    
+        .loading-text {
+            font-size: xx-large;
+        }
 
+        .dots::after {
+            content: '';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+
+        @keyframes dots {
+            0%, 100% {
+                content: '';
+            }
+            25% {
+                content: '.';
+            }
+            50% {
+                content: '..';
+            }
+            75% {
+                content: '...';
+            }
+        }
+    </style>
+    
     <script defer>
         var _hmt = _hmt || [];
         (function () {
@@ -18,48 +76,13 @@
         })();
     </script>
     <script type="text/javascript" src="//api.tongjiniao.com/c?_=699409175462318080" async></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/echarts/5.6.0/echarts.min.js" defer></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/echarts-wordcloud/2.1.0/echarts-wordcloud.js" defer></script>
-    <script>
-        if (import.meta.env.VITE_APP_ENV === 'prod') {
-
-
-            // 屏蔽F12 右键
-            document.onkeydown = function () {
-
-                if (window.event && window.event.keyCode == 123) {
-                    alert("F12被禁用");
-                    event.keyCode = 0;
-                    event.returnValue = false;
-                }
-                if (window.event && window.event.keyCode == 13) {
-                    window.event.keyCode = 505;
-                }
-                if (window.event && window.event.keyCode == 8) {
-                    alert(str + "\n请使用Del键进行字符的删除操作！");
-                    window.event.returnValue = false;
-                }
-
-            }
-
-            document.oncontextmenu = function (event) {
-                if (window.event) {
-                    event = window.event;
-                } try {
-                    var the = event.srcElement;
-                    if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")) {
-                        return false;
-                    }
-                    return true;
-                } catch (e) {
-                    return false;
-                }
-            }
-        }
-    </script>
 </head>
 
 <body>
+    <div id="global-loading">
+        <img src="/wan0.png" alt="玩零蛋加载图" class="loading-spin">
+        <div class="loading-text">加载中<span class="dots"></span></div>
+    </div>
     <div id="app"></div>
     <script type="module" src="/src/main.js"></script>
 </body>

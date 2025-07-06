@@ -5,6 +5,8 @@
 
 <script setup>
 import { onMounted, ref } from 'vue'
+import * as echarts from 'echarts'
+import 'echarts-wordcloud'
 import httpInstance from '@/apis/httpInstance';
 
 const wordCloud = ref(null)
