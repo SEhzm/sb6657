@@ -21,6 +21,7 @@ const router = createRouter({
                 { path: 'UserInfo', name: 'UserInfo', component: () => import('@/views/MainLayout/components/user/components/index.vue') },
                 { path: 'post-bar', name: 'post-bar', component: () => import('@/views/MainLayout/components/post-bar/post-bar-main.vue') },
                 { path: 'me-post', name: 'me-post', component: () => import('@/views/MainLayout/components/post-bar/Me-Post.vue') },
+                { path: 'me-memes', name: 'me-memes', component: () => import('@/views/MainLayout/components/user/components/Me-memes.vue') },
                 { path: 'me-msg', name: 'me-msg', component: () => import('@/views/MainLayout/components/post-bar/Post-Message.vue') },
                 { path: 'memes/:category', name: 'memes', component: () => import('@/views/MainLayout/components/memes-view.vue') },
                 { path: 'matchPrediction', name: 'matchPrediction', component: () => import('@/views/MainLayout/components/match-prediction/CS2Major.vue') },

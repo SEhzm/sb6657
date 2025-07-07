@@ -11,6 +11,9 @@
                 <router-link divided to="/me-post">
                     <el-dropdown-item>我的帖子</el-dropdown-item>
                 </router-link>
+                <router-link divided to="/me-memes">
+                    <el-dropdown-item>我的投稿</el-dropdown-item>
+                </router-link>
                 <el-dropdown-item command="login" divided v-show="!isRelogin">
                     <span @click="loginAndReg">登录/注册</span>
                 </el-dropdown-item>
