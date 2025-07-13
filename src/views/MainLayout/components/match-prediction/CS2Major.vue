@@ -58,17 +58,20 @@
                                 </div>
                             </div>
                             <div class="match-footer">
-                                <div class="reward-info">竞猜会获得平台虚拟奖章，所获奖章在比赛结束后统计</div>
+                                <!-- <div class="reward-info">竞猜会获得平台虚拟奖章，所获奖章在比赛结束后统计</div> -->
                                 <div class="button-group">
                                     <el-button type="primary" @click="captureAndShare" :loading="isCapturing">
                                         <el-icon><Share /></el-icon>
                                         截图分享预测
                                     </el-button>
-                                    <el-button type="success" @click="showCoinViewerfun">
+                                </div>
+                                <div class="button-group">
+                                    <el-button type="success"  @click="showCoinViewerfun">
                                         <el-icon><View /></el-icon>
-                                        预览3D奖章
+                                        预览2025奥斯汀Major3D奖章
                                     </el-button>
                                 </div>
+                                
                             </div>
                         </div>
 
@@ -649,7 +652,7 @@ function showCoinViewerfun() {
         display: flex;
         gap: 12px;
         justify-content: center;
-
+        margin-top: 20px;
         @media screen and (max-width: 768px) {
             flex-direction: column;
             width: 100%;

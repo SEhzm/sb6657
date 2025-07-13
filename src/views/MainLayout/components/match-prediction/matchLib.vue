@@ -168,7 +168,7 @@ interface BarrageResponse {
 const matchList = ref<MatchItem[]>([])
 const total = ref(0)
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(20)
 const dialogVisible = ref(false)
 const currentMatch = ref<MatchItem | null>(null)
 const matchBarrageList = ref<BarrageItem[]>([])

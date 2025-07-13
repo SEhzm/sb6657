@@ -38,7 +38,7 @@ export const MemeCategory = [
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
     { path: '/aichat', text: 'AI造梗', icon: chat_icon },
-    { path: '/matchPrediction', text: 'Major竞猜', icon: cs2_icon },
+    { path: '/matchPrediction', text: '赛事竞猜', icon: cs2_icon },
     { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
     { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/memes/penWJQ', text: '喷玩机器篇', icon: wjq_icon, api: API.GET_FK_WJQ_MEME, category: 'penWJQ' },
