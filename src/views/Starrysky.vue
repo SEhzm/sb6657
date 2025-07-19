@@ -1,9 +1,9 @@
 <template>
   <el-popover placement="left" title="" :width="200" trigger="hover" :visible="diaochaSetTime"
-    content="官方交流🐧:327113203">
+    content="官方交流群🐧:327113203">
     <template #reference>
       <el-button id="diaocha" type="plain" @mouseover="diaochaSetTime = 1000"
-        @click="dialogVisible = 'true'">官方交流🐧</el-button>
+        @click="dialogVisible = 'true'">官方交流群🐧</el-button>
     </template>
   </el-popover>
   <el-dialog v-model="dialogVisible" style="" draggable="true" title="官方交流🐧" width="410px">
@@ -310,7 +310,7 @@ const closeHot = () => {
   writing-mode: vertical-rl;
   text-orientation: upright;
   white-space: nowrap;
-  height: 70px;
+  height: 100px;
   width: 30px;
   z-index: 1000;
 }
@@ -339,7 +339,7 @@ const closeHot = () => {
     writing-mode: vertical-rl;
     text-orientation: upright;
     white-space: nowrap;
-    height: 60px;
+    height: 100px;
     width: 13px;
     font-size: 11px;
     z-index: 1000;

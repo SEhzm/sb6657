@@ -104,10 +104,10 @@ function showLoginView() {
 }
 
 watch(
-  () => authStore.loginVisible,
-  (newVal) => {
-    loginView.value = newVal
-  }
+    () => authStore.loginVisible,
+    (newVal) => {
+        loginView.value = newVal
+    }
 )
 </script>
 
@@ -121,6 +121,16 @@ watch(
     }
 
     .avatar-wrapper {
+        height: 32px;
+        cursor: pointer;
+        display: block;
+    }
+}
+
+@media (max-width: 600px) {
+    .avatar-wrapper {
+        height: 26px;
+        cursor: pointer;
         display: block;
     }
 }

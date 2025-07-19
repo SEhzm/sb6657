@@ -1,10 +1,23 @@
 <template>
     <div class="header">
         <div class="header-content">
-            <a href="https://www.douyu.com/6657" target="_blank" class="logo-link">
-                <img src="/public/favicon.ico" alt="大🐖头" class="logo-img" />
-                <p class="header-title">斗鱼玩机器烂梗库</p>
-            </a>
+            <div class="logo-link">
+                <a href="https://www.douyu.com/6657" target="_blank">
+                    <img src="/public/favicon.ico" alt="大🐖头" class="logo-img" />
+                    <p class="header-title">斗鱼玩机器烂梗库</p>
+                </a>
+                <div class="elinput-mobile">
+                    <el-input v-model="searchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
+                        <template #append>
+                            <el-button type="primary" @click="handleSearchMeme">
+                                <el-icon>
+                                    <Search />
+                                </el-icon>
+                            </el-button>
+                        </template>
+                    </el-input>
+                </div>
+            </div>
 
             <div class="header-actions">
                 <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img"
@@ -29,39 +42,32 @@
                 </div>
 
                 <el-button type="primary" @click="complaintButton" class="complaint-button">
-                    <span>
-                        上传照片
-                        <br />
-                        建议/提交BUG
-                    </span>
+                    上传照片<br />
+                    建议/提交BUG
                 </el-button>
-                <el-tooltip class="box-item" effect="light" content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com"
-                    placement="bottom">
-                    <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-img" />
+                <el-tooltip effect="light" content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com" placement="bottom">
+                    <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-container icon-img" />
                 </el-tooltip>
-                <a href="https://sb6657.cn/#/Tampermonkey">
+                <a class="icon-container" href="https://sb6657.cn/#/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
                 </a>
-                <a href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
+                <a class="icon-container" href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
                     <img src="@/assets/imgs/douyu.png" alt="douyu" class="icon-img" />
                 </a>
-                <a href="https://github.com/SEhzm/sb6657/" target="_blank">
+                <a class="icon-container" href="https://github.com/SEhzm/sb6657/" target="_blank">
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
 
-                <el-image class="icon-img-rounded" :src="lightningUrl" :hide-on-click-modal="true" :zoom-rate="1.2"
-                    :max-scale="7" lazy :min-scale="0.2" :preview-src-list="['http://cdn.hguofichp.cn/zfb.jpg']"
-                    :initial-index="4" fit="cover" />
-
+                <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
+                    @click="supportMeDialog = true" />
 
                 <el-dropdown trigger="hover">
-                    <div style="display: flex; font-size: 12px; height: 25px; color: #e3d5b8ff; position: relative;">
-                        <span>
-                            <img src="@/assets/icons/msg.svg" alt="msg" class="icon-img" />
-                            <span v-if="totalUnreadMessages > 0" class="unread-badge">{{ totalUnreadMessages }}</span>
-                            <span v-else-if="totalUnreadMessages === 0" class="unread-badge">0</span>
-                            <br>消息
-                        </span>
+                    <div class="user-message">
+                        <div class="message-icon">
+                            <img src="@/assets/icons/msg.svg" alt="msg" />
+                            <div>消息</div>
+                        </div>
+                        <span class="unread-badge">{{ totalUnreadMessages || '0' }}</span>
                     </div>
                     <template #dropdown>
                         <el-dropdown-menu>
@@ -78,9 +84,11 @@
                 </el-dropdown>
 
 
-                <userHome style="margin-left:20px;" class="icon-img"></userHome>
+                <userHome class="icon-img"></userHome>
                 <!-- <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button> -->
-                <el-button class="GuangGaoHead" plain @click="openAd"><span>奇缘电竞(便宜靠谱)</span></el-button>
+                <el-button class="GuangGaoHead" plain @click="openAd">
+                    <span>奇缘电竞(便宜靠谱)</span>
+                </el-button>
 
             </div>
             <!-- <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
@@ -89,7 +97,7 @@
                 <h4>男陪玩最低1.3rating魔王S <b style="color: red;">女客服：J34-126</b></h4>
                 <h4>纯绿色，店长线下见过所有陪玩</h4>
             </el-dialog> -->
-            <el-dialog v-model="AdDialog" title="奇缘电竞(便宜靠谱)" width="100%">
+            <el-dialog v-model="AdDialog" title="奇缘电竞(便宜靠谱)" :width="adWidth" :append-to-body="true">
                 <h2>FPS天花板 奇缘电竞PW</h2>
                 <h4>客服：<b style="color: red;font-size: 16px;">QYDJ661</b></h4>
                 <h4>KOOK： <b style="color: red;font-size: 16px;"> 661661</b></h4>
@@ -118,11 +126,11 @@
             :emptyText="searchEmptyText" @refresh="handleSearchMeme">
             <div class="search-tips">烂梗搜索结果:</div>
         </memeDialog>
+        <!-- 支持我弹出框 -->
+        <el-dialog v-model="supportMeDialog" title="谢谢你" :width="lightWidth">
+            <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width='100%' />
+        </el-dialog>
     </div>
-    <!-- 支持我弹出框 -->
-    <el-dialog v-model="supportMeDialog" title="谢谢你" :width=lightWidth>
-        <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width='100%' />
-    </el-dialog>
 </template>
 
 <script setup lang="ts">
@@ -210,7 +218,8 @@ async function handleSearchMeme() {
     searchedMeme.value = res;
 }
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
-let lightWidth = '35%'
+const lightWidth = computed(() => isMobile.value ? '100%' : '35%');
+const adWidth = computed(() => isMobile.value ? '90%' : '35%');
 
 // 消息数量
 const likeAndStatementNum = ref(0);
@@ -233,14 +242,10 @@ async function fetchMsgNum() {
 }
 
 onMounted(() => {
-fetchMsgNum();
-        setInterval(() => {
-            fetchMsgNum();
-        }, 10 * 60 * 1000); // 10min
-
-    if (isMobile.value) {
-        lightWidth = '100%';
-    }
+    fetchMsgNum();
+    setInterval(() => {
+        fetchMsgNum();
+    }, 10 * 60 * 1000); // 10min
 
     //第一次在一小时后弹出
     setTimeout(() => {
@@ -264,239 +269,254 @@ function openAd() {
 </script>
 
 <style scoped lang="scss">
-@media (min-width: 601px) {
-    .header {
-        z-index: 1000;
-        top: 0;
-        position: sticky;
+.header {
+    z-index: 1000;
+    top: 0;
+    position: sticky;
 
-        .header-content {
-            backdrop-filter: saturate(100%) blur(4px);
-            height: 55px;
-            width: 100%;
+    .header-content {
+        backdrop-filter: saturate(100%) blur(4px);
+        height: 55px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        justify-content: space-between;
+
+        .logo-link {
+            height: 100%;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            margin-left: 10px;
 
-            .logo-link {
+            &>a {
                 display: flex;
-                margin-left: 10px;
-
-                .logo-img {
-                    height: 40px;
-                    margin: 5px;
-                    border-radius: 5px;
-                }
-
-                .header-title {
-                    width: 300px;
-                    color: #ff552e;
-                    font-size: 30px;
-                }
             }
 
-            .header-actions {
-                display: flex;
+            .logo-img {
+                height: 40px;
+                margin-right: 6px;
+                border-radius: 5px;
+            }
 
-                .hot-barrage-img {
-                    width: 26px;
-                    height: 26px;
-                }
+            .header-title {
+                width: 250px;
+                color: #ff552e;
+                font-size: 30px;
+            }
 
-                .hot-barrage {
-                    cursor: pointer;
-                    width: 300px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
+            .elinput-mobile {
+                display: none;
+            }
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+
+            .hot-barrage-img {
+                width: 26px;
+                height: 26px;
+            }
+
+            .hot-barrage {
+                cursor: pointer;
+                width: 300px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                color: #e4d6b8;
+                white-space: nowrap;
+
+                .hot-barrage-span {
                     color: #e4d6b8;
-                    white-space: nowrap;
-
-                    .hot-barrage-span {
-                        color: #e4d6b8;
-                        border-bottom: 1px solid #e4d6b8;
-                    }
-
-                    .fade-enter-active,
-                    .fade-leave-active {
-                        transition: opacity 0.5s;
-                    }
-
-                    .fade-enter-from,
-                    .fade-leave-to {
-                        opacity: 0;
-                    }
+                    border-bottom: 1px solid #e4d6b8;
                 }
 
-                .GuangGaoHead {
-                    display: none;
+                .fade-enter-active,
+                .fade-leave-active {
+                    transition: opacity 0.5s;
                 }
 
-                .unread-badge {
-                    position: absolute;
-                    bottom: -20px;
-                    right: 0px;
-                    background-color: red;
-                    color: white;
-                    border-radius: 50%;
-                    width: 18px;
-                    height: 18px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    font-size: 13px;
-                    font-weight: bold;
+                .fade-enter-from,
+                .fade-leave-to {
+                    opacity: 0;
                 }
             }
 
             .elinput {
                 width: 180px;
                 margin-right: 20px;
-
-                .el-input__wrapper {
-                    border-radius: 95px;
-                    border: 0;
-                    box-shadow: 0 0 0 0px;
-                }
             }
 
             .complaint-button {
                 margin-right: 10px;
             }
 
+            .icon-container {
+                cursor: pointer;
+                height: 32px;
+                margin-right: 15px;
+            }
+
             .icon-img {
-                width: 32px;
-                margin-right: 15px;
+                height: 32px;
+                object-fit: contain;
             }
 
-            .icon-img-rounded {
-                width: 31px;
-                height: 31px;
+            .user-message {
+                height: 32px;
                 margin-right: 15px;
-                border-radius: 5px;
+                position: relative;
+                cursor: pointer;
+
+                .message-icon {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    font-size: 12px;
+                    color: #e3d5b8ff;
+
+                    img {
+                        height: 28px;
+                    }
+                }
+
+                .unread-badge {
+                    position: absolute;
+                    top: -3px;
+                    right: -4px;
+                    background-color: red;
+                    color: white;
+                    border-radius: 50%;
+                    width: 16px;
+                    height: 16px;
+                    font-size: 12px;
+                    text-align: center;
+                    line-height: 12px;
+                    font-weight: bold;
+                }
             }
 
-            ::v-deep .el-image-viewer__wrapper {
-                position: fixed;
-                height: 100vh;
+            .GuangGaoHead {
+                display: none;
             }
         }
     }
 
+    .dialog-header {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .search-tips {
+        font-size: x-large;
+    }
 }
 
+// 移动端样式
 @media (max-width: 600px) {
-    .hot-barrage-span {
-        color: #e4d6b8;
-        border-bottom: 1px solid black;
-        padding-bottom: 1px;
-    }
-
-    .hot-barrage-img {
-        position: absolute;
-        margin-top: 230px;
-        width: 24px;
-        height: 24px;
-        cursor: pointer;
-        margin-right: 10px;
-    }
-
-    .logo-link {
-        display: none;
-    }
-
-    .hot-barrage {
-        cursor: pointer;
-        width: 300px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        position: absolute;
-        margin-top: 230px;
-        left: 30px;
-        z-index: 1;
-        color: black;
-    }
-
-    .fade-enter-active,
-    .fade-leave-active {
-        transition: opacity 0.5s;
-    }
-
-    .fade-enter-from,
-    .fade-leave-to {
-        opacity: 0;
-    }
-
-    .elinput {
-        margin-left: 20px;
-        width: 90vw;
-
-        .el-input__wrapper {
-            border-radius: 95px;
-            border: 0;
-            box-shadow: 0 0 0 0px;
-        }
-    }
-
-    .icon-img-rounded {
-        margin-top: 5px;
-        width: 22px;
-        height: 20px;
-        border-radius: 5px;
-        margin-right: 5px;
-    }
-
-    .complaint-button {
-        width: 80px;
-        height: 30px;
-        font-size: 11px;
-        margin-right: 5px;
-    }
-
-    .icon-img {
-        margin-top: 5px;
-        height: 20px;
-        width: 20px;
-        margin-right: 5px;
-    }
-
     .header {
         background-color: #fff;
-        display: flex;
-        align-items: center;
         border-bottom: 1px solid #ddd;
+
+        .header-content {
+            padding-top: 6px;
+            height: auto;
+            display: flex;
+            flex-wrap: wrap;
+
+            .logo-link {
+                height: 100%;
+                display: flex;
+                gap: 20px;
+                align-items: center;
+                margin-left: 10px;
+
+                .header-title {
+                    display: none;
+                }
+
+                .elinput-mobile {
+                    display: block;
+                    width: 280px;
+                    margin-right: 20px;
+                }
+            }
+
+            .header-actions {
+
+                width: 100%;
+                justify-content: space-around;
+
+                .hot-barrage-img {
+                    position: absolute;
+                    top: 260px;
+                    left: 4px;
+                    width: 24px;
+                    height: 24px;
+                    cursor: pointer;
+                }
+
+                .hot-barrage {
+                    cursor: pointer;
+                    width: 360px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    position: absolute;
+                    top: 260px;
+                    left: 30px;
+                    z-index: 1;
+                }
+
+                .elinput {
+                    display: none;
+                }
+
+                .complaint-button {
+                    padding: 2px;
+                    margin-right: 0;
+                }
+
+                .icon-container {
+                    height: 24px;
+                    margin-right: 0;
+                }
+
+                .icon-img {
+                    height: 24px;
+                }
+
+                .user-message {
+                    height: auto;
+                    margin-right: 0;
+
+                    .message-icon {
+                        font-size: 10px;
+
+                        img {
+                            height: 20px;
+                        }
+                    }
+
+                    .unread-badge {
+                        top: -2px;
+                        right: -3px;
+                        width: 14px;
+                        height: 14px;
+                        font-size: 10px;
+                        line-height: 14px;
+                    }
+                }
+
+                .GuangGaoHead {
+                    display: inline-flex;
+                    font-size: 11px;
+                    padding: 0 4px;
+                    color: #000;
+                }
+            }
+        }
     }
-
-    .GuangGaoHead {
-        width: 90px;
-        font-size: 11px;
-        padding: 0px;
-        color: #000;
-    }
-
-    .unread-badge {
-        position: absolute;
-        bottom: 0px;
-        right: -5px;
-        background-color: red;
-        color: white;
-        border-radius: 50%;
-        width: 13px;
-        height: 13px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 13px;
-        font-weight: bold;
-    }
-}
-
-.dialog-header {
-    display: flex;
-    justify-content: space-between;
-}
-
-.search-tips {
-    font-size: x-large;
 }
 </style>
