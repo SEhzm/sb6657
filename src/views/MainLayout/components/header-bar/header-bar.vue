@@ -86,9 +86,9 @@
 
                 <userHome class="icon-img"></userHome>
                 <!-- <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button> -->
-                <el-button class="GuangGaoHead" plain @click="openAd">
+                <!-- <el-button class="GuangGaoHead" plain @click="openAd">
                     <span>奇缘电竞(便宜靠谱)</span>
-                </el-button>
+                </el-button> -->
 
             </div>
             <!-- <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
