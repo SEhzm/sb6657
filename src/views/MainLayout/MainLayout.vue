@@ -33,7 +33,7 @@
     <a href="https://github.com/SEhzm/sb6657/blob/master/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97.md" target="_blank"><span
             class="version">版本: {{ sbVersion }}</span></a>
     <div class="GuangGaoWei">
-        <!-- <img style="width: 220px;height: 105px;" src="https://pic1.imgdb.cn/item/6872766b58cb8da5c8a581f0.png" alt=""> -->
+        <img style="width: 220px;height: 105px;" src="https://pic1.imgdb.cn/item/6872766b58cb8da5c8a581f0.png" alt="">
         <span style="display: flex;font-size:large;color: white;">广告位招租</span>
     </div>
     <div class="GuiBin">当前直播间贵宾数:{{ OniValue }}</div>

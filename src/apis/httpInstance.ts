@@ -5,12 +5,12 @@ import { ElMessageBox, ElMessage, ElNotification } from 'element-plus'
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const httpInstance = axios.create({
-     baseURL: SERVER_ADDRESS,
+    baseURL: SERVER_ADDRESS,
     // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
 
-export const sbVersion = '25.07.07';
+export const sbVersion = '25.07.23';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 
