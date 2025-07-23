@@ -418,6 +418,7 @@ function openAd() {
     .header {
         background-color: #fff;
         border-bottom: 1px solid #ddd;
+        position: static;
 
         .header-content {
             padding-top: 6px;
