@@ -61,8 +61,7 @@ export const CommunityNorms = `
     </ul>
 
     <div class="footer">
-      <p>本政策解释权归sb6657.cn所有</p>
       <p>官方邮箱：he20020928@foxmail.com</p>
-      <p>2025.3.19</p>
+      <p>2025.7.23</p>
     </div>
 `;
