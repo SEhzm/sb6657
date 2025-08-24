@@ -58,9 +58,10 @@
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
 
-                <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
-                    @click="supportMeDialog = true" />
-
+                 <el-tooltip v-model:visible="supportVisible" content="如果你喜欢这个网站，可以点我进行赞赏或GitHub点个star~" placement="bottom" effect="light">
+                    <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
+                        @click="supportMeDialog = true" />
+                </el-tooltip>
                 <el-dropdown trigger="hover">
                     <div class="user-message">
                         <div class="message-icon">
@@ -152,6 +153,7 @@ const supportMeDialog = ref(false);
 const showHotMeme24h = ref(false);
 const hotMeme24h = ref<Meme[]>([]);
 const hotMeme24hLoading = ref(true);
+const supportVisible = ref(true);
 async function refreshHotMeme24h() {
     const memeArr = await getHotMeme24h();
     if (!memeArr) return;
@@ -255,6 +257,9 @@ onMounted(() => {
             supportMeDialog.value = true;
         }, 2 * 60 * 60 * 1000); // 2h
     }, 60 * 60 * 1000); // 1h  60 * 60 * 1000
+    setTimeout(() => {
+    supportVisible.value = false;
+  }, 5000);
 });
 //上传按钮
 const complaintButton = () => {
