@@ -1,22 +1,8 @@
 import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { MemeCategory } from '@/constants/backend';
-interface hotMeme_res {
-    tags: string;
-    barrage: string;
-    barrageId: number;
-    cnt: number;
-    hotDateTime: null;
-    id: null;
-    tableName: string;
-    likes: number;
-    submitTime: string;
-}
-interface getHotMeme_res {
-    code: number;
-    msg: string;
-    data: hotMeme_res[];
-}
+import type { getHotMeme_res, searchMeme_res, getMemeList_res, getData, getMemeTags } from '@/types/meme';
+
 async function getHotMeme(url: string, tips: string) {
     try {
         const res: getHotMeme_res = await httpInstance.get(url);
@@ -28,10 +14,9 @@ async function getHotMeme(url: string, tips: string) {
             return {
                 tags: item.tags,
                 content: item.barrage,
-                category: item.tableName,
                 id: `${item.barrageId}`,
                 copyCount: item.cnt,
-                likes: item.likes,
+                submitTime: item.submitTime,
             };
         });
         return memeArr;
@@ -47,26 +32,16 @@ export function getHotMeme7d() {
     return getHotMeme(API.GET_HOT_MEME_7D, '七天热门');
 }
 
-interface searchMeme_data {
-    tags: string;
-    barrage: string;
-    cnt: string;
-    id: string;
-    likes: string;
-    submitTime: string;
-}
-interface searchMeme_res {
-    code: number;
-    data: searchMeme_data[];
-    msg: string;
-}
-export async function searchMeme(searchKey: string) {
-    console.log(`搜索词: ${searchKey}`);
-    if(searchKey==null || searchKey==''){
+// submitTime格式是yyyy-mm-dd
+export async function searchMeme(searchKey: string, tags?: string[], submitTime?: [string, string]) {
+    console.log(`搜索词: ${searchKey}, 标签: ${tags}, 投稿时间: ${submitTime}`);
+    if (searchKey == null || searchKey == '') {
         return false;
     }
     try {
         const res: searchMeme_res = await httpInstance.post(API.SEARCH_MEME, {
+            tags: tags?.join(',') || '',
+            submitTime: submitTime || [],
             barrage: searchKey,
         });
         if (res.data.length === 0) {
@@ -77,10 +52,8 @@ export async function searchMeme(searchKey: string) {
             return {
                 tags: item.tags,
                 content: item.barrage,
-                category: 'allbarrage', // 由于目前搜索不返分类，所以分类写死成所有
-                id: item.id,
-                copyCount: +item.cnt,
-                likes: +item.likes,
+                id: `${item.id}`,
+                copyCount: Number(item.cnt),
                 submitTime: item.submitTime,
             };
         });
@@ -91,39 +64,6 @@ export async function searchMeme(searchKey: string) {
     }
 }
 
-interface getMemeList_meme {
-    tags: string;
-    id: string;
-    barrage: string;
-    cnt: string;
-    likes: string;
-    submitTime: string;
-}
-interface getMemeList_data {
-    total: number;
-    list: getMemeList_meme[];
-    pageNum: number;
-    pageSize: number;
-    size: number;
-    startRow: number;
-    endRow: number;
-    pages: number;
-    prePage: number;
-    nextPage: number;
-    isFirstPage: boolean;
-    isLastPage: boolean;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
-    navigatePages: number;
-    navigatepageNums: number[];
-    navigateFirstPage: number;
-    navigateLastPage: number;
-}
-interface getMemeList_res {
-    code: number;
-    msg: string;
-    data: getMemeList_data;
-}
 export async function getMemeList(category: string, pageIndex: number, pageSize: number, tags?: string) {
     console.log(`请求烂梗分类: ${category}, 页数: ${pageIndex}, 每页烂梗数: ${pageSize}`);
     try {
@@ -160,4 +100,12 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
         console.error('请求烂梗列表失败', err);
         return false;
     }
+}
+
+export async function getMemeTags() {
+    const res: getData<getMemeTags[]> = await httpInstance.get(API.GET_MEME_TAGS);
+    if (res.code !== 200) {
+        throw new Error(res.msg);
+    }
+    return res.data;
 }

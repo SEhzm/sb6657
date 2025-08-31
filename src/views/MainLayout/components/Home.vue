@@ -463,7 +463,6 @@ const disabledDate = (time) => {
 //搜索
 const queryBarrage = () => {
     queryLoading.value = true;
-    // console.log(submitTime.value)
     if (searchQuery == null || searchQuery.value == "") {
         emptyText.value = "请输入搜索词..."
     }
@@ -521,7 +520,6 @@ const copyText = (row) => {
     // 检查鼠标位置是否变化
     if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
         mousePositionCnt++;
-        console.log(mousePositionCnt)
         if (mousePositionCnt > 4) {
             ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
                 confirmButtonText: '好吧，我错了',
@@ -659,7 +657,7 @@ onMounted(() => {
     margin-bottom: 10px;
 }
 
-::v-deep .preset-tags .el-tag__close {
+:deep(.preset-tags .el-tag__close) {
     font-size: 30px;
     transform: rotate(45deg);
 }
@@ -752,7 +750,7 @@ onMounted(() => {
         font-size: 20px;
         cursor: pointer;
 
-        ::v-deep(.el-table__header-wrapper) {
+        :deep(.el-table__header-wrapper) {
             font-size: 14px;
             white-space: normal !important;
         }

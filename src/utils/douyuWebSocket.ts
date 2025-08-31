@@ -268,9 +268,4 @@ function showNotification() {
     };
 }
 
-// 启动连接
-const socket = ref()
-onMounted(() => {
-    socket.value = new DouyuWebSocket(6979222, handleDanmu);
-});
 export default DouyuWebSocket

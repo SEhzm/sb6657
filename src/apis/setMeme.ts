@@ -9,7 +9,7 @@ interface copyCountPlus1_res {
 }
 export async function copyCountPlus1(category: string, memeId: string, pageNum?: number, PageSize?: number, sortOrder?: string) {
     try {
-        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_COPY_COUNT+`/${memeId}`);
+        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_COPY_COUNT + `/${memeId}`);
         console.log('弹幕复制次数+1成功', res);
         return true;
     } catch (err: any) {
@@ -17,9 +17,9 @@ export async function copyCountPlus1(category: string, memeId: string, pageNum?:
         return false;
     }
 }
-export async function postCopy(memeId: string,category?: string,  pageNum?: number, PageSize?: number, sortOrder?: string) {
+export async function postCopy(memeId: string, category?: string, pageNum?: number, PageSize?: number, sortOrder?: string) {
     try {
-        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_COPY_COUNT+`/${memeId}`);
+        const res: copyCountPlus1_res = await httpInstance.get(API.INCREASE_COPY_COUNT + `/${memeId}`);
         console.log('弹幕复制次数+1成功', res);
         return true;
     } catch (err: any) {
@@ -56,8 +56,7 @@ export async function submitMeme(category: string, meme: string) {
                 type: 'error',
             });
             return false;
-        }
-        else if(res.code !== 200) {
+        } else if (res.code !== 200) {
             console.log('烂梗投稿失败');
             return false;
         }

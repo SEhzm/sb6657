@@ -348,7 +348,6 @@ const copyText = (row) => {
     // 检查鼠标位置是否变化
     if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
         mousePositionCnt++;
-        console.log(mousePositionCnt)
         if (mousePositionCnt > 4) {
             ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
                 confirmButtonText: '好吧，我错了',
@@ -425,7 +424,7 @@ const copyText = (row) => {
 
 @media(min-width:601px) {
 
-    ::v-deep .el-rate__icon {
+    :deep(.el-rate__icon) {
         font-size: 35px;
     }
 
@@ -468,15 +467,15 @@ const copyText = (row) => {
 }
 
 @media(max-width: 600px) {
-    ::v-deep .tall {
+    :deep(.tall) {
         width: 90vw;
     }
 
-    ::v-deep .el-rate__icon {
+    :deep(.el-rate__icon) {
         font-size: 30px;
     }
 
-    ::v-deep .custom-dialog {
+    :deep(.custom-dialog) {
         z-index: 100;
         width: 90%;
         /* 在较小的屏幕上使用百分比宽度 */

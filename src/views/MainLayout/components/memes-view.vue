@@ -369,7 +369,7 @@ const formatSubmitTime = (timeString: string): string => {
     margin-bottom: 10px;
 }
 
-::v-deep .preset-tags .el-tag__close {
+:deep(.preset-tags .el-tag__close) {
     font-size: 30px;
     transform: rotate(45deg);
 }

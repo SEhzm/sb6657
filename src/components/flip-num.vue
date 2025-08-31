@@ -8,7 +8,7 @@
     </span>
 </template>
 <script setup lang="ts">
-import { watch, ref } from 'vue';
+import { watch, ref, nextTick } from 'vue';
 import { sleep } from '@/utils/common';
 
 const props = defineProps<{
@@ -32,6 +32,8 @@ watch(
             return;
         }
         flipping = true;
+        // 防止浏览器合并渲染跳过滚动动画，强制渲染带end flex-start类名的那一帧
+        await nextTick();
         // 这么写是因为对齐问题。宽度占位用的新值，所以在新值比旧值小的时候要靠左对齐，不然动画很诡异
         flipState.value = newVaL < oldVal ? 'end flex-start' : 'end';
         await sleep(500);

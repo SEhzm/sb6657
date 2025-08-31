@@ -1,6 +1,8 @@
 <template>
     <RouterView />
-    <StarrySky class="starrySky" />
+    <span class="starrySky">
+        <StarrySky />
+    </span>
 </template>
 
 <script setup lang="ts">

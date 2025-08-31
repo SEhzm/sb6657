@@ -8,10 +8,10 @@
         </div>
         <template #dropdown>
             <el-dropdown-menu>
-                <router-link divided to="/me-post">
+                <router-link to="/me-post">
                     <el-dropdown-item>我的帖子</el-dropdown-item>
                 </router-link>
-                <router-link divided to="/me-memes">
+                <router-link to="/me-memes">
                     <el-dropdown-item>我的投稿</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item command="login" divided v-show="!isRelogin">
@@ -29,18 +29,18 @@
             </el-dropdown-menu>
         </template>
     </el-dropdown>
-    <el-dialog align-center="true" v-model="loginView" draggable="true" :width=dialogWidth :modal="false"
-        append-to-body="true">
+    <el-dialog :align-center="true" v-model="loginView" :draggable="true" :width=dialogWidth :modal="false"
+        :append-to-body="true">
         <login v-show="loginView" :onRegister="handleRegister" :closeDialog="closeDialog"></login>
     </el-dialog>
-    <el-dialog align-center="true" v-model="registerView" draggable="true" :width=dialogWidth :modal="false"
-        append-to-body="true">
+    <el-dialog :align-center="true" v-model="registerView" :draggable="true" :width=dialogWidth :modal="false"
+        :append-to-body="true">
         <register v-show="registerView"></register>
     </el-dialog>
 
     <el-dialog v-model="ysCommunityNorms" title="社区规范与隐私政策"
         style="position: fixed;top: 0; left: 0; right: 0; bottom: 0; margin: auto;" :width=dialogWidth :modal="false"
-        append-to-body="true">
+        :append-to-body="true">
         <div v-html="CommunityNorms"></div>
     </el-dialog>
 </template>

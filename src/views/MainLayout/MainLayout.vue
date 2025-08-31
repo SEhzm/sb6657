@@ -49,10 +49,15 @@ import { useGuiBinStore } from '@/stores/GuiBinStore';
 import DouyuWebSocket from '@/utils/douyuWebSocket';
 import { computed, onMounted, ref } from 'vue';
 import { handleDanmu } from '@/utils/douyuWebSocket';
+import { useMemeTagsStore } from '@/stores/memeTags';
+import { ElNotification } from 'element-plus';
+
 const route = useRoute();
 const router = useRouter();
 
 const guiBinStore = useGuiBinStore();
+const memeTagsStore = useMemeTagsStore();
+memeTagsStore.setMemeTags()
 
 const OniValue = computed(() => guiBinStore.Oni);
 

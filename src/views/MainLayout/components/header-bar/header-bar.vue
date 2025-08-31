@@ -3,11 +3,11 @@
         <div class="header-content">
             <div class="logo-link">
                 <a href="https://www.douyu.com/6657" target="_blank">
-                    <img src="/public/favicon.ico" alt="大🐖头" class="logo-img" />
+                    <img src="/favicon.ico" alt="大🐖头" class="logo-img" />
                     <p class="header-title">斗鱼玩机器烂梗库</p>
                 </a>
                 <div class="elinput-mobile">
-                    <el-input v-model="searchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
+                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="elinput">
-                    <el-input v-model="searchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
+                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -84,8 +84,9 @@
                     </template>
                 </el-dropdown>
 
-
-                <userHome class="icon-img"></userHome>
+                <div class="icon-img">
+                    <userHome />
+                </div>
                 <!-- <el-button class="GuangGaoHead" plain @click="openAd"><span>玩小将自己的<br>陪玩店🏪</span></el-button> -->
                 <!-- <el-button class="GuangGaoHead" plain @click="openAd">
                     <span>奇缘电竞(便宜靠谱)</span>
@@ -123,10 +124,7 @@
             </div>
         </memeDialog>
         <!-- 搜索结果框 -->
-        <memeDialog v-model="showSearchDialog" :memeArr="searchedMeme" :loading="searchDialogLoading"
-            :emptyText="searchEmptyText" @refresh="handleSearchMeme">
-            <div class="search-tips">烂梗搜索结果:</div>
-        </memeDialog>
+        <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
         <!-- 支持我弹出框 -->
         <el-dialog v-model="supportMeDialog" title="谢谢你" :width="lightWidth">
             <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width='100%' />
@@ -139,6 +137,7 @@ import { ref, computed, onMounted } from 'vue';
 import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
 import { Search } from '@element-plus/icons-vue';
 import memeDialog from './components/meme-dialog.vue';
+import searchDialog from '@/components/header-bar/search-dialog.vue';
 import userHome from './components/userHome.vue';
 import { useIsMobile } from '@/utils/common';
 import { useRoute } from 'vue-router';
@@ -196,29 +195,14 @@ setInterval(() => {
 }, 5000);
 
 // 搜索
+const enteringSearchKey = ref('');
 const searchKey = ref('');
 const showSearchDialog = ref(false);
-const searchedMeme = ref<Meme[]>([]);
-const searchDialogLoading = ref(true);
-const searchEmptyText = ref(loadingTips);
-async function handleSearchMeme() {
-    searchDialogLoading.value = true;
+function handleSearchMeme() {
     showSearchDialog.value = true;
-    searchEmptyText.value = loadingTips;
-    const res = await searchMeme(searchKey.value);
-    searchDialogLoading.value = false;
-    if (!res) {
-        searchedMeme.value = [];
-        searchEmptyText.value = "请输入搜索词..."
-        return;
-    }
-    if (res === 'notfound') {
-        searchedMeme.value = [];
-        searchEmptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
-        return;
-    }
-    searchedMeme.value = res;
+    searchKey.value = enteringSearchKey.value;
 }
+
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
 const lightWidth = computed(() => isMobile.value ? '100%' : '35%');
 const adWidth = computed(() => isMobile.value ? '90%' : '35%');
@@ -411,10 +395,6 @@ function openAd() {
     .dialog-header {
         display: flex;
         justify-content: space-between;
-    }
-
-    .search-tips {
-        font-size: x-large;
     }
 }
 

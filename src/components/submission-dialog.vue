@@ -77,7 +77,7 @@
                     </div>
                 </div>
                 <div class="button-group">
-                    <el-button type="plain" @click="dialogFormVisible = false">关闭</el-button>
+                    <el-button plain @click="dialogFormVisible = false">关闭</el-button>
                     <el-button type="primary" @click="saveBarrage">投稿</el-button>
                 </div>
             </div>
@@ -124,7 +124,6 @@ function getMatch() {
         } else {
             matchData.value = null; // 确保 matchData 为 null 当没有正在进行的赛事时
         }
-        console.log(matchData);
     });
 }
 getMatch();
@@ -213,7 +212,7 @@ h3 {
     margin-bottom: 10px;
 }
 
-::v-deep .preset-tags .el-tag__close {
+:deep(.preset-tags .el-tag__close) {
     font-size: 30px;
     transform: rotate(45deg);
 }

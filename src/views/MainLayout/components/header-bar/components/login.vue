@@ -31,15 +31,15 @@
         </el-form-item>
       </el-form>
     </div>
-    <el-dialog align-center="true" v-model="resetPasswordView" draggable="true" :width="dialogWidth" :modal="false"
-      append-to-body="true">
+    <el-dialog :align-center="true" v-model="resetPasswordView" :draggable="true" :width="dialogWidth" :modal="false"
+      :append-to-body="true">
       <reset-password v-show="resetPasswordView" :closeDialog="closeResetPassword"></reset-password>
     </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref, defineProps } from "vue"
+import { reactive, ref } from "vue"
 import httpInstance from "@/apis/httpInstance";
 import { ElMessage } from "element-plus";
 import Cookies from "js-cookie";

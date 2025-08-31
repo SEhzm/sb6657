@@ -61,7 +61,7 @@ import { ref } from 'vue';
  * 2.v-model，控制提示框的展示与否。注意这是个v-model，父组件要用v-model绑定。vue3.4新增的语法
  * 3.memeArr，烂梗数组
  * 4.loading，是否加载中
- * 5.emptyText，加载中或者搜索为空时候的提示词
+ * 5.emptyText，加载中或者为空时候的提示词
  * 6.refresh，刷新函数，其实就是获取此烂梗的函数，这里复制完调用一次，刷新+1结果
  */
 const showDialog = defineModel();
