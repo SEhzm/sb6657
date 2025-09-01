@@ -49,9 +49,11 @@
                                             style="margin-right: 8px;">
                                             <el-tag round effect="dark"
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                <div class="tag-icon-wrapper">
+                                                    <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                        style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                </div>
                                             </el-tag>
                                         </div>
                                         <span
@@ -107,9 +109,11 @@
                             <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                                 @close="removeQueryTagFromPreset(tag)" @click="removeQueryTagFromPreset(tag)"
                                 style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                                <img v-if="tag.iconUrl" :src="tag.iconUrl"
-                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                                <div class="tag-icon-wrapper">
+                                    <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                                        style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                    <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                                </div>
                             </el-tag>
                         </div>
                     </div>
@@ -132,9 +136,11 @@
                                             style="margin-right: 8px;">
                                             <el-tag round effect="dark"
                                                 :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                <div class="tag-icon-wrapper">
+                                                    <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                        style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                                    <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                </div>
                                             </el-tag>
                                         </div>
                                         <span
@@ -184,9 +190,11 @@
                         <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                             @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
                             style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            <img v-if="tag.iconUrl" :src="tag.iconUrl"
-                                style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            <div class="tag-icon-wrapper">
+                                <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                                    style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            </div>
                         </el-tag>
                     </div>
                 </div>
@@ -940,5 +948,11 @@ onMounted(() => {
         justify-content: flex-end;
     }
 
+}
+.tag-icon-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 </style>

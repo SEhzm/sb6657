@@ -30,8 +30,10 @@
                         <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
                             @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
                             style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 25px; object-fit: cover;vertical-align: middle;" />
-                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            <div class="tag-icon-wrapper">
+                                <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 25px; object-fit: cover;vertical-align: middle;" />
+                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                            </div>
                         </el-tag>
                     </div>
                 </div>
@@ -51,8 +53,10 @@
                 <div class="added-tags">
                     <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
                         @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
-                        <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                        <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                        <div class="tag-icon-wrapper">
+                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                        </div>
                     </el-tag>
                 </div>
             </div>
@@ -83,9 +87,10 @@
                                     <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
                                         style="margin-right: 8px;">
                                         <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                            <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                style=" width: 16px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                                            <div class="tag-icon-wrapper">
+                                                <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 22px; object-fit: cover;vertical-align: middle;" />
                                                 <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                            </div>
                                         </el-tag>
                                     </div>
                                     <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</span>
@@ -536,5 +541,12 @@ const formatSubmitTime = (timeString: string): string => {
     .main-table {
         font-size: medium;
     }
+}
+
+.tag-icon-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 </style>

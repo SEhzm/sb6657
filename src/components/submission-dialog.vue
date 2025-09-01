@@ -27,9 +27,11 @@
                 <el-tag round v-for="(tag, index) in presetTags" :key="index" closable @close="removeTagFromPreset(tag)"
                     @click="removeTagFromPreset(tag)" style=" padding:15px; cursor: pointer;font-size: 16px;"
                     type="primary">
-                    <img v-if="tag.iconUrl" :src="tag.iconUrl"
-                        style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                    <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                    <div class="tag-icon-wrapper">
+                        <img v-if="tag.iconUrl" :src="tag.iconUrl"
+                            style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
+                        <span style="vertical-align: middle;"> {{ tag.label }}</span>
+                    </div>
                 </el-tag>
             </div>
         </div>
@@ -351,5 +353,11 @@ h3 {
         width: 95% !important;
         margin: 10px auto !important;
     }
+}
+.tag-icon-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 </style>

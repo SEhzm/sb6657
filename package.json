@@ -1,6 +1,6 @@
 {
   "name": "vue",
-  "version": "25.08.31",
+  "version": "25.09.01",
   "private": true,
   "scripts": {
     "dev": "vite --host 0.0.0.0",
