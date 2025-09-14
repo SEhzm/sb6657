@@ -7,7 +7,7 @@
                     <p class="header-title">斗鱼玩机器烂梗库</p>
                 </a>
                 <div class="elinput-mobile">
-                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
+                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="elinput">
-                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keydown.enter="handleSearchMeme">
+                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -58,7 +58,7 @@
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
 
-                 <el-tooltip v-model:visible="supportVisible" content="如果你喜欢这个网站，可以点我进行赞赏或GitHub点个star~" placement="bottom" effect="light">
+                <el-tooltip v-model:visible="supportVisible" content="如果你喜欢这个网站，可以点我进行赞赏或GitHub点个star~" placement="bottom" effect="light">
                     <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
                         @click="supportMeDialog = true" />
                 </el-tooltip>
@@ -143,6 +143,8 @@ import { useIsMobile } from '@/utils/common';
 import { useRoute } from 'vue-router';
 import httpInstance from '@/apis/httpInstance';
 import { isRelogin } from '@/apis/httpInstance';
+import { ElMessage } from 'element-plus';
+
 const isMobile = useIsMobile();
 const route = useRoute();
 
@@ -199,8 +201,18 @@ const enteringSearchKey = ref('');
 const searchKey = ref('');
 const showSearchDialog = ref(false);
 function handleSearchMeme() {
+    if (enteringSearchKey.value.trim() === '') {
+        ElMessage.warning('请输入搜索内容');
+        return;
+    }
     showSearchDialog.value = true;
     searchKey.value = enteringSearchKey.value;
+}
+
+function handleSearchMemeOnEnter(event: KeyboardEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    handleSearchMeme();
 }
 
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';

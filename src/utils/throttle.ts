@@ -23,3 +23,25 @@ export function throttle<CB extends (...args: any[]) => any, CBTHEN extends () =
         }
     };
 }
+
+/**
+ * 防抖函数，在指定时间内多次调用只执行最后一次
+ * @param cb 回调函数
+ * @param delay 防抖时间，传入毫秒
+ * @returns 返回防抖处理过的函数
+ */
+export function debounce<CB extends (...args: any[]) => any>(
+    cb: CB,
+    delay: number
+): (...args: Parameters<CB>) => void {
+    let timer: ReturnType<typeof setTimeout> | null = null;
+    return (...args: Parameters<CB>): void => {
+        if (timer) {
+            clearTimeout(timer);
+        }
+        timer = setTimeout(() => {
+            cb(...args);
+            timer = null;
+        }, delay);
+    };
+}

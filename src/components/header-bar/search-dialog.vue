@@ -6,209 +6,586 @@
                 <span class="search-tips">烂梗搜索结果:</span>
             </template>
 
+            <!-- 高级筛选 -->
+            <div class="advanced-search">
+                <div class="title">
+                    <div class="title-left">
+                        <span class="title-text">高级筛选</span>
+                        <el-button text @click="toggleAdvancedSearch" class="collapse-btn">
+                            <span class="collapse-text">{{ isAdvancedSearchCollapsed ? '展开' : '收起' }}</span>
+                            <el-icon>
+                                <component :is="isAdvancedSearchCollapsed ? 'ArrowDown' : 'ArrowUp'" />
+                            </el-icon>
+                        </el-button>
+                    </div>
+                    <el-button text type="danger" @click="clearAdvancedSearch">清空已选高级搜索</el-button>
+                </div>
+                <transition name="collapse">
+                    <div v-show="!isAdvancedSearchCollapsed" class="collapsible-content">
+                        <div class="time-container">
+                            <el-date-picker class="time-picker" v-model="submitTime" type="daterange"
+                                range-separator="到" value-format="YYYY-MM-DD" start-placeholder="起始"
+                                end-placeholder="结束" :disabled-date="disabledDate" />
+                        </div>
+                        <div class="tags-container">
+                            <div class="selected-tags">
+                                <div class="tags-title">已选标签:</div>
+                                <div class="tags" v-if="selectedTags.length > 0">
+                                    <el-tag class="tag1" v-for="tag in selectedTags" :key="tag.dictValue" round
+                                        @click="removeTag(tag)">
+                                        <div class="tag-icon-wrapper">
+                                            <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
+                                            <span class="tag-label">{{ tag.dictLabel }}</span>
+                                            <el-icon>
+                                                <Close />
+                                            </el-icon>
+                                        </div>
+                                    </el-tag>
+                                </div>
+                                <div v-if="selectedTags.length === 0" class="empty-tips">
+                                    暂无已选标签(点击下面标签进行筛选)
+                                </div>
+                            </div>
+                            <div class="all-tags">
+                                <div class="tags-title">所有标签:</div>
+                                <div class="tags">
+                                    <el-tag class="tag1" v-for="tag in allTags" :key="tag.dictValue" round
+                                        @click="addTag(tag)">
+                                        <div class="tag-icon-wrapper">
+                                            <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
+                                            <span class="tag-label">{{ tag.dictLabel }}</span>
+                                            <el-icon>
+                                                <Plus />
+                                            </el-icon>
+                                        </div>
+                                    </el-tag>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </transition>
+            </div>
+
             <!-- Table -->
-            <el-table :data="memeArr" stripe :empty-text="emptyText" cell-class-name="hover-pointer">
+            <el-table :data="highlightedMemeArr" stripe cell-class-name="hover-pointer" row-key="id" :lazy="true">
+                <!-- 自定义空状态插槽 -->
+                <template #empty>
+                    <div class="empty-state">
+                        <el-icon v-if="emptyText !== '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！'" class="loading-icon">
+                            <Loading />
+                        </el-icon>
+                        <span>{{ emptyText }}</span>
+                    </div>
+                </template>
                 <!-- 序号列 -->
-                <el-table-column align="center" width="60">
+                <el-table-column align="center" width="70">
                     <template #default="scope">
-                        <el-tag round effect="plain">{{ scope.$index + 1 }}</el-tag>
+                        <div class="row-number" v-memo="[scope.$index]">{{ scope.row.id }}</div>
                     </template>
                 </el-table-column>
 
                 <!-- 内容列 -->
                 <el-table-column prop="content">
                     <template #default="scope">
-                        <el-popover placement="top" :width="'auto'" trigger="hover">
-                            <template #reference>
-                                <div class="barrage-text" v-html="hightLightData(scope.row.content, props.searchKey)">
-                                </div>
-                            </template>
-                            <template #default>
-                                <div class="popover-details">
-                                    <div class="tag-list">
-                                        <div v-for="item in getDictLabel(scope.row.tags)" :key="item.label">
-                                            <el-tag round effect="dark" class="tag-item">
-                                                <div class="tag-icon-wrapper">
-                                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
-                                                    <span class="tag-label">{{ item.label }}</span>
-                                                </div>
-                                            </el-tag>
+                        <div v-memo="[scope.row.id, scope.row.highlightedContent, props.searchKey]">
+                            <el-popover placement="top" :width="'auto'" trigger="hover">
+                                <template #reference>
+                                    <div class="barrage-text"
+                                        v-html="scope.row.highlightedContent || scope.row.content">
+                                    </div>
+                                </template>
+                                <template #default>
+                                    <div class="popover-details">
+                                        <div class="tag-list">
+                                            <div v-for="item in getDictLabel(scope.row.tags)" :key="item.label">
+                                                <el-tag round effect="dark" class="tag-item">
+                                                    <div class="tag-icon-wrapper">
+                                                        <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                                                        <span class="tag-label">{{ item.label }}</span>
+                                                    </div>
+                                                </el-tag>
+                                            </div>
+                                        </div>
+                                        <div class="submit-time">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}
                                         </div>
                                     </div>
-                                    <div class="submit-time">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</div>
-                                </div>
-                            </template>
-                        </el-popover>
+                                </template>
+                            </el-popover>
+                        </div>
                     </template>
                 </el-table-column>
 
                 <!-- 操作列 -->
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">
-                            复制 (<flip-num :num="scope.row.copyCount" />)
-                        </el-button>
+                        <div v-memo="[scope.row.id, scope.row.copyCount]">
+                            <el-button type="primary" class="copy-btn" @click.stop="handleCopyMeme(scope.row)">
+                                复制 (<flip-num :num="scope.row.copyCount" />)
+                            </el-button>
+                        </div>
                     </template>
                 </el-table-column>
             </el-table>
+
+            <!-- 分页组件 -->
+            <div class="pagination-container" v-if="total > 0">
+                <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="total"
+                    layout="total, prev, pager, next, jumper" :small="true" background />
+            </div>
         </el-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { throttle } from '@/utils/throttle';
+import { throttle, debounce } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import { searchMeme } from '@/apis/getMeme';
 import flipNum from '@/components/flip-num.vue';
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useMemeTagsStore } from '@/stores/memeTags';
+import type { getMemeTags as memeTag } from '@/types/meme';
+import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue'
 
-// --- Pinia Store ---
-// 使用 Pinia store 获取标签字典数据
-const memeTagsStore = useMemeTagsStore();
-// 使用 storeToRefs 来保证解构出的数据是响应式的，这是最佳实践
-const { memeTags: dictData } = storeToRefs(memeTagsStore);
+// ==================== 类型定义 ====================
+interface Meme {
+    id: string;
+    content: string;
+    tags: string;
+    submitTime: string;
+    copyCount: number;
+    highlightedContent?: string;
+}
 
-// --- Props & Model ---
+// ==================== Props & Model ====================
 const showDialog = defineModel<boolean>();
 const props = defineProps<{
     searchKey: string;
 }>();
 
-// --- Component State ---
+// ==================== Store ====================
+const memeTagsStore = useMemeTagsStore();
+const { memeTags } = storeToRefs(memeTagsStore);
+
+// ==================== 响应式数据 ====================
+// 搜索相关
 const memeArr = ref<Meme[]>([]);
 const loading = ref(false);
 const emptyText = ref('正在搜索中...坐和放宽...');
 
-// --- API Functions ---
+// 分页相关
+const currentPage = ref(1);
+const pageSize = ref(20);
+const total = ref(0);
+
+// 高级搜索相关
+const isAdvancedSearchCollapsed = ref(true);
+const allTags = ref<memeTag[]>([]);
+const selectedTags = ref<memeTag[]>([]);
+const submitTime = ref<[string, string] | []>([]);
+let tagLoaded = false;
+
+// ==================== 工具函数 ====================
 /**
- * 执行高级搜索请求，并更新表格数据
- * @param searchKey 搜索关键词
- * @param tags 标签数组 (可选)
- * @param submitTime 时间范围 (可选)
+ * 重置搜索状态
  */
-async function advancedSearch(searchKey: string, tags?: string[], submitTime?: [string, string]) {
-    const res = await searchMeme(searchKey, tags, submitTime);
-    if (!res || res === 'notfound') {
-        memeArr.value = []; // 清空数组以触发 empty-text
-        emptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
-    } else {
-        memeArr.value = res;
-    }
-}
-
-// --- Watchers ---
-// 监听外部传入的 searchKey 变化，自动触发搜索
-watch(
-    () => props.searchKey,
-    async (newVal) => {
-        if (newVal === null || newVal === '') return;
-        loading.value = true;
-        await advancedSearch(props.searchKey);
-        loading.value = false;
-    },
-    { immediate: true }
-); // immediate: true 可以在组件创建时立即执行一次
-
-// --- Event Handlers ---
-// 使用节流函数包装复制操作，防止2秒内重复触发
-const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-
-/**
- * 处理复制按钮点击事件
- * 1. 调用节流复制函数
- * 2. 如果复制成功，向后端发送请求使复制数+1
- * 3. 刷新当前搜索结果以显示最新的复制数
- */
-async function copyMeme_countPlus1(meme: Meme) {
-    const res = copyMeme(meme.content);
-    if (!res || res === 'limitedSuccess') return;
-
-    copySuccess();
-    const success = await copyCountPlus1('', meme.id);
-    if (success) {
-        // 成功后，重新搜索以刷新数据，而不是整个页面刷新
-        await advancedSearch(props.searchKey);
-    } else {
-        plus1Error();
-    }
-}
-
-// --- Utility Functions ---
-/**
- * [重点重构] 根据标签字符串（如 "1,2,3"）从 Pinia store 中查找并返回对应的标签对象数组
- * @param tags 逗号分隔的标签值字符串
- * @returns 包含 label 和 iconUrl 的对象数组
- */
-function getDictLabel(tags: string | null | undefined): { label: string; iconUrl: string }[] {
-    // 1. 边缘情况处理：如果 tags 为空或只包含空白，直接返回空数组
-    if (!tags || tags.trim() === '') {
-        return [];
-    }
-
-    // 2. 数据准备：将 "1, 2, 1" 这样的字符串处理成 ["1", "2"] 这样的唯一值数组
-    const tagArray = tags.split(','); // "1, 2, 1" -> ["1", " 2", " 1"]
-    const trimmedTags = tagArray.map((tag) => tag.trim()); // -> ["1", "2", "1"]
-    const uniqueTags = [...new Set(trimmedTags)]; // 使用 Set 去重 -> ["1", "2"]
-
-    // 3. 性能优化：如果字典数据还没加载好，先返回一个占位结构
-    if (!dictData.value) {
-        return uniqueTags.map((tag) => ({ label: tag, iconUrl: '' }));
-    }
-
-    // 4. 创建快速查找表：将数组 [ {dictValue: '1', ...}, ... ] 转换成 Map 结构
-    //    这样可以通过 key (dictValue) 快速找到对象，避免每次都遍历整个数组，性能更高。
-    const dictMap = new Map(dictData.value.map((item) => [String(item.dictValue).trim(), item]));
-
-    // 5. 查找并返回结果：遍历去重后的标签数组，从 Map 中查找对应的标签信息
-    return uniqueTags.map((tag) => {
-        const dictItem = dictMap.get(tag);
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '未知标签', iconUrl: '' }; // 给未找到的标签一个默认值
-    });
+function resetSearchState() {
+    memeArr.value = [];
+    currentPage.value = 1;
+    total.value = 0;
+    emptyText.value = '正在搜索中...坐和放宽...';
 }
 
 /**
- * 格式化 ISO 格式的时间字符串
- * @param timeString "2024-01-01T12:00:00.000Z"
- * @returns "2024-01-01 12:00:00"
+ * 重置高级搜索
+ */
+function resetAdvancedSearch() {
+    selectedTags.value = [];
+    allTags.value = [...memeTags.value];
+    submitTime.value = [];
+}
+
+/**
+ * 转义正则表达式特殊字符
+ */
+function escapeRegExp(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+/**
+ * 格式化时间字符串
  */
 function formatSubmitTime(timeString: string): string {
     if (!timeString) return '';
     return timeString.replace('T', ' ').split('.')[0];
 }
 
-// 转义特殊字符串正则
-function escapeRegExp(string: string) {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+/**
+ * 解析标签字符串为标签对象数组
+ */
+function getDictLabel(tags: string | null | undefined): { label: string; iconUrl: string }[] {
+    if (!tags || tags.trim() === '') return [];
+
+    const uniqueTags = [...new Set(tags.split(',').map(tag => tag.trim()))];
+
+    if (!memeTags.value) {
+        return uniqueTags.map(tag => ({ label: tag, iconUrl: '' }));
+    }
+
+    const dictMap = new Map(memeTags.value.map(item => [String(item.dictValue).trim(), item]));
+
+    return uniqueTags.map(tag => {
+        const dictItem = dictMap.get(tag);
+        return dictItem
+            ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl }
+            : { label: '未知标签', iconUrl: '' };
+    });
 }
-// 高亮搜索关键字
-function hightLightData(text: string, key: string) {
-    if (!text || !key) return '';
-    // 以搜索词做正则匹配，不区分大小写
-    const regex = new RegExp(escapeRegExp(key), 'gi');
-    // 把之前搜索完成后的数组，加上高亮
-    return text.replace(regex, (match) => `<span style="background-color: yellow">${match}</span>`);
+
+// ==================== 业务逻辑函数 ====================
+/**
+ * 执行搜索请求
+ */
+async function performSearch(searchKey: string, tags?: string[], timeRange?: [string, string] | []) {
+    const res = await searchMeme(searchKey, tags, timeRange);
+
+    if (!res || res === 'notfound') {
+        memeArr.value = [];
+        total.value = 0;
+        currentPage.value = 1;
+        emptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
+    } else {
+        memeArr.value = res as Meme[];
+        total.value = res.length;
+        currentPage.value = 1;
+    }
 }
+
+/**
+ * 处理复制操作
+ */
+async function handleCopyMeme(meme: Meme) {
+    const copyResult = copyMeme(meme.content);
+    if (!copyResult || copyResult === 'limitedSuccess') return;
+
+    copySuccess();
+    const success = await copyCountPlus1('', meme.id);
+
+    if (success) {
+        const targetIndex = memeArr.value.findIndex(item => item.id === meme.id);
+        if (targetIndex !== -1) {
+            memeArr.value[targetIndex].copyCount += 1;
+        }
+    } else {
+        plus1Error();
+    }
+}
+
+/**
+ * 标签操作
+ */
+function addTag(tag: memeTag) {
+    selectedTags.value.push(tag);
+    allTags.value = allTags.value.filter(t => t.dictValue !== tag.dictValue);
+}
+
+function removeTag(tag: memeTag) {
+    allTags.value.push(tag);
+    selectedTags.value = selectedTags.value.filter(t => t.dictValue !== tag.dictValue);
+}
+
+/**
+ * 切换高级搜索折叠状态
+ */
+function toggleAdvancedSearch() {
+    isAdvancedSearchCollapsed.value = !isAdvancedSearchCollapsed.value;
+}
+
+/**
+ * 清空高级搜索
+ */
+function clearAdvancedSearch() {
+    if (selectedTags.value.length === 0 && submitTime.value.length === 0) return;
+    resetAdvancedSearch();
+    resetSearchState();
+}
+
+/**
+ * 日期禁用规则
+ */
+const disabledDate = (time: Date) => {
+    return time.getTime() < new Date('2024-09-24').getTime();
+};
+
+// ==================== 防抖函数 ====================
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
+
+const debouncedSearch = debounce(async (searchKey: string) => {
+    if (!searchKey) return;
+    loading.value = true;
+    resetSearchState();
+    await performSearch(searchKey);
+    loading.value = false;
+}, 300);
+
+const debouncedAdvancedSearch = debounce(async (searchKey: string, tags?: string[], time?: [string, string] | []) => {
+    memeArr.value = [];
+    await performSearch(searchKey, tags, time);
+}, 300);
+
+// ==================== 计算属性 ====================
+const paginatedMemeArr = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return memeArr.value.slice(start, end);
+});
+
+const highlightedMemeArr = computed(() => {
+    if (!props.searchKey || !paginatedMemeArr.value.length) return paginatedMemeArr.value;
+
+    const regex = new RegExp(escapeRegExp(props.searchKey), 'gi');
+    return paginatedMemeArr.value.map(meme => ({
+        ...meme,
+        highlightedContent: meme.content.replace(regex, match =>
+            `<span style="background-color: yellow">${match}</span>`
+        )
+    }));
+});
+
+// ==================== 监听器 ====================
+// 监听对话框显示状态
+watch(showDialog, (newVal) => {
+    if (!newVal) {
+        resetSearchState();
+        resetAdvancedSearch();
+    }
+});
+
+// 监听搜索关键词变化
+watch(
+    () => props.searchKey,
+    (newVal) => debouncedSearch(newVal),
+    { immediate: true }
+);
+
+// 监听标签数据加载
+watch(memeTags, (newVal) => {
+    if (tagLoaded || newVal.length === 0) return;
+    tagLoaded = true;
+    allTags.value = [...newVal];
+});
+
+// 监听高级搜索条件变化
+watch(
+    [selectedTags, submitTime],
+    ([tags, time]) => {
+        const tagArr = tags.map(t => t.dictValue);
+        debouncedAdvancedSearch(props.searchKey, tagArr, time);
+    },
+    { deep: true }
+);
 </script>
 
 <style scoped lang="scss">
-.search-tips {
-    font-size: x-large;
-}
-
+// 根容器
 :deep(.dialog-main) {
     width: 95%;
     max-width: 1200px;
+
+    // Header 部分
+    .search-tips {
+        font-size: x-large;
+    }
+
+    // 高级筛选部分
+    .advanced-search {
+        border: 1px solid #e4e7ed;
+        padding: 0 6px;
+        background-color: #eee;
+
+        .title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+
+            .title-left {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+
+                .title-text {
+                    font-weight: 600;
+                    font-size: 16px;
+                    color: #303133;
+                }
+
+                .collapse-btn {
+                    padding: 4px 8px;
+                    min-height: auto;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                    color: #409eff;
+
+                    .collapse-text {
+                        font-size: 13px;
+                    }
+
+                    .el-icon {
+                        font-size: 14px;
+                    }
+
+                    &:hover {
+                        background-color: #ecf5ff;
+                    }
+                }
+            }
+        }
+
+        // 折叠动画
+        .collapse-enter-active,
+        .collapse-leave-active {
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .collapse-enter-from,
+        .collapse-leave-to {
+            max-height: 0;
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+
+        .collapse-enter-to,
+        .collapse-leave-from {
+            max-height: 500px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .collapsible-content {
+            overflow: hidden;
+
+            .time-container {
+                .time-picker {
+                    // 时间选择器样式可以在这里添加
+                }
+            }
+
+            .tags-container {
+
+                .selected-tags,
+                .all-tags {
+                    margin-bottom: 16px;
+
+                    .tags-title {
+                        font-weight: 500;
+                        margin-bottom: 10px;
+                        color: #606266;
+                        font-size: 14px;
+                    }
+
+                    .tags {
+                        display: flex;
+                        flex-wrap: wrap;
+                        gap: 8px;
+
+                        .tag1 {
+                            margin: 0;
+                            cursor: pointer;
+                            border: 1px solid #dcdfe6;
+                            background-color: #f5f7fa;
+
+                            &:hover {
+                                border-color: #409eff;
+                                background-color: #ecf5ff;
+                            }
+
+                            .tag-icon-wrapper {
+                                display: flex;
+                                align-items: center;
+                                gap: 4px;
+
+                                .tag-icon {
+                                    width: 14px;
+                                    height: 14px;
+                                    object-fit: cover;
+                                }
+
+                                .tag-label {
+                                    font-size: 13px;
+                                }
+                            }
+                        }
+                    }
+
+                    .empty-tips {
+                        color: #909399;
+                        font-size: 13px;
+                        font-style: italic;
+                    }
+                }
+            }
+        }
+    }
+
+    // Table 部分
+    .el-table {
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            color: #909399;
+
+            .loading-icon {
+                font-size: 24px;
+                animation: rotate 1s linear infinite;
+            }
+
+            @keyframes rotate {
+                from {
+                    transform: rotate(0deg);
+                }
+
+                to {
+                    transform: rotate(360deg);
+                }
+            }
+        }
+
+        .row-number {
+            font-size: 20px;
+            font-weight: 600;
+            color: #888888;
+            line-height: 1;
+            font-style: italic;
+        }
+
+        .barrage-text {
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .copy-btn {
+            width: 90px;
+        }
+    }
+
+    // 分页组件
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 16px;
+        padding: 0 16px;
+    }
 }
 
+// Table 全局样式
 :deep(.hover-pointer .cell) {
-    cursor: pointer;
-}
-
-.barrage-text {
-    width: 100%;
     cursor: pointer;
 }
 
@@ -217,45 +594,42 @@ function hightLightData(text: string, key: string) {
     display: flex;
     flex-direction: column;
     gap: 10px;
-}
 
-.tag-list {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap; // 自动换行
-    gap: 8px; // 标签之间的间距
-}
+    .tag-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
 
-.tag-item {
-    font-size: 16px;
-    cursor: pointer;
-}
+        .tag-item {
+            font-size: 16px;
+            cursor: pointer;
 
-.tag-icon-wrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
+            .tag-icon-wrapper {
+                height: 100%;
+                width: 100%;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
 
-.tag-icon {
-    width: 16px;
-    height: 16px;
-    object-fit: cover;
-    vertical-align: middle;
-}
+                .tag-icon {
+                    width: 16px;
+                    height: 16px;
+                    object-fit: cover;
+                    vertical-align: middle;
+                }
 
-.tag-label {
-    vertical-align: middle;
-}
+                .tag-label {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
 
-.submit-time {
-    color: #909399;
-    font-size: 14px;
-}
-
-.copy-btn {
-    width: 90px;
+    .submit-time {
+        color: #909399;
+        font-size: 14px;
+    }
 }
 </style>

@@ -33,7 +33,7 @@ export function getHotMeme7d() {
 }
 
 // submitTime格式是yyyy-mm-dd
-export async function searchMeme(searchKey: string, tags?: string[], submitTime?: [string, string]) {
+export async function searchMeme(searchKey: string, tags?: string[], submitTime?: [string, string] | []) {
     console.log(`搜索词: ${searchKey}, 标签: ${tags}, 投稿时间: ${submitTime}`);
     if (searchKey == null || searchKey == '') {
         return false;

@@ -8,21 +8,26 @@
     </span>
 </template>
 <script setup lang="ts">
-import { watch, ref, nextTick } from 'vue';
+import { watch, ref, nextTick, computed } from 'vue';
 import { sleep } from '@/utils/common';
 
 const props = defineProps<{
-    num: number;
+    num: number | string;
 }>();
 
-const currNum = ref(props.num);
-const nextNum = ref(props.num);
+// 将传入的num统一转换为number类型
+const numValue = computed(() => {
+    return typeof props.num === 'string' ? Number(props.num) : props.num;
+});
+
+const currNum = ref(numValue.value);
+const nextNum = ref(numValue.value);
 let flipping = false;
 
 const flipState = ref<'normal' | 'end' | 'end flex-start'>('normal');
 
 watch(
-    () => props.num,
+    numValue,
     async (newVaL, oldVal) => {
         currNum.value = oldVal;
         nextNum.value = newVaL;
