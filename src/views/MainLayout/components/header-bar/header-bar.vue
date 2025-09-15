@@ -7,7 +7,7 @@
                     <p class="header-title">斗鱼玩机器烂梗库</p>
                 </a>
                 <div class="elinput-mobile">
-                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keyup.enter="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" placeholder="输入以搜索烂梗..." clearable @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="elinput">
-                    <el-input v-model="enteringSearchKey" placeholder="搜索烂梗" clearable @keyup.enter="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" placeholder="输入以搜索烂梗..." clearable @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>

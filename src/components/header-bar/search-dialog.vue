@@ -17,6 +17,8 @@
                                 <component :is="isAdvancedSearchCollapsed ? 'ArrowDown' : 'ArrowUp'" />
                             </el-icon>
                         </el-button>
+                        <el-button v-if="sortType === 'id'" text type="info" @click="sortByCopyCount">点击按复制次数排序</el-button>
+                        <el-button v-else-if="sortType === 'copy'" text type="info" @click="sortById">点击按id(时间)排序</el-button>
                     </div>
                     <el-button text type="danger" @click="clearAdvancedSearch">清空已选高级搜索</el-button>
                 </div>
@@ -168,28 +170,13 @@ const props = defineProps<{
 const memeTagsStore = useMemeTagsStore();
 const { memeTags } = storeToRefs(memeTagsStore);
 
-// ==================== 响应式数据 ====================
-// 搜索相关
+// ==================== 搜索功能模块 ====================
 const memeArr = ref<Meme[]>([]);
 const loading = ref(false);
 const emptyText = ref('正在搜索中...坐和放宽...');
+const sortType = ref<'id'|'copy'>('id');
 
-// 分页相关
-const currentPage = ref(1);
-const pageSize = ref(20);
-const total = ref(0);
-
-// 高级搜索相关
-const isAdvancedSearchCollapsed = ref(true);
-const allTags = ref<memeTag[]>([]);
-const selectedTags = ref<memeTag[]>([]);
-const submitTime = ref<[string, string] | []>([]);
-let tagLoaded = false;
-
-// ==================== 工具函数 ====================
-/**
- * 重置搜索状态
- */
+// 搜索相关工具函数
 function resetSearchState() {
     memeArr.value = [];
     currentPage.value = 1;
@@ -197,33 +184,104 @@ function resetSearchState() {
     emptyText.value = '正在搜索中...坐和放宽...';
 }
 
-/**
- * 重置高级搜索
- */
+function escapeRegExp(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+// 搜索业务逻辑
+async function performSearch(searchKey: string, tags?: string[], timeRange?: [string, string] | []) {
+    const res = await searchMeme(searchKey, tags, timeRange);
+
+    if (!res || res === 'notfound') {
+        memeArr.value = [];
+        total.value = 0;
+        currentPage.value = 1;
+        emptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
+    } else {
+        memeArr.value = res as Meme[];
+        total.value = res.length;
+        currentPage.value = 1;
+    }
+}
+
+// 排序功能
+function sortByCopyCount() {
+    memeArr.value.sort((a, b) => b.copyCount - a.copyCount);
+    sortType.value = 'copy';
+}
+
+function sortById() {
+    memeArr.value.sort((a, b) => Number(b.id) - Number(a.id));
+    sortType.value = 'id';
+}
+
+// 防抖搜索
+const debouncedSearch = debounce(async (searchKey: string) => {
+    if (!searchKey) return;
+    loading.value = true;
+    resetSearchState();
+    await performSearch(searchKey);
+    loading.value = false;
+}, 300);
+
+const debouncedAdvancedSearch = debounce(async (searchKey: string, tags?: string[], time?: [string, string] | []) => {
+    memeArr.value = [];
+    await performSearch(searchKey, tags, time);
+}, 300);
+
+// ==================== 分页功能模块 ====================
+const currentPage = ref(1);
+const pageSize = ref(20);
+const total = ref(0);
+
+// 分页计算属性
+const paginatedMemeArr = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value;
+    const end = start + pageSize.value;
+    return memeArr.value.slice(start, end);
+});
+
+// ==================== 高级搜索功能模块 ====================
+const isAdvancedSearchCollapsed = ref(true);
+const allTags = ref<memeTag[]>([]);
+const selectedTags = ref<memeTag[]>([]);
+const submitTime = ref<[string, string] | []>([]);
+let tagLoaded = false;
+
+// 高级搜索相关函数
 function resetAdvancedSearch() {
     selectedTags.value = [];
     allTags.value = [...memeTags.value];
     submitTime.value = [];
 }
 
-/**
- * 转义正则表达式特殊字符
- */
-function escapeRegExp(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+function toggleAdvancedSearch() {
+    isAdvancedSearchCollapsed.value = !isAdvancedSearchCollapsed.value;
 }
 
-/**
- * 格式化时间字符串
- */
-function formatSubmitTime(timeString: string): string {
-    if (!timeString) return '';
-    return timeString.replace('T', ' ').split('.')[0];
+function clearAdvancedSearch() {
+    if (selectedTags.value.length === 0 && submitTime.value.length === 0) return;
+    resetAdvancedSearch();
+    resetSearchState();
 }
 
-/**
- * 解析标签字符串为标签对象数组
- */
+const disabledDate = (time: Date) => {
+    return time.getTime() < new Date('2024-09-24').getTime();
+};
+
+// ==================== 标签功能模块 ====================
+// 标签操作函数
+function addTag(tag: memeTag) {
+    selectedTags.value.push(tag);
+    allTags.value = allTags.value.filter(t => t.dictValue !== tag.dictValue);
+}
+
+function removeTag(tag: memeTag) {
+    allTags.value.push(tag);
+    selectedTags.value = selectedTags.value.filter(t => t.dictValue !== tag.dictValue);
+}
+
+// 标签解析工具函数
 function getDictLabel(tags: string | null | undefined): { label: string; iconUrl: string }[] {
     if (!tags || tags.trim() === '') return [];
 
@@ -243,28 +301,10 @@ function getDictLabel(tags: string | null | undefined): { label: string; iconUrl
     });
 }
 
-// ==================== 业务逻辑函数 ====================
-/**
- * 执行搜索请求
- */
-async function performSearch(searchKey: string, tags?: string[], timeRange?: [string, string] | []) {
-    const res = await searchMeme(searchKey, tags, timeRange);
+// ==================== 复制功能模块 ====================
+// 复制相关函数
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
 
-    if (!res || res === 'notfound') {
-        memeArr.value = [];
-        total.value = 0;
-        currentPage.value = 1;
-        emptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
-    } else {
-        memeArr.value = res as Meme[];
-        total.value = res.length;
-        currentPage.value = 1;
-    }
-}
-
-/**
- * 处理复制操作
- */
 async function handleCopyMeme(meme: Meme) {
     const copyResult = copyMeme(meme.content);
     if (!copyResult || copyResult === 'limitedSuccess') return;
@@ -282,65 +322,13 @@ async function handleCopyMeme(meme: Meme) {
     }
 }
 
-/**
- * 标签操作
- */
-function addTag(tag: memeTag) {
-    selectedTags.value.push(tag);
-    allTags.value = allTags.value.filter(t => t.dictValue !== tag.dictValue);
+// ==================== 工具函数模块 ====================
+function formatSubmitTime(timeString: string): string {
+    if (!timeString) return '';
+    return timeString.replace('T', ' ').split('.')[0];
 }
 
-function removeTag(tag: memeTag) {
-    allTags.value.push(tag);
-    selectedTags.value = selectedTags.value.filter(t => t.dictValue !== tag.dictValue);
-}
-
-/**
- * 切换高级搜索折叠状态
- */
-function toggleAdvancedSearch() {
-    isAdvancedSearchCollapsed.value = !isAdvancedSearchCollapsed.value;
-}
-
-/**
- * 清空高级搜索
- */
-function clearAdvancedSearch() {
-    if (selectedTags.value.length === 0 && submitTime.value.length === 0) return;
-    resetAdvancedSearch();
-    resetSearchState();
-}
-
-/**
- * 日期禁用规则
- */
-const disabledDate = (time: Date) => {
-    return time.getTime() < new Date('2024-09-24').getTime();
-};
-
-// ==================== 防抖函数 ====================
-const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-
-const debouncedSearch = debounce(async (searchKey: string) => {
-    if (!searchKey) return;
-    loading.value = true;
-    resetSearchState();
-    await performSearch(searchKey);
-    loading.value = false;
-}, 300);
-
-const debouncedAdvancedSearch = debounce(async (searchKey: string, tags?: string[], time?: [string, string] | []) => {
-    memeArr.value = [];
-    await performSearch(searchKey, tags, time);
-}, 300);
-
-// ==================== 计算属性 ====================
-const paginatedMemeArr = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = start + pageSize.value;
-    return memeArr.value.slice(start, end);
-});
-
+// ==================== 计算属性模块 ====================
 const highlightedMemeArr = computed(() => {
     if (!props.searchKey || !paginatedMemeArr.value.length) return paginatedMemeArr.value;
 
@@ -353,7 +341,7 @@ const highlightedMemeArr = computed(() => {
     }));
 });
 
-// ==================== 监听器 ====================
+// ==================== 监听器模块 ====================
 // 监听对话框显示状态
 watch(showDialog, (newVal) => {
     if (!newVal) {
@@ -509,8 +497,7 @@ watch(
                                 gap: 4px;
 
                                 .tag-icon {
-                                    width: 14px;
-                                    height: 14px;
+                                    width: 18px;
                                     object-fit: cover;
                                 }
 
@@ -614,8 +601,7 @@ watch(
                 cursor: pointer;
 
                 .tag-icon {
-                    width: 16px;
-                    height: 16px;
+                    width: 18px;
                     object-fit: cover;
                     vertical-align: middle;
                 }
