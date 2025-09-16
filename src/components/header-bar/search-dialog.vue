@@ -17,10 +17,18 @@
                                 <component :is="isAdvancedSearchCollapsed ? 'ArrowDown' : 'ArrowUp'" />
                             </el-icon>
                         </el-button>
-                        <el-button v-if="sortType === 'id'" text type="info" @click="sortByCopyCount">点击按复制次数排序</el-button>
-                        <el-button v-else-if="sortType === 'copy'" text type="info" @click="sortById">点击按id(时间)排序</el-button>
+                        <el-button v-if="sortType === 'id'" text type="info" @click="sortByCopyCount"
+                            :size="isMobile ? 'small' : 'default'">
+                            {{ isMobile ? '复制数排序' : '点击按复制次数排序' }}
+                        </el-button>
+                        <el-button v-else-if="sortType === 'copy'" text type="info" @click="sortById"
+                            :size="isMobile ? 'small' : 'default'">
+                            {{ isMobile ? '时间排序' : '点击按id(时间)排序' }}
+                        </el-button>
                     </div>
-                    <el-button text type="danger" @click="clearAdvancedSearch">清空已选高级搜索</el-button>
+                    <el-button text type="danger" @click="clearAdvancedSearch">
+                        {{ isMobile ? '清空筛选' : '清空已选高级搜索' }}
+                    </el-button>
                 </div>
                 <transition name="collapse">
                     <div v-show="!isAdvancedSearchCollapsed" class="collapsible-content">
@@ -90,7 +98,7 @@
                 <el-table-column prop="content">
                     <template #default="scope">
                         <div v-memo="[scope.row.id, scope.row.highlightedContent, props.searchKey]">
-                            <el-popover placement="top" :width="'auto'" trigger="hover">
+                            <el-popover placement="top" width="auto" trigger="hover">
                                 <template #reference>
                                     <div class="barrage-text"
                                         v-html="scope.row.highlightedContent || scope.row.content">
@@ -132,7 +140,8 @@
             <!-- 分页组件 -->
             <div class="pagination-container" v-if="total > 0">
                 <el-pagination v-model:current-page="currentPage" :page-size="pageSize" :total="total"
-                    layout="total, prev, pager, next, jumper" :small="true" background />
+                    :layout="isMobile ? 'prev, pager, next' : 'total, prev, pager, next, jumper'" size="small"
+                    background />
             </div>
         </el-dialog>
     </div>
@@ -149,6 +158,7 @@ import { storeToRefs } from 'pinia';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import type { getMemeTags as memeTag } from '@/types/meme';
 import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue'
+import { useIsMobile } from '@/utils/common';
 
 // ==================== 类型定义 ====================
 interface Meme {
@@ -165,6 +175,7 @@ const showDialog = defineModel<boolean>();
 const props = defineProps<{
     searchKey: string;
 }>();
+const isMobile = useIsMobile();
 
 // ==================== Store ====================
 const memeTagsStore = useMemeTagsStore();
@@ -174,7 +185,7 @@ const { memeTags } = storeToRefs(memeTagsStore);
 const memeArr = ref<Meme[]>([]);
 const loading = ref(false);
 const emptyText = ref('正在搜索中...坐和放宽...');
-const sortType = ref<'id'|'copy'>('id');
+const sortType = ref<'id' | 'copy'>('id');
 
 // 搜索相关工具函数
 function resetSearchState() {
@@ -378,7 +389,7 @@ watch(
 <style scoped lang="scss">
 // 根容器
 :deep(.dialog-main) {
-    width: 95%;
+    width: 96%;
     max-width: 1200px;
 
     // Header 部分
@@ -401,7 +412,7 @@ watch(
             .title-left {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: 4px;
 
                 .title-text {
                     font-weight: 600;
@@ -521,11 +532,12 @@ watch(
     // Table 部分
     .el-table {
         .empty-state {
+
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 8px;
-            padding: 20px;
+            padding: 20px 0;
             color: #909399;
 
             .loading-icon {
