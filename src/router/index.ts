@@ -15,7 +15,6 @@ const router = createRouter({
                 { path: 'aichat', name: 'AIChat', component: () => import('@/views/MainLayout/components/AiGenerateMemes/AIChat.vue') },
                 { path: 'image', name: 'image', component: () => import('@/views/MainLayout/components/image.vue') },
                 { path: 'test', name: 'test', component: () => import('@/views/MainLayout/components/test.vue') },
-                { path: 'test2', name: 'test2', component: () => import('@/views/MainLayout/components/test2.vue') },
                 { path: 'Starrysky', name: 'Starrysky', component: () => import('@/views/Starrysky.vue') },
                 { path: 'Tampermonkey', name: 'Tampermonkey', component: () => import('@/views/MainLayout/components/Tampermonkey.vue') },
                 { path: 'UserInfo', name: 'UserInfo', component: () => import('@/views/MainLayout/components/user/components/index.vue') },
@@ -26,6 +25,7 @@ const router = createRouter({
                 { path: 'memes/:category', name: 'memes', component: () => import('@/views/MainLayout/components/memes-view.vue') },
                 { path: 'matchPrediction', name: 'matchPrediction', component: () => import('@/views/MainLayout/components/match-prediction/CS2Major.vue') },
                 { path: 'matchLib', name: 'matchLib', component: () => import('@/views/MainLayout/components/match-prediction/matchLib.vue') },
+                { path: 'dejaVuNiko', name: 'dejaVuNiko', component: () => import('@/views/MainLayout/components/deja-vu-niko.vue') },
             ],
         },
         {

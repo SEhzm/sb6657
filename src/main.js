@@ -10,17 +10,6 @@ import '@/assets/css/global.css';
 
 const app = createApp(App);
 const pinia = createPinia()
-/**
- * 统一命名
- * allbarrage
- * mygo
- * p1
- * penPlayer
- * penWJQ
- * QMLW
- * QUQU
- * ZbjHuPen
- */
 
 app.use(router);
 app.use(ElementPlus, {

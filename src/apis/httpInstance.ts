@@ -10,7 +10,7 @@ const httpInstance = axios.create({
     timeout: 60000, // 默认超时时间
 });
 
-export const sbVersion = '25.09.15';
+export const sbVersion = '25.09.19';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 
