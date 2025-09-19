@@ -9,8 +9,10 @@
                     <span class="author-label">作者：</span>
                     <div class="author-links">
                         <a href="https://space.bilibili.com/505122023" target="_blank">bilibili: @Mr_皮乐</a>
-                        <a href="https://tieba.baidu.com/home/main?id=tb.1.e7e1a59e.6wTN3gPNJQkiSeJQQkzyow" target="_blank">贴吧: @浪泼独流</a>
-                        <a href="https://news.wmpvp.com/community-detail.html?id=347406749" target="_blank">完美: @永远喜欢尼古拉科维奇</a>
+                        <a href="https://tieba.baidu.com/home/main?id=tb.1.e7e1a59e.6wTN3gPNJQkiSeJQQkzyow"
+                            target="_blank">贴吧: @浪泼独流</a>
+                        <a href="https://news.wmpvp.com/community-detail.html?id=347406749" target="_blank">完美:
+                            @永远喜欢尼古拉科维奇</a>
                     </div>
                 </div>
             </div>
@@ -134,7 +136,7 @@
                 我发现这个赛事，尼尼或者说猎鹰的评论区都被我们🦐孝占领了，全部都是全力开孝的海鲜粉。我感觉大家都和我一样简直憋坏了，好久不能看尼尼的比赛而且上次ewc又被喂屎了，正好好久没看见老尼这么c了，评论区直接哄堂大孝。说实话，本来真怀疑老尼要一拉到底，现在这个ct指挥还有枪法真感觉这个猎鹰或许真的能起飞。冲鸭，海鲜大队。
             </div>
         </section>
-        <el-dialog v-model="dialogVisible" :title="dialogTitle" width="50%">
+        <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
             <p>{{ dialogText }}</p>
         </el-dialog>
     </article>
@@ -237,7 +239,7 @@ function changeDejaVuType(type: number) {
                     color: #0066cc;
                     text-decoration: none;
                     font-size: 12px;
-                    
+
                     &:hover {
                         text-decoration: underline;
                         color: #004499;
@@ -365,7 +367,7 @@ function changeDejaVuType(type: number) {
         font-family: "Courier New", monospace;
         line-height: 1.8;
         white-space: pre-line;
-        
+
         @media (max-width: 768px) {
             font-size: 13px;
             padding: 12px;
@@ -404,19 +406,19 @@ function changeDejaVuType(type: number) {
         border-left: none;
         border-right: none;
     }
-    
+
     .header {
         padding: 12px 15px;
     }
-    
+
     .briefing {
         padding: 12px 15px;
     }
-    
+
     .main-content {
         padding: 15px;
     }
-    
+
     .commentary {
         margin: 15px;
     }
@@ -426,11 +428,23 @@ function changeDejaVuType(type: number) {
     .ranking-section .section-header {
         flex-direction: column;
         align-items: flex-start;
-        
+
         .section-actions {
             width: 100%;
             justify-content: flex-start;
         }
+    }
+}
+
+:deep(.dialog) {
+    width: 90%;
+    max-width: 600px;
+
+    .el-dialog__header {
+        font-weight: bold;
+    }
+    .el-dialog__body {
+        padding: 15px;
     }
 }
 </style>
