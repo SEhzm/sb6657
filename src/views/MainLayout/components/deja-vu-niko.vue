@@ -3,7 +3,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="title-section">
-                    <h1 class="title">🦐超级逮虾户战报第58期🦐</h1>
+                    <h1 class="title">🦐超级逮虾户战报第59期🦐</h1>
                 </div>
                 <div class="author-section">
                     <span class="author-label">作者：</span>
@@ -17,13 +17,13 @@
                 </div>
             </div>
             <div class="match-info">
-                <h3 class="match-title">裂变天地S2 Falcons战胜FaZe</h3>
-                <span class="match-date">2025-09-16</span>
+                <h3 class="match-title">裂变天地S2淘汰赛 Falcons战胜paiN</h3>
+                <span class="match-date">2025-09-20</span>
             </div>
         </header>
         <section class="briefing">
             <div class="briefing-content">
-                本场比赛FaZe战队无人对位优于NiKo，broky(3:9)获得2点痛风点数。
+                本场比赛paiN战队无人对位优于NiKo，本期榜单无变化。
             </div>
         </section>
         <section class="main-content">
@@ -58,7 +58,7 @@
                     1.latto(Legacy) 😋👉🦐👈2点<br />
                     2.apEX(Vitality) &#x1FAD8 2(3-1)点<br />
                     3.YEKINDAR(FURIA)😋👉🦐👈2点<br />
-                    4.尼克斯(PUA) 😋👉🦐👈2点<br />
+                    4.nicx(PUA) 😋👉🦐👈2点<br />
                     5.Graviti(3DMAX) 😋👉🦐👈2点<br />
                     6.wicadia(Aurora)🎁👉🦐👈2点<br />
                     7.jottAAA(Aurora)😋👉🦐👈1(2-1)点<br />
@@ -93,7 +93,7 @@
                     </div>
                 </div>
                 <div class="ranking-list">
-                    1. broky(FaZe) 🦞👉📦6点(new) <br />
+                    1. broky(FaZe) 🦞👉📦6点<br />
                     2. woxic(Aurora) 🦞👉 &#x1FAF2 3(1-4)点<br />
                     3.Brollan(MOUZ) 🦞👉💵3(1-4)点<br />
                     4.malbsMd(G2) 🦞👉🐴3点<br />
@@ -126,14 +126,14 @@
                     VP(1:1)Falcons 入门捕虾队 <br />
                     G2(1:2)Falcons 劣质捕虾队 <br />
                     GL(1:4)Falcons 被钳破船队 <br />
-                    FaZe(0:4)Falcons 浮游生物队(new) <br />
+                    FaZe(0:4)Falcons 浮游生物队 <br />
                 </div>
             </div>
         </section>
         <section class="commentary">
             <h3 class="commentary-title">野榜杂谈</h3>
             <div class="commentary-content">
-                我发现这个赛事，尼尼或者说猎鹰的评论区都被我们🦐孝占领了，全部都是全力开孝的海鲜粉。我感觉大家都和我一样简直憋坏了，好久不能看尼尼的比赛而且上次ewc又被喂屎了，正好好久没看见老尼这么c了，评论区直接哄堂大孝。说实话，本来真怀疑老尼要一拉到底，现在这个ct指挥还有枪法真感觉这个猎鹰或许真的能起飞。冲鸭，海鲜大队。
+                🦐哥下令，熬夜的兄弟们可以早睡。老尼这么c，那还说了啥，😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐😙🦐对mvp绝对的有利竞争者尼古拉科维奇，全力开孝。
             </div>
         </section>
         <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
