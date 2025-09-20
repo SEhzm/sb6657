@@ -27,6 +27,7 @@ import image_icon from '@/assets/icons/image_icon.svg';
 import cs2_icon from '@/assets/icons/cs2_icon.svg';
 import chat_icon from '@/assets/icons/chat_icon.svg';
 import deja_vu_niko from '@/assets/icons/deja_vu_niko.svg';
+import donk from '@/assets/imgs/donk.png';
 
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
@@ -37,4 +38,5 @@ export const MemeCategory = [
     { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
     { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/dejaVuNiko', text: '超级逮虾户战报', icon: deja_vu_niko },
+    { path: '/15warriorsDonk', text: '布雷德15勇士', icon: donk },
 ];
