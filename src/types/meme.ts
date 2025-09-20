@@ -33,18 +33,45 @@ export interface getHotMeme_res {
     data: hotMeme_res[];
 }
 
-export interface searchMeme_data {
-    tags: string;
+// 0: 按id排序, 1: 按复制次数排序
+export enum SortType { 
+    ID = 0,
+    COPY = 1,
+}
+export interface searchMeme_req {
+    barrage: string;
+    tags?: string;
+    submitTime?: [string, string];
+    sort: SortType;
+    pageSize: number;
+    pageNum: number;
+}
+export interface searchMemeElement {
+    id: number;
     barrage: string;
     cnt: string;
-    id: string;
-    likes: string;
+    tags: string;
     submitTime: string;
 }
 export interface searchMeme_res {
-    code: number;
-    data: searchMeme_data[];
-    msg: string;
+    total: number;
+    list: searchMemeElement[];
+    pageNum: number;
+    pageSize: number;
+    size: number;
+    startRow: number;
+    endRow: number;
+    pages: number;
+    prePage: number;
+    nextPage: number;
+    isFirstPage: boolean;
+    isLastPage: true;
+    hasPreviousPage: false;
+    hasNextPage: false;
+    navigatePages: number;
+    navigatepageNums: number[];
+    navigateFirstPage: number;
+    navigateLastPage: number;
 }
 
 export interface getMemeList_meme {

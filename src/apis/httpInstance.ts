@@ -10,6 +10,40 @@ const httpInstance = axios.create({
     timeout: 60000, // 默认超时时间
 });
 
+interface req<T> {
+    url: string;
+    data: T;
+}
+export interface res<T> {
+    _failure?: boolean;
+    flatData: T | null;
+}
+interface BackendResponse<T> {
+    code: number;
+    data: T;
+    msg: string;
+}
+
+export async function post<T, R = any>(req: req<T>): Promise<res<R>> {
+    let result: res<R> = {
+        _failure: false,
+        flatData: null,
+    };
+    try {
+        const res = (await httpInstance.post(req.url, req.data)) as BackendResponse<R>;
+        if (res.code === 200) {
+            result.flatData = res.data;
+        } else {
+            console.warn('请求失败', req.url, res.msg);
+            result._failure = true;
+        }
+    } catch (e) {
+        console.warn('请求失败', req.url, e);
+        result._failure = true;
+    }
+    return result;
+}
+
 export const sbVersion = '25.09.20';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**

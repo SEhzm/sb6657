@@ -1,7 +1,7 @@
-import httpInstance from '@/apis/httpInstance';
+import httpInstance, { type res, post } from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { MemeCategory } from '@/constants/backend';
-import type { getHotMeme_res, searchMeme_res, getMemeList_res, getData, getMemeTags } from '@/types/meme';
+import type { getHotMeme_res, getMemeList_res, getData, getMemeTags, searchMeme_req, searchMeme_res } from '@/types/meme';
 
 async function getHotMeme(url: string, tips: string) {
     try {
@@ -33,35 +33,13 @@ export function getHotMeme7d() {
 }
 
 // submitTime格式是yyyy-mm-dd
-export async function searchMeme(searchKey: string, tags?: string[], submitTime?: [string, string] | []) {
-    console.log(`搜索词: ${searchKey}, 标签: ${tags}, 投稿时间: ${submitTime}`);
-    if (searchKey == null || searchKey == '') {
-        return false;
-    }
-    try {
-        const res: searchMeme_res = await httpInstance.post(API.SEARCH_MEME, {
-            tags: tags?.join(',') || '',
-            submitTime: submitTime || [],
-            barrage: searchKey,
-        });
-        if (res.data.length === 0) {
-            console.log('未搜索到烂梗');
-            return 'notfound';
-        }
-        const memeArr: Meme[] = res.data.map((item) => {
-            return {
-                tags: item.tags,
-                content: item.barrage,
-                id: `${item.id}`,
-                copyCount: Number(item.cnt),
-                submitTime: item.submitTime,
-            };
-        });
-        return memeArr;
-    } catch (err: any) {
-        console.log('搜索烂梗失败', err);
-        return false;
-    }
+export async function searchMeme(req: searchMeme_req): Promise<res<searchMeme_res>> {
+    console.log(`搜索词: ${req.barrage}, 标签: ${req.tags}, 投稿时间: ${req.submitTime}, 排序: ${req.sort}, 每页烂梗数: ${req.pageSize}, 页数: ${req.pageNum}`);
+    const res = await post({
+        url: API.SEARCH_MEME,
+        data: req,
+    });
+    return res;
 }
 
 export async function getMemeList(category: string, pageIndex: number, pageSize: number, tags?: string) {

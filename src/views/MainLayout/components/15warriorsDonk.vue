@@ -1,7 +1,7 @@
 <template>
     <div class="container">
         <header class="header">
-            <h1>布雷德十五大勇士 & donk十五大受害者</h1>
+            <h1>布雷德十五勇士 & donk十五受害者</h1>
             <div class="more-info">
                 <div class="match-info">
                     <h3 class="match-title">BLAST伦敦公开赛2025 G2战胜Spirit</h3>
@@ -55,7 +55,7 @@
             </section>
 
             <section class="ranking-section">
-                <h2>donk十五大受害者</h2>
+                <h2>donk十五受害者</h2>
                 <p class="description">实际上被donk“轻松击杀”的选手们</p>
                 <div class="table-wrapper">
                     <table>
