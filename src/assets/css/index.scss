@@ -1,3 +1,4 @@
+/* just override what you need */
 @forward "element-plus/theme-chalk/src/common/var.scss" with ($colors: (
     "primary": ("base": #11A983),
     "success": ("base": #3BB201),
@@ -5,3 +6,7 @@
     "danger": ("base": #F64848),
     "info": ("base": #6E77F2),
 ));
+
+// If you just import on demand, you can ignore the following content.
+// 如果你想导入所有样式:
+@use "element-plus/theme-chalk/src/index.scss" as *;

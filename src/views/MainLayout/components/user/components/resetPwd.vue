@@ -18,6 +18,7 @@
 </template>
 
 <script setup>
+import { ref, getCurrentInstance, reactive } from 'vue';
 import httpInstance from "@/apis/httpInstance";
 const { proxy } = getCurrentInstance();
 
@@ -35,7 +36,7 @@ const equalToPassword = (rule, value, callback) => {
   }
 };
 
-const rules = ref({
+const rules = reactive({
   oldPassword: [{ required: true, message: "旧密码不能为空", trigger: "blur" }],
   newPassword: [{ required: true, message: "新密码不能为空", trigger: "blur" }, { min: 6, max: 20, message: "长度在 6 到 20 个字符", trigger: "blur" }, { pattern: /^[^<>"'|\\]+$/, message: "不能包含非法字符：< > \" ' \\\ |", trigger: "blur" }],
   confirmPassword: [{ required: true, message: "确认密码不能为空", trigger: "blur" }, { required: true, validator: equalToPassword, trigger: "blur" }]

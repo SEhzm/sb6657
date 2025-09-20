@@ -56,7 +56,7 @@ const queryBarrage = () => {
   httpInstance.post(API.SEARCH_MEME, {
     barrage: searchMemeStr.value
   }).then(res => {
-    data.filteredItems = res.data || [];
+    data.filteredItems = res.data.list || [];
   }).catch(err => {
     console.error('搜索失败', err);
   });

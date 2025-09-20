@@ -23,6 +23,7 @@
 </template>
 
 <script setup name="Profile">
+import { ref, reactive } from 'vue';
 import userInfo from "./userInfo.vue";
 import resetPwd from "./resetPwd.vue";
 import httpInstance from "@/apis/httpInstance";

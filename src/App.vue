@@ -8,6 +8,4 @@ import StarrySky from '@/views/Starrysky.vue';
 
 </script>
 
-<style scoped lang="scss">
-@media (max-width: 600px) {}
-</style>
+<style scoped lang="scss"></style>

@@ -359,7 +359,7 @@ watch(
     () => props.searchKey,
     (newVal) => {
         if (newVal.trim()) {
-            currentPage.value = 1; // 重置页码
+            resetSearchState();
             debouncedSearch(newVal);
         }
     },
@@ -388,7 +388,7 @@ watch(
         // 避免初始化时触发
         if (oldTags === undefined && oldTime === undefined && oldSort === undefined) return;
 
-        currentPage.value = 1; // 重置页码
+        resetSearchState();
         const tagArr = tags.map((t) => t.dictValue);
         debouncedSearch(props.searchKey, sort, 1, tagArr, time);
     },

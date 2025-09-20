@@ -187,7 +187,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, defineAsyncComponent } from 'vue';
 import httpInstance from '@/apis/httpInstance';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
 import ChatRoom from '@/components/ChatRoom.vue';

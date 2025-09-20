@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/favicon.ico">
-    <!--    <meta name="viewport" content=" width=720,initial-scale=1.0">-->
-    <meta name="viewport" content="initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>玩机器烂梗收集</title>
     <style>
         #global-loading {
@@ -21,30 +20,30 @@
             align-items: center;
             gap: 20px;
         }
-    
+
         #global-loading.fade-out {
             opacity: 0;
             pointer-events: none;
         }
-    
-        .loading-img{
+
+        .loading-img {
             width: 200px;
         }
 
         .loading-spin {
             animation: loading-spin 8s linear infinite;
         }
-    
+
         @keyframes loading-spin {
             0% {
                 transform: rotate(0deg);
             }
-    
+
             100% {
                 transform: rotate(360deg);
             }
         }
-    
+
         .loading-text {
             font-size: xx-large;
         }
@@ -55,21 +54,26 @@
         }
 
         @keyframes dots {
-            0%, 100% {
+
+            0%,
+            100% {
                 content: '';
             }
+
             25% {
                 content: '.';
             }
+
             50% {
                 content: '..';
             }
+
             75% {
                 content: '...';
             }
         }
     </style>
-    
+
     <script defer>
         var _hmt = _hmt || [];
         (function () {
@@ -97,7 +101,7 @@
             loadingImgDOM.classList.add('loading-spin');
         }
     </script>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 
 </html>

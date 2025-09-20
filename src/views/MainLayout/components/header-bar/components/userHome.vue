@@ -14,18 +14,22 @@
                 <router-link to="/me-memes">
                     <el-dropdown-item>我的投稿</el-dropdown-item>
                 </router-link>
-                <el-dropdown-item command="login" divided v-show="!isRelogin">
-                    <span @click="loginAndReg">登录/注册</span>
-                </el-dropdown-item>
+                <template v-if="!isRelogin.show">
+                    <el-dropdown-item command="login" divided>
+                        <span @click="loginAndReg">登录/注册</span>
+                    </el-dropdown-item>
+                </template>
                 <router-link to="/userInfo">
                     <el-dropdown-item>个人中心</el-dropdown-item>
                 </router-link>
                 <el-dropdown-item command="login">
                     <span @click="ysCommunityNorms = true">隐私政策</span>
                 </el-dropdown-item>
-                <el-dropdown-item divided command="logout" v-show="isRelogin">
-                    <span @click="logout">退出登录</span>
-                </el-dropdown-item>
+                <template v-if="isRelogin.show">
+                    <el-dropdown-item divided command="logout">
+                        <span @click="logout">退出登录</span>
+                    </el-dropdown-item>
+                </template>
             </el-dropdown-menu>
         </template>
     </el-dropdown>
@@ -47,14 +51,14 @@
 
 <script setup>
 import { ElMessageBox } from 'element-plus'
-import { ref, onMounted, onBeforeUnmount, } from 'vue'
+import { ref, watch } from 'vue'
 import { removeToken } from '@/utils/cookieUtils';
 import httpInstance from "@/apis/httpInstance";
 import login from './login.vue';
 import { CommunityNorms } from '@/common/CommunityNorms'
 import register from './register.vue';
 import { useIsMobile } from '@/utils/common';
-import isRelogin from '@/apis/httpInstance';
+import { isRelogin } from '@/apis/httpInstance';
 import { useAuthStore } from '@/stores/useAuthStore'
 
 const authStore = useAuthStore()
@@ -87,6 +91,8 @@ function logout() {
         type: 'warning'
     }).then(() => {
         removeToken();
+        // 退出登录后设置状态为false
+        isRelogin.show = false;
     }).catch(() => { });
 }
 
@@ -102,6 +108,7 @@ function showLoginView() {
     console.log('showLoginView')
     loginView.value = true
 }
+function handleCommand(){}
 
 watch(
     () => authStore.loginVisible,

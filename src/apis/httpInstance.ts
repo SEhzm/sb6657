@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import axios from 'axios';
 import { SERVER_ADDRESS } from '@/constants/backend';
 import { getToken, setSiteToken, getSiteToken, setToken, getRefreshToken, isTokenExpiringSoon, removeToken } from '@/utils/cookieUtils';
@@ -44,7 +45,7 @@ export async function post<T, R = any>(req: req<T>): Promise<res<R>> {
     return result;
 }
 
-export const sbVersion = '25.09.20';
+export const sbVersion = '25.09.21';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 
@@ -113,6 +114,11 @@ httpInstance.interceptors.request.use(
 
         const token = getToken();
         if (token) {
+            // 如果有有效token，确保isRelogin状态为true
+            if (!isRelogin.value.show) {
+                isRelogin.value.show = true;
+            }
+            
             // 检查 token 是否即将过期
             if (isTokenExpiringSoon()) {
                 if (!isRefreshing) {
@@ -120,6 +126,8 @@ httpInstance.interceptors.request.use(
                     try {
                         // 刷新 token
                         const newToken = await refreshToken();
+                        // 确保刷新成功后登录状态为true
+                        isRelogin.value.show = true;
                         // 更新请求头
                         config.headers['Authorization'] = 'Bearer ' + newToken;
                         // 重试队列中的请求
@@ -161,7 +169,7 @@ const errorCode: Record<string, string> = {
     '404': '访问资源不存在',
     'default': '系统未知错误，请反馈给管理员'
 };
-export let isRelogin = { show: false };
+export const isRelogin = ref({ show: false });
 httpInstance.interceptors.response.use(
     res => {
       if (!authStore) {
@@ -180,14 +188,14 @@ httpInstance.interceptors.response.use(
         return res.data
       }
       if (code === 401) {
-        if (!isRelogin.show) {
-          isRelogin.show = true;
+        if (!isRelogin.value.show) {
+          isRelogin.value.show = true;
           ElMessageBox.confirm('请先登录再使用该功能，或您的登录状态已过期，您可以继续留在该页面，或者重新登录', '请您先登录~', { 
             confirmButtonText: '重新登录', 
             cancelButtonText: '取消', 
             type: 'warning' 
           }).then(() => {
-            isRelogin.show = false;
+            isRelogin.value.show = false;
             if (authStore) {
               authStore.showLogin()
             } else {
@@ -199,7 +207,7 @@ httpInstance.interceptors.response.use(
               }
             }
           }).catch(() => {
-            isRelogin.show = false;
+            isRelogin.value.show = false;
           });
         }
         return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
@@ -235,14 +243,16 @@ httpInstance.interceptors.response.use(
               try {
                 // 尝试刷新 token
                 const newToken = await refreshToken();
+                // 确保刷新成功后登录状态为true
+                isRelogin.value.show = true;
                 // 重试原请求
                 error.config.headers['Authorization'] = 'Bearer ' + newToken;
                 return httpInstance(error.config);
               } catch (refreshError) {
                 // 刷新失败，清除 token 并显示登录框
                 removeToken();
-                if (!isRelogin.show) {
-                  isRelogin.show = true;
+                if (!isRelogin.value.show) {
+                  isRelogin.value.show = true;
                   ElMessageBox.confirm(
                     '登录状态已过期，请重新登录',
                     '系统提示',
@@ -252,12 +262,12 @@ httpInstance.interceptors.response.use(
                       type: 'warning'
                     }
                   ).then(() => {
-                    isRelogin.show = false;
+                    isRelogin.value.show = false;
                     if (authStore) {
                       authStore.showLogin();
                     }
                   }).catch(() => {
-                    isRelogin.show = false;
+                    isRelogin.value.show = false;
                   });
                 }
                 return Promise.reject(refreshError);

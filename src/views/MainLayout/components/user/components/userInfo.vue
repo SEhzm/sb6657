@@ -1,12 +1,12 @@
 <template>
-   <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="邮箱" prop="nickName">
+   <el-form ref="userRef" :model="form"  label-width="80px">
+      <el-form-item label="昵称" prop="nickName">
          <el-input v-model="form.nickName" disabled maxlength="30" />
       </el-form-item>
-      <el-form-item label="测试" prop="phonenumber">
+      <el-form-item label="手机号" prop="phonenumber">
          <el-input v-model="form.phonenumber" disabled maxlength="11" />
       </el-form-item>
-      <el-form-item label="测试" prop="email">
+      <el-form-item label="邮箱" prop="email">
          <el-input v-model="form.email" disabled maxlength="50" />
       </el-form-item>
       <el-form-item>
@@ -15,6 +15,7 @@
 </template>
 
 <script setup>
+import { ref, getCurrentInstance, watch } from 'vue';
 
 const props = defineProps({
   user: {

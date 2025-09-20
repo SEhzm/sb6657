@@ -228,7 +228,7 @@ const totalUnreadMessages = computed(() => {
 const readFlag = ref(false);
 async function fetchMsgNum() {
     try {
-        const res = await httpInstance.get('/machine/SysMessage/getMsgNum');
+        const res: any = await httpInstance.get('/machine/SysMessage/getMsgNum');
         if (res.code === 200) {
             likeAndStatementNum.value = res.data.likeAndStatementNum;
             commentNum.value = res.data.commentNum;

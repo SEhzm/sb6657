@@ -41,6 +41,16 @@ export function removeToken() {
     localStorage.removeItem(TokenKey)
     localStorage.removeItem(RefreshTokenKey)
     localStorage.removeItem(TokenExpireKey)
+    
+    // 重置登录状态
+    try {
+        // 动态导入以避免循环依赖
+        import('@/apis/httpInstance').then(({ isRelogin }) => {
+            isRelogin.value.show = false;
+        });
+    } catch (error) {
+        console.warn('无法重置登录状态:', error);
+    }
 }
 
 // 站点 token 相关（保持不变）

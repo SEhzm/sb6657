@@ -61,7 +61,7 @@
             </el-table>
             <div class="pagination-wrapper">
                 <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"
-                    :total="total" :pager-count="4" :page-size="pageSize" @current-change="handlePageChange" />
+                    :total="total" :pager-count="5" :page-size="pageSize" @current-change="handlePageChange" />
             </div>
         </el-card>
     </div>

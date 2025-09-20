@@ -47,6 +47,7 @@ import { setToken } from "@/utils/cookieUtils"
 import { decrypt, encrypt } from "@/utils/jsencrypt";
 import resetPassword from './resetPassword.vue';
 import { useIsMobile } from '@/utils/common';
+import { isRelogin } from "@/apis/httpInstance";
 
 const props = defineProps({
   onRegister: {
@@ -108,6 +109,7 @@ function login() {
       httpInstance.post('/login', loginForm.value).then(res => {
         if (res.code === 200) {
           ElMessage.success('登录成功')
+          isRelogin.value.show = true;
           setToken(res.token, res.refreshToken, 15 * 24 * 60 * 60)
           closeDialog();
         } else {
