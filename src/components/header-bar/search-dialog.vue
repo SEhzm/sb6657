@@ -198,7 +198,7 @@ async function performSearch(searchKey: string, sortType: SortType = SortType.ID
         pageSize: PAGE_SIZE,
     });
 
-    if (_failure || !flatData) {
+    if (_failure || !flatData || flatData.list.length <= 0) {
         memeArr.value = [];
         total.value = 0;
         currentPage.value = 1;
