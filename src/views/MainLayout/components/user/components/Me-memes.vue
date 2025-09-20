@@ -53,6 +53,11 @@
                         {{ formatSubmitTime(scope.row.createTime) }}
                     </template>
                 </el-table-column>
+                <el-table-column label="复制次数" align="center" width="100" prop="cnt">
+                    <template #default="scope">
+                        {{ scope.row.cnt || 0 }}
+                    </template>
+                </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
                 <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"

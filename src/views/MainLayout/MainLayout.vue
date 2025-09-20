@@ -77,14 +77,6 @@ onMounted(() => {
      */
 
     socket.value = new DouyuWebSocket(6979222, handleDanmu);
-    ElNotification({
-        title: '来自sb6657.cn',
-        dangerouslyUseHTMLString: true,
-        message: "现已推出造梗Ai（Demo），欢迎使用<br><b>Ai费用不低，请酌情使用~</b>",
-        position: 'bottom-left',
-        type: 'success',
-        duration: 10000,
-    })
 });
 function navigateTo(path: string) {
     router.push(path);
