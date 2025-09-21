@@ -1,16 +1,14 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="home">
         <div class="boomouder">
-            <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom"
-                class="boom6657" />
+            <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
         <div class="card first-card">
             <div>
                 <b>
                     <p class="announcement">
                         因为GreasyFork被墙，你可以
-                        <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js"
-                            target="_blank">点击我下载最新的油猴插件</a>
+                        <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击我下载最新的油猴插件</a>
                         ，你只需要将下载的文件拖入油猴管理面板即可
                     </p>
                 </b>
@@ -30,45 +28,45 @@
         </div>
 
         <div class="card third-card">
-            <div>
-                <el-button type="primary" @click="getRandOne">点我随机一条弹幕</el-button>
-                <el-table v-loading="loading" :data="data.tableData" class="barrage-table" @row-click="copyText">
-                    <el-table-column prop="barrage">
-                        <template #default="scope">
-                            <el-popover placement="top" :width="'auto'" trigger="hover"
-                                :visible="scope.row.popoverVisible">
-                                <template #reference>
-                                    <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)"
-                                        @touchend="handleTouchEnd(scope.row)">
-                                        <span class="barrage-text">{{ scope.row.barrage }}</span>
-                                    </div>
-                                </template>
-                                <template #default>
-                                    <div style="display: flex; align-items: center; flex-wrap: wrap">
-                                        <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
-                                            style="margin-right: 8px">
-                                            <el-tag round effect="dark"
-                                                :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                                <div class="tag-icon-wrapper">
-                                                    <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                        style="width: 22px; height: 22px; object-fit: cover; vertical-align: middle" />
-                                                    <span style="vertical-align: middle">{{ item.label }}</span>
-                                                </div>
-                                            </el-tag>
-                                        </div>
-                                        <span
-                                            style="position: absolute; bottom: 0; right: 0; font-size: 11px; min-width: 170px">投稿时间:
-                                            {{ formatSubmitTime(scope.row.submitTime) }}</span>
-                                    </div>
-                                </template>
-                            </el-popover>
-                        </template>
-                    </el-table-column>
-                    <el-table-column label="" align="center" width="85">
-                        <el-button type="primary">复制</el-button>
-                    </el-table-column>
-                </el-table>
+            <div class="random-barrage-header">
+                <h3 class="random-barrage-title">随机一条烂梗</h3>
+                <div class="refresh-controls">
+                    <span class="refresh-text" @click="handleRefresh">换一换</span>
+                    <el-icon :class="['refresh-icon', { rotating: isRotating }]" @click="handleRefresh" size="18">
+                        <Refresh />
+                    </el-icon>
+                </div>
             </div>
+
+            <div v-if="data.tableData && data.tableData.length > 0" class="modern-barrage-container">
+                <div class="modern-barrage-card" @click="copyText_countPlus1(data.tableData[0], $event)" @touchstart="handleTouchStart(data.tableData[0])" @touchend="handleTouchEnd(data.tableData[0])">
+                    <div class="barrage-main-content">
+                        <div class="barrage-text-wrapper">
+                            <span class="barrage-text">{{ data.tableData[0].barrage }}</span>
+                        </div>
+
+                        <div class="barrage-meta-info">
+                            <div class="tags-container" v-if="getDictLabel(data.tableData[0].tags).length > 0">
+                                <div v-for="(item, index) in getDictLabel(data.tableData[0].tags)" :key="index" class="modern-tag">
+                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                                    <span class="tag-label">{{ item.label }}</span>
+                                </div>
+                            </div>
+                            <div class="submit-time">{{ formatSubmitTime(data.tableData[0].submitTime) }}</div>
+                        </div>
+                    </div>
+
+                    <div class="modern-copy-button" @click.stop="copyText_countPlus1(data.tableData[0], $event)">
+                        <div class="copy-text">复制</div>
+                        <div class="copy-icon">📋</div>
+                        <div class="copy-count">
+                            <flip-num :num="data.tableData[0].cnt || 0" />
+                        </div>
+                        <div class="copy-ripple"></div>
+                    </div>
+                </div>
+            </div>
+            <div v-else class="no-data">暂无弹幕数据</div>
         </div>
 
         <div class="card fifth-card">
@@ -85,7 +83,7 @@
                         <br />
                         <b>点击标签即可添加</b>
                     </el-popover>
-                    <el-button link type="success" style="margin-left: 50%">
+                    <el-button link type="success" class="submit-tag-button">
                         投稿标签
                         <el-popover :width="300">
                             <template #reference>
@@ -101,13 +99,10 @@
 
                 <div class="preset-tags-container">
                     <div class="preset-tags">
-                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
-                            @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
-                            style="padding: 15px; cursor: pointer; font-size: 16px" type="primary">
+                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)" class="preset-tag" type="primary">
                             <div class="tag-icon-wrapper">
-                                <img v-if="tag.iconUrl" :src="tag.iconUrl"
-                                    style="width: 22px; height: 22px; object-fit: cover; vertical-align: middle" />
-                                <span style="vertical-align: middle">{{ tag.label }}</span>
+                                <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
+                                <span class="tag-text">{{ tag.label }}</span>
                             </div>
                         </el-tag>
                     </div>
@@ -127,13 +122,11 @@
                 </span>
 
                 <div class="added-tags">
-                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
-                        @close="removeTag(tag)" style="padding: 15px; cursor: pointer; font-size: 16px" effect="dark">
+                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)" @close="removeTag(tag)" class="added-tag" effect="dark">
                         {{ tag.label }}
                     </el-tag>
                 </div>
-                <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }"
-                    show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
+                <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
 
                 <!-- 新增的关联赛事库部分 -->
                 <div class="match-association-container">
@@ -146,8 +139,7 @@
                         </el-checkbox>
                         <div v-if="matchData" class="match-details-box-home">
                             <div class="match-info-row-home">
-                                <img :src="matchData.matchesImg" class="match-image-home"
-                                    :alt="matchData.matchesName" />
+                                <img :src="matchData.matchesImg" class="match-image-home" :alt="matchData.matchesName" />
                                 <span class="match-name-home">{{ matchData.matchesName }}</span>
                             </div>
                             <div class="match-time-home">{{ matchData.startTime }} 至 {{ matchData.endTime }}</div>
@@ -167,10 +159,9 @@
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
         <div class="wordCloudDiv">
-            <span style="background-color: white; border-radius: 25px; padding: 5px">
+            <span class="word-cloud-title">
                 搜索词云
-                <el-icon size="20" style="cursor: pointer; animation: rotating 4s linear infinite reverse"
-                    @click="refreshWordCloud()">
+                <el-icon size="20" class="word-cloud-refresh-icon" @click="refreshWordCloud()">
                     <Refresh />
                 </el-icon>
             </span>
@@ -179,7 +170,7 @@
                     <WordCloud ref="wordCloudRef" />
                 </template>
                 <template #fallback>
-                    <div style="height: 270px; width: 300px">词云加载中...</div>
+                    <div class="word-cloud-loading">词云加载中...</div>
                 </template>
             </Suspense>
         </div>
@@ -190,16 +181,17 @@
 import { ref, reactive, onMounted, defineAsyncComponent } from 'vue';
 import httpInstance from '@/apis/httpInstance';
 import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
+import { Refresh, Warning, QuestionFilled } from '@element-plus/icons-vue';
 import ChatRoom from '@/components/ChatRoom.vue';
+import flipNum from '@/components/flip-num.vue';
 import { API } from '@/constants/backend';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 
 const loading = ref(true);
+const isRotating = ref(false);
 
 const data = reactive({
-    getRandOne: [],
     tableData: [],
-    table: '',
-    barrage: '',
 });
 
 const dictData = ref([]);
@@ -344,6 +336,116 @@ const getRandOne = () => {
             console.error('随机失败');
         });
 };
+
+// 新的刷新处理函数，包含旋转动画
+const handleRefresh = async () => {
+    if (loading.value) return;
+
+    isRotating.value = true;
+    loading.value = true;
+
+    try {
+        await httpInstance.get(API.GET_RAND_ONE_MEME).then((res) => {
+            data.tableData = [res.data];
+            loading.value = false;
+        });
+    } catch (err) {
+        console.error('随机失败');
+        loading.value = false;
+    }
+
+    // 旋转动画持续600ms
+    setTimeout(() => {
+        isRotating.value = false;
+    }, 600);
+};
+
+// 防刷变量
+let lastCallTime = 0;
+let lastMousePosition = null;
+let mousePositionCnt = 0;
+
+// 复制并增加计数的函数（包含防刷逻辑）
+const copyText_countPlus1 = async (row, event) => {
+    const currentTime = Date.now();
+    const currentMousePosition = { x: event.clientX, y: event.clientY };
+
+    // 检查鼠标位置是否变化
+    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
+        mousePositionCnt++;
+        if (mousePositionCnt > 4) {
+            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
+                confirmButtonText: '好吧，我错了',
+            });
+        }
+    } else {
+        mousePositionCnt = 0;
+    }
+
+    // 检查是否已经过了 1.5 秒
+    if (currentTime - lastCallTime < 1500) {
+        ElNotification({
+            title: '请勿刷次数',
+            message: '复制成功，但次数没有增加',
+            type: 'warning',
+        });
+        const textToCopy = row.barrage;
+        let tempInput = document.createElement('input');
+        tempInput.value = textToCopy;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand('Copy');
+        } catch (err) {
+            ElNotification({
+                title: '复制失败',
+                message: '复制操作失败，请稍后重试',
+                type: 'error',
+            });
+            console.error('复制失败:', err);
+        }
+        document.body.removeChild(tempInput);
+        lastCallTime = currentTime;
+        lastMousePosition = currentMousePosition;
+        return;
+    }
+
+    lastMousePosition = currentMousePosition;
+    lastCallTime = currentTime;
+    const textToCopy = row.barrage;
+    let tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+
+    try {
+        document.execCommand('Copy');
+        // 复制成功提示
+        open2();
+        console.log('内容已复制到剪贴板');
+
+        // 增加复制计数
+        const success = await copyCountPlus1('', row.id);
+        if (success) {
+            // 更新本地数据中的复制计数，确保数值转换
+            if (data.tableData[0] && data.tableData[0].id === row.id) {
+                data.tableData[0].cnt = String(Number(data.tableData[0].cnt || 0) + 1);
+            }
+        } else {
+            plus1Error();
+        }
+    } catch (err) {
+        ElNotification({
+            title: '复制失败',
+            message: '复制操作失败，请稍后重试',
+            type: 'error',
+        });
+        console.error('复制失败:', err);
+        open4();
+    }
+    document.body.removeChild(tempInput);
+};
+
 getRandOne();
 
 const open2 = () => {
@@ -358,79 +460,6 @@ const open4 = () => {
         message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
         type: 'error',
     });
-};
-
-let lastCallTime = 0;
-let lastMousePosition = null;
-let mousePositionCnt = 0;
-const copyText = (row) => {
-    const currentTime = new Date().getTime();
-    const currentMousePosition = { x: event.clientX, y: event.clientY };
-    // 检查鼠标位置是否变化
-    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
-        mousePositionCnt++;
-        if (mousePositionCnt > 4) {
-            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-                confirmButtonText: '好吧，我错了',
-            });
-        }
-    } else {
-        mousePositionCnt = 0;
-    }
-    // 检查是否已经过了 1.5 秒
-    if (currentTime - lastCallTime < 1500) {
-        ElNotification({
-            title: '请勿刷次数',
-            message: '复制成功，但次数没有增加',
-            type: 'warning',
-        });
-        const textToCopy = row.barrage;
-        let tempInput = document.createElement('input');
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select(); // 选择对象
-        try {
-            document.execCommand('Copy'); // 执行浏览器复制命令
-        } catch (err) {
-            // 复制失败，可以显示错误信息
-            ElNotification({
-                title: '复制失败',
-                message: '复制操作失败，请稍后重试',
-                type: 'error',
-            });
-            console.error('复制失败:', err);
-        }
-        document.body.removeChild(tempInput); // 清理临时元素
-        lastCallTime = currentTime;
-        lastMousePosition = currentMousePosition;
-        return;
-    }
-    lastMousePosition = currentMousePosition;
-    lastCallTime = currentTime;
-    const textToCopy = row.barrage;
-    let tempInput = document.createElement('input');
-    tempInput.value = textToCopy;
-    document.body.appendChild(tempInput);
-    tempInput.select(); // 选择对象
-    try {
-        document.execCommand('Copy'); // 执行浏览器复制命令
-        // 复制成功，可以显示提示信息
-        open2();
-        console.log('内容已复制到剪贴板');
-        httpInstance.get('/machine/addCnt/' + `${row.id}`).then(() => {
-            //setTimeout(() => load(data.currentPage), 50); // 50 毫秒后执行 load
-        });
-    } catch (err) {
-        // 复制失败，可以显示错误信息
-        ElNotification({
-            title: '复制失败',
-            message: '复制操作失败，请稍后重试',
-            type: 'error',
-        });
-        console.error('复制失败:', err);
-        open4();
-    }
-    document.body.removeChild(tempInput); // 清理临时元素
 };
 
 //移动端的触摸展示
@@ -460,49 +489,77 @@ const formatSubmitTime = (timeString) => {
     if (!timeString) return '';
     return timeString.replace('T', ' ').split('.')[0];
 };
-onMounted(() => { });
 </script>
 
 <style scoped lang="scss">
-/* 预设标签容器 */
+/* 标签相关样式 */
+.submit-tag-button {
+    margin-left: 50%;
+}
+
 .preset-tags-container {
     max-height: 75px;
     overflow-y: auto;
     margin-top: 10px;
     margin-bottom: 20px;
+
+    .preset-tags {
+        display: flex;
+        flex-wrap: wrap;
+
+        .el-tag {
+            position: relative;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        :deep(.el-tag__close) {
+            font-size: 30px;
+            transform: rotate(45deg);
+        }
+    }
 }
 
-/* 预设标签按钮的样式 */
-.preset-tags {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.preset-tags .el-tag {
-    position: relative;
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-:deep(.preset-tags .el-tag__close) {
-    font-size: 30px;
-    transform: rotate(45deg);
+.preset-tag {
+    padding: 15px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
 .added-tags {
     display: flex;
     flex-wrap: wrap;
+
+    .el-tag {
+        margin-right: 10px;
+        margin-bottom: 10px;
+    }
 }
 
-.added-tags .el-tag {
-    margin-right: 10px;
-    margin-bottom: 10px;
+.added-tag {
+    padding: 15px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.tag-icon-wrapper {
+    .tag-icon {
+        width: 22px;
+        height: 22px;
+        object-fit: cover;
+        vertical-align: middle;
+    }
+
+    .tag-text {
+        vertical-align: middle;
+    }
 }
 
 .home {
     height: auto;
     width: 80%;
 
+    // 顶部横幅区域
     .boomouder {
         height: 150px;
 
@@ -514,6 +571,7 @@ onMounted(() => { });
         }
     }
 
+    // 卡片容器
     .card {
         line-height: 25px;
 
@@ -526,8 +584,216 @@ onMounted(() => { });
         }
 
         &.third-card {
-            line-height: 0px;
             margin-top: 8px;
+            padding: 12px;
+
+            .random-barrage-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 16px;
+
+                .random-barrage-title {
+                    margin: 0;
+                    font-size: 24px;
+                    font-weight: 600;
+                    color: #303133;
+                }
+
+                .refresh-controls {
+                    display: flex;
+                    align-items: center;
+                }
+
+                .refresh-text {
+                    font-size: 18px;
+                    color: #409eff;
+                    cursor: pointer;
+                    &:hover {
+                        color: #66b1ff;
+                    }
+                }
+
+                .refresh-icon {
+                    color: #409eff;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        color: #66b1ff;
+                    }
+
+                    &.rotating {
+                        animation: rotate 0.6s linear;
+                    }
+                }
+            }
+
+            .modern-barrage-card {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                .barrage-main-content {
+                    flex: 1;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+
+                    &:hover {
+                        .barrage-text {
+                            color: #11a983;
+                        }
+                    }
+                }
+
+                .barrage-text-wrapper {
+                    margin-bottom: 12px;
+                }
+
+                .barrage-text {
+                    font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
+                    font-size: large;
+                    color: #303133;
+                    line-height: 1.6;
+                    word-break: break-all;
+                    transition: color 0.3s ease;
+                }
+
+                .barrage-meta-info {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                }
+
+                .tags-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 6px;
+                }
+
+                .modern-tag {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 3px;
+                    background: #e7f6f3;
+                    border: none;
+                    border-radius: 50px;
+                    padding: 4px 8px;
+                    font-size: 14px;
+                    color: #18a985;
+
+                    .tag-icon {
+                        width: 22px;
+                        height: 22px;
+                        object-fit: cover;
+                    }
+                }
+
+                .submit-time {
+                    font-size: 12px;
+                    color: #909399;
+                }
+
+                .modern-copy-button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 6px 12px;
+                    background: #11a983;
+                    border-radius: 6px;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    border: none;
+                    white-space: nowrap;
+                    flex-shrink: 0;
+
+                    &:hover {
+                        background: #0e8a6b;
+                        transform: translateY(-1px);
+                        box-shadow: 0 4px 8px rgba(17, 169, 131, 0.3);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
+
+                    .copy-icon {
+                        font-size: 16px;
+                        color: #ffffff;
+                        margin-right: 4px;
+                    }
+
+                    .copy-text {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: #ffffff;
+                        margin-right: 4px;
+                    }
+
+                    .copy-count {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: #ffffff;
+                        overflow: hidden;
+                        height: 1.2em;
+                        line-height: 1.2em;
+                    }
+                }
+            }
+
+            // 响应式设计
+            @media (max-width: 768px) {
+                .modern-barrage-card {
+                    flex-direction: column;
+                    gap: 12px;
+                    padding: 10px 0;
+
+                    .barrage-text {
+                        font-size: 15px;
+                    }
+
+                    .modern-copy-button {
+                        align-self: flex-start;
+                        padding: 5px 10px;
+
+                        .copy-icon {
+                            font-size: 14px;
+                        }
+
+                        .copy-text {
+                            font-size: 13px;
+                        }
+
+                        .copy-count {
+                            font-size: 13px;
+                            overflow: hidden;
+                            height: 1.2em;
+                            line-height: 1.2em;
+                        }
+                    }
+
+                    .modern-tag {
+                        padding: 3px 6px;
+                        font-size: 12px;
+                        color: #18a985;
+
+                        .tag-icon {
+                            width: 12px;
+                            height: 12px;
+                        }
+                    }
+                }
+            }
+
+            .no-data {
+                text-align: center;
+                color: #909399;
+                font-size: 14px;
+                padding: 32px;
+                background-color: #f8f9fa;
+                border-radius: 8px;
+                border: 1px dashed #dcdfe6;
+            }
         }
 
         &.fifth-card {
@@ -547,30 +813,6 @@ onMounted(() => { });
 
     .announcement {
         font-size: 15px;
-    }
-
-    .announcement-highlight {
-        font-size: 18px;
-        color: red;
-
-        a {
-            color: red;
-        }
-    }
-
-    .barrage-table {
-        font-family: 微软雅黑;
-        font-size: 20px;
-        cursor: pointer;
-
-        :deep(.el-table__header-wrapper) {
-            font-size: 14px;
-            white-space: normal !important;
-        }
-    }
-
-    .submit-button {
-        font-size: 20px;
     }
 
     .dgq63136 {
@@ -658,6 +900,7 @@ onMounted(() => { });
     margin-left: 10px;
 }
 
+// 响应式设计
 @media (min-width: 601px) {
     .home {
         .wordCloudDiv {
@@ -706,42 +949,66 @@ onMounted(() => { });
             .boom6657 {
                 position: absolute;
                 border-radius: 10px;
-                width: 192px;
                 height: 118px;
                 left: 25%;
             }
         }
     }
+}
 
-    .ChatRoom {
-        margin: 10px 0;
+// 弹窗内容样式
+.popover-content {
+    .tags-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 8px;
+
+        .tag-item {
+            margin-right: 8px;
+            margin-bottom: 4px;
+        }
+
+        .custom-tag {
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .tag-icon-wrapper {
+            display: flex;
+            align-items: center;
+
+            .tag-icon {
+                width: 22px;
+                height: 22px;
+                object-fit: cover;
+                margin-right: 4px;
+            }
+
+            .tag-label {
+                vertical-align: middle;
+            }
+        }
     }
 
-    .match-association-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-        padding: 8px;
+    .submit-time {
+        font-size: 11px;
+        color: #909399;
+        text-align: right;
+        margin-top: 4px;
+        border-top: 1px solid #ebeef5;
+        padding-top: 4px;
     }
+}
 
-    .match-section-home {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 8px;
-    }
+.ChatRoom {
+    margin: 10px 0;
+}
 
-    .match-details-box-home,
-    .no-match-info-home {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    .button-group-home {
-        width: 100%;
-        margin-left: 0;
-        justify-content: flex-end;
-    }
+.match-details-box-home,
+.no-match-info-home {
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .tag-icon-wrapper {
@@ -749,5 +1016,42 @@ onMounted(() => { });
     width: 100%;
     display: flex;
     align-items: center;
+}
+
+/* 词云相关样式 */
+.word-cloud-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #303133;
+    margin: 0;
+}
+
+.word-cloud-refresh-icon {
+    color: #409eff;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+        color: #66b1ff;
+    }
+
+    &.rotating {
+        animation: rotate 0.6s linear;
+    }
+}
+
+.word-cloud-loading {
+    text-align: center;
+    padding: 20px;
+    color: #909399;
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 </style>

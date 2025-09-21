@@ -128,6 +128,7 @@ function navigateTo(path: string) {
 
     .main-content {
         display: flex;
+        margin-bottom: 40px;
     }
 
     .sidebar {
