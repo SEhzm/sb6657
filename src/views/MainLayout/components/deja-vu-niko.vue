@@ -435,16 +435,18 @@ const teamRatings = [
             border-collapse: collapse;
             font-family: "Courier New", monospace;
             font-size: 14px;
+            table-layout: auto; // 让表格根据内容自动调整列宽
 
             @media (max-width: 768px) {
                 font-size: 13px;
             }
 
             td {
-                padding: 8px 12px;
+                padding: 6px 2px;
                 text-align: left;
                 border-bottom: 1px solid #e0e0e0;
                 vertical-align: middle;
+                white-space: nowrap;
             }
 
             tbody tr:hover {
@@ -455,54 +457,53 @@ const teamRatings = [
                 background-color: #fafafa;
             }
 
-            // 列宽控制
+            // 列样式控制（不设固定宽度，让内容撑开）
             td:nth-child(1) { // 排名
-                width: 60px;
                 text-align: center;
+                font-weight: 500;
+                width: 1%;
+                padding: 6px 4px;
             }
 
             td:nth-child(2) { // 选手
-                width: 120px;
                 font-weight: 500;
             }
 
-            td:nth-child(3) { // 队伍
-                width: 100px;
-            }
+
 
             td:nth-child(4) { // 表情
-                width: 80px;
                 text-align: center;
+                width: 1%;
             }
 
             td:nth-child(5) { // 点数
-                width: 100px;
                 text-align: center;
                 font-weight: 500;
+                // 不设固定宽度，让内容自动撑开
             }
         }
 
         // 捕虾队评级表格的特殊样式
         &.team-rating-table table {
             td:nth-child(1) { // 队伍
-                width: 100px;
                 font-weight: 500;
+                // 不设固定宽度，让内容自动撑开
             }
 
-            td:nth-child(2) { // 比分
-                width: 80px;
+            td:nth-child(2) {
                 text-align: center;
                 font-weight: 500;
+                width: 1%;
             }
 
             td:nth-child(3) { // 对手
-                width: 100px;
+                // 不设固定宽度，让内容自动撑开
             }
 
             td:nth-child(4) { // 评级
-                width: 120px;
                 text-align: center;
                 font-weight: 500;
+                // 不设固定宽度，让内容自动撑开
             }
         }
     }
