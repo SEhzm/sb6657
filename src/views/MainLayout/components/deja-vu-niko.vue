@@ -163,7 +163,7 @@ const top30Rankings = [
 const nonTop30Rankings = [
     { rank: '1', player: 'yuurih', team: 'FURIA', emoji: '😋', points: '2点' },
     { rank: '2', player: 'latto', team: 'Legacy', emoji: '😋', points: '2点' },
-    { rank: '3', player: 'apEX', team: 'Vitality', emoji: '🫘', points: '2(3-1)点' },
+    { rank: '2', player: 'apEX', team: 'Vitality', emoji: '&#x1FAD8', points: '2(3-1)点' },
     { rank: '4', player: 'YEKINDAR', team: 'FURIA', emoji: '😋', points: '2点' },
     { rank: '5', player: 'nicx', team: 'PUA', emoji: '😋', points: '2点' },
     { rank: '6', player: 'Graviti', team: '3DMAX', emoji: '😋', points: '2点' },
@@ -236,7 +236,6 @@ const teamRatings = [
     font-size: 14px;
     line-height: 1.6;
     color: #333333;
-    margin-bottom: 40px;
 }
 
 // Header 样式
@@ -485,25 +484,31 @@ const teamRatings = [
 
         // 捕虾队评级表格的特殊样式
         &.team-rating-table table {
+            table-layout: fixed;
+            width: 100%;
+            
             td:nth-child(1) { // 队伍
                 font-weight: 500;
-                // 不设固定宽度，让内容自动撑开
+                width: 15%;
             }
 
-            td:nth-child(2) {
+            td:nth-child(2) { // 比分
                 text-align: center;
                 font-weight: 500;
-                width: 1%;
+                width: 20%;
+                padding: 6px 10px;
             }
 
             td:nth-child(3) { // 对手
-                // 不设固定宽度，让内容自动撑开
+                width: 20%;
+                padding-right: 15px;
             }
 
             td:nth-child(4) { // 评级
-                text-align: center;
+                text-align: left;
                 font-weight: 500;
-                // 不设固定宽度，让内容自动撑开
+                width: 40%;
+                padding-left: 10px;
             }
         }
     }
