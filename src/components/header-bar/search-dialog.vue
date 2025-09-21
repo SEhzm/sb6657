@@ -89,28 +89,26 @@
                 <!-- 内容列 -->
                 <el-table-column prop="content">
                     <template #default="scope">
-                        <div v-memo="[scope.row.id, scope.row.highlightedContent, props.searchKey]">
-                            <el-popover placement="top" width="auto" trigger="hover">
-                                <template #reference>
-                                    <div class="barrage-text" v-html="scope.row.highlightedContent || scope.row.content"></div>
-                                </template>
-                                <template #default>
-                                    <div class="popover-details">
-                                        <div class="tag-list">
-                                            <div v-for="item in getDictLabel(scope.row.tags)" :key="item.label">
-                                                <el-tag round effect="dark" class="tag-item">
-                                                    <div class="tag-icon-wrapper">
-                                                        <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
-                                                        <span class="tag-label">{{ item.label }}</span>
-                                                    </div>
-                                                </el-tag>
-                                            </div>
+                        <el-popover placement="top" width="auto" trigger="hover">
+                            <template #reference>
+                                <div class="barrage-text" v-html="scope.row.highlightedContent || scope.row.content"></div>
+                            </template>
+                            <template #default>
+                                <div class="popover-details">
+                                    <div class="tag-list">
+                                        <div v-for="item in getDictLabel(scope.row.tags)" :key="item.label">
+                                            <el-tag round effect="dark" class="tag-item">
+                                                <div class="tag-icon-wrapper">
+                                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                                                    <span class="tag-label">{{ item.label }}</span>
+                                                </div>
+                                            </el-tag>
                                         </div>
-                                        <div class="submit-time">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</div>
                                     </div>
-                                </template>
-                            </el-popover>
-                        </div>
+                                    <div class="submit-time">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</div>
+                                </div>
+                            </template>
+                        </el-popover>
                     </template>
                 </el-table-column>
 

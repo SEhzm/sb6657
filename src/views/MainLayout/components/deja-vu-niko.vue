@@ -35,15 +35,18 @@
                         <button class="btn-switch" @click="changeDejaVuType(1)">切换到非top30版</button>
                     </div>
                 </div>
-                <div class="ranking-list">
-                    1.Jimpphat(MOUZ)🐱👉🦐👈3(5-2)点 <br />
-                    2.XANTARES(Aurora)😡👉🦐👈3(4-1)点<br />
-                    3.ropz(Vitality) 🚘👉🦐👈2(3-1)点<br />
-                    4.Senzu(MGLZ) 😋👉🦐👈2点<br />
-                    5.NertZ(Liquid) 😋👉🦐👈2点<br />
-                    6.KSCERATO(FURIA)😋👉🦐👈1点<br />
-                    7.donk(Spirit) 🕳👉🦐👈1点<br />
-                    8.frozen(FaZe) 🥶👉🦐👈1(2-1)点<br />
+                <div class="ranking-table">
+                    <table>
+                        <tbody>
+                            <tr v-for="item in top30Rankings" :key="item.rank">
+                                <td>{{ item.rank }}</td>
+                                <td>{{ item.player }}</td>
+                                <td>{{ item.team }}</td>
+                                <td v-html="item.emoji + '👉🦐👈'"></td>
+                                <td>{{ item.points }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div v-if="dejaVuType === 1" class="ranking-section">
@@ -54,35 +57,18 @@
                         <button class="btn-switch" @click="changeDejaVuType(0)">切换到top30版</button>
                     </div>
                 </div>
-                <div class="ranking-list">
-                    1.latto(Legacy) 😋👉🦐👈2点<br />
-                    2.apEX(Vitality) &#x1FAD8 2(3-1)点<br />
-                    3.YEKINDAR(FURIA)😋👉🦐👈2点<br />
-                    4.nicx(PUA) 😋👉🦐👈2点<br />
-                    5.Graviti(3DMAX) 😋👉🦐👈2点<br />
-                    6.wicadia(Aurora)🎁👉🦐👈2点<br />
-                    7.jottAAA(Aurora)😋👉🦐👈1(2-1)点<br />
-                    8.FalleN(FURIA) 😋👉🦐👈1点<br />
-                    9.mzinho(MGLZ) 😋👉🦐👈1(2-1)点<br />
-                    10.ztr(GL) 🐷👉🦐👈1(2-1)点<br />
-                    11.Lucaozy(Fluxo)😋👉🦐👈1点<br />
-                    12.C4LLM3SU3(LVG)😋👉🦐👈1点<br />
-                    13.acoR(m1x) 😋👉🦐👈1点<br />
-                    14.xfl0ud(HEROIC)😋👉🦐👈1点<br />
-                    15.LNZ(HEROIC) 😋👉🦐👈1点<br />
-                    16.Jeorge(NRG) 😋👉🦐👈1点<br />
-                    17.sl3nd(benched)😋👉🦐👈1(2-1)点<br />
-                    18.cej0t(9INE) 😋👉🦐👈1点<br />
-                    19.story(SAW) 😋👉🦐👈1点<br />
-                    20.hallzerk(PUA) 😋👉🦐👈1点<br />
-                    21.Grim(PUA) 😋👉🦐👈1点<br />
-                    22.FL1t(VP) 👼👉🦐👈1点<br />
-                    23.FL4MUS(benched)😎👉🦐👈1点<br />
-                    24.ICY(VP) 🧊 👉🦐👈1点<br />
-                    25.Lucky(3DMAX)🤬👉🦐👈1点<br />
-                    26.Ex3rcice(3DMAX)😋👉🦐👈1点<br />
-                    27.jabbi(Astralis) 🐭👉🦐👈1点<br />
-                    28.sdy(ENCE) 😋👉🦐👈1点<br />
+                <div class="ranking-table">
+                    <table>
+                        <tbody>
+                            <tr v-for="item in nonTop30Rankings" :key="item.rank">
+                                <td>{{ item.rank }}</td>
+                                <td>{{ item.player }}</td>
+                                <td>{{ item.team }}</td>
+                                <td v-html="item.emoji + '👉🦐👈'"></td>
+                                <td>{{ item.points }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="ranking-section">
@@ -92,21 +78,18 @@
                         <button class="btn-link" @click="showDialog(title2, text2)">痛风点数计算规则</button>
                     </div>
                 </div>
-                <div class="ranking-list">
-                    1. broky(FaZe) 🦞👉📦6点<br />
-                    2. woxic(Aurora) 🦞👉 &#x1FAF2 3(1-4)点<br />
-                    3.Brollan(MOUZ) 🦞👉💵3(1-4)点<br />
-                    4.malbsMd(G2) 🦞👉🐴3点<br />
-                    5.flameZ(Vitality) 🦞👉🔥2点<br />
-                    6.w0nderful(NAVI) 🦞👉🧨2点<br />
-                    7. EliGE (benched) 🦞👉🐔2点<br />
-                    8.device(Astralis) 🦞👉😨2点<br />
-                    9.ZywOo(Vitality) 🦞👉🍠1(2-3)点<br />
-                    10.torzsi(MOUZ) 🦞👉🧦1(3-4)点<br />
-                    11.xertioN(MOUZ) 🦞👉🦀1(2-3)点<br />
-                    12.sh1ro(Spirit) 🦞👉🧟‍♂️1点<br />
-                    13.NAF(Liquid) 🦞👉🦥1点<br />
-                    14.stavn(Astralis) 🦞👉🐍1点<br />
+                <div class="ranking-table">
+                    <table>
+                        <tbody>
+                            <tr v-for="item in goutRankings" :key="item.rank">
+                                <td>{{ item.rank }}</td>
+                                <td>{{ item.player }}</td>
+                                <td>{{ item.team }}</td>
+                                <td v-html="item.emoji"></td>
+                                <td>{{ item.points }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="ranking-section">
@@ -116,17 +99,17 @@
                         <span class="rule-text">规则：只会评级和Falcons有重复交手记录的队伍。</span>
                     </div>
                 </div>
-                <div class="ranking-list">
-                    Vitality(4:1)Falcons 专业捕虾队 <br />
-                    Aurora(4:1)Falcons 专业捕虾队 <br />
-                    MOUZ(4:4)Falcons 入门捕虾队 <br />
-                    FURIA(1:1)Falcons 入门捕虾队 <br />
-                    MGLZ(1:1)Falcons 入门捕虾队 <br />
-                    paiN(1:1)Falcons 入门捕虾队 <br />
-                    VP(1:1)Falcons 入门捕虾队 <br />
-                    G2(1:2)Falcons 劣质捕虾队 <br />
-                    GL(1:4)Falcons 被钳破船队 <br />
-                    FaZe(0:4)Falcons 浮游生物队 <br />
+                <div class="ranking-table team-rating-table">
+                    <table>
+                        <tbody>
+                            <tr v-for="item in teamRatings" :key="item.team">
+                                <td>{{ item.team }}</td>
+                                <td>{{ item.score }}</td>
+                                <td>{{ item.opponent }}</td>
+                                <td>{{ item.rating }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </section>
@@ -163,6 +146,82 @@ const dejaVuType = ref(0)
 function changeDejaVuType(type: number) {
     dejaVuType.value = type
 }
+
+// Top30版鲜虾点数排行榜
+const top30Rankings = [
+    { rank: '1', player: 'Jimpphat', team: 'MOUZ', emoji: '🐱', points: '3(5-2)点' },
+    { rank: '2', player: 'XANTARES', team: 'Aurora', emoji: '😡', points: '3(4-1)点' },
+    { rank: '3', player: 'ropz', team: 'Vitality', emoji: '🚘', points: '2(3-1)点' },
+    { rank: '4', player: 'Senzu', team: 'MGLZ', emoji: '😋', points: '2点' },
+    { rank: '5', player: 'NertZ', team: 'Liquid', emoji: '😋', points: '2点' },
+    { rank: '6', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
+    { rank: '7', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
+    { rank: '8', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
+]
+
+// 非top30版荣誉提名鲜虾榜
+const nonTop30Rankings = [
+    { rank: '1', player: 'latto', team: 'Legacy', emoji: '😋', points: '2点' },
+    { rank: '2', player: 'apEX', team: 'Vitality', emoji: '&#x1FAD8', points: '2(3-1)点' },
+    { rank: '3', player: 'YEKINDAR', team: 'FURIA', emoji: '😋', points: '2点' },
+    { rank: '4', player: 'nicx', team: 'PUA', emoji: '😋', points: '2点' },
+    { rank: '5', player: 'Graviti', team: '3DMAX', emoji: '😋', points: '2点' },
+    { rank: '6', player: 'wicadia', team: 'Aurora', emoji: '🎁', points: '2点' },
+    { rank: '7', player: 'jottAAA', team: 'Aurora', emoji: '😋', points: '1(2-1)点' },
+    { rank: '8', player: 'FalleN', team: 'FURIA', emoji: '😋', points: '1点' },
+    { rank: '9', player: 'mzinho', team: 'MGLZ', emoji: '😋', points: '1(2-1)点' },
+    { rank: '10', player: 'ztr', team: 'GL', emoji: '🐷', points: '1(2-1)点' },
+    { rank: '11', player: 'Lucaozy', team: 'Fluxo', emoji: '😋', points: '1点' },
+    { rank: '12', player: 'C4LLM3SU3', team: 'LVG', emoji: '😋', points: '1点' },
+    { rank: '13', player: 'acoR', team: 'm1x', emoji: '😋', points: '1点' },
+    { rank: '14', player: 'xfl0ud', team: 'HEROIC', emoji: '😋', points: '1点' },
+    { rank: '15', player: 'LNZ', team: 'HEROIC', emoji: '😋', points: '1点' },
+    { rank: '16', player: 'Jeorge', team: 'NRG', emoji: '😋', points: '1点' },
+    { rank: '17', player: 'sl3nd', team: 'benched', emoji: '😋', points: '1(2-1)点' },
+    { rank: '18', player: 'cej0t', team: '9INE', emoji: '😋', points: '1点' },
+    { rank: '19', player: 'story', team: 'SAW', emoji: '😋', points: '1点' },
+    { rank: '20', player: 'hallzerk', team: 'PUA', emoji: '😋', points: '1点' },
+    { rank: '21', player: 'Grim', team: 'PUA', emoji: '😋', points: '1点' },
+    { rank: '22', player: 'FL1t', team: 'VP', emoji: '👼', points: '1点' },
+    { rank: '23', player: 'FL4MUS', team: 'benched', emoji: '😎', points: '1点' },
+    { rank: '24', player: 'ICY', team: 'VP', emoji: '🧊', points: '1点' },
+    { rank: '25', player: 'Lucky', team: '3DMAX', emoji: '🤬', points: '1点' },
+    { rank: '26', player: 'Ex3rcice', team: '3DMAX', emoji: '😋', points: '1点' },
+    { rank: '27', player: 'jabbi', team: 'Astralis', emoji: '🐭', points: '1点' },
+    { rank: '28', player: 'sdy', team: 'ENCE', emoji: '😋', points: '1点' }
+]
+
+// 痛风点数榜
+const goutRankings = [
+    { rank: '1', player: 'broky', team: 'FaZe', emoji: '🦞👉📦', points: '6点' },
+    { rank: '2', player: 'woxic', team: 'Aurora', emoji: '🦞👉 &#x1FAF2', points: '3(1-4)点' },
+    { rank: '3', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
+    { rank: '4', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
+    { rank: '5', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
+    { rank: '6', player: 'w0nderful', team: 'NAVI', emoji: '🦞👉🧨', points: '2点' },
+    { rank: '7', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
+    { rank: '8', player: 'device', team: 'Astralis', emoji: '🦞👉😨', points: '2点' },
+    { rank: '9', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
+    { rank: '10', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '1(3-4)点' },
+    { rank: '11', player: 'xertioN', team: 'MOUZ', emoji: '🦞👉🦀', points: '1(2-3)点' },
+    { rank: '12', player: 'sh1ro', team: 'Spirit', emoji: '🦞👉🧟‍♂️', points: '1点' },
+    { rank: '13', player: 'NAF', team: 'Liquid', emoji: '🦞👉🦥', points: '1点' },
+    { rank: '14', player: 'stavn', team: 'Astralis', emoji: '🦞👉🐍', points: '1点' }
+]
+
+// 捕虾队评级
+const teamRatings = [
+    { team: 'Vitality', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
+    { team: 'Aurora', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
+    { team: 'MOUZ', score: '4:4', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'FURIA', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'MGLZ', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'paiN', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'VP', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'G2', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
+    { team: 'GL', score: '1:4', opponent: 'Falcons', rating: '被钳破船队' },
+    { team: 'FaZe', score: '0:4', opponent: 'Falcons', rating: '浮游生物队' }
+]
 
 </script>
 
@@ -361,16 +420,89 @@ function changeDejaVuType(type: number) {
         }
     }
 
-    .ranking-list {
+    .ranking-table {
         padding: 15px;
         background-color: #ffffff;
-        font-family: "Courier New", monospace;
-        line-height: 1.8;
-        white-space: pre-line;
+        overflow-x: auto;
 
         @media (max-width: 768px) {
-            font-size: 13px;
             padding: 12px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+
+            @media (max-width: 768px) {
+                font-size: 13px;
+            }
+
+            td {
+                padding: 8px 12px;
+                text-align: left;
+                border-bottom: 1px solid #e0e0e0;
+                vertical-align: middle;
+            }
+
+            tbody tr:hover {
+                background-color: #f9f9f9;
+            }
+
+            tbody tr:nth-child(even) {
+                background-color: #fafafa;
+            }
+
+            // 列宽控制
+            td:nth-child(1) { // 排名
+                width: 60px;
+                text-align: center;
+            }
+
+            td:nth-child(2) { // 选手
+                width: 120px;
+                font-weight: 500;
+            }
+
+            td:nth-child(3) { // 队伍
+                width: 100px;
+            }
+
+            td:nth-child(4) { // 表情
+                width: 80px;
+                text-align: center;
+            }
+
+            td:nth-child(5) { // 点数
+                width: 100px;
+                text-align: center;
+                font-weight: 500;
+            }
+        }
+
+        // 捕虾队评级表格的特殊样式
+        &.team-rating-table table {
+            td:nth-child(1) { // 队伍
+                width: 100px;
+                font-weight: 500;
+            }
+
+            td:nth-child(2) { // 比分
+                width: 80px;
+                text-align: center;
+                font-weight: 500;
+            }
+
+            td:nth-child(3) { // 对手
+                width: 100px;
+            }
+
+            td:nth-child(4) { // 评级
+                width: 120px;
+                text-align: center;
+                font-weight: 500;
+            }
         }
     }
 }
