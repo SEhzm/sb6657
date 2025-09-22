@@ -52,7 +52,7 @@
                                     <span class="tag-label">{{ item.label }}</span>
                                 </div>
                             </div>
-                            <div class="submit-time">{{ formatSubmitTime(data.tableData[0].submitTime) }}</div>
+                            <div class="submit-time"><span class="meme-id">#{{ data.tableData[0].id }}</span>{{ formatSubmitTime(data.tableData[0].submitTime) }}</div>
                         </div>
                     </div>
 
@@ -615,6 +615,13 @@ const formatSubmitTime = (timeString) => {
                 .submit-time {
                     font-size: 12px;
                     color: #909399;
+                    .meme-id {
+                        font-size: 16px;
+                        color: gray;
+                        padding-right: 4px;
+                        font-weight: 600;
+                        font-style: italic;
+                    }
                 }
 
                 .modern-copy-button {
