@@ -39,7 +39,7 @@
             </div>
 
             <div v-if="data.tableData && data.tableData.length > 0" class="modern-barrage-container">
-                <div class="modern-barrage-card" @click="copyText_countPlus1(data.tableData[0], $event)">
+                <div class="modern-barrage-card" @click="handleCopyMeme(data.tableData[0])">
                     <div class="barrage-main-content">
                         <div class="barrage-text-wrapper">
                             <span class="barrage-text">{{ data.tableData[0].barrage }}</span>
@@ -56,7 +56,7 @@
                         </div>
                     </div>
 
-                    <div class="modern-copy-button" @click.stop="copyText_countPlus1(data.tableData[0], $event)">
+                    <div class="modern-copy-button" @click.stop="handleCopyMeme(data.tableData[0])">
                         <div class="copy-text">复制</div>
                         <div class="copy-icon">📋</div>
                         <div class="copy-count">
@@ -186,6 +186,9 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import flipNum from '@/components/flip-num.vue';
 import { API } from '@/constants/backend';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import { throttle } from '@/utils/throttle';
+import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
+
 
 const loading = ref(true);
 const isRotating = ref(false);
@@ -360,91 +363,27 @@ const handleRefresh = async () => {
     }, 600);
 };
 
-// 防刷变量
-let lastCallTime = 0;
-let lastMousePosition = null;
-let mousePositionCnt = 0;
+// 节流过的搜索，2s内多次点击复制只取其中一次发请求给后台
+const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
+async function handleCopyMeme(meme) {
+    const copyResult = copyMeme(meme.content);
+    if (!copyResult || copyResult === 'limitedSuccess') return;
 
-// 复制并增加计数的函数（包含防刷逻辑）
-const copyText_countPlus1 = async (row, event) => {
-    const currentTime = Date.now();
-    const currentMousePosition = { x: event.clientX, y: event.clientY };
-
-    // 检查鼠标位置是否变化
-    if (lastMousePosition && lastMousePosition.x === currentMousePosition.x && lastMousePosition.y === currentMousePosition.y) {
-        mousePositionCnt++;
-        if (mousePositionCnt > 4) {
-            ElMessageBox.alert('😡😡😡你在刷次数😡😡😡', '请勿使用连点器', {
-                confirmButtonText: '好吧，我错了',
-            });
-        }
-    } else {
-        mousePositionCnt = 0;
-    }
-
-    // 检查是否已经过了 1.5 秒
-    if (currentTime - lastCallTime < 1500) {
-        ElNotification({
-            title: '请勿刷次数',
-            message: '复制成功，但次数没有增加',
-            type: 'warning',
-        });
-        const textToCopy = row.barrage;
-        let tempInput = document.createElement('input');
-        tempInput.value = textToCopy;
-        document.body.appendChild(tempInput);
-        tempInput.select();
-        try {
-            document.execCommand('Copy');
-        } catch (err) {
-            ElNotification({
-                title: '复制失败',
-                message: '复制操作失败，请稍后重试',
-                type: 'error',
-            });
-            console.error('复制失败:', err);
-        }
-        document.body.removeChild(tempInput);
-        lastCallTime = currentTime;
-        lastMousePosition = currentMousePosition;
-        return;
-    }
-
-    lastMousePosition = currentMousePosition;
-    lastCallTime = currentTime;
-    const textToCopy = row.barrage;
-    let tempInput = document.createElement('input');
-    tempInput.value = textToCopy;
-    document.body.appendChild(tempInput);
-    tempInput.select();
+    copySuccess();
 
     try {
-        document.execCommand('Copy');
-        // 复制成功提示
-        open2();
-        console.log('内容已复制到剪贴板');
-
-        // 增加复制计数
-        const success = await copyCountPlus1('', row.id);
+        const success = await copyCountPlus1('', meme.id);
         if (success) {
-            // 更新本地数据中的复制计数，确保数值转换
-            if (data.tableData[0] && data.tableData[0].id === row.id) {
-                data.tableData[0].cnt = String(Number(data.tableData[0].cnt || 0) + 1);
-            }
+            // 更新本地复制计数
+            data.tableData[0].cnt = `${+data.tableData[0].cnt + 1}`;
         } else {
             plus1Error();
         }
-    } catch (err) {
-        ElNotification({
-            title: '复制失败',
-            message: '复制操作失败，请稍后重试',
-            type: 'error',
-        });
-        console.error('复制失败:', err);
-        open4();
+    } catch (error) {
+        console.error('更新复制计数失败:', error);
+        plus1Error();
     }
-    document.body.removeChild(tempInput);
-};
+}
 
 getRandOne();
 

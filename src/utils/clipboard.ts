@@ -42,7 +42,6 @@ export function limitedLike() {
 }
 
 export function copyToClipboard(copyText: string): boolean {
-    console.log(111+copyText)
     const inputDOM = document.createElement('input');
     inputDOM.value = copyText;
     document.body.appendChild(inputDOM);
