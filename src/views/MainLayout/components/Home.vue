@@ -39,7 +39,7 @@
             </div>
 
             <div v-if="data.tableData && data.tableData.length > 0" class="modern-barrage-container">
-                <div class="modern-barrage-card" @click="copyText_countPlus1(data.tableData[0], $event)" @touchstart="handleTouchStart(data.tableData[0])" @touchend="handleTouchEnd(data.tableData[0])">
+                <div class="modern-barrage-card" @click="copyText_countPlus1(data.tableData[0], $event)">
                     <div class="barrage-main-content">
                         <div class="barrage-text-wrapper">
                             <span class="barrage-text">{{ data.tableData[0].barrage }}</span>
@@ -460,22 +460,6 @@ const open4 = () => {
         message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
         type: 'error',
     });
-};
-
-//移动端的触摸展示
-const handleTouchStart = (row) => {
-    row.touchStartTime = Date.now();
-};
-
-const handleTouchEnd = (row) => {
-    const touchEndTime = Date.now();
-    if (touchEndTime - row.touchStartTime > 100) {
-        //100ms 长按时长
-        row.popoverVisible = true;
-        setTimeout(() => {
-            row.popoverVisible = false;
-        }, 1500);
-    }
 };
 
 const wordCloudRef = ref(null);

@@ -7,7 +7,7 @@
                     <p class="header-title">斗鱼玩机器烂梗库</p>
                 </a>
                 <div class="elinput-mobile">
-                    <el-input v-model="enteringSearchKey" placeholder="输入以搜索烂梗..." clearable @keyup.enter="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable @keyup.enter.native="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -20,17 +20,15 @@
             </div>
 
             <div class="header-actions">
-                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img"
-                    @click="openHotMeme24h" />
+                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
                 <div v-if="showHotMeme" @click="openHotMeme24h" class="hot-barrage">
                     <transition name="fade">
-                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content
-                            || '' }}</span>
+                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
                     </transition>
                 </div>
 
                 <div class="elinput">
-                    <el-input v-model="enteringSearchKey" placeholder="输入以搜索烂梗..." clearable @keyup.enter="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable @keyup.enter.native="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -42,7 +40,8 @@
                 </div>
 
                 <el-button type="primary" @click="complaintButton" class="complaint-button">
-                    上传照片<br />
+                    上传照片
+                    <br />
                     建议/提交BUG
                 </el-button>
                 <el-tooltip effect="light" content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com" placement="bottom">
@@ -59,8 +58,7 @@
                 </a>
 
                 <el-tooltip v-model:visible="supportVisible" content="如果你喜欢这个网站，可以点我进行赞赏或GitHub点个star~" placement="bottom" effect="light">
-                    <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
-                        @click="supportMeDialog = true" />
+                    <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover" @click="supportMeDialog = true" />
                 </el-tooltip>
                 <el-dropdown trigger="hover">
                     <div class="user-message">
@@ -73,12 +71,8 @@
                     <template #dropdown>
                         <el-dropdown-menu>
                             <router-link to="/me-msg">
-                                <el-dropdown-item>
-                                    评论 ({{ commentNum }})
-                                </el-dropdown-item>
-                                <el-dropdown-item>
-                                    赞和表态 ({{ likeAndStatementNum }})
-                                </el-dropdown-item>
+                                <el-dropdown-item>评论 ({{ commentNum }})</el-dropdown-item>
+                                <el-dropdown-item>赞和表态 ({{ likeAndStatementNum }})</el-dropdown-item>
                             </router-link>
                         </el-dropdown-menu>
                     </template>
@@ -91,7 +85,6 @@
                 <!-- <el-button class="GuangGaoHead" plain @click="openAd">
                     <span>奇缘电竞(便宜靠谱)</span>
                 </el-button> -->
-
             </div>
             <!-- <el-dialog v-model="AdDialog" title="玩小将自己的陪玩店🏪" width="100%">
                 <h2>店长5年观龄玩神脑残粉</h2>
@@ -104,20 +97,17 @@
                 <h4>客服：<b style="color: red;font-size: 16px;">QYDJ661</b></h4>
                 <h4>KOOK： <b style="color: red;font-size: 16px;"> 661661</b></h4>
             </el-dialog> -->
-
         </div>
 
         <!-- 24h热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips"
-            @refresh="refreshHotMeme24h">
+        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips" @refresh="refreshHotMeme24h">
             <div class="dialog-header">
                 <div>24h热门烂梗</div>
                 <div><el-button @click="openHotMeme7d">查看近七天热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 7天热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips"
-            @refresh="refreshHotMeme7d">
+        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips" @refresh="refreshHotMeme7d">
             <div class="dialog-header">
                 <div>七天热门烂梗</div>
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
@@ -127,7 +117,7 @@
         <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
         <!-- 支持我弹出框 -->
         <el-dialog v-model="supportMeDialog" title="谢谢你" :width="lightWidth">
-            <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width='100%' />
+            <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
         </el-dialog>
     </div>
 </template>
@@ -213,11 +203,12 @@ function handleSearchMemeOnEnter(event: KeyboardEvent) {
     event.preventDefault();
     event.stopPropagation();
     handleSearchMeme();
+    (event.target as HTMLInputElement)?.blur();
 }
 
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
-const lightWidth = computed(() => isMobile.value ? '100%' : '35%');
-const adWidth = computed(() => isMobile.value ? '90%' : '35%');
+const lightWidth = computed(() => (isMobile.value ? '100%' : '35%'));
+const adWidth = computed(() => (isMobile.value ? '90%' : '35%'));
 
 // 消息数量
 const likeAndStatementNum = ref(0);
@@ -254,18 +245,18 @@ onMounted(() => {
         }, 2 * 60 * 60 * 1000); // 2h
     }, 60 * 60 * 1000); // 1h  60 * 60 * 1000
     setTimeout(() => {
-    supportVisible.value = false;
-  }, 5000);
+        supportVisible.value = false;
+    }, 5000);
 });
 //上传按钮
 const complaintButton = () => {
     window.open('https://www.wjx.cn/vm/rQUgnS0.aspx#');
 };
 
-const AdDialog = ref(false)
+const AdDialog = ref(false);
 
 function openAd() {
-    AdDialog.value = !AdDialog.value
+    AdDialog.value = !AdDialog.value;
 }
 </script>
 
@@ -290,7 +281,7 @@ function openAd() {
             align-items: center;
             margin-left: 10px;
 
-            &>a {
+            & > a {
                 display: flex;
             }
 
@@ -442,7 +433,6 @@ function openAd() {
             }
 
             .header-actions {
-
                 width: 100%;
                 justify-content: space-around;
 
