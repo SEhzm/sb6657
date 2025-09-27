@@ -45,7 +45,7 @@ export async function post<T, R = any>(req: req<T>): Promise<res<R>> {
     return result;
 }
 
-export const sbVersion = '25.09.21';
+export const sbVersion = '25.09.27';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 
