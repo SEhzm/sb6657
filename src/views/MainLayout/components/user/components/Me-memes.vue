@@ -70,6 +70,8 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import httpInstance from '@/apis/httpInstance';
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
 
 interface MemeItem {
     barrage: string;
@@ -92,15 +94,9 @@ const loading = ref(true);
 const dictData = ref<DictItem[]>([]);
 
 // 获取标签字典
-const getDict = () => {
-    httpInstance.get('/machine/dictList').then((res: any) => {
-        if (res.code === 200) {
-            dictData.value = res.data as DictItem[];
-        }
-    }).catch((err: any) => {
-        console.error('获取字典数据失败', err);
-    });
-};
+memeTagsStore.tagsLoaded.then(() => {
+    dictData.value = memeTagsStore.memeTags
+})
 
 // 标签映射
 const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
@@ -152,7 +148,6 @@ const handlePageChange = (page: number) => {
 };
 
 onMounted(() => {
-    getDict();
     getMeMemes(1);
 });
 </script>

@@ -54,6 +54,8 @@ import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import httpInstance from '@/apis/httpInstance';
 import { ref } from 'vue';
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
 
 /**
  * 组件输入:
@@ -100,16 +102,10 @@ async function copyMeme_countPlus1(meme: Meme) {
 }
 
 const dictData = ref([]);
+memeTagsStore.tagsLoaded.then(() => {
+    dictData.value = memeTagsStore.memeTags;
+});
 
-const getDict = () => {
-    httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === 200) {
-            dictData.value = res.data;
-        }
-    }).catch(err => {
-        console.error('获取字典数据失败', err);
-    });
-};
 const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
     if (!tags || tags.trim() === '') {
         return [];
@@ -128,7 +124,7 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
 
     return labels;
 };
-getDict()
+
 //移动端的触摸展示
 const handleTouchStart = (row: any) => {
     row.touchStartTime = Date.now();

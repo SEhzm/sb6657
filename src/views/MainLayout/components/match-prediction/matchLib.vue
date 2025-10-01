@@ -123,6 +123,8 @@ import flipNum from '@/components/flip-num.vue'
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard'
 import { throttle } from '@/utils/throttle'
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme'
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
 
 interface MatchItem {
     id: number
@@ -293,15 +295,9 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
 }
 
 // 获取字典数据
-const getDict = () => {
-    httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === 200) {
-            dictData.value = res.data
-        }
-    }).catch(err => {
-        console.error('获取字典数据失败', err)
-    })
-}
+memeTagsStore.tagsLoaded.then(() => {
+    dictData.value = memeTagsStore.memeTags
+})
 
 // 移动端触摸处理
 const handleTouchStart = (row: any) => {
@@ -325,7 +321,6 @@ const formatSubmitTime = (timeString: string): string => {
 }
 
 onMounted(() => {
-    getDict()
     getMatchList()
     window.addEventListener('resize', handleResize)
 })
