@@ -363,7 +363,7 @@ const handleRefresh = async () => {
     }, 600);
 };
 
-// 节流过的搜索，2s内多次点击复制只取其中一次发请求给后台
+// 节流过的复制，2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
 async function handleCopyMeme(meme) {
     const copyResult = copyMeme(meme.barrage);

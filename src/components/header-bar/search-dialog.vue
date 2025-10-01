@@ -147,6 +147,7 @@ import { useMemeTagsStore } from '@/stores/memeTags';
 import { type getMemeTags as memeTag, SortType } from '@/types/meme';
 import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
 import { useIsMobile } from '@/utils/common';
+import defaultTag from '@/assets/icons/tag.svg';
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -279,21 +280,11 @@ function removeTag(tag: memeTag) {
 }
 
 // 解析标签显示信息
-function getDictLabel(tags: string | null | undefined): { label: string; iconUrl: string }[] {
-    if (!tags || tags.trim() === '') return [];
-
-    const uniqueTags = [...new Set(tags.split(',').map((tag) => tag.trim()))];
-
-    if (!memeTags.value || memeTags.value.length === 0) {
-        return uniqueTags.map((tag) => ({ label: tag, iconUrl: '' }));
-    }
-
-    const dictMap = new Map(memeTags.value.map((item) => [String(item.dictValue).trim(), item]));
-
-    return uniqueTags.map((tag) => {
-        const dictItem = dictMap.get(tag);
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '未知标签', iconUrl: '' };
-    });
+function getDictLabel(tags: string): { label: string; iconUrl: string }[] {
+    const tagsArr = tags.split(',');
+    return memeTags.value
+        .filter((item) => tagsArr.includes(item.dictValue))
+        .map((item) => ({ label: item.dictLabel, iconUrl: item.iconUrl || defaultTag }));
 }
 
 // ==================== 复制功能 ====================
