@@ -93,6 +93,9 @@ import { ElMessage, ElNotification } from 'element-plus';
 import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { ref } from 'vue';
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
+
 const barrage = ref('');
 // 预设标签
 const presetTags = ref([]);
@@ -104,18 +107,13 @@ const addedTags = ref([]);
 const addedDictValues = ref([]);
 
 // 获取字典数据
-function getDict() {
-    httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === 200) {
-            presetTags.value = res.data.map(item => ({
-                iconUrl: item.iconUrl,
-                label: item.dictLabel,
-                value: item.dictValue
-            }));
-        }
-    });
-}
-getDict();
+memeTagsStore.tagsLoaded.then(() => {
+    presetTags.value = memeTagsStore.memeTags.map((item) => ({
+        iconUrl: item.iconUrl,
+        label: item.dictLabel,
+        value: item.dictValue,
+    }))
+});
 
 const matchData = ref(null);
 function getMatch() {

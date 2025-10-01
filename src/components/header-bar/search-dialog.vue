@@ -147,7 +147,6 @@ import { useMemeTagsStore } from '@/stores/memeTags';
 import { type getMemeTags as memeTag, SortType } from '@/types/meme';
 import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
 import { useIsMobile } from '@/utils/common';
-import defaultTag from '@/assets/icons/tag.svg';
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -284,7 +283,7 @@ function getDictLabel(tags: string): { label: string; iconUrl: string }[] {
     const tagsArr = tags.split(',');
     return memeTags.value
         .filter((item) => tagsArr.includes(item.dictValue))
-        .map((item) => ({ label: item.dictLabel, iconUrl: item.iconUrl || defaultTag }));
+        .map((item) => ({ label: item.dictLabel, iconUrl: item.iconUrl }));
 }
 
 // ==================== 复制功能 ====================

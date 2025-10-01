@@ -180,7 +180,7 @@
 <script setup>
 import { ref, reactive, onMounted, defineAsyncComponent } from 'vue';
 import httpInstance from '@/apis/httpInstance';
-import { ElMessage, ElNotification, ElMessageBox } from 'element-plus';
+import { ElMessage, ElNotification } from 'element-plus';
 import { Refresh, Warning, QuestionFilled } from '@element-plus/icons-vue';
 import ChatRoom from '@/components/ChatRoom.vue';
 import flipNum from '@/components/flip-num.vue';
@@ -188,7 +188,8 @@ import { API } from '@/constants/backend';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
-
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
 
 const loading = ref(true);
 const isRotating = ref(false);
@@ -198,24 +199,16 @@ const data = reactive({
 });
 
 const dictData = ref([]);
+memeTagsStore.tagsLoaded.then(() => {
+    console.log('dictData', memeTagsStore.memeTags);
+    dictData.value = memeTagsStore.memeTags
+    presetTags.value = memeTagsStore.memeTags.map((item) => ({
+        iconUrl: item.iconUrl,
+        label: item.dictLabel,
+        value: item.dictValue,
+    }))
+});
 
-const getDict = () => {
-    httpInstance
-        .get('/machine/dictList')
-        .then((res) => {
-            if (res.code === 200) {
-                dictData.value = res.data;
-                presetTags.value = res.data.map((item) => ({
-                    iconUrl: item.iconUrl,
-                    label: item.dictLabel,
-                    value: item.dictValue,
-                }));
-            }
-        })
-        .catch((err) => {
-            console.error('获取字典数据失败', err);
-        });
-};
 const getDictLabel = (tags) => {
     if (!tags || tags.trim() === '') {
         return [];
@@ -232,8 +225,6 @@ const getDictLabel = (tags) => {
 
     return labels;
 };
-
-getDict();
 
 const barrage = ref('');
 // 所有预设标签
@@ -601,7 +592,7 @@ const formatSubmitTime = (timeString) => {
                     background: #e7f6f3;
                     border: none;
                     border-radius: 50px;
-                    padding: 4px 8px;
+                    padding: 4px 6px;
                     font-size: 14px;
                     color: #18a985;
 
@@ -708,8 +699,8 @@ const formatSubmitTime = (timeString) => {
                         color: #18a985;
 
                         .tag-icon {
-                            width: 12px;
-                            height: 12px;
+                            width: 20px;
+                            height: 20px;
                         }
                     }
                 }

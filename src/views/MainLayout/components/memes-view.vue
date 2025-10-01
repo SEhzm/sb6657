@@ -136,6 +136,8 @@ import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
 import LikeNum from '@/components/like-num.vue';
 import httpInstance from '@/apis/httpInstance';
+import { useMemeTagsStore } from '@/stores/memeTags';
+const memeTagsStore = useMemeTagsStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -277,20 +279,14 @@ const handleSubmit = () => {
     dialogFormVisible.value = true;
 };
 
-const getDict = () => {
-    httpInstance.get('/machine/dictList').then(res => {
-        if (res.code === 200) {
-            dictData.value = res.data;
-            presetTags.value = res.data.map(item => ({
-                iconUrl: item.iconUrl,
-                label: item.dictLabel,
-                value: item.dictValue
-            }));
-        }
-    }).catch(err => {
-        console.error('获取字典数据失败', err);
-    });
-};
+memeTagsStore.tagsLoaded.then(() => {
+    dictData.value = memeTagsStore.memeTags
+    presetTags.value = memeTagsStore.memeTags.map((item) => ({
+        iconUrl: item.iconUrl,
+        label: item.dictLabel,
+        value: item.dictValue,
+    }))
+});
 
 const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
     if (!tags || tags.trim() === '') {
@@ -310,8 +306,6 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
 
     return labels;
 };
-
-getDict()
 
 
 // 删除已添加标签
