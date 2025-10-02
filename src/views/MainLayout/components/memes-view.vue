@@ -197,7 +197,6 @@ refreshMeme(1);
  * 排序功能
 */
 async function sortMeme(pageNum: number) {
-    getDict();
     httpInstance.get(API.GET_SORTED_ALL_MEME, {
         params: {
             pageNum: pageNum,

@@ -56,22 +56,7 @@ export interface searchMemeElement {
 export interface searchMeme_res {
     total: number;
     list: searchMemeElement[];
-    pageNum: number;
-    pageSize: number;
-    size: number;
-    startRow: number;
-    endRow: number;
-    pages: number;
-    prePage: number;
-    nextPage: number;
-    isFirstPage: boolean;
     isLastPage: true;
-    hasPreviousPage: false;
-    hasNextPage: false;
-    navigatePages: number;
-    navigatepageNums: number[];
-    navigateFirstPage: number;
-    navigateLastPage: number;
 }
 
 export interface getMemeList_meme {
@@ -85,22 +70,7 @@ export interface getMemeList_meme {
 export interface getMemeList_data {
     total: number;
     list: getMemeList_meme[];
-    pageNum: number;
-    pageSize: number;
-    size: number;
-    startRow: number;
-    endRow: number;
-    pages: number;
-    prePage: number;
-    nextPage: number;
-    isFirstPage: boolean;
     isLastPage: boolean;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
-    navigatePages: number;
-    navigatepageNums: number[];
-    navigateFirstPage: number;
-    navigateLastPage: number;
 }
 export interface getMemeList_res {
     code: number;
