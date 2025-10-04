@@ -3,28 +3,49 @@
         <div class="boomouder">
             <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
-        <div class="card first-card">
-            <div>
-                <b>
+        <div class="cards-container">
+            <div class="card first-card">
+                <div>
                     <p class="announcement">
-                        因为GreasyFork被墙，你可以
-                        <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击我下载最新的油猴插件</a>
-                        ，你只需要将下载的文件拖入油猴管理面板即可
+                        <b>这是一个收集6657烂梗的网站：</b>
+                        <span class="dgq63136">
+                            <a href="https://sb6657.cn">sb6657.cn</a>
+                        </span>
+                        尽情欣赏你们的烂梗吧。
                     </p>
-                </b>
+                    <p class="sub-info">
+                        <b>
+                            油猴插件
+                            <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击下载</a>
+                            可在斗鱼直播间一键复制烂梗
+                        </b>
+                    </p>
+                    <p class="sub-info">开放注册功能，可能会出现收不到邮件的情况。</p>
+                    <p class="sub-info">目前已支持玩机器直播间开播提醒</p>
+                    <p class="sub-info">
+                        <RouterLink to="/update">网站更新日志</RouterLink>
+                    </p>
+                </div>
             </div>
-        </div>
 
-        <div class="card second-card">
-            <p>
-                这是一个收集6657烂梗的网站:
-                <span class="dgq63136">
-                    <a href="https://sb6657.cn">sb6657.cn</a>
-                </span>
-                尽情欣赏你们的烂梗吧。
-                <b>开放注册功能，可能会出现收不到邮件的情况。</b>
-                <b>目前已支持玩机器直播间开播提醒</b>
-            </p>
+            <div class="card second-card">
+                <div class="did-you-know">
+                    <h3>🤔 你知道吗？</h3>
+                    <ul class="knowledge-list">
+                        <li>
+                            HeavyGod目前打出了对位donk最多的击杀， Brollan被donk打出了最多的击杀
+                            <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
+                        </li>
+                        <li>
+                            Jimpphat是目前擒niko最多的选手，反之broky是被niko擒住次数最多的选手
+                            <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
+                        </li>
+                        <li class="placeholder-item">
+                            <!-- 预留给最后投稿弹幕内容 -->
+                        </li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <div class="card third-card">
@@ -148,6 +169,7 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import RandomMeme from '@/components/home/random-meme.vue';
+import { RouterLink } from 'vue-router';
 
 const memeTagsStore = useMemeTagsStore();
 
@@ -343,15 +365,28 @@ function refreshWordCloud() {
     }
 
     // 卡片容器
+    .cards-container {
+        display: flex;
+        gap: 16px;
+        margin-top: 10px;
+
+        // 响应式布局：窄屏时变为竖排
+        @media (max-width: 768px) {
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
+
     .card {
         line-height: 25px;
+        flex: 1; // 让两个卡片平分宽度
 
         &.first-card {
-            margin-top: 10px;
+            margin-top: 0; // 重置margin，由容器控制间距
         }
 
         &.second-card {
-            margin-top: 8px;
+            margin-top: 0; // 重置margin，由容器控制间距
         }
 
         &.third-card {
@@ -375,15 +410,75 @@ function refreshWordCloud() {
     }
 
     .announcement {
-        font-size: 15px;
+        font-size: 16px;
+        margin-bottom: 8px;
+    }
+
+    .sub-info {
+        font-size: 14px;
+        color: #666;
+        margin-top: 8px;
+
+        a {
+            color: #409eff;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
     }
 
     .dgq63136 {
-        font-size: 23px;
+        font-size: 20px;
         font-weight: bold;
 
         a {
             color: red;
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // "你知道吗？"卡片样式
+    .did-you-know {
+        h3 {
+            margin: 0 0 12px 0;
+            font-size: 18px;
+            color: #303133;
+            font-weight: 600;
+        }
+
+        .knowledge-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+
+            li {
+                margin-bottom: 8px;
+                font-size: 14px;
+                line-height: 1.6;
+                color: #606266;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                a {
+                    color: #409eff;
+                    text-decoration: none;
+                    font-weight: 500;
+                    text-wrap: nowrap;
+
+                    &:hover {
+                        text-decoration: underline;
+                        color: #66b1ff;
+                    }
+                }
+            }
         }
     }
 }
