@@ -54,16 +54,16 @@ SpringBoot + MyBatis + MySQL + Redis
 
 本项目由个人开发，可能存在未发现的 bug，仅供学习交流使用。  
 
-前端基于 [Apache License 2.0](./LICENSE) 协议开源。** 二次开发需保留版权与此协议，并注明修改。**
+前端基于 [Apache License 2.0](./LICENSE) 协议开源。**二次开发需保留版权与此协议，并注明修改。**
 
 #### 作者：
 
-##### 斗鱼ID：瓜瓜的御用攻城狮
+##### 1. 斗鱼ID：瓜瓜的御用攻城狮
 QQ：2693445032
 
 前端、后端、弹幕管理后台
 
-##### [https://github.com/9WiSHao](https://github.com/9WiSHao)
+##### 2. [9WiSHao](https://github.com/9WiSHao)
 QQ: 825763548
 
 前端
