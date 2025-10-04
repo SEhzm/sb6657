@@ -105,7 +105,7 @@
                                             </el-tag>
                                         </div>
                                     </div>
-                                    <div class="submit-time">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</div>
+                                    <div class="submit-time">投稿时间: {{ easyFormatTime(scope.row.submitTime) }}</div>
                                 </div>
                             </template>
                         </el-popover>
@@ -147,6 +147,7 @@ import { useMemeTagsStore } from '@/stores/memeTags';
 import { type getMemeTags as memeTag, SortType } from '@/types/meme';
 import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
 import { useIsMobile } from '@/utils/common';
+import { easyFormatTime } from '@/utils/time';
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -313,11 +314,6 @@ async function handleCopyMeme(meme: LocalMeme) {
 }
 
 // ==================== 工具函数 ====================
-function formatSubmitTime(timeString: string): string {
-    if (!timeString) return '';
-    return timeString.replace('T', ' ').split('.')[0];
-}
-
 function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }

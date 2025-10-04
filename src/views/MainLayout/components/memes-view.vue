@@ -93,7 +93,7 @@
                                             </div>
                                         </el-tag>
                                     </div>
-                                    <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ formatSubmitTime(scope.row.submitTime) }}</span>
+                                    <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ easyFormatTime(scope.row.submitTime) }}</span>
                                 </div>
                             </template>
                         </el-popover>
@@ -136,6 +136,7 @@ import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
 import LikeNum from '@/components/like-num.vue';
 import httpInstance from '@/apis/httpInstance';
+import { easyFormatTime } from '@/utils/time';
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
 
@@ -340,11 +341,6 @@ const handleTouchEnd = (row: any) => {
             row.popoverVisible=false
         },1500)
     }
-};
-// 处理投稿时间格式
-const formatSubmitTime = (timeString: string): string => {
-  if (!timeString) return '';
-  return timeString.replace('T', ' ').split('.')[0];
 };
 </script>
 

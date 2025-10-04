@@ -1,7 +1,7 @@
-import httpInstance, { type res, post } from '@/apis/httpInstance';
+import httpInstance, { type res, post, get} from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { MemeCategory } from '@/constants/backend';
-import type { getHotMeme_res, getMemeList_res, getData, getMemeTags, searchMeme_req, searchMeme_res } from '@/types/meme';
+import type { getHotMeme_res, getMemeList_res, getData, getMemeTags, searchMeme_req, searchMeme_res, getMemeList_meme } from '@/types/meme';
 
 async function getHotMeme(url: string, tips: string) {
     try {
@@ -86,4 +86,9 @@ export async function getMemeTags() {
         throw new Error(res.msg);
     }
     return res.data;
+}
+
+export async function getRandomMeme(): Promise<res<getMemeList_meme>> {
+    const res = await get(API.GET_RAND_ONE_MEME);
+    return res;
 }

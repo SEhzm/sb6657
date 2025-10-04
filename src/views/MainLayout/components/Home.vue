@@ -28,45 +28,7 @@
         </div>
 
         <div class="card third-card">
-            <div class="random-barrage-header">
-                <h3 class="random-barrage-title">随机一条烂梗</h3>
-                <div class="refresh-controls">
-                    <span class="refresh-text" @click="handleRefresh">换一换</span>
-                    <el-icon :class="['refresh-icon', { rotating: isRotating }]" @click="handleRefresh" size="18">
-                        <Refresh />
-                    </el-icon>
-                </div>
-            </div>
-
-            <div v-if="data.tableData && data.tableData.length > 0" class="modern-barrage-container">
-                <div class="modern-barrage-card" @click="handleCopyMeme(data.tableData[0])">
-                    <div class="barrage-main-content">
-                        <div class="barrage-text-wrapper">
-                            <span class="barrage-text">{{ data.tableData[0].barrage }}</span>
-                        </div>
-
-                        <div class="barrage-meta-info">
-                            <div class="tags-container" v-if="getDictLabel(data.tableData[0].tags).length > 0">
-                                <div v-for="(item, index) in getDictLabel(data.tableData[0].tags)" :key="index" class="modern-tag">
-                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
-                                    <span class="tag-label">{{ item.label }}</span>
-                                </div>
-                            </div>
-                            <div class="submit-time"><span class="meme-id">#{{ data.tableData[0].id }}</span>{{ formatSubmitTime(data.tableData[0].submitTime) }}</div>
-                        </div>
-                    </div>
-
-                    <div class="modern-copy-button" @click.stop="handleCopyMeme(data.tableData[0])">
-                        <div class="copy-text">复制</div>
-                        <div class="copy-icon">📋</div>
-                        <div class="copy-count">
-                            <flip-num :num="data.tableData[0].cnt || 0" />
-                        </div>
-                        <div class="copy-ripple"></div>
-                    </div>
-                </div>
-            </div>
-            <div v-else class="no-data">暂无弹幕数据</div>
+            <RandomMeme />
         </div>
 
         <div class="card fifth-card">
@@ -178,53 +140,27 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, defineAsyncComponent } from 'vue';
+import { ref, onMounted, defineAsyncComponent } from 'vue';
 import httpInstance from '@/apis/httpInstance';
-import { ElMessage, ElNotification } from 'element-plus';
+import { ElNotification } from 'element-plus';
 import { Refresh, Warning, QuestionFilled } from '@element-plus/icons-vue';
 import ChatRoom from '@/components/ChatRoom.vue';
-import flipNum from '@/components/flip-num.vue';
 import { API } from '@/constants/backend';
-import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
-import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { useMemeTagsStore } from '@/stores/memeTags';
+import RandomMeme from '@/components/home/random-meme.vue';
+
 const memeTagsStore = useMemeTagsStore();
-
-const loading = ref(true);
-const isRotating = ref(false);
-
-const data = reactive({
-    tableData: [],
-});
 
 const dictData = ref([]);
 memeTagsStore.tagsLoaded.then(() => {
     console.log('dictData', memeTagsStore.memeTags);
-    dictData.value = memeTagsStore.memeTags
+    dictData.value = memeTagsStore.memeTags;
     presetTags.value = memeTagsStore.memeTags.map((item) => ({
         iconUrl: item.iconUrl,
         label: item.dictLabel,
         value: item.dictValue,
-    }))
+    }));
 });
-
-const getDictLabel = (tags) => {
-    if (!tags || tags.trim() === '') {
-        return [];
-    }
-    const tagList = Array.from(new Set(tags.split(',').map((tag) => tag.trim())));
-    if (!dictData.value) {
-        return tagList.map(() => ({ label: '', iconUrl: '' }));
-    }
-    const dictMap = new Map(dictData.value.map((item) => [String(item.dictValue).trim(), item]));
-    const labels = tagList.map((tag) => {
-        const dictItem = dictMap.get(tag);
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
-    });
-
-    return labels;
-};
 
 const barrage = ref('');
 // 所有预设标签
@@ -318,91 +254,12 @@ const saveBarrage = () => {
     }
 };
 
-const getRandOne = () => {
-    httpInstance
-        .get(API.GET_RAND_ONE_MEME)
-        .then((res) => {
-            data.tableData = [res.data];
-            // console.log(res)
-            loading.value = false;
-        })
-        .catch((err) => {
-            console.error('随机失败');
-        });
-};
-
-// 新的刷新处理函数，包含旋转动画
-const handleRefresh = async () => {
-    if (loading.value) return;
-
-    isRotating.value = true;
-    loading.value = true;
-
-    try {
-        await httpInstance.get(API.GET_RAND_ONE_MEME).then((res) => {
-            data.tableData = [res.data];
-            loading.value = false;
-        });
-    } catch (err) {
-        console.error('随机失败');
-        loading.value = false;
-    }
-
-    // 旋转动画持续600ms
-    setTimeout(() => {
-        isRotating.value = false;
-    }, 600);
-};
-
-// 节流过的复制，2s内多次点击复制只取其中一次发请求给后台
-const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-async function handleCopyMeme(meme) {
-    const copyResult = copyMeme(meme.barrage);
-    if (!copyResult || copyResult === 'limitedSuccess') return;
-
-    copySuccess();
-
-    try {
-        const success = await copyCountPlus1('', meme.id);
-        if (success) {
-            // 更新本地复制计数
-            data.tableData[0].cnt = `${+data.tableData[0].cnt + 1}`;
-        } else {
-            plus1Error();
-        }
-    } catch (error) {
-        console.error('更新复制计数失败:', error);
-        plus1Error();
-    }
-}
-
-getRandOne();
-
-const open2 = () => {
-    ElMessage({
-        message: '复制成功',
-        type: 'success',
-    });
-};
-
-const open4 = () => {
-    ElMessage({
-        message: '复制失败，请检查浏览器是否禁用navigator.clipboard对象或手动复制,请勿使用夸克浏览器',
-        type: 'error',
-    });
-};
-
 const wordCloudRef = ref(null);
 // 懒加载 wordCloud 组件
 const WordCloud = defineAsyncComponent(() => import('@/components/wordCloud.vue'));
 function refreshWordCloud() {
     wordCloudRef.value?.getData?.();
 }
-// 处理投稿时间格式
-const formatSubmitTime = (timeString) => {
-    if (!timeString) return '';
-    return timeString.replace('T', ' ').split('.')[0];
-};
 </script>
 
 <style scoped lang="scss">
@@ -500,221 +357,6 @@ const formatSubmitTime = (timeString) => {
         &.third-card {
             margin-top: 8px;
             padding: 12px;
-
-            .random-barrage-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 16px;
-
-                .random-barrage-title {
-                    margin: 0;
-                    font-size: 24px;
-                    font-weight: 600;
-                    color: #303133;
-                }
-
-                .refresh-controls {
-                    display: flex;
-                    align-items: center;
-                }
-
-                .refresh-text {
-                    font-size: 18px;
-                    color: #409eff;
-                    cursor: pointer;
-                    &:hover {
-                        color: #66b1ff;
-                    }
-                }
-
-                .refresh-icon {
-                    color: #409eff;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-
-                    &:hover {
-                        color: #66b1ff;
-                    }
-
-                    &.rotating {
-                        animation: rotate 0.6s linear;
-                    }
-                }
-            }
-
-            .modern-barrage-card {
-                display: flex;
-                align-items: center;
-                gap: 12px;
-
-                .barrage-main-content {
-                    flex: 1;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-
-                    &:hover {
-                        .barrage-text {
-                            color: #11a983;
-                        }
-                    }
-                }
-
-                .barrage-text-wrapper {
-                    margin-bottom: 12px;
-                }
-
-                .barrage-text {
-                    font-family: 'Microsoft YaHei', '微软雅黑', sans-serif;
-                    font-size: large;
-                    color: #303133;
-                    line-height: 1.6;
-                    word-break: break-all;
-                    transition: color 0.3s ease;
-                }
-
-                .barrage-meta-info {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 8px;
-                }
-
-                .tags-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 6px;
-                }
-
-                .modern-tag {
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 3px;
-                    background: #e7f6f3;
-                    border: none;
-                    border-radius: 50px;
-                    padding: 4px 6px;
-                    font-size: 14px;
-                    color: #18a985;
-
-                    .tag-icon {
-                        width: 22px;
-                        height: 22px;
-                        object-fit: cover;
-                    }
-                }
-
-                .submit-time {
-                    font-size: 12px;
-                    color: #909399;
-                    .meme-id {
-                        font-size: 16px;
-                        color: gray;
-                        padding-right: 4px;
-                        font-weight: 600;
-                        font-style: italic;
-                    }
-                }
-
-                .modern-copy-button {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 6px 12px;
-                    background: #11a983;
-                    border-radius: 6px;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    border: none;
-                    white-space: nowrap;
-                    flex-shrink: 0;
-
-                    &:hover {
-                        background: #0e8a6b;
-                        transform: translateY(-1px);
-                        box-shadow: 0 4px 8px rgba(17, 169, 131, 0.3);
-                    }
-
-                    &:active {
-                        transform: translateY(0);
-                    }
-
-                    .copy-icon {
-                        font-size: 16px;
-                        color: #ffffff;
-                        margin-right: 4px;
-                    }
-
-                    .copy-text {
-                        font-size: 14px;
-                        font-weight: 500;
-                        color: #ffffff;
-                        margin-right: 4px;
-                    }
-
-                    .copy-count {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #ffffff;
-                        overflow: hidden;
-                        height: 1.2em;
-                        line-height: 1.2em;
-                    }
-                }
-            }
-
-            // 响应式设计
-            @media (max-width: 768px) {
-                .modern-barrage-card {
-                    flex-direction: column;
-                    gap: 12px;
-                    padding: 10px 0;
-
-                    .barrage-text {
-                        font-size: 15px;
-                    }
-
-                    .modern-copy-button {
-                        align-self: flex-start;
-                        padding: 5px 10px;
-
-                        .copy-icon {
-                            font-size: 14px;
-                        }
-
-                        .copy-text {
-                            font-size: 13px;
-                        }
-
-                        .copy-count {
-                            font-size: 13px;
-                            overflow: hidden;
-                            height: 1.2em;
-                            line-height: 1.2em;
-                        }
-                    }
-
-                    .modern-tag {
-                        padding: 3px 6px;
-                        font-size: 12px;
-                        color: #18a985;
-
-                        .tag-icon {
-                            width: 20px;
-                            height: 20px;
-                        }
-                    }
-                }
-            }
-
-            .no-data {
-                text-align: center;
-                color: #909399;
-                font-size: 14px;
-                padding: 32px;
-                background-color: #f8f9fa;
-                border-radius: 8px;
-                border: 1px dashed #dcdfe6;
-            }
         }
 
         &.fifth-card {

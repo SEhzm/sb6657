@@ -45,7 +45,27 @@ export async function post<T, R = any>(req: req<T>): Promise<res<R>> {
     return result;
 }
 
-export const sbVersion = '25.09.27';
+export async function get<R = any>(url: string): Promise<res<R>> {
+    let result: res<R> = {
+        _failure: false,
+        flatData: null,
+    };
+    try {
+        const res = (await httpInstance.get(url)) as BackendResponse<R>;
+        if (res.code === 200) {
+            result.flatData = res.data;
+        } else {
+            console.warn('请求失败', url, res.msg);
+            result._failure = true;
+        }
+    } catch (e) {
+        console.warn('请求失败', url, e);
+        result._failure = true;
+    }
+    return result;
+}
+
+export const sbVersion = '25.10.04';
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 

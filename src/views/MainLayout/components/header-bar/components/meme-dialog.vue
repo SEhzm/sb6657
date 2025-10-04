@@ -139,11 +139,6 @@ const handleTouchEnd = (row: any) => {
         },1500)
     }
 };
-// 处理投稿时间格式
-const formatSubmitTime = (timeString: string): string => {
-  if (!timeString) return '';
-  return timeString.replace('T', ' ').split('.')[0];
-};
 </script>
 
 <style scoped lang="scss">

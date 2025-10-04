@@ -23,7 +23,7 @@
                                     </div>
                                     <span
                                         style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间:
-                                        {{ formatSubmitTime(scope.row.createTime) }}</span>
+                                        {{ easyFormatTime(scope.row.createTime) }}</span>
                                 </div>
                             </template>
                         </el-popover>
@@ -50,7 +50,7 @@
                 </el-table-column>
                 <el-table-column label="投稿时间" align="center" width="100">
                     <template #default="scope">
-                        {{ formatSubmitTime(scope.row.createTime) }}
+                        {{ easyFormatTime(scope.row.createTime) }}
                     </template>
                 </el-table-column>
                 <el-table-column label="复制次数" align="center" width="100" prop="cnt">
@@ -70,6 +70,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import httpInstance from '@/apis/httpInstance';
+import { easyFormatTime } from '@/utils/time';
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
 
@@ -115,12 +116,6 @@ const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl
         return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
     });
     return labels;
-};
-
-// 格式化时间
-const formatSubmitTime = (timeString: string): string => {
-    if (!timeString) return '';
-    return timeString.replace('T', ' ').split('.')[0];
 };
 
 // 获取我的投稿
