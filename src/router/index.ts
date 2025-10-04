@@ -27,6 +27,7 @@ const router = createRouter({
                 { path: 'matchLib', name: 'matchLib', component: () => import('@/views/MainLayout/components/match-prediction/matchLib.vue') },
                 { path: 'dejaVuNiko', name: 'dejaVuNiko', component: () => import('@/views/MainLayout/components/deja-vu-niko.vue') },
                 { path: '15warriorsDonk', name: '15warriorsDonk', component: () => import('@/views/MainLayout/components/15warriorsDonk.vue') },
+                { path: 'update', name: 'update-timeline', component: () => import('@/views/MainLayout/components/update-timeline.vue') },
             ],
         },
         {
