@@ -33,11 +33,11 @@
                     <h3>🤔 你知道吗？</h3>
                     <ul class="knowledge-list">
                         <li>
-                            HeavyGod目前打出了对位donk最多的击杀， Brollan被donk打出了最多的击杀
+                            谁目前打出了对位donk最多的击杀? 谁又是对位donk最大的受害者? 
                             <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
                         </li>
                         <li>
-                            Jimpphat是目前擒niko最多的选手，反之broky是被niko擒住次数最多的选手
+                            哪只队伍捕虾最专业? 谁是最佳捕虾人, 谁在捕虾过程中惨遭反夹?
                             <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
                         </li>
                         <li class="placeholder-item">

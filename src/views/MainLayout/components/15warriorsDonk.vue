@@ -4,8 +4,8 @@
             <h1>布雷德十五勇士 & donk十五受害者</h1>
             <div class="more-info">
                 <div class="match-info">
-                    <h3 class="match-title">BLAST伦敦公开赛2025 G2战胜Spirit</h3>
-                    <span class="match-date">2025-09-02</span>
+                    <h3 class="match-title">EPL S22 Spirit战胜Inner Circle</h3>
+                    <span class="match-date">2025-10-04</span>
                 </div>
                 <div class="author-info">
                     <span class="author-label">作者：</span>
@@ -91,7 +91,7 @@
 <script setup>
 import { ref } from 'vue';
 
-// “布雷德十五勇士”榜单数据
+// "布雷德十五勇士"榜单数据
 const warriors = ref([
     { rank: 1, player: 'HeavyGod', kill: 29, death: 18, k_dDiff: 11, maps: 6, team: 'G2 Esports' },
     { rank: 2, player: 'ropz', kill: 26, death: 17, k_dDiff: 9, maps: 8, team: 'Vitality' }, 
@@ -101,16 +101,16 @@ const warriors = ref([
     { rank: 6, player: 'REZ', kill: 25, death: 19, k_dDiff: 6, maps: 5, team: 'GamerLegion' }, 
     { rank: 7, player: 'mzinho', kill: 19, death: 15, k_dDiff: 4, maps: 5, team: 'TheMongolZ' },
     { rank: 8, player: 'sjuush', kill: 22, death: 18, k_dDiff: 4, maps: 4, team: 'Ninjas in Pyjamas' }, 
-    { rank: 9, player: 'Starry', kill: 4, death: 1, k_dDiff: 3, maps: 1, team: 'LynnVisionGaming' },
-    { rank: 10, player: 'electroNic', kill: 20, death: 18, k_dDiff: 2, maps: 6, team: 'Virtus.pro' },
-    { rank: 11, player: 'MUTiRiS', kill: 10, death: 8, k_dDiff: 2, maps: 2, team: 'SAW' },
-    { rank: 12, player: 'EliGE', kill: 5, death: 3, k_dDiff: 2, maps: 2, team: 'FaZe Clan' }, 
-    { rank: 13, player: 'frozen', kill: 4, death: 2, k_dDiff: 2, maps: 2, team: 'FaZe Clan' },
-    { rank: 14, player: 'jottAAA', kill: 34, death: 33, k_dDiff: 1, maps: 9, team: 'EternalFire/Aurora' },
-    { rank: 15, player: 'siuhy', kill: 5, death: 4, k_dDiff: 1, maps: 2, team: 'TeamLiquid' }, 
+    { rank: 9, player: 'cairne', kill: 11, death: 7, k_dDiff: 4, maps: 3, team: 'Inner Circle' },
+    { rank: 10, player: 'Starry', kill: 4, death: 1, k_dDiff: 3, maps: 1, team: 'LynnVisionGaming' },
+    { rank: 11, player: 'electroNic', kill: 20, death: 18, k_dDiff: 2, maps: 6, team: 'Virtus.pro' },
+    { rank: 12, player: 'MUTiRiS', kill: 10, death: 8, k_dDiff: 2, maps: 2, team: 'SAW' },
+    { rank: 13, player: 'EliGE', kill: 5, death: 3, k_dDiff: 2, maps: 2, team: 'FaZe Clan' }, 
+    { rank: 14, player: 'frozen', kill: 4, death: 2, k_dDiff: 2, maps: 2, team: 'FaZe Clan' },
+    { rank: 15, player: 'jottAAA', kill: 34, death: 33, k_dDiff: 1, maps: 9, team: 'EternalFire/Aurora' }, 
 ]);
 
-// “donk十五大受害者”榜单数据
+// "donk十五大受害者"榜单数据
 const victims = ref([
     { rank: 1, player: 'Brollan', kill: 47, death: 92, k_dDiff: -45, maps: 17, team: 'Mousesports' }, 
     { rank: 2, player: 'Aleksib', kill: 26, death: 69, k_dDiff: -43, maps: 14, team: 'Natus Vincere' },
