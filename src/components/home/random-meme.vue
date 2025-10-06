@@ -12,36 +12,33 @@
                 </el-icon>
             </div>
         </div>
-
-        <div v-if="randomMeme" class="modern-barrage-container">
-            <div class="modern-barrage-card" @click="handleCopyMeme(randomMeme)">
-                <div class="barrage-main-content">
-                    <div class="barrage-text-wrapper">
-                        <span class="barrage-text">{{ randomMeme.barrage }}</span>
-                    </div>
-
-                    <div class="barrage-meta-info">
-                        <div class="tags-container" v-if="getDictLabel(randomMeme.tags).length > 0">
-                            <div v-for="(item, index) in getDictLabel(randomMeme.tags)" :key="index" class="modern-tag">
-                                <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
-                                <span class="tag-label">{{ item.label }}</span>
-                            </div>
-                        </div>
-                        <div class="submit-time">
-                            <span class="meme-id">#{{ randomMeme.id }}</span>
-                            {{ easyFormatTime(randomMeme.submitTime) }}
-                        </div>
-                    </div>
+        <div v-if="randomMeme" class="modern-barrage-card" @click="handleCopyMeme(randomMeme)">
+            <div class="barrage-main-content">
+                <div class="barrage-text-wrapper">
+                    <span class="barrage-text">{{ randomMeme.barrage }}</span>
                 </div>
 
-                <div class="modern-copy-button" @click.stop="handleCopyMeme(randomMeme)">
-                    <div class="copy-text">复制</div>
-                    <div class="copy-icon">📋</div>
-                    <div class="copy-count">
-                        <flipNum :num="randomMeme.cnt || 0" />
+                <div class="barrage-meta-info">
+                    <div class="tags-container" v-if="getDictLabel(randomMeme.tags).length > 0">
+                        <div v-for="(item, index) in getDictLabel(randomMeme.tags)" :key="index" class="modern-tag">
+                            <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                            <span class="tag-label">{{ item.label }}</span>
+                        </div>
                     </div>
-                    <div class="copy-ripple"></div>
+                    <div class="submit-time">
+                        <span class="meme-id">#{{ randomMeme.id }}</span>
+                        {{ easyFormatTime(randomMeme.submitTime) }}
+                    </div>
                 </div>
+            </div>
+
+            <div class="modern-copy-button" @click.stop="handleCopyMeme(randomMeme)">
+                <div class="copy-text">复制</div>
+                <div class="copy-icon">📋</div>
+                <div class="copy-count">
+                    <flipNum :num="randomMeme.cnt || 0" />
+                </div>
+                <div class="copy-ripple"></div>
             </div>
         </div>
         <div v-else class="no-data">暂无烂梗数据</div>
@@ -308,6 +305,9 @@ async function handleCopyMeme(meme: getMemeList_meme) {
             flex-direction: column;
             gap: 12px;
             padding: 10px 0;
+            .barrage-main-content {
+                width: 100%;
+            }
 
             .barrage-text {
                 font-size: 15px;
