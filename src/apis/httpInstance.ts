@@ -10,6 +10,7 @@ const httpInstance = axios.create({
     // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
+export const sbVersion = '25.10.06';
 
 interface req<T> {
     url: string;
@@ -65,7 +66,7 @@ export async function get<R = any>(url: string): Promise<res<R>> {
     return result;
 }
 
-export const sbVersion = '25.10.04';
+
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
  * 后端使用siteToken来统计UV PV IP日均 

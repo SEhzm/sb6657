@@ -3,16 +3,17 @@
     <span>主播相册</span><span style="font-size: 16px;">(点击放大图片)</span>
     <em style="font-size: 14px;">如侵权，请右上角联系删除</em>
   </div>
-  <div class="image-list">
+  <div class="image-list" v-infinite-scroll="loadMoreImages">
     <div v-for="(image, index) in image.outerImg" :key="index" class="image-block">
       <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
         :preview-src-list="[image.url]" fit="cover" lazy style="width: 250px; height: 300px; ">
       </el-image>
       <div style="text-align: center; padding: 0 0 5px 0;">
-        <el-button style="width: 230px; font-size: 16px;  white-space: normal; word-break: break-word;">{{ image.date }}</el-button>
+        <el-button style="width: 230px; font-size: 16px;  white-space: normal; word-break: break-word;">{{ image.date
+          }}</el-button>
       </div>
       <el-button @click="toggleComments(image)" style=" font-size: 18px; margin-left: 15px; box-sizing: border-box;">{{
-        image.showComments ? '隐藏评论' : '显示评论('+  image.comments.length+ ')' 
+        image.showComments ? '隐藏评论' : '显示评论(' + image.comments.length + ')'
       }}
       </el-button>
       <div v-if="image.showComments" class="comment-list">
@@ -27,7 +28,12 @@
       </el-button>
     </div>
   </div>
-
+  <div v-if="hasMore" class="card load-more" style="text-align: center;cursor: pointer;color: orangered;" @click="loadMoreImages()">
+      加载更多<el-icon><ArrowDownBold /></el-icon>
+  </div>
+  <div v-else-if="image.outerImg.length > 0" class="card no-more" style="text-align: center; color: #999; margin: 20px 0;">
+    没有更多图片了
+  </div>
   <el-dialog v-model="image.dialogFormVisible" draggable title="评论">
     <el-form :model="image" label-width="100px" :rules="rules" label-position="right">
       <!-- <el-form-item label="用户昵称" prop="douyuID">
@@ -75,16 +81,50 @@ const image = reactive({
   dialogFormVisible: false,
 })
 
-const load = () => {
-  httpInstance.get('/machine/showImage', {}).then(res => {
-    // console.log(res)
-    image.outerImg = res.data || []
-    // console.log(image.outerImg)
-  }).catch(err => {
+// 分页状态管理
+const pageNum = ref(1)
+const pageSize = 20
+const hasMore = ref(true)
+const loading = ref(false)
+
+const load = async () => {
+  if (loading.value || !hasMore.value) return;
+  loading.value = true;
+  
+  try {
+    const res = await httpInstance.get('/machine/showImage', {
+      params: {
+        pageNum: pageNum.value,
+        pageSize: pageSize
+      }
+    });
+    
+    // 根据返回的数据结构判断是否还有更多数据
+    if (res.data.list.length < pageSize || res.data.lastPage === true) {
+      hasMore.value = false;
+    }
+    
+    // 如果是第一页，直接赋值；否则追加数据
+    if (pageNum.value === 1) {
+      image.outerImg = res.data.list || [];
+    } else {
+      image.outerImg.push(...res.data.list);
+    }
+    
+    pageNum.value++; // 递增页码
+  } catch (err) {
     console.error('加载数据失败:', err)
-  })
+  } finally {
+    loading.value = false;
+  }
 }
 
+// 触底加载更多图片
+const loadMoreImages = () => {
+  load();
+}
+
+// 初始化加载
 load()
 //图片打开/关闭评论
 const toggleComments = (image) => {
@@ -105,7 +145,7 @@ const rules = ({
 })
 
 const addComment = (image2) => {
-  console.log(image2)
+  // console.log(image2)
   image.imageId = image2.id
   ElNotification({
     title: '温馨提醒',
@@ -117,25 +157,29 @@ const addComment = (image2) => {
   image.dialogFormVisible = true
 }
 
-const saveComment = (Obimage) => {
+const saveComment = async (Obimage) => {
   // console.log(Obimage)
   if (Obimage.Commentname === '') {
     ElNotification.error("请输入评论");
   } else {
-    httpInstance.post('/machine/addCommentname', {
-      id: '',
-      imageId: image.imageId,
-      douyuID: Obimage.douyuID,
-      createdAt: '',
-      commentname: Obimage.Commentname,
-    }).then(res => {
+    try {
+      const res = await httpInstance.post('/machine/addCommentname', {
+        id: '',
+        imageId: image.imageId,
+        douyuID: Obimage.douyuID,
+        createdAt: '',
+        commentname: Obimage.Commentname,
+      });
       // console.log(res)
-      load()
+      // 重置分页状态并重新加载第一页
+      pageNum.value = 1;
+      hasMore.value = true;
+      await load();
       ElNotification.success("评论成功");
-      image.dialogFormVisible = false
-    }).catch(err => {
-      console.error('加载数据失败:', err)
-    })
+      image.dialogFormVisible = false;
+    } catch (err) {
+      console.error('加载数据失败:', err);
+    }
   }
 }
 
@@ -144,7 +188,6 @@ const saveComment = (Obimage) => {
 
 
 <style scoped>
-
 .el-image-viewer__img {
   width: 200px;
   height: 200px;
@@ -157,7 +200,7 @@ const saveComment = (Obimage) => {
   align-items: center;
   font-size: 23px;
   text-align: center;
-  color:white;
+  color: white;
 }
 
 .image-block {
@@ -196,7 +239,7 @@ const saveComment = (Obimage) => {
   justify-content: center;
 }
 
-.image-block {}
+/* .image-block styles are defined above */
 
 .comment-list {
   margin-top: 10px;
@@ -217,8 +260,8 @@ const saveComment = (Obimage) => {
 }
 
 @media (max-width: 600px) {
-  .outer{
-    color:black;
+  .outer {
+    color: black;
     margin-bottom: 20px;
   }
 

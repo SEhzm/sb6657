@@ -47,8 +47,6 @@ Vue3 + Vite + axios + elementUIPlus + Typescript
 后端：
 SpringBoot + MyBatis + MySQL + Redis
 
-弹幕管理后台：
-基于若依vue3框架二次开发
 
 ## 声明
 
