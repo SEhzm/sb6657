@@ -4,8 +4,8 @@
             <h1>布雷德十五勇士 & donk十五受害者</h1>
             <div class="more-info">
                 <div class="match-info">
-                    <h3 class="match-title">EPL S22 Spirit战胜Inner Circle</h3>
-                    <span class="match-date">2025-10-04</span>
+                    <h3 class="match-title">EPL S22 Spirit 战胜 HOTU</h3>
+                    <span class="match-date">2025-10-05</span>
                 </div>
                 <div class="author-info">
                     <span class="author-label">作者：</span>
@@ -31,10 +31,10 @@
                             <tr>
                                 <th>#</th>
                                 <th>Player</th>
+                                <th class="diff-col">K/D Diff</th>
                                 <th>Team</th>
                                 <th>Kills</th>
                                 <th>Deaths</th>
-                                <th class="diff-col">K/D Diff</th>
                                 <th>Maps</th>
                             </tr>
                         </thead>
@@ -42,11 +42,11 @@
                             <tr v-for="player in warriors" :key="player.player">
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.player }}</td>
+                                <td class="positive diff-col">{{ player.k_dDiff > 0 ? '+' : '' }}{{ player.k_dDiff }}
+                                </td>
                                 <td>{{ player.team }}</td>
                                 <td>{{ player.kill }}</td>
                                 <td>{{ player.death }}</td>
-                                <td class="positive diff-col">{{ player.k_dDiff > 0 ? '+' : '' }}{{ player.k_dDiff }}
-                                </td>
                                 <td>{{ player.maps }}</td>
                             </tr>
                         </tbody>
@@ -63,10 +63,10 @@
                             <tr>
                                 <th>#</th>
                                 <th>Player</th>
+                                <th class="diff-col">K/D Diff</th>
                                 <th>Team</th>
                                 <th>Kills</th>
                                 <th>Deaths</th>
-                                <th class="diff-col">K/D Diff</th>
                                 <th>Maps</th>
                             </tr>
                         </thead>
@@ -74,10 +74,10 @@
                             <tr v-for="player in victims" :key="player.player">
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.player }}</td>
+                                <td class="negative diff-col">{{ player.k_dDiff }}</td>
                                 <td>{{ player.team }}</td>
                                 <td>{{ player.kill }}</td>
                                 <td>{{ player.death }}</td>
-                                <td class="negative diff-col">{{ player.k_dDiff }}</td>
                                 <td>{{ player.maps }}</td>
                             </tr>
                         </tbody>
@@ -334,9 +334,14 @@ const victims = ref([
                     font-size: 0.95rem;
                     min-width: 500px;
 
+                    @media (max-width: 768px) {
+                        font-size: 0.8rem;
+                        min-width: 380px;
+                    }
+
                     @media (max-width: 480px) {
-                        font-size: 0.85rem;
-                        min-width: 450px;
+                        font-size: 0.75rem;
+                        min-width: 320px;
                     }
 
                     thead {
@@ -348,8 +353,12 @@ const victims = ref([
                             text-align: left;
                             border-bottom: 1px solid #e8e8e8;
 
-                            @media (max-width: 480px) {
+                            @media (max-width: 768px) {
                                 padding: 0.6rem 0.4rem;
+                            }
+
+                            @media (max-width: 480px) {
+                                padding: 0.4rem 0.3rem;
                             }
 
                             &:nth-child(1) {
@@ -376,8 +385,12 @@ const victims = ref([
                                 text-align: left;
                                 border-bottom: 1px solid #e8e8e8;
 
-                                @media (max-width: 480px) {
+                                @media (max-width: 768px) {
                                     padding: 0.6rem 0.4rem;
+                                }
+
+                                @media (max-width: 480px) {
+                                    padding: 0.4rem 0.3rem;
                                 }
 
                                 &:nth-child(1) {
@@ -397,6 +410,14 @@ const victims = ref([
     font-weight: 700;
     text-align: center;
     width: 80px;
+
+    @media (max-width: 768px) {
+        width: 60px;
+    }
+
+    @media (max-width: 480px) {
+        width: 50px;
+    }
 
     &.positive {
         color: #2e7d32;
