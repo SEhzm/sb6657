@@ -132,7 +132,7 @@ import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import RandomMeme from '@/components/home/random-meme.vue';
 import HomeIntro from '@/components/home/homeIntro.vue';
-import DidYouKnow from '@/components/home/didyouknow.vue';
+import DidYouKnow from '@/components/home/didYouKnow.vue';
 
 const memeTagsStore = useMemeTagsStore();
 
