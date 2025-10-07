@@ -5,7 +5,7 @@
             <span class="tips">(与源码 更新日志.md 同步)</span>
         </h2>
         <el-timeline>
-            <el-timeline-item v-for="version in parsedVersions" :key="version.version" :timestamp="version.date" placement="top">
+            <el-timeline-item v-for="version in parsedVersions" :key="version.version" :timestamp="version.date" placement="top" type="success">
                 <h3>{{ version.version }}</h3>
                 <ul>
                     <li v-for="(item, index) in version.updates" :key="index" :class="getUpdateTypeClass(item.type)" class="update-content">
@@ -154,6 +154,8 @@ function getUpdateTypeClass(type: string): string {
             return 'update-type-optimize';
         case '删除':
             return 'update-type-delete';
+        case '重构':
+            return 'update-type-refactor';
         default:
             return 'update-type-other';
     }
@@ -201,19 +203,22 @@ function getUpdateTypeClass(type: string): string {
 
     // 不同类型的颜色标识
     .update-type-add strong {
-        color: #67c23a;
+        color: #42b983;
     }
     .update-type-fix strong {
-        color: #e6a23c;
+        color: #f39c12;
     }
     .update-type-optimize strong {
-        color: #409eff;
+        color: #3498db;
     }
     .update-type-delete strong {
-        color: #f56c6c;
+        color: #e74c3c;
+    }
+    .update-type-refactor strong {
+        color: #9b59b6;
     }
     .update-type-other strong {
-        color: #909399;
+        color: #95a5a6;
     }
 }
 
