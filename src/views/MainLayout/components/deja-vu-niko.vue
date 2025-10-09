@@ -3,7 +3,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="title-section">
-                    <h1 class="title">🦐超级逮虾户战报第60期🦐</h1>
+                    <h1 class="title">🦐超级逮虾户战报第62期🦐</h1>
                 </div>
                 <div class="author-section">
                     <span class="author-label">作者：</span>
@@ -17,13 +17,13 @@
                 </div>
             </div>
             <div class="match-info">
-                <h3 class="match-title">裂变天地S2半决赛 FURIA战胜Falcons</h3>
-                <span class="match-date">2025-09-21</span>
+                <h3 class="match-title">EPL S22 Falcons 战胜 NAVI</h3>
+                <span class="match-date">2025-10-05</span>
             </div>
         </header>
         <section class="briefing">
             <div class="briefing-content">
-                本场比赛来自FURIA战队的yuurih(13:6)对位优于NiKo，获得两点鲜虾点数。
+                本场比赛来自NAVI战队的iM(7:2)和b1t(8:6)对位优于NiKo，分别获得1点和0点鲜虾点数，w0nderful(4:8)对位劣于NiKo获得1点痛风点数。
             </div>
         </section>
         <section class="main-content">
@@ -116,7 +116,7 @@
         <section class="commentary">
             <h3 class="commentary-title">野榜杂谈</h3>
             <div class="commentary-content">
-                从天堂到地狱，尼尼孩孩是夺冠热门的这几次，总是被一脚踹死给粉丝浇冷水。玩大哥真给我心想的说出来了，我真觉得不科学了，难道这世界上真的有软脚虾啊。k1那波究极铺垫究极勾引就是给老尼制造舞台啊，对面人还没漏，为什么要提前枪呢，提前枪也是一个没收，把狂哥和fallen只是打残了。难道真的有所谓的诅咒所谓的命运吗。我真的不相信科学了，我也不演了，我也真想看猎鹰夺一次冠啊，这批孩发挥去年是top2top3的水平啊，14：3被molodoy对位爆了都，最后京介那沙鹰全是先开枪再瞄准，长枪站了个一换一的位置。海鲜真有软脚属性啊，我真的要气昏了，不行，这比赛看不了一点，布达佩斯major也干不回来，这个比赛内容...
+                猎鹰的定海参针站出来了，如果说老尼c能把队伍c进4强，那么小孩一直c可以把队伍c进决赛乃至夺冠。有些时候还是感觉本质神队，夺冠仅在幻想中。今天晚上一边背单词一边看比赛算了😋😋，老鼠也是老对手了，真舍不得这一口。
             </div>
         </section>
         <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
@@ -154,9 +154,10 @@ const top30Rankings = [
     { rank: '3', player: 'ropz', team: 'Vitality', emoji: '🚘', points: '2(3-1)点' },
     { rank: '4', player: 'Senzu', team: 'MGLZ', emoji: '&#x1F977 ', points: '2点' },
     { rank: '5', player: 'NertZ', team: 'Liquid', emoji: '😋', points: '2点' },
-    { rank: '6', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
-    { rank: '7', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
-    { rank: '8', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
+    { rank: '6', player: 'iM', team: 'NAVI', emoji: '😋', points: '1点' },
+    { rank: '7', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
+    { rank: '8', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
+    { rank: '9', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
 ]
 
 // 非top30版荣誉提名鲜虾榜
@@ -195,13 +196,13 @@ const nonTop30Rankings = [
 // 痛风点数榜
 const goutRankings = [
     { rank: '1', player: 'broky', team: 'FaZe', emoji: '🦞👉📦', points: '6点' },
-    { rank: '2', player: 'woxic', team: 'Aurora', emoji: '🦞👉&#x1FAF2', points: '3(1-4)点' },
-    { rank: '3', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
-    { rank: '4', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
-    { rank: '5', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
-    { rank: '6', player: 'w0nderful', team: 'NAVI', emoji: '🦞👉🧨', points: '2点' },
-    { rank: '7', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
-    { rank: '8', player: 'device', team: 'Astralis', emoji: '🦞👉😨', points: '2点' },
+    { rank: '2', player: 'device', team: 'Astralis', emoji: '🦞👉😨', points: '4点' },
+    { rank: '3', player: 'w0nderful', team: 'NAVI', emoji: '🦞👉🧨', points: '3点' },
+    { rank: '4', player: 'woxic', team: 'Aurora', emoji: '🦞👉&#x1FAF2', points: '3(1-4)点' },
+    { rank: '5', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
+    { rank: '6', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
+    { rank: '7', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
+    { rank: '8', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
     { rank: '9', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
     { rank: '10', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '1(3-4)点' },
     { rank: '11', player: 'xertioN', team: 'MOUZ', emoji: '🦞👉🦀', points: '1(2-3)点' },
@@ -220,6 +221,8 @@ const teamRatings = [
     { team: 'VP', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
     { team: 'paiN', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'G2', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
+    { team: 'NAVI', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
+    { team: 'Astralis', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'GL', score: '1:4', opponent: 'Falcons', rating: '被钳破船队' },
     { team: 'FaZe', score: '0:4', opponent: 'Falcons', rating: '浮游生物队' }
 ]

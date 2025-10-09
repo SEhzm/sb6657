@@ -1,57 +1,19 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="home">
-        <div class="boomouder">
+        <div class="boom">
             <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
         <div class="cards-container">
             <div class="card first-card">
-                <div>
-                    <p class="announcement">
-                        <b>这是一个收集6657烂梗的网站：</b>
-                        <span class="dgq63136">
-                            <a href="https://sb6657.cn">sb6657.cn</a>
-                        </span>
-                        尽情欣赏你们的烂梗吧。
-                    </p>
-                    <p class="sub-info">
-                        <b>
-                            油猴插件
-                            <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击下载</a>
-                            可在斗鱼直播间一键复制烂梗
-                        </b>
-                    </p>
-                    <p class="sub-info">开放注册功能，可能会出现收不到邮件的情况。</p>
-                    <p class="sub-info">目前已支持玩机器直播间开播提醒</p>
-                    <p class="sub-info">
-                        <RouterLink to="/update">网站更新日志</RouterLink>
-                    </p>
-                </div>
+                <HomeIntro />
             </div>
-
             <div class="card second-card">
-                <div class="did-you-know">
-                    <h3>🤔 你知道吗？</h3>
-                    <ul class="knowledge-list">
-                        <li>
-                            谁目前打出了对位donk最多的击杀? 谁又是对位donk最大的受害者? 
-                            <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
-                        </li>
-                        <li>
-                            哪只队伍捕虾最专业? 谁是最佳捕虾人, 谁在捕虾过程中惨遭反夹?
-                            <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
-                        </li>
-                        <li class="placeholder-item">
-                            <!-- 预留给最后投稿弹幕内容 -->
-                        </li>
-                    </ul>
-                </div>
+                <DidYouKnow />
             </div>
         </div>
-
         <div class="card third-card">
             <RandomMeme />
         </div>
-
         <div class="card fifth-card">
             <div>
                 <span>
@@ -169,14 +131,12 @@ import ChatRoom from '@/components/ChatRoom.vue';
 import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import RandomMeme from '@/components/home/random-meme.vue';
-import { RouterLink } from 'vue-router';
+import HomeIntro from '@/components/home/homeIntro.vue';
+import DidYouKnow from '@/components/home/didYouKnow.vue';
 
 const memeTagsStore = useMemeTagsStore();
 
-const dictData = ref([]);
 memeTagsStore.tagsLoaded.then(() => {
-    console.log('dictData', memeTagsStore.memeTags);
-    dictData.value = memeTagsStore.memeTags;
     presetTags.value = memeTagsStore.memeTags.map((item) => ({
         iconUrl: item.iconUrl,
         label: item.dictLabel,
@@ -285,107 +245,39 @@ function refreshWordCloud() {
 </script>
 
 <style scoped lang="scss">
-/* 标签相关样式 */
-.submit-tag-button {
-    margin-left: 50%;
-}
-
-.preset-tags-container {
-    max-height: 75px;
-    overflow-y: auto;
-    margin-top: 10px;
-    margin-bottom: 20px;
-
-    .preset-tags {
-        display: flex;
-        flex-wrap: wrap;
-
-        .el-tag {
-            position: relative;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }
-
-        :deep(.el-tag__close) {
-            font-size: 30px;
-            transform: rotate(45deg);
-        }
-    }
-}
-
-.preset-tag {
-    padding: 15px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.added-tags {
-    display: flex;
-    flex-wrap: wrap;
-
-    .el-tag {
-        margin-right: 10px;
-        margin-bottom: 10px;
-    }
-}
-
-.added-tag {
-    padding: 15px;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.tag-icon-wrapper {
-    .tag-icon {
-        width: 22px;
-        height: 22px;
-        object-fit: cover;
-        vertical-align: middle;
-    }
-
-    .tag-text {
-        vertical-align: middle;
-    }
-}
-
+// ===== 主容器样式 =====
 .home {
-    height: auto;
     width: 80%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     // 顶部横幅区域
-    .boomouder {
+    .boom {
         height: 150px;
 
         .boom6657 {
-            left: calc(50vw - 153px);
-            position: absolute;
-            height: 150px;
+            height: 100%;
             border-radius: 10px;
         }
     }
 
     // 卡片容器
     .cards-container {
+        width: 100%;
         display: flex;
-        gap: 16px;
+        gap: 8px;
         margin-top: 10px;
-
-        // 响应式布局：窄屏时变为竖排
-        @media (max-width: 768px) {
-            flex-direction: column;
-            gap: 8px;
-        }
     }
 
+    // 卡片通用样式
     .card {
+        width: 100%;
         line-height: 25px;
-        flex: 1; // 让两个卡片平分宽度
 
-        &.first-card {
-            margin-top: 0; // 重置margin，由容器控制间距
-        }
-
+        &.first-card,
         &.second-card {
+            flex: 1; // 让两个卡片平分宽度
             margin-top: 0; // 重置margin，由容器控制间距
         }
 
@@ -397,10 +289,152 @@ function refreshWordCloud() {
         &.fifth-card {
             margin-top: 8px;
 
-            .saveBnt {
-                margin-left: 20%;
-                width: 100px;
+            // 投稿标签按钮
+            .submit-tag-button {
+                margin-left: 50%;
+            }
+
+            // 预设标签容器
+            .preset-tags-container {
+                max-height: 75px;
+                overflow-y: auto;
                 margin-top: 10px;
+                margin-bottom: 20px;
+
+                .preset-tags {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .el-tag {
+                        position: relative;
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                    }
+
+                    :deep(.el-tag__close) {
+                        font-size: 30px;
+                        transform: rotate(45deg);
+                    }
+                }
+            }
+
+            // 预设标签样式
+            .preset-tag {
+                padding: 15px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            // 已添加标签容器
+            .added-tags {
+                display: flex;
+                flex-wrap: wrap;
+
+                .el-tag {
+                    margin-right: 10px;
+                    margin-bottom: 10px;
+                }
+            }
+
+            // 已添加标签样式
+            .added-tag {
+                padding: 15px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+            // 标签图标包装器
+            .tag-icon-wrapper {
+                .tag-icon {
+                    width: 22px;
+                    height: 22px;
+                    object-fit: cover;
+                    vertical-align: middle;
+                }
+
+                .tag-text {
+                    vertical-align: middle;
+                }
+            }
+
+            // 赛事关联容器
+            .match-association-container {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                background-color: #f5f7fa;
+                padding: 12px;
+                border-radius: 4px;
+                margin-top: 10px;
+                box-sizing: border-box;
+
+                .match-section-home {
+                    display: flex;
+                    align-items: center;
+                    flex: 1;
+                    flex-wrap: wrap;
+                    gap: 10px;
+
+                    .match-checkbox-home {
+                        margin-right: 10px;
+                        white-space: nowrap;
+                    }
+
+                    .match-details-box-home {
+                        display: flex;
+                        flex-direction: column;
+                        background-color: #e6f5f2ff;
+                        padding: 5px 10px;
+                        border-radius: 4px;
+                        flex-shrink: 0;
+                        justify-content: center;
+                        width: 100%;
+                        box-sizing: border-box;
+
+                        .match-info-row-home {
+                            display: flex;
+                            align-items: center;
+
+                            .match-image-home {
+                                width: 30px;
+                                height: 30px;
+                                margin-right: 10px;
+                                object-fit: contain;
+                            }
+
+                            .match-name-home {
+                                font-size: 14px;
+                                color: #303133;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                text-overflow: ellipsis;
+                                max-width: 150px;
+                            }
+                        }
+
+                        .match-time-home {
+                            font-size: 12px;
+                            color: #606266;
+                        }
+                    }
+
+                    .no-match-info-home {
+                        color: #909399;
+                        font-size: 14px;
+                        padding: 5px 10px;
+                        background-color: #f5f7fa;
+                        border-radius: 4px;
+                        flex-shrink: 0;
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+
+                    .saveBnt {
+                        margin-left: 20%;
+                        width: 100px;
+                        margin-top: 10px;
+                    }
+                }
             }
         }
 
@@ -408,160 +442,60 @@ function refreshWordCloud() {
             margin-top: 10px;
         }
     }
+}
 
-    .announcement {
-        font-size: 16px;
-        margin-bottom: 8px;
+// ===== 聊天室样式 =====
+.ChatRoom {
+    margin: 10px 0;
+}
+
+// ===== 词云相关样式 =====
+.wordCloudDiv {
+    .word-cloud-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #303133;
+        margin: 0;
+
     }
 
-    .sub-info {
-        font-size: 14px;
-        color: #666;
-        margin-top: 8px;
+    .word-cloud-refresh-icon {
+        color: #409eff;
+        cursor: pointer;
+        transition: all 0.3s ease;
 
-        a {
-            color: #409eff;
-            text-decoration: none;
+        &:hover {
+            color: #66b1ff;
+        }
 
-            &:hover {
-                text-decoration: underline;
-            }
+        &.rotating {
+            animation: rotate 0.6s linear;
         }
     }
 
-    .dgq63136 {
-        font-size: 20px;
-        font-weight: bold;
-
-        a {
-            color: red;
-            text-decoration: none;
-
-            &:hover {
-                text-decoration: underline;
-            }
-        }
-    }
-
-    // "你知道吗？"卡片样式
-    .did-you-know {
-        h3 {
-            margin: 0 0 12px 0;
-            font-size: 18px;
-            color: #303133;
-            font-weight: 600;
-        }
-
-        .knowledge-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-
-            li {
-                margin-bottom: 8px;
-                font-size: 14px;
-                line-height: 1.6;
-                color: #606266;
-
-                &:last-child {
-                    margin-bottom: 0;
-                }
-
-                a {
-                    color: #409eff;
-                    text-decoration: none;
-                    font-weight: 500;
-                    text-wrap: nowrap;
-
-                    &:hover {
-                        text-decoration: underline;
-                        color: #66b1ff;
-                    }
-                }
-            }
-        }
+    .word-cloud-loading {
+        text-align: center;
+        padding: 20px;
+        color: #909399;
     }
 }
 
-.match-association-container {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    background-color: #f5f7fa;
-    padding: 12px;
-    border-radius: 4px;
-    margin-top: 10px;
-    box-sizing: border-box;
+// ===== 动画定义 =====
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
-.match-section-home {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.match-checkbox-home {
-    margin-right: 10px;
-    white-space: nowrap;
-}
-
-.match-details-box-home {
-    display: flex;
-    flex-direction: column;
-    background-color: #e6f5f2ff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    flex-shrink: 0;
-    justify-content: center;
-}
-
-.match-info-row-home {
-    display: flex;
-    align-items: center;
-}
-
-.match-image-home {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    object-fit: contain;
-}
-
-.match-name-home {
-    font-size: 14px;
-    color: #303133;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
-}
-
-.match-time-home {
-    font-size: 12px;
-    color: #606266;
-}
-
-.no-match-info-home {
-    color: #909399;
-    font-size: 14px;
-    padding: 5px 10px;
-    background-color: #f5f7fa;
-    border-radius: 4px;
-    flex-shrink: 0;
-}
-
-.button-group-home {
-    display: flex;
-    gap: 10px;
-    margin-left: 10px;
-}
-
-// 响应式设计
+// ===== 响应式设计 =====
+// 大屏幕样式 (601px及以上)
 @media (min-width: 601px) {
     .home {
         .wordCloudDiv {
+            z-index: 9;
             position: fixed;
             bottom: 10px;
             right: 10px;
@@ -577,6 +511,16 @@ function refreshWordCloud() {
     }
 }
 
+// 前俩卡片在窄屏下换行展示
+@media (max-width: 768px) {
+    .home {
+        .cards-container {
+            flex-direction: column;
+        }
+    }
+}
+
+// 小屏幕样式 (600px及以下)
 @media (max-width: 600px) {
     .AnnualHotList {
         margin-bottom: 20px;
@@ -585,131 +529,35 @@ function refreshWordCloud() {
     .home {
         width: 100%;
 
+        .boom {
+            height: 150px;
+
+            .boom6657 {
+                margin-top: 6px;
+                height: 130px;
+            }
+        }
+
         .wordCloudDiv {
             margin-top: 10px;
+            width: 100%;
         }
 
         .card {
             &.fifth-card {
                 margin-top: 8px;
 
-                .saveBnt {
-                    margin-left: 35%;
-                    width: 100px;
-                    margin-top: 10px;
+                .match-association-container {
+                    .match-section-home {
+                        .saveBnt {
+                            margin-left: 35%;
+                            width: 100px;
+                            margin-top: 10px;
+                        }
+                    }
                 }
             }
         }
-
-        .boomouder {
-            height: 150px;
-
-            .boom6657 {
-                position: absolute;
-                border-radius: 10px;
-                height: 118px;
-                left: 25%;
-            }
-        }
-    }
-}
-
-// 弹窗内容样式
-.popover-content {
-    .tags-container {
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        margin-bottom: 8px;
-
-        .tag-item {
-            margin-right: 8px;
-            margin-bottom: 4px;
-        }
-
-        .custom-tag {
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .tag-icon-wrapper {
-            display: flex;
-            align-items: center;
-
-            .tag-icon {
-                width: 22px;
-                height: 22px;
-                object-fit: cover;
-                margin-right: 4px;
-            }
-
-            .tag-label {
-                vertical-align: middle;
-            }
-        }
-    }
-
-    .submit-time {
-        font-size: 11px;
-        color: #909399;
-        text-align: right;
-        margin-top: 4px;
-        border-top: 1px solid #ebeef5;
-        padding-top: 4px;
-    }
-}
-
-.ChatRoom {
-    margin: 10px 0;
-}
-
-.match-details-box-home,
-.no-match-info-home {
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.tag-icon-wrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-}
-
-/* 词云相关样式 */
-.word-cloud-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #303133;
-    margin: 0;
-}
-
-.word-cloud-refresh-icon {
-    color: #409eff;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    &:hover {
-        color: #66b1ff;
-    }
-
-    &.rotating {
-        animation: rotate 0.6s linear;
-    }
-}
-
-.word-cloud-loading {
-    text-align: center;
-    padding: 20px;
-    color: #909399;
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
     }
 }
 </style>
