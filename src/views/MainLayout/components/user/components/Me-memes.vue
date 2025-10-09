@@ -5,6 +5,7 @@
                 <span><b>我的投稿</b>（确保在登录状态下投稿）</span>
             </template>
             <el-table :data="memeArr" stripe v-loading="loading" empty-text="暂无投稿~">
+                <el-table-column type="index" label="#" :index="indexMethod" width="60" align="center" />
                 <el-table-column label="烂梗" prop="barrage">
                     <template #default="scope">
                         <el-popover placement="top" :width="'auto'" trigger="hover">
@@ -60,7 +61,7 @@
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"
+                <el-pagination v-if="!loading" background layout="total, prev, pager, next, jumper" :current-page="currentPage"
                     :total="total" :pager-count="5" :page-size="pageSize" @current-change="handlePageChange" />
             </div>
         </el-card>
@@ -93,6 +94,11 @@ const pageSize = 50;
 const currentPage = ref(1);
 const loading = ref(true);
 const dictData = ref<DictItem[]>([]);
+
+// 表格索引（包含分页偏移）
+const indexMethod = (index: number): number => {
+    return (currentPage.value - 1) * pageSize + index + 1;
+};
 
 // 获取标签字典
 memeTagsStore.tagsLoaded.then(() => {
