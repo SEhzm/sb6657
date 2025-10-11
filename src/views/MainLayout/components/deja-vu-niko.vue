@@ -3,7 +3,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="title-section">
-                    <h1 class="title">🦐超级逮虾户战报第62期🦐</h1>
+                    <h1 class="title">🦐超级逮虾户战报第63期🦐</h1>
                 </div>
                 <div class="author-section">
                     <span class="author-label">作者：</span>
@@ -17,13 +17,13 @@
                 </div>
             </div>
             <div class="match-info">
-                <h3 class="match-title">EPL S22 Falcons 战胜 NAVI</h3>
-                <span class="match-date">2025-10-05</span>
+                <h3 class="match-title">EPL S22 Falcons 战胜 MOUZ</h3>
+                <span class="match-date">2025-10-07</span>
             </div>
         </header>
         <section class="briefing">
             <div class="briefing-content">
-                本场比赛来自NAVI战队的iM(7:2)和b1t(8:6)对位优于NiKo，分别获得1点和0点鲜虾点数，w0nderful(4:8)对位劣于NiKo获得1点痛风点数。
+                本场比赛来自MOUZ战队的xertioN(11:5)和Spinx(12:5)对位优于NiKo，同时获得2点鲜虾点数，torzsi(3:6)对位劣于NiKo获得1点痛风点数。
             </div>
         </section>
         <section class="main-content">
@@ -116,7 +116,7 @@
         <section class="commentary">
             <h3 class="commentary-title">野榜杂谈</h3>
             <div class="commentary-content">
-                猎鹰的定海参针站出来了，如果说老尼c能把队伍c进4强，那么小孩一直c可以把队伍c进决赛乃至夺冠。有些时候还是感觉本质神队，夺冠仅在幻想中。今天晚上一边背单词一边看比赛算了😋😋，老鼠也是老对手了，真舍不得这一口。
+                本来就水的榜单还要水上加水，淘汰赛加油吧哈基鹰。
             </div>
         </section>
         <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
@@ -151,13 +151,15 @@ function changeDejaVuType(type: number) {
 const top30Rankings = [
     { rank: '1', player: 'Jimpphat', team: 'MOUZ', emoji: '🐱', points: '3(5-2)点' },
     { rank: '2', player: 'XANTARES', team: 'Aurora', emoji: '😡', points: '3(4-1)点' },
-    { rank: '3', player: 'ropz', team: 'Vitality', emoji: '🚘', points: '2(3-1)点' },
-    { rank: '4', player: 'Senzu', team: 'MGLZ', emoji: '&#x1F977 ', points: '2点' },
-    { rank: '5', player: 'NertZ', team: 'Liquid', emoji: '😋', points: '2点' },
-    { rank: '6', player: 'iM', team: 'NAVI', emoji: '😋', points: '1点' },
-    { rank: '7', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
-    { rank: '8', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
-    { rank: '9', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
+    { rank: '3', player: 'Spinx', team: 'MOUZ', emoji: '🦑', points: '2(7-5)点' },
+    { rank: '4', player: 'ropz', team: 'Vitality', emoji: '🚘', points: '2(3-1)点' },
+    { rank: '5', player: 'Senzu', team: 'MGLZ', emoji: '&#x1F977', points: '2点' },
+    { rank: '6', player: 'NertZ', team: 'Liquid', emoji: '😋', points: '2点' },
+    { rank: '7', player: 'xertioN', team: 'MOUZ', emoji: '🦀', points: '1(4-3)点' },
+    { rank: '8', player: 'iM', team: 'NAVI', emoji: '😋', points: '1点' },
+    { rank: '9', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
+    { rank: '10', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
+    { rank: '11', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
 ]
 
 // 非top30版荣誉提名鲜虾榜
@@ -201,14 +203,13 @@ const goutRankings = [
     { rank: '4', player: 'woxic', team: 'Aurora', emoji: '🦞👉&#x1FAF2', points: '3(1-4)点' },
     { rank: '5', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
     { rank: '6', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
-    { rank: '7', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
-    { rank: '8', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
-    { rank: '9', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
-    { rank: '10', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '1(3-4)点' },
-    { rank: '11', player: 'xertioN', team: 'MOUZ', emoji: '🦞👉🦀', points: '1(2-3)点' },
-    { rank: '12', player: 'sh1ro', team: 'Spirit', emoji: '🦞👉🧟‍♂️', points: '1点' },
-    { rank: '13', player: 'NAF', team: 'Liquid', emoji: '🦞👉🦥', points: '1点' },
-    { rank: '14', player: 'stavn', team: 'benched', emoji: '🦞👉🐍', points: '1点' }
+    { rank: '7', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '2(3-5)点' },
+    { rank: '8', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
+    { rank: '9', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
+    { rank: '10', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
+    { rank: '11', player: 'sh1ro', team: 'Spirit', emoji: '🦞👉🧟‍♂️', points: '1点' },
+    { rank: '12', player: 'NAF', team: 'Liquid', emoji: '🦞👉🦥', points: '1点' },
+    { rank: '13', player: 'stavn', team: 'benched', emoji: '🦞👉🐍', points: '1点' }
 ]
 
 // 捕虾队评级
@@ -216,9 +217,9 @@ const teamRatings = [
     { team: 'Vitality', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
     { team: 'Aurora', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
     { team: 'FURIA', score: '2:1', opponent: 'Falcons', rating: '优秀捕虾队' },
-    { team: 'MOUZ', score: '4:4', opponent: 'Falcons', rating: '入门捕虾队' },
     { team: 'MGLZ', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
     { team: 'VP', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
+    { team: 'MOUZ', score: '4:5', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'paiN', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'G2', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'NAVI', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
