@@ -96,7 +96,7 @@
                             <template #default>
                                 <div class="popover-details">
                                     <div class="tag-list">
-                                        <div v-for="item in getDictLabel(scope.row.tags)" :key="item.label">
+                                        <div v-for="item in getDisplayTags(scope.row.tags, memeTags)" :key="item.label">
                                             <el-tag round effect="dark" class="tag-item">
                                                 <div class="tag-icon-wrapper">
                                                     <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
@@ -148,6 +148,7 @@ import { type getMemeTags as memeTag, SortType } from '@/types/meme';
 import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
 import { useIsMobile } from '@/utils/common';
 import { easyFormatTime } from '@/utils/time';
+import { getDisplayTags } from '@/utils/tags';
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -277,14 +278,6 @@ function removeTag(tag: memeTag) {
     if (!allTags.value.find((t) => t.dictValue === tag.dictValue)) {
         allTags.value.push(tag);
     }
-}
-
-// 解析标签显示信息
-function getDictLabel(tags: string): { label: string; iconUrl: string }[] {
-    const tagsArr = tags.split(',');
-    return memeTags.value
-        .filter((item) => tagsArr.includes(item.dictValue))
-        .map((item) => ({ label: item.dictLabel, iconUrl: item.iconUrl }));
 }
 
 // ==================== 复制功能 ====================

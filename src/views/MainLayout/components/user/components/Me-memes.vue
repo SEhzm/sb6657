@@ -14,7 +14,7 @@
                             </template>
                             <template #default>
                                 <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                                    <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
+                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index"
                                         style="margin-right: 8px;">
                                         <el-tag round effect="dark" :style="{ fontSize: '15px', cursor: 'pointer' }">
                                             <img v-if="item.iconUrl" :src="item.iconUrl"
@@ -33,7 +33,7 @@
                 <!-- <el-table-column label="标签" align="center">
                     <template #default="scope">
                         <div style="display: flex; flex-wrap: wrap;">
-                            <el-tag v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" round
+                            <el-tag v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index" round
                                 effect="plain" style="margin-right: 4px;">
                                 <img v-if="item.iconUrl" :src="item.iconUrl"
                                     style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
@@ -72,6 +72,8 @@
 import { ref, onMounted } from 'vue';
 import httpInstance from '@/apis/httpInstance';
 import { easyFormatTime } from '@/utils/time';
+import { getDisplayTags } from '@/utils/tags';
+import type { getMemeTags as memeTag } from '@/types/meme';
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
 
@@ -82,18 +84,12 @@ interface MemeItem {
     createTime: string;
 }
 
-interface DictItem {
-    dictValue: string;
-    dictLabel: string;
-    iconUrl: string;
-}
-
 const memeArr = ref<MemeItem[]>([]);
 const total = ref(0);
 const pageSize = 50;
 const currentPage = ref(1);
 const loading = ref(true);
-const dictData = ref<DictItem[]>([]);
+const dictData = ref<memeTag[]>([]);
 
 // 表格索引（包含分页偏移）
 const indexMethod = (index: number): number => {
@@ -104,25 +100,6 @@ const indexMethod = (index: number): number => {
 memeTagsStore.tagsLoaded.then(() => {
     dictData.value = memeTagsStore.memeTags
 })
-
-// 标签映射
-const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
-    if (!tags || tags.trim() === '') {
-        return [];
-    }
-    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())));
-    if (!dictData.value) {
-        return tagList.map(() => ({ label: '', iconUrl: '' }));
-    }
-    const dictMap = new Map(
-        (dictData.value as DictItem[]).map(item => [String(item.dictValue).trim(), item])
-    );
-    const labels = tagList.map(tag => {
-        const dictItem = dictMap.get(tag);
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
-    });
-    return labels;
-};
 
 // 获取我的投稿
 const getMeMemes = (pageNum = 1) => {

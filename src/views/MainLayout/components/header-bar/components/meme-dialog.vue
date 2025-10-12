@@ -12,25 +12,24 @@
                 </el-table-column>
                 <el-table-column prop="content">
                     <template #default="scope">
-                            <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
-                                <template #reference>
-                                    <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
-                                        <span class="barrage-text">{{ scope.row.content }}</span>
+                        <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
+                            <template #reference>
+                                <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                    <span class="barrage-text">{{ scope.row.content }}</span>
+                                </div>
+                            </template>
+                            <template #default>
+                                <div style="display: flex; align-items: center; flex-wrap: wrap">
+                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index" style="margin-right: 8px">
+                                        <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
+                                            <img v-if="item.iconUrl" :src="item.iconUrl" style="width: 16px; height: 16px; object-fit: cover; vertical-align: middle" />
+                                            <span style="vertical-align: middle">{{ item.label }}</span>
+                                        </el-tag>
                                     </div>
-                                </template>
-                                <template #default>
-                                    <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                                        <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index" style="margin-right: 8px;">
-                                            <el-tag round effect="dark"
-                                                :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 16px; object-fit: cover;vertical-align: middle;" />
-                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
-                                            </el-tag>
-                                        </div>
-                                    </div>
-                                </template>
-                            </el-popover>
-                        </template>
+                                </div>
+                            </template>
+                        </el-popover>
+                    </template>
                 </el-table-column>
                 <!-- <el-table-column align="center" width="40">
                     <template #default="scope">
@@ -39,7 +38,11 @@
                 </el-table-column> -->
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制 (<flip-num :num="scope.row.copyCount" />)</el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">
+                            复制 (
+                            <flip-num :num="scope.row.copyCount" />
+                            )
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -48,12 +51,12 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue';
 import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy ,likeSuccess} from '@/utils/clipboard';
+import { copyToClipboard, copySuccess, limitedCopy, likeSuccess } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
-import httpInstance from '@/apis/httpInstance';
-import { ref } from 'vue';
+import { getDisplayTags } from '@/utils/tags';
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
 
@@ -101,29 +104,10 @@ async function copyMeme_countPlus1(meme: Meme) {
     plus1Error();
 }
 
-const dictData = ref([]);
+const dictData = ref<any>([]);
 memeTagsStore.tagsLoaded.then(() => {
     dictData.value = memeTagsStore.memeTags;
 });
-
-const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
-    if (!tags || tags.trim() === '') {
-        return [];
-    }
-    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())));
-    if (!dictData.value) {
-        return tagList.map(() => ({ label: '', iconUrl: '' }));
-    }
-    const dictMap = new Map(
-        dictData.value.map(item => [String(item.dictValue).trim(), item])
-    );
-    const labels = tagList.map(tag => {
-        const dictItem = dictMap.get(tag);
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' };
-    });
-
-    return labels;
-};
 
 //移动端的触摸展示
 const handleTouchStart = (row: any) => {
@@ -132,11 +116,12 @@ const handleTouchStart = (row: any) => {
 
 const handleTouchEnd = (row: any) => {
     const touchEndTime = Date.now();
-    if (touchEndTime - row.touchStartTime > 100) { //100ms 长按时长
+    if (touchEndTime - row.touchStartTime > 100) {
+        //100ms 长按时长
         row.popoverVisible = true;
-        setTimeout(()=>{
-            row.popoverVisible=false
-        },1500)
+        setTimeout(() => {
+            row.popoverVisible = false;
+        }, 1500);
     }
 };
 </script>

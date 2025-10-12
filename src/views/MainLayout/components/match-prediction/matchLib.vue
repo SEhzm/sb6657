@@ -76,7 +76,7 @@
                                     </template>
                                     <template #default>
                                         <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                                            <div v-for="(item, index) in getDictLabel(scope.row.tags)" :key="index"
+                                            <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index"
                                                 style="margin-right: 8px;">
                                                 <el-tag round effect="dark"
                                                     :style="{ fontSize: '16px', cursor: 'pointer' }">
@@ -124,6 +124,7 @@ import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard'
 import { throttle } from '@/utils/throttle'
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme'
 import { easyFormatTime } from '@/utils/time'
+import { getDisplayTags } from '@/utils/tags'
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
 
@@ -274,25 +275,6 @@ const copyMeme_countPlus1 = async (item: BarrageItem) => {
 const handleBarragePageChange = (page: number) => {
     barrageCurrentPage.value = page
     getMatchBarrageList(page)
-}
-
-// 获取字典标签
-const getDictLabel = (tags: string | null | undefined): { label: string; iconUrl: string }[] => {
-    if (!tags || tags.trim() === '') {
-        return []
-    }
-    const tagList = Array.from(new Set(tags.split(',').map(tag => tag.trim())))
-    if (!dictData.value) {
-        return tagList.map(() => ({ label: '', iconUrl: '' }))
-    }
-    const dictMap = new Map(
-        dictData.value.map(item => [String(item.dictValue).trim(), item])
-    )
-    const labels = tagList.map(tag => {
-        const dictItem = dictMap.get(tag)
-        return dictItem ? { label: dictItem.dictLabel, iconUrl: dictItem.iconUrl } : { label: '', iconUrl: '' }
-    })
-    return labels
 }
 
 // 获取字典数据

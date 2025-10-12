@@ -19,8 +19,8 @@
                 </div>
 
                 <div class="barrage-meta-info">
-                    <div class="tags-container" v-if="getDictLabel(randomMeme.tags).length > 0">
-                        <div v-for="(item, index) in getDictLabel(randomMeme.tags)" :key="index" class="modern-tag">
+                    <div class="tags-container" v-if="getDisplayTags(randomMeme.tags, memeTags).length > 0">
+                        <div v-for="(item, index) in getDisplayTags(randomMeme.tags, memeTags)" :key="index" class="modern-tag">
                             <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
                             <span class="tag-label">{{ item.label }}</span>
                         </div>
@@ -56,6 +56,7 @@ import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { easyFormatTime } from '@/utils/time';
 import type { getMemeList_meme } from '@/types/meme';
 import type { getMemeTags as memeTag } from '@/types/meme';
+import { getDisplayTags } from '@/utils/tags';
 
 const memeTagsStore = useMemeTagsStore();
 const memeTags = ref<memeTag[]>([]);
@@ -97,12 +98,6 @@ const handleRefresh = async () => {
         isRotating.value = false;
     }, 600);
 };
-
-// 标签相关
-function getDictLabel(tags: string): { label: string; iconUrl: string }[] {
-    const tagsArr = tags.split(',');
-    return memeTags.value.filter((item) => tagsArr.includes(item.dictValue)).map((item) => ({ label: item.dictLabel, iconUrl: item.iconUrl }));
-}
 
 // 节流过的复制，2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
