@@ -9,10 +9,8 @@
                     <span class="author-label">作者：</span>
                     <div class="author-links">
                         <a href="https://space.bilibili.com/505122023" target="_blank">bilibili: @Mr_皮乐</a>
-                        <a href="https://tieba.baidu.com/home/main?id=tb.1.e7e1a59e.6wTN3gPNJQkiSeJQQkzyow"
-                            target="_blank">贴吧: @浪泼独流</a>
-                        <a href="https://news.wmpvp.com/community-detail.html?id=347406749" target="_blank">完美:
-                            @永远喜欢尼古拉科维奇</a>
+                        <a href="https://tieba.baidu.com/home/main?id=tb.1.e7e1a59e.6wTN3gPNJQkiSeJQQkzyow" target="_blank">贴吧: @浪泼独流</a>
+                        <a href="https://news.wmpvp.com/community-detail.html?id=347406749" target="_blank">完美: @永远喜欢尼古拉科维奇</a>
                     </div>
                 </div>
             </div>
@@ -21,10 +19,21 @@
                 <span class="match-date">2025-10-07</span>
             </div>
         </header>
-        <section class="briefing">
-            <div class="briefing-content">
-                本场比赛来自MOUZ战队的xertioN(11:5)和Spinx(12:5)对位优于NiKo，同时获得2点鲜虾点数，torzsi(3:6)对位劣于NiKo获得1点痛风点数。
+        <section class="pause-notice" role="status" aria-live="polite">
+            <div class="notice-content">
+                <img src="https://pan.xxbyq.net/f/j6DhB/nikoshrimp.webp" alt="停更公告配图" class="notice-image" />
+                <div class="notice-text">
+                    <h3 class="notice-title">停更公告</h3>
+                    <p class="notice-desc">
+                        鲜虾榜停更至 12.22，专心备战考研去了。（作者原话，见
+                        <a style="text-decoration: underline;" href="https://www.bilibili.com/opus/1123112580507762704">b站动态</a>
+                        😭）
+                    </p>
+                </div>
             </div>
+        </section>
+        <section class="briefing">
+            <div class="briefing-content">本场比赛来自MOUZ战队的xertioN(11:5)和Spinx(12:5)对位优于NiKo，同时获得2点鲜虾点数，torzsi(3:6)对位劣于NiKo获得1点痛风点数。</div>
         </section>
         <section class="main-content">
             <div v-if="dejaVuType === 0" class="ranking-section">
@@ -115,9 +124,7 @@
         </section>
         <section class="commentary">
             <h3 class="commentary-title">野榜杂谈</h3>
-            <div class="commentary-content">
-                本来就水的榜单还要水上加水，淘汰赛加油吧哈基鹰。
-            </div>
+            <div class="commentary-content">本来就水的榜单还要水上加水，淘汰赛加油吧哈基鹰。</div>
         </section>
         <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
             <p>{{ dialogText }}</p>
@@ -126,25 +133,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const dialogVisible = ref(false)
-const dialogTitle = ref('')
-const dialogText = ref('')
+import { ref } from 'vue';
+const dialogVisible = ref(false);
+const dialogTitle = ref('');
+const dialogText = ref('');
 const showDialog = (title: string, text: string) => {
-    dialogTitle.value = title
-    dialogText.value = text
-    dialogVisible.value = true
-}
+    dialogTitle.value = title;
+    dialogText.value = text;
+    dialogVisible.value = true;
+};
 
-const title1 = '鲜虾点数计算规则'
-const text1 = '每场比赛对位优于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有人对位优于NiKo，则无人获得鲜虾点数。(分为top30版和非top30荣誉提名版)'
+const title1 = '鲜虾点数计算规则';
+const text1 = '每场比赛对位优于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有人对位优于NiKo，则无人获得鲜虾点数。(分为top30版和非top30荣誉提名版)';
 
-const title2 = '痛风点数计算规则'
-const text2 = '每场比赛的(24年)top30选手对位劣于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有top30选手或未有对位劣于NiKo的top30选手，则无人获得痛风点数。'
+const title2 = '痛风点数计算规则';
+const text2 = '每场比赛的(24年)top30选手对位劣于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有top30选手或未有对位劣于NiKo的top30选手，则无人获得痛风点数。';
 
-const dejaVuType = ref(0)
+const dejaVuType = ref(0);
 function changeDejaVuType(type: number) {
-    dejaVuType.value = type
+    dejaVuType.value = type;
 }
 
 // Top30版鲜虾点数排行榜
@@ -159,8 +166,8 @@ const top30Rankings = [
     { rank: '8', player: 'iM', team: 'NAVI', emoji: '😋', points: '1点' },
     { rank: '9', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
     { rank: '10', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
-    { rank: '11', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' }
-]
+    { rank: '11', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' },
+];
 
 // 非top30版荣誉提名鲜虾榜
 const nonTop30Rankings = [
@@ -192,15 +199,15 @@ const nonTop30Rankings = [
     { rank: '26', player: 'Lucky', team: '3DMAX', emoji: '🤬', points: '1点' },
     { rank: '27', player: 'Ex3rcice', team: '3DMAX', emoji: '😋', points: '1点' },
     { rank: '28', player: 'jabbi', team: 'Astralis', emoji: '🐭', points: '1点' },
-    { rank: '29', player: 'sdy', team: 'ENCE', emoji: '😋', points: '1点' }
-]
+    { rank: '29', player: 'sdy', team: 'ENCE', emoji: '😋', points: '1点' },
+];
 
 // 痛风点数榜
 const goutRankings = [
     { rank: '1', player: 'broky', team: 'FaZe', emoji: '🦞👉📦', points: '6点' },
     { rank: '2', player: 'device', team: 'Astralis', emoji: '🦞👉😨', points: '4点' },
     { rank: '3', player: 'w0nderful', team: 'NAVI', emoji: '🦞👉🧨', points: '3点' },
-    { rank: '4', player: 'woxic', team: 'Aurora', emoji: '🦞👉&#x1FAF2', points: '3(1-4)点' },
+    { rank: '4', player: 'woxic', team: 'Aurora', emoji: '🦞👉 &#x1FAF2', points: '3(1-4)点' },
     { rank: '5', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
     { rank: '6', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
     { rank: '7', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '2(3-5)点' },
@@ -209,8 +216,8 @@ const goutRankings = [
     { rank: '10', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
     { rank: '11', player: 'sh1ro', team: 'Spirit', emoji: '🦞👉🧟‍♂️', points: '1点' },
     { rank: '12', player: 'NAF', team: 'Liquid', emoji: '🦞👉🦥', points: '1点' },
-    { rank: '13', player: 'stavn', team: 'benched', emoji: '🦞👉🐍', points: '1点' }
-]
+    { rank: '13', player: 'stavn', team: 'benched', emoji: '🦞👉🐍', points: '1点' },
+];
 
 // 捕虾队评级
 const teamRatings = [
@@ -225,9 +232,8 @@ const teamRatings = [
     { team: 'NAVI', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'Astralis', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
     { team: 'GL', score: '1:4', opponent: 'Falcons', rating: '被钳破船队' },
-    { team: 'FaZe', score: '0:4', opponent: 'Falcons', rating: '浮游生物队' }
-]
-
+    { team: 'FaZe', score: '0:4', opponent: 'Falcons', rating: '浮游生物队' },
+];
 </script>
 
 <style lang="scss" scoped>
@@ -236,7 +242,7 @@ const teamRatings = [
     margin: 0 auto;
     background-color: #ffffff;
     border: 1px solid #cccccc;
-    font-family: "Microsoft YaHei", "SimSun", Arial, sans-serif;
+    font-family: 'Microsoft YaHei', 'SimSun', Arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
     color: #333333;
@@ -339,7 +345,6 @@ const teamRatings = [
         }
     }
 }
-
 // 简报样式
 .briefing {
     background-color: #ffffcc;
@@ -367,7 +372,7 @@ const teamRatings = [
     background-color: #fafafa;
 
     .section-header {
-        background-color: #E6E6E6;
+        background-color: #e6e6e6;
         border-bottom: 1px solid #cccccc;
         padding: 12px 15px;
         display: flex;
@@ -436,7 +441,7 @@ const teamRatings = [
         table {
             width: 100%;
             border-collapse: collapse;
-            font-family: "Courier New", monospace;
+            font-family: 'Courier New', monospace;
             font-size: 14px;
             table-layout: auto; // 让表格根据内容自动调整列宽
 
@@ -461,25 +466,27 @@ const teamRatings = [
             }
 
             // 列样式控制（不设固定宽度，让内容撑开）
-            td:nth-child(1) { // 排名
+            td:nth-child(1) {
+                // 排名
                 text-align: center;
                 font-weight: 500;
                 width: 1%;
                 padding: 6px 4px;
             }
 
-            td:nth-child(2) { // 选手
+            td:nth-child(2) {
+                // 选手
                 font-weight: 500;
             }
 
-
-
-            td:nth-child(4) { // 表情
+            td:nth-child(4) {
+                // 表情
                 text-align: center;
                 width: 1%;
             }
 
-            td:nth-child(5) { // 点数
+            td:nth-child(5) {
+                // 点数
                 text-align: center;
                 font-weight: 500;
                 // 不设固定宽度，让内容自动撑开
@@ -490,25 +497,29 @@ const teamRatings = [
         &.team-rating-table table {
             table-layout: fixed;
             width: 100%;
-            
-            td:nth-child(1) { // 队伍
+
+            td:nth-child(1) {
+                // 队伍
                 font-weight: 500;
                 width: 15%;
             }
 
-            td:nth-child(2) { // 比分
+            td:nth-child(2) {
+                // 比分
                 text-align: center;
                 font-weight: 500;
                 width: 20%;
                 padding: 6px 10px;
             }
 
-            td:nth-child(3) { // 对手
+            td:nth-child(3) {
+                // 对手
                 width: 20%;
                 padding-right: 15px;
             }
 
-            td:nth-child(4) { // 评级
+            td:nth-child(4) {
+                // 评级
                 text-align: left;
                 font-weight: 500;
                 width: 40%;
@@ -519,7 +530,7 @@ const teamRatings = [
 }
 
 .commentary {
-    background-color: #E6E6E6;
+    background-color: #e6e6e6;
     border: 1px solid #b0d4f1;
     margin: 20px;
     padding: 0;
@@ -588,6 +599,56 @@ const teamRatings = [
     }
     .el-dialog__body {
         padding: 15px;
+    }
+}
+.pause-notice {
+    background: linear-gradient(90deg, #fff4e6 0%, #ffe9e6 100%);
+    border: 1px solid #ffb48a;
+    margin: 0;
+    padding: 15px 20px;
+
+    .notice-content {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .notice-image {
+        width: 120px;
+        height: auto;
+        border-radius: 6px;
+        border: 1px solid #ffd1b3;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .notice-text {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .notice-title {
+        margin: 0;
+        font-size: 16px;
+        font-weight: bold;
+        color: #d24d00;
+    }
+
+    .notice-desc {
+        margin: 0;
+        font-size: 14px;
+        color: #8a4b2e;
+    }
+}
+
+@media (max-width: 768px) {
+    .pause-notice {
+        padding: 12px 15px;
+
+        .notice-image {
+            width: 100px;
+        }
     }
 }
 </style>
