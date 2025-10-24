@@ -3,7 +3,7 @@
         <header class="header">
             <div class="header-top">
                 <div class="title-section">
-                    <h1 class="title">🦐超级逮虾户战报第63期🦐</h1>
+                    <h1 class="title">{{ reportData.issueTitle }}</h1>
                 </div>
                 <div class="author-section">
                     <span class="author-label">作者：</span>
@@ -15,39 +15,39 @@
                 </div>
             </div>
             <div class="match-info">
-                <h3 class="match-title">EPL S22 Falcons 战胜 MOUZ</h3>
-                <span class="match-date">2025-10-07</span>
+                <h3 class="match-title">{{ reportData.match.title }}</h3>
+                <span class="match-date">{{ reportData.match.date }}</span>
             </div>
         </header>
         <section class="pause-notice" role="status" aria-live="polite">
             <div class="notice-content">
-                <img src="https://pan.xxbyq.net/f/j6DhB/nikoshrimp.webp" alt="停更公告配图" class="notice-image" />
+                <img src="https://sb6657oss.wishao.fun/nikoshrimp.webp" alt="停更公告配图" class="notice-image" />
                 <div class="notice-text">
                     <h3 class="notice-title">停更公告</h3>
                     <p class="notice-desc">
                         鲜虾榜停更至 12.22，专心备战考研去了。（作者原话，见
-                        <a style="text-decoration: underline;" href="https://www.bilibili.com/opus/1123112580507762704">b站动态</a>
+                        <a style="text-decoration: underline" href="https://www.bilibili.com/opus/1123112580507762704">b站动态</a>
                         😭）
                     </p>
                 </div>
             </div>
         </section>
         <section class="briefing">
-            <div class="briefing-content">本场比赛来自MOUZ战队的xertioN(11:5)和Spinx(12:5)对位优于NiKo，同时获得2点鲜虾点数，torzsi(3:6)对位劣于NiKo获得1点痛风点数。</div>
+            <div class="briefing-content">{{ reportData.briefing }}</div>
         </section>
         <section class="main-content">
             <div v-if="dejaVuType === 0" class="ranking-section">
                 <div class="section-header">
                     <h3 class="section-title">目前美味鲜虾点数排行榜(top30):</h3>
                     <div class="section-actions">
-                        <button class="btn-link" @click="showDialog(title1, text1)">鲜虾点数计算规则</button>
+                        <button class="btn-link" @click="showDialog(shrimpRuleTitle, shrimpRuleDescription)">鲜虾点数计算规则</button>
                         <button class="btn-switch" @click="changeDejaVuType(1)">切换到非top30版</button>
                     </div>
                 </div>
                 <div class="ranking-table">
                     <table>
                         <tbody>
-                            <tr v-for="item in top30Rankings" :key="item.rank">
+                            <tr v-for="item in reportData.rankings.top30" :key="item.rank">
                                 <td>{{ item.rank }}</td>
                                 <td>{{ item.player }}</td>
                                 <td>{{ item.team }}</td>
@@ -62,14 +62,14 @@
                 <div class="section-header">
                     <h3 class="section-title">非top30版荣誉提名鲜虾榜:</h3>
                     <div class="section-actions">
-                        <button class="btn-link" @click="showDialog(title1, text1)">鲜虾点数计算规则</button>
+                        <button class="btn-link" @click="showDialog(shrimpRuleTitle, shrimpRuleDescription)">鲜虾点数计算规则</button>
                         <button class="btn-switch" @click="changeDejaVuType(0)">切换到top30版</button>
                     </div>
                 </div>
                 <div class="ranking-table">
                     <table>
                         <tbody>
-                            <tr v-for="item in nonTop30Rankings" :key="item.rank">
+                            <tr v-for="item in reportData.rankings.nonTop30" :key="item.rank">
                                 <td>{{ item.rank }}</td>
                                 <td>{{ item.player }}</td>
                                 <td>{{ item.team }}</td>
@@ -84,13 +84,13 @@
                 <div class="section-header">
                     <h3 class="section-title">目前虾钳反夹，痛风点数榜:</h3>
                     <div class="section-actions">
-                        <button class="btn-link" @click="showDialog(title2, text2)">痛风点数计算规则</button>
+                        <button class="btn-link" @click="showDialog(goutRuleTitle, goutRuleDescription)">痛风点数计算规则</button>
                     </div>
                 </div>
                 <div class="ranking-table">
                     <table>
                         <tbody>
-                            <tr v-for="item in goutRankings" :key="item.rank">
+                            <tr v-for="item in reportData.rankings.gout" :key="item.rank">
                                 <td>{{ item.rank }}</td>
                                 <td>{{ item.player }}</td>
                                 <td>{{ item.team }}</td>
@@ -111,7 +111,7 @@
                 <div class="ranking-table team-rating-table">
                     <table>
                         <tbody>
-                            <tr v-for="item in teamRatings" :key="item.team">
+                            <tr v-for="item in reportData.teamRatings" :key="item.team">
                                 <td>{{ item.team }}</td>
                                 <td>{{ item.score }}</td>
                                 <td>{{ item.opponent }}</td>
@@ -124,7 +124,7 @@
         </section>
         <section class="commentary">
             <h3 class="commentary-title">野榜杂谈</h3>
-            <div class="commentary-content">本来就水的榜单还要水上加水，淘汰赛加油吧哈基鹰。</div>
+            <div class="commentary-content">{{ reportData.commentary }}</div>
         </section>
         <el-dialog class="dialog" v-model="dialogVisible" :title="dialogTitle" width="50%">
             <p>{{ dialogText }}</p>
@@ -133,7 +133,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onUnmounted } from 'vue';
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const dialogText = ref('');
@@ -143,97 +143,46 @@ const showDialog = (title: string, text: string) => {
     dialogVisible.value = true;
 };
 
-const title1 = '鲜虾点数计算规则';
-const text1 = '每场比赛对位优于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有人对位优于NiKo，则无人获得鲜虾点数。(分为top30版和非top30荣誉提名版)';
-
-const title2 = '痛风点数计算规则';
-const text2 = '每场比赛的(24年)top30选手对位劣于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有top30选手或未有对位劣于NiKo的top30选手，则无人获得痛风点数。';
+// 规则前端写死
+const shrimpRuleTitle = '鲜虾点数计算规则';
+const shrimpRuleDescription = '每场比赛对位优于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有人对位优于NiKo，则无人获得鲜虾点数。(分为top30版和非top30荣誉提名版)';
+const goutRuleTitle = '痛风点数计算规则';
+const goutRuleDescription = '每场比赛的(24年)top30选手对位劣于NiKo时，对位差大于等于3计1点，每额外超过3再多计1点。若本场比赛未有top30选手或未有对位劣于NiKo的top30选手，则无人获得痛风点数。';
 
 const dejaVuType = ref(0);
 function changeDejaVuType(type: number) {
     dejaVuType.value = type;
 }
 
-// Top30版鲜虾点数排行榜
-const top30Rankings = [
-    { rank: '1', player: 'Jimpphat', team: 'MOUZ', emoji: '🐱', points: '3(5-2)点' },
-    { rank: '2', player: 'XANTARES', team: 'Aurora', emoji: '😡', points: '3(4-1)点' },
-    { rank: '3', player: 'Spinx', team: 'MOUZ', emoji: '🦑', points: '2(7-5)点' },
-    { rank: '4', player: 'ropz', team: 'Vitality', emoji: '🚘', points: '2(3-1)点' },
-    { rank: '5', player: 'Senzu', team: 'MGLZ', emoji: '&#x1F977', points: '2点' },
-    { rank: '6', player: 'NertZ', team: 'Liquid', emoji: '😋', points: '2点' },
-    { rank: '7', player: 'xertioN', team: 'MOUZ', emoji: '🦀', points: '1(4-3)点' },
-    { rank: '8', player: 'iM', team: 'NAVI', emoji: '😋', points: '1点' },
-    { rank: '9', player: 'KSCERATO', team: 'FURIA', emoji: '😋', points: '1点' },
-    { rank: '10', player: 'donk', team: 'Spirit', emoji: '🕳', points: '1点' },
-    { rank: '11', player: 'frozen', team: 'FaZe', emoji: '🥶', points: '1(2-1)点' },
-];
-
-// 非top30版荣誉提名鲜虾榜
-const nonTop30Rankings = [
-    { rank: '1', player: 'yuurih', team: 'FURIA', emoji: '😋', points: '2点' },
-    { rank: '2', player: 'latto', team: 'Legacy', emoji: '😋', points: '2点' },
-    { rank: '2', player: 'apEX', team: 'Vitality', emoji: '&#x1FAD8', points: '2(3-1)点' },
-    { rank: '4', player: 'YEKINDAR', team: 'FURIA', emoji: '😋', points: '2点' },
-    { rank: '5', player: 'nicx', team: 'PUA', emoji: '😋', points: '2点' },
-    { rank: '6', player: 'Graviti', team: '3DMAX', emoji: '😋', points: '2点' },
-    { rank: '7', player: 'wicadia', team: 'Aurora', emoji: '🎁', points: '2点' },
-    { rank: '8', player: 'jottAAA', team: 'Aurora', emoji: '😋', points: '1(2-1)点' },
-    { rank: '9', player: 'FalleN', team: 'FURIA', emoji: '😋', points: '1点' },
-    { rank: '10', player: 'mzinho', team: 'MGLZ', emoji: '😋', points: '1(2-1)点' },
-    { rank: '11', player: 'ztr', team: 'GL', emoji: '🐷', points: '1(2-1)点' },
-    { rank: '12', player: 'Lucaozy', team: 'Fluxo', emoji: '😋', points: '1点' },
-    { rank: '13', player: 'C4LLM3SU3', team: 'LVG', emoji: '😋', points: '1点' },
-    { rank: '14', player: 'acoR', team: 'm1x', emoji: '😋', points: '1点' },
-    { rank: '15', player: 'xfl0ud', team: 'HEROIC', emoji: '😋', points: '1点' },
-    { rank: '16', player: 'LNZ', team: 'HEROIC', emoji: '😋', points: '1点' },
-    { rank: '17', player: 'Jeorge', team: 'NRG', emoji: '😋', points: '1点' },
-    { rank: '18', player: 'sl3nd', team: 'benched', emoji: '😋', points: '1(2-1)点' },
-    { rank: '19', player: 'cej0t', team: '9INE', emoji: '😋', points: '1点' },
-    { rank: '20', player: 'story', team: 'SAW', emoji: '😋', points: '1点' },
-    { rank: '21', player: 'hallzerk', team: 'PUA', emoji: '😋', points: '1点' },
-    { rank: '22', player: 'Grim', team: 'PUA', emoji: '😋', points: '1点' },
-    { rank: '23', player: 'FL1t', team: 'VP', emoji: '👼', points: '1点' },
-    { rank: '24', player: 'FL4MUS', team: 'benched', emoji: '😎', points: '1点' },
-    { rank: '25', player: 'ICY', team: 'VP', emoji: '🧊', points: '1点' },
-    { rank: '26', player: 'Lucky', team: '3DMAX', emoji: '🤬', points: '1点' },
-    { rank: '27', player: 'Ex3rcice', team: '3DMAX', emoji: '😋', points: '1点' },
-    { rank: '28', player: 'jabbi', team: 'Astralis', emoji: '🐭', points: '1点' },
-    { rank: '29', player: 'sdy', team: 'ENCE', emoji: '😋', points: '1点' },
-];
-
-// 痛风点数榜
-const goutRankings = [
-    { rank: '1', player: 'broky', team: 'FaZe', emoji: '🦞👉📦', points: '6点' },
-    { rank: '2', player: 'device', team: 'Astralis', emoji: '🦞👉😨', points: '4点' },
-    { rank: '3', player: 'w0nderful', team: 'NAVI', emoji: '🦞👉🧨', points: '3点' },
-    { rank: '4', player: 'woxic', team: 'Aurora', emoji: '🦞👉 &#x1FAF2', points: '3(1-4)点' },
-    { rank: '5', player: 'Brollan', team: 'MOUZ', emoji: '🦞👉💵', points: '3(1-4)点' },
-    { rank: '6', player: 'malbsMd', team: 'G2', emoji: '🦞👉🐴', points: '3点' },
-    { rank: '7', player: 'torzsi', team: 'MOUZ', emoji: '🦞👉🧦', points: '2(3-5)点' },
-    { rank: '8', player: 'flameZ', team: 'Vitality', emoji: '🦞👉🔥', points: '2点' },
-    { rank: '9', player: 'EliGE', team: 'benched', emoji: '🦞👉🐔', points: '2点' },
-    { rank: '10', player: 'ZywOo', team: 'Vitality', emoji: '🦞👉🍠', points: '1(2-3)点' },
-    { rank: '11', player: 'sh1ro', team: 'Spirit', emoji: '🦞👉🧟‍♂️', points: '1点' },
-    { rank: '12', player: 'NAF', team: 'Liquid', emoji: '🦞👉🦥', points: '1点' },
-    { rank: '13', player: 'stavn', team: 'benched', emoji: '🦞👉🐍', points: '1点' },
-];
-
-// 捕虾队评级
-const teamRatings = [
-    { team: 'Vitality', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
-    { team: 'Aurora', score: '4:1', opponent: 'Falcons', rating: '专业捕虾队' },
-    { team: 'FURIA', score: '2:1', opponent: 'Falcons', rating: '优秀捕虾队' },
-    { team: 'MGLZ', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
-    { team: 'VP', score: '1:1', opponent: 'Falcons', rating: '入门捕虾队' },
-    { team: 'MOUZ', score: '4:5', opponent: 'Falcons', rating: '劣质捕虾队' },
-    { team: 'paiN', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
-    { team: 'G2', score: '1:2', opponent: 'Falcons', rating: '劣质捕虾队' },
-    { team: 'NAVI', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
-    { team: 'Astralis', score: '0:2', opponent: 'Falcons', rating: '劣质捕虾队' },
-    { team: 'GL', score: '1:4', opponent: 'Falcons', rating: '被钳破船队' },
-    { team: 'FaZe', score: '0:4', opponent: 'Falcons', rating: '浮游生物队' },
-];
+const reportData = ref<any>({
+    issueTitle: '加载中...',
+    match: { title: '加载中...', date: '加载中...' },
+    briefing: '加载中...',
+    rankings: {
+        top30: [],
+        nonTop30: [],
+        gout: [],
+    },
+    teamRatings: [],
+    commentary: '加载中...',
+});
+const ossUrl = 'https://sb6657oss.wishao.fun/dejaVuNiko.json';
+const abortController = new AbortController();
+async function loadReportData() {
+    try {
+        const res = await fetch(ossUrl, { signal: abortController.signal });
+        const data = await res.json();
+        reportData.value = data;
+    } catch (err) {
+        console.error('加载战报数据失败:', err);
+        reportData.value.issueTitle = '超级逮虾户战报加载失败，请稍后重试。。。';
+    }
+}
+loadReportData();
+// 组件卸载时中止请求，防止资源泄露
+onUnmounted(() => {
+    abortController.abort();
+});
 </script>
 
 <style lang="scss" scoped>

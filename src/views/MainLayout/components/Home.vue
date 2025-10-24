@@ -1,7 +1,7 @@
 <template xmlns="http://www.w3.org/1999/html">
     <div class="home">
         <div class="boom">
-            <img src="https://gcore.jsdelivr.net/gh/9WiSHao/AnythingStorage/img/6657boom.webp" alt="6657boom" class="boom6657" />
+            <img src="https://sb6657oss.wishao.fun/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
         <div class="cards-container">
             <div class="card first-card">
@@ -456,7 +456,6 @@ function refreshWordCloud() {
         font-weight: 600;
         color: #303133;
         margin: 0;
-
     }
 
     .word-cloud-refresh-icon {

@@ -8,8 +8,8 @@
             <div class="rules-brief">计算规则：2025年累计对位KD差 | AWPER不录入 | 仅供娱乐</div>
             <div class="more-info">
                 <div class="match-info">
-                    <h3 class="match-title">EPL S22 Spirit 0-2 FaZe</h3>
-                    <span class="match-date">2025-10-11</span>
+                    <h3 class="match-title">{{ reportData.match.title }}</h3>
+                    <span class="match-date">{{ reportData.match.date }}</span>
                 </div>
                 <div class="author-info">
                     <span class="author-label">作者：</span>
@@ -19,7 +19,7 @@
                 </div>
             </div>
             <div class="quote">
-                <img src="https://pan.xxbyq.net/f/d6dtR/B1ad3.jpg" alt="B1ad3" class="image" />
+                <img src="https://sb6657oss.wishao.fun/B1ad3.jpg" alt="B1ad3" class="image" />
                 <div class="text">
                     <div>"donk? 现在有至少15名步枪手可以轻松在任何位置击杀他"</div>
                     <div class="attribution">- B1ad3, 2025.01.15</div>
@@ -45,10 +45,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="player in warriors" :key="player.player">
+                            <tr v-for="player in reportData.rankings.warriors" :key="player.player">
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.player }}</td>
-                                <td class="positive diff-col">{{ player.k_dDiff > 0 ? '+' : '' }}{{ player.k_dDiff }}</td>
+                                <td class="positive diff-col">{{ player.k_dDiff > 0 ? '+' : '' }}{{ player.k_dDiff }}
+                                </td>
                                 <td>{{ player.team }}</td>
                                 <td>{{ player.kill }}</td>
                                 <td>{{ player.death }}</td>
@@ -76,7 +77,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="player in victims" :key="player.player">
+                            <tr v-for="player in reportData.rankings.victims" :key="player.player">
                                 <td>{{ player.rank }}</td>
                                 <td>{{ player.player }}</td>
                                 <td class="negative diff-col">{{ player.k_dDiff }}</td>
@@ -93,46 +94,34 @@
     </div>
 </template>
 
-<script setup>
-import { ref } from 'vue';
+<script setup lang="ts">
+import { ref, onUnmounted } from 'vue';
 
-// "布雷德十五勇士"榜单数据
-const warriors = ref([
-    { rank: 1, player: 'ropz', kill: 26, death: 17, k_dDiff: 9, maps: 8, team: 'Vitality' },
-    { rank: 2, player: 'Magisk', kill: 14, death: 6, k_dDiff: 8, maps: 3, team: 'Falcons' },
-    { rank: 3, player: 'Maden', kill: 8, death: 1, k_dDiff: 7, maps: 2, team: 'Heroic' },
-    { rank: 4, player: 'frozen', kill: 15, death: 8, k_dDiff: 7, maps: 4, team: 'FaZe Clan' },
-    { rank: 5, player: 'tN1R', kill: 20, death: 14, k_dDiff: 6, maps: 5, team: 'Heroic' },
-    { rank: 6, player: 'REZ', kill: 25, death: 19, k_dDiff: 6, maps: 5, team: 'GamerLegion' },
-    { rank: 7, player: 'mzinho', kill: 19, death: 15, k_dDiff: 4, maps: 5, team: 'TheMongolZ' },
-    { rank: 8, player: 'sjuush', kill: 22, death: 18, k_dDiff: 4, maps: 4, team: 'Ninjas in Pyjamas' },
-    { rank: 9, player: 'HeavyGod', kill: 31, death: 27, k_dDiff: 4, maps: 8, team: 'G2 Esports' },
-    { rank: 10, player: 'cairne', kill: 11, death: 7, k_dDiff: 4, maps: 3, team: 'Inner Circle' },
-    { rank: 11, player: 'Starry', kill: 4, death: 1, k_dDiff: 3, maps: 1, team: 'LynnVision' },
-    { rank: 12, player: 'EliGE', kill: 5, death: 3, k_dDiff: 2, maps: 2, team: 'FaZe Clan' },
-    { rank: 13, player: 'electroNic', kill: 20, death: 18, k_dDiff: 2, maps: 6, team: 'VirtusPro' },
-    { rank: 14, player: 'MUTiRiS', kill: 10, death: 8, k_dDiff: 2, maps: 2, team: 'SAW' },
-    { rank: 15, player: 'jottAAA', kill: 34, death: 33, k_dDiff: 1, maps: 9, team: 'EternalFire/Aurora' },
-]);
+const reportData = ref<any>({
+    match: { title: '加载中...', date: '加载中...' },
+    rankings: {
+        warriors: [],
+        victims: [],
+    },
+});
 
-// "反向十五勇士"榜单数据
-const victims = ref([
-    { rank: 1, player: 'Brollan', kill: 47, death: 92, k_dDiff: -45, maps: 17, team: 'Mousesports' },
-    { rank: 2, player: 'Aleksib', kill: 26, death: 69, k_dDiff: -43, maps: 14, team: 'NatusVincere' },
-    { rank: 3, player: 'xertioN', kill: 74, death: 101, k_dDiff: -27, maps: 17, team: 'Mousesports' },
-    { rank: 4, player: 'iM', kill: 54, death: 80, k_dDiff: -26, maps: 14, team: 'NatusVincere' },
-    { rank: 5, player: 'yxngstxr', kill: 12, death: 37, k_dDiff: -25, maps: 7, team: 'Heroic' },
-    { rank: 6, player: 'jabbi', kill: 14, death: 35, k_dDiff: -21, maps: 8, team: 'Astralis' },
-    { rank: 7, player: 'Jimpphat', kill: 55, death: 75, k_dDiff: -20, maps: 17, team: 'Mousesports' },
-    { rank: 8, player: 'Vexite', kill: 12, death: 31, k_dDiff: -19, maps: 6, team: 'FlyQuest' },
-    { rank: 9, player: 'bLitz', kill: 12, death: 31, k_dDiff: -19, maps: 5, team: 'TheMongolZ' },
-    { rank: 10, player: 'ewjerkz', kill: 11, death: 28, k_dDiff: -17, maps: 4, team: 'Ninjas in Pyjamas' },
-    { rank: 11, player: 'INS', kill: 13, death: 29, k_dDiff: -16, maps: 6, team: 'FlyQuest' },
-    { rank: 12, player: 'Wicadia', kill: 27, death: 43, k_dDiff: -16, maps: 9, team: 'EternalFire/Aurora' },
-    { rank: 13, player: 'Staehr', kill: 20, death: 36, k_dDiff: -16, maps: 8, team: 'Astralis' },
-    { rank: 14, player: 'NertZ', kill: 7, death: 23, k_dDiff: -16, maps: 4, team: 'TeamLiquid' },
-    { rank: 15, player: 'YEKINDAR', kill: 15, death: 31, k_dDiff: -16, maps: 5, team: 'FURIA' },
-]);
+const ossUrl = 'https://sb6657oss.wishao.fun/15warriorsDonk.json';
+const abortController = new AbortController();
+async function loadReportData() {
+    try {
+        const res = await fetch(ossUrl, { signal: abortController.signal });
+        const data = await res.json();
+        reportData.value = data;
+    } catch (err) {
+        console.error('加载15勇士战报数据失败:', err);
+        reportData.value.match.title = '15勇士战报加载失败，请稍后重试。。。';
+    }
+}
+loadReportData();
+// 组件卸载时中止请求，防止资源泄露
+onUnmounted(() => {
+    abortController.abort();
+});
 </script>
 
 <style lang="scss" scoped>
