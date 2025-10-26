@@ -33,37 +33,7 @@
                         <div class="time-container">
                             <el-date-picker class="time-picker" v-model="submitTime" type="daterange" range-separator="到" value-format="YYYY-MM-DD" start-placeholder="起始" end-placeholder="结束" :disabled-date="disabledDate" />
                         </div>
-                        <div class="tags-container">
-                            <div class="selected-tags">
-                                <div class="tags-title">已选标签:</div>
-                                <div class="tags" v-if="selectedTags.length > 0">
-                                    <el-tag class="tag1" v-for="tag in selectedTags" :key="tag.dictValue" round @click="removeTag(tag)">
-                                        <div class="tag-icon-wrapper">
-                                            <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
-                                            <span class="tag-label">{{ tag.dictLabel }}</span>
-                                            <el-icon>
-                                                <Close />
-                                            </el-icon>
-                                        </div>
-                                    </el-tag>
-                                </div>
-                                <div v-if="selectedTags.length === 0" class="empty-tips">暂无已选标签(点击下面标签进行筛选)</div>
-                            </div>
-                            <div class="all-tags">
-                                <div class="tags-title">所有标签:</div>
-                                <div class="tags">
-                                    <el-tag class="tag1" v-for="tag in allTags" :key="tag.dictValue" round @click="addTag(tag)">
-                                        <div class="tag-icon-wrapper">
-                                            <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
-                                            <span class="tag-label">{{ tag.dictLabel }}</span>
-                                            <el-icon>
-                                                <Plus />
-                                            </el-icon>
-                                        </div>
-                                    </el-tag>
-                                </div>
-                            </div>
-                        </div>
+                        <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
                     </div>
                 </transition>
             </div>
@@ -96,7 +66,7 @@
                             <template #default>
                                 <div class="popover-details">
                                     <div class="tag-list">
-                                        <div v-for="item in getDisplayTags(scope.row.tags, memeTags)" :key="item.label">
+                                        <div v-for="item in getDisplayTags(scope.row.tags, allTags)" :key="item.label">
                                             <el-tag round effect="dark" class="tag-item">
                                                 <div class="tag-icon-wrapper">
                                                     <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
@@ -136,19 +106,20 @@
 
 <script setup lang="ts">
 // ==================== 导入依赖 ====================
-import { throttle, debounce } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
-import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
-import { searchMeme } from '@/apis/getMeme';
-import flipNum from '@/components/flip-num.vue';
 import { ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useMemeTagsStore } from '@/stores/memeTags';
+import { ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
 import { type getMemeTags as memeTag, SortType } from '@/types/meme';
-import { Plus, Close, ArrowDown, ArrowUp, Loading } from '@element-plus/icons-vue';
+import { useMemeTagsStore } from '@/stores/memeTags';
+import { searchMeme } from '@/apis/getMeme';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import { throttle, debounce } from '@/utils/throttle';
+import { copyToClipboard, copySuccess, limitedCopy } from '@/utils/clipboard';
 import { useIsMobile } from '@/utils/common';
 import { easyFormatTime } from '@/utils/time';
 import { getDisplayTags } from '@/utils/tags';
+import flipNum from '@/components/flip-num.vue';
+import tagSelector from '@/components/tag-selector.vue';
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -236,9 +207,11 @@ function changeSortType(type: SortType) {
 // ==================== 高级搜索功能 ====================
 const isAdvancedSearchCollapsed = ref(true);
 const allTags = ref<memeTag[]>([]);
+memeTagsStore.tagsLoaded.then((tags) => {
+    allTags.value = memeTags.value;
+});
 const selectedTags = ref<memeTag[]>([]);
 const submitTime = ref<[string, string] | undefined>();
-let tagLoaded = false;
 
 // 高级搜索控制
 function toggleAdvancedSearch() {
@@ -262,22 +235,6 @@ function clearAdvancedSearch() {
 // 日期限制
 function disabledDate(time: Date) {
     return time.getTime() < new Date('2024-09-24').getTime();
-}
-
-// ==================== 标签管理功能 ====================
-// 添加标签
-function addTag(tag: memeTag) {
-    if (selectedTags.value.find((t) => t.dictValue === tag.dictValue)) return;
-    selectedTags.value.push(tag);
-    allTags.value = allTags.value.filter((t) => t.dictValue !== tag.dictValue);
-}
-
-// 移除标签
-function removeTag(tag: memeTag) {
-    selectedTags.value = selectedTags.value.filter((t) => t.dictValue !== tag.dictValue);
-    if (!allTags.value.find((t) => t.dictValue === tag.dictValue)) {
-        allTags.value.push(tag);
-    }
 }
 
 // ==================== 复制功能 ====================
@@ -349,13 +306,6 @@ watch(currentPage, (newVal, oldVal) => {
         const tagArr = selectedTags.value.map((t) => t.dictValue);
         debouncedSearch(props.searchKey, sortType.value, newVal, tagArr, submitTime.value);
     }
-});
-
-// 监听标签数据加载
-watch(memeTags, (newVal) => {
-    if (tagLoaded || !newVal || newVal.length === 0) return;
-    tagLoaded = true;
-    allTags.value = [...newVal];
 });
 
 // 监听高级搜索条件变化
@@ -452,69 +402,16 @@ watch(
         }
 
         .collapsible-content {
-            overflow: hidden;
+                overflow: hidden;
 
-            .time-container {
-                margin-bottom: 16px;
-
-                .time-picker {
-                    width: 100%;
-                }
-            }
-
-            .tags-container {
-                .selected-tags,
-                .all-tags {
+                .time-container {
                     margin-bottom: 16px;
 
-                    .tags-title {
-                        font-weight: 500;
-                        margin-bottom: 10px;
-                        color: #606266;
-                        font-size: 14px;
-                    }
-
-                    .tags {
-                        display: flex;
-                        flex-wrap: wrap;
-                        gap: 8px;
-
-                        .tag1 {
-                            margin: 0;
-                            cursor: pointer;
-                            border: 1px solid #dcdfe6;
-                            background-color: #f5f7fa;
-
-                            &:hover {
-                                border-color: #409eff;
-                                background-color: #ecf5ff;
-                            }
-
-                            .tag-icon-wrapper {
-                                display: flex;
-                                align-items: center;
-                                gap: 4px;
-
-                                .tag-icon {
-                                    width: 18px;
-                                    object-fit: cover;
-                                }
-
-                                .tag-label {
-                                    font-size: 13px;
-                                }
-                            }
-                        }
-                    }
-
-                    .empty-tips {
-                        color: #909399;
-                        font-size: 13px;
-                        font-style: italic;
+                    .time-picker {
+                        width: 100%;
                     }
                 }
             }
-        }
     }
 
     // Table 部分

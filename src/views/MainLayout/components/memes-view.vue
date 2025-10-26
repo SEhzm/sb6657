@@ -2,73 +2,41 @@
     <div class="memes-view">
         <div class="card-table">
             <div class="card" v-if="route.path === '/memes/AllBarrage'">
-                <h4>按标签查看烂梗<el-popover :width="300">
+                <h4>
+                    按标签查看烂梗
+                    <el-popover :width="300">
                         <template #reference>
                             <el-icon size="16">
                                 <Warning />
                             </el-icon>
                         </template>
-                        为解决烂梗分栏不足和分类不清晰问题。<br>
+                        为解决烂梗分栏不足和分类不清晰问题。
+                        <br />
                         <b>点击标签即可添加</b>
                     </el-popover>
-                    <el-button link type="success" style="margin-left: 50%">投稿标签
+                    <el-button link type="success" style="margin-left: 50%">
+                        投稿标签
                         <el-popover :width="300">
                             <template #reference>
                                 <el-icon size="16">
                                     <QuestionFilled />
                                 </el-icon>
                             </template>
-                            <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b><br>
+                            <b>功能待完善(后续更新将添加)，请在上方(建议/提交)问卷投稿，sry。</b>
+                            <br />
                             <b>审核巨严格，(重复，相似等)将不通过</b>
                         </el-popover>
                     </el-button>
                 </h4>
-
-                <!-- 预设标签 -->
-                <div class="preset-tags-container">
-                    <div class="preset-tags">
-                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable
-                            @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)"
-                            style=" padding:15px; cursor: pointer;font-size: 16px;" type="primary">
-                            <div class="tag-icon-wrapper">
-                                <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 25px; object-fit: cover;vertical-align: middle;" />
-                                <span style="vertical-align: middle;"> {{ tag.label }}</span>
-                            </div>
-                        </el-tag>
-                    </div>
-                </div>
-
-                <!-- 已添加标签 -->
-                <h4>包含标签
-                    <el-popover >
-                        <template #reference>
-                            <el-icon size="16">
-                                <Warning />
-                            </el-icon>
-                        </template>
-                        <b>烂梗包含该标签</b>
-                    </el-popover>
-                </h4>
-
-                <div class="added-tags">
-                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
-                        @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
-                        <div class="tag-icon-wrapper">
-                            <img v-if="tag.iconUrl" :src="tag.iconUrl" style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                            <span style="vertical-align: middle;"> {{ tag.label }}</span>
-                        </div>
-                    </el-tag>
-                </div>
+                <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
             </div>
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
-                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision"
-                    color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
+                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision" color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！"
-                @row-click="copyMeme_countPlus1">
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
@@ -78,22 +46,21 @@
                     <template #default="scope">
                         <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
-                                <div style="cursor: pointer;" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
                                     <span class="barrage-text">{{ scope.row.content }}</span>
                                 </div>
                             </template>
                             <template #default>
-                                <div style="display: flex; align-items: center; flex-wrap: wrap;">
-                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index"
-                                        style="margin-right: 8px;">
+                                <div style="display: flex; align-items: center; flex-wrap: wrap">
+                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, allTags)" :key="index" style="margin-right: 8px">
                                         <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
                                             <div class="tag-icon-wrapper">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl" style=" width: 16px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                                                <span style="vertical-align: middle;"> {{ item.label }}</span>
+                                                <img v-if="item.iconUrl" :src="item.iconUrl" style="height: 22px; object-fit: cover; vertical-align: middle" />
+                                                <span style="vertical-align: middle">{{ item.label }}</span>
                                             </div>
                                         </el-tag>
                                     </div>
-                                    <span style="position: absolute;bottom: 0;right: 0;font-size: 11px;min-width: 170px;">投稿时间: {{ easyFormatTime(scope.row.submitTime) }}</span>
+                                    <span style="position: absolute; bottom: 0; right: 0; font-size: 11px; min-width: 170px">投稿时间: {{ easyFormatTime(scope.row.submitTime) }}</span>
                                 </div>
                             </template>
                         </el-popover>
@@ -106,15 +73,15 @@
                 </el-table-column> -->
                 <el-table-column align="center" width="100">
                     <template #default="scope">
-                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">复制
-                            🌈<flip-num :num="scope.row.copyCount" /></el-button>
+                        <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">
+                            复制 🌈
+                            <flip-num :num="scope.row.copyCount" />
+                        </el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper"
-                    :current-page="currentPage" :total="total" :pager-count="5" :page-size="pageSize"
-                    @current-change="handlePageChange"></el-pagination>
+                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="5" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
@@ -129,8 +96,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { MemeCategory } from '@/constants/backend';
 import { getMemeList } from '@/apis/getMeme';
 import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy, limitedLike} from '@/utils/clipboard';
+import { copyToClipboard, copySuccess, limitedCopy, limitedLike } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import { type getMemeTags as memeTag } from '@/types/meme';
 import { API } from '@/constants/backend';
 import submissionDialog from '@/components/submission-dialog.vue';
 import flipNum from '@/components/flip-num.vue';
@@ -139,6 +107,7 @@ import httpInstance from '@/apis/httpInstance';
 import { easyFormatTime } from '@/utils/time';
 import { getDisplayTags } from '@/utils/tags';
 import { useMemeTagsStore } from '@/stores/memeTags';
+import tagSelector from '@/components/tag-selector.vue';
 const memeTagsStore = useMemeTagsStore();
 
 const route = useRoute();
@@ -149,111 +118,103 @@ const router = useRouter();
  * 所以我采取的方法是匹配不到就定位到404页。建议后面用currentCategory的地方都这么处理
  */
 const currentCategory = computed(() => {
-    //清空已选标签
-    addedDictValues.value=[]
+    selectedTags.value = [];
     return MemeCategory.find((item) => item.path === route.path);
 });
 
 const loading = ref(true);
 const memeArr = ref<Meme[]>([]);
-const total = ref(0);
-const pageSize = 50;
-const currentPage = ref(1);
-const isSort = ref(false)
-const dictData = ref([]);
 
-// 预设标签
-const presetTags = ref([]);
-
-// 已添加标签
-const addedTags = ref([]);
-
-// 已添加标签的 dictValue 数组
-const addedDictValues = ref([]);
-async function refreshMeme(pageNum: number) {
-    const category = currentCategory.value?.category;
-    if (!category) {
-        router.push('/404');
-        return;
+const allTags = ref<memeTag[]>([]);
+memeTagsStore.tagsLoaded.then(() => {
+    allTags.value = memeTagsStore.memeTags;
+});
+const selectedTags = ref<memeTag[]>([]);
+const selectedTagsStr = computed(() => selectedTags.value.map((t) => t.dictValue).join(','));
+watch(
+    () => selectedTagsStr.value,
+    () => {
+        refreshMeme(1);
     }
-    let res;
-    // console.log(addedDictValues.value.join(','));
-    
-    if (addedDictValues.value.length==0) {  //没选标签就加载全部烂梗
-        res = await getMemeList(category, pageNum, pageSize);
-    } else {
-        res = await getMemeList(category, pageNum, pageSize, addedDictValues.value.join(','));
-    }
+);
 
-    // if (!res) return;   //没有就是没有数据
-
-    memeArr.value = res.memeArr;
-    // console.log(memeArr.value);
-    
-    total.value = res.total;
-    loading.value = false;
-}
-refreshMeme(1);
-
-/** 
+/**
  * 排序功能
-*/
+ */
+const isSort = ref(false);
 async function sortMeme(pageNum: number) {
-    httpInstance.get(API.GET_SORTED_ALL_MEME, {
-        params: {
-            pageNum: pageNum,
-            pageSize: pageSize,
-            tags: `${addedDictValues.value}`
-        }
-    }).then(res => {
-        isSort.value = true
-        memeArr.value = res.data.list.map((item) => {
-            return {
-                total: item.total,
-                content: item.barrage,
-                id: item.id,
-                copyCount: +item.cnt,
-                tags: item.tags,
-            };
+    try {
+        const res = await httpInstance.get(API.GET_SORTED_ALL_MEME, {
+            params: {
+                pageNum: pageNum,
+                pageSize: pageSize,
+                tags: selectedTagsStr.value,
+            },
         });
-    }).catch(err => {
+        isSort.value = true;
+        memeArr.value = res.data.list.map((item: any) => ({
+            total: item.total,
+            content: item.barrage,
+            id: item.id,
+            copyCount: +item.cnt,
+            tags: item.tags,
+        }));
+    } catch (err) {
+        console.error('排序失败:', err);
         memeArr.value = [];
-    })
+    }
 }
-
 watch(
     () => route.path,
     () => {
         console.log('当前页面path:', route.path);
-        isSort.value = false
+        isSort.value = false;
         currentPage.value = 1;
         loading.value = true;
         refreshMeme(1);
     }
 );
 
-const scrollToTop = () => {
-    window.scrollTo({
-        // top: document.documentElement.offsetHeight, //回到底部
-        top: 0, //回到顶部
-        behavior: 'smooth', //smooth 平滑；auto:瞬间
-    });
-};
-const handlePageChange = (page: number) => {
+// 分页
+const pageSize = 50;
+const currentPage = ref(1);
+const total = ref(0);
+function handlePageChange(page: number) {
     currentPage.value = page;
     scrollToTop();
     if (isSort.value == false) {
         refreshMeme(page);
     } else {
-        sortMeme(page)
+        sortMeme(page);
     }
-};
+}
 
+async function refreshMeme(pageNum: number) {
+    const category = currentCategory.value?.category;
+    if (!category) {
+        router.push('/404');
+        return;
+    }
+    const res = await getMemeList(category, pageNum, pageSize, selectedTagsStr.value || undefined);
+
+    //没有就是没有数据
+    if (!res) {
+        memeArr.value = [];
+        return;
+    }
+
+    memeArr.value = res.memeArr;
+
+    total.value = res.total;
+    loading.value = false;
+}
+refreshMeme(1);
+
+// 复制
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
 //like复用copy
 const likeMeme = throttle(copyToClipboard, limitedLike, 2000);
-
 async function copyMeme_countPlus1(meme: Meme) {
     const memeText = meme.content;
     const res = copyMeme(memeText);
@@ -265,7 +226,7 @@ async function copyMeme_countPlus1(meme: Meme) {
             return;
         }
     } else {
-        if (await copyCountPlus1(meme.category, meme.id, currentPage.value, pageSize)) {
+        if (await copyCountPlus1(meme.category || 'allbarrage', meme.id, currentPage.value, pageSize)) {
             await refreshMeme(currentPage.value);
             return;
         }
@@ -273,93 +234,38 @@ async function copyMeme_countPlus1(meme: Meme) {
     plus1Error();
 }
 
-const dialogFormVisible = ref(false);
-
 // 弹出投稿弹窗按钮
-const handleSubmit = () => {
+const dialogFormVisible = ref(false);
+function handleSubmit() {
     dialogFormVisible.value = true;
-};
+}
 
-memeTagsStore.tagsLoaded.then(() => {
-    dictData.value = memeTagsStore.memeTags
-    presetTags.value = memeTagsStore.memeTags.map((item) => ({
-        iconUrl: item.iconUrl,
-        label: item.dictLabel,
-        value: item.dictValue,
-    }))
-});
-
-// 删除已添加标签
-const removeTag = (tag) => {
-    addedTags.value = addedTags.value.filter(t => t.value !== tag.value);
-    addedDictValues.value = addedDictValues.value.filter(value => value !== tag.value);
-    presetTags.value.push(tag);
-    refreshMeme(1);
-};
-
-// 添加标签的点击事件
-const removeTagFromPreset = (tag) => {
-    
-    // 当删除预设标签时，将其移到已添加标签
-    if (!addedTags.value.some(t => t.value === tag.value)) {
-        addedTags.value.push(tag);
-        addedDictValues.value.push(tag.value);
-        presetTags.value = presetTags.value.filter(t => t.value !== tag.value);
-    }
-    console.log(addedDictValues.value);
-    refreshMeme(1);
-};
 //移动端的触摸展示
-const handleTouchStart = (row: any) => {
+function handleTouchStart(row: any) {
     row.touchStartTime = Date.now();
-};
-
-const handleTouchEnd = (row: any) => {
+}
+function handleTouchEnd(row: any) {
     const touchEndTime = Date.now();
-    if (touchEndTime - row.touchStartTime > 100) { //100ms 长按时长
+    if (touchEndTime - row.touchStartTime > 100) {
+        //100ms 长按时长
         row.popoverVisible = true;
-        setTimeout(()=>{
-            row.popoverVisible=false
-        },1500)
+        setTimeout(() => {
+            row.popoverVisible = false;
+        }, 1500);
     }
+}
+
+// 回顶部
+const scrollToTop = () => {
+    window.scrollTo({
+        // top: document.documentElement.offsetHeight, //回到底部
+        top: 0, //回到顶部
+        behavior: 'smooth', //smooth 平滑；auto:瞬间
+    });
 };
 </script>
 
 <style scoped lang="scss">
-/* 预设标签容器 */
-.preset-tags-container {
-    max-height: 100px;
-    overflow-y: auto;
-}
-
-/* 预设标签按钮的样式 */
-.preset-tags {
-    display: flex;
-    flex-wrap: wrap;
-}
-
-.preset-tags .el-tag {
-    position: relative;
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-:deep(.preset-tags .el-tag__close) {
-    font-size: 30px;
-    transform: rotate(45deg);
-}
-
-.added-tags {
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.added-tags .el-tag {
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
 .memes-view {
     width: 93%;
     display: flex;
@@ -369,6 +275,10 @@ const handleTouchEnd = (row: any) => {
     .card-table {
         width: 100%;
         max-width: 1400px;
+
+        .card {
+            border-radius: 5px 5px 0 0;
+        }
 
         .top {
             display: flex;
@@ -395,7 +305,7 @@ const handleTouchEnd = (row: any) => {
 
             @keyframes crissCrossLeft {
                 0% {
-                    left: -20px
+                    left: -20px;
                 }
 
                 50% {
@@ -413,7 +323,7 @@ const handleTouchEnd = (row: any) => {
 
             @keyframes crissCrossRight {
                 0% {
-                    right: -20px
+                    right: -20px;
                 }
 
                 50% {
@@ -428,7 +338,6 @@ const handleTouchEnd = (row: any) => {
                     height: 375px;
                 }
             }
-
 
             .btn-animate__ball-collision {
                 position: relative;
@@ -462,12 +371,12 @@ const handleTouchEnd = (row: any) => {
                 &:hover {
                     &::before {
                         opacity: 1;
-                        animation: crissCrossLeft .8s both;
+                        animation: crissCrossLeft 0.8s both;
                     }
 
                     &::after {
                         opacity: 1;
-                        animation: crissCrossRight .8s both;
+                        animation: crissCrossRight 0.8s both;
                     }
                 }
             }
@@ -508,6 +417,7 @@ const handleTouchEnd = (row: any) => {
     .memes-view {
         width: 100%;
     }
+
     .main-table {
         font-size: medium;
     }

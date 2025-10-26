@@ -22,38 +22,7 @@
             </el-button>
         </h4>
 
-        <div class="preset-tags-container">
-            <div class="preset-tags">
-                <el-tag round v-for="(tag, index) in presetTags" :key="index" closable @close="removeTagFromPreset(tag)"
-                    @click="removeTagFromPreset(tag)" style=" padding:15px; cursor: pointer;font-size: 16px;"
-                    type="primary">
-                    <div class="tag-icon-wrapper">
-                        <img v-if="tag.iconUrl" :src="tag.iconUrl"
-                            style=" width: 22px; height: 22px; object-fit: cover;vertical-align: middle;" />
-                        <span style="vertical-align: middle;"> {{ tag.label }}</span>
-                    </div>
-                </el-tag>
-            </div>
-        </div>
-
-        <!-- 已添加标签 -->
-        <h4>已选标签
-            <el-popover :width="300">
-                <template #reference>
-                    <el-icon size="16">
-                        <Warning />
-                    </el-icon>
-                </template>
-                <b>最少一个标签，最多五个标签。</b>
-            </el-popover>
-        </h4>
-
-        <div class="added-tags">
-            <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)"
-                @close="removeTag(tag)" style="padding:15px; cursor: pointer;font-size: 16px;" effect="dark">
-                {{ tag.label }}
-            </el-tag>
-        </div>
+        <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
         <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }"
             show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
         <template #footer>
@@ -94,25 +63,16 @@ import httpInstance from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { ref } from 'vue';
 import { useMemeTagsStore } from '@/stores/memeTags';
+import tagSelector from '@/components/tag-selector.vue';
 const memeTagsStore = useMemeTagsStore();
 
 const barrage = ref('');
-// 预设标签
-const presetTags = ref([]);
-
-// 已添加标签
-const addedTags = ref([]);
-
-// 已添加标签的 dictValue 数组
-const addedDictValues = ref([]);
+const allTags = ref([]);
+const selectedTags = ref([]);
 
 // 获取字典数据
 memeTagsStore.tagsLoaded.then(() => {
-    presetTags.value = memeTagsStore.memeTags.map((item) => ({
-        iconUrl: item.iconUrl,
-        label: item.dictLabel,
-        value: item.dictValue,
-    }))
+    allTags.value = memeTagsStore.memeTags;
 });
 
 const matchData = ref(null);
@@ -128,58 +88,42 @@ function getMatch() {
 }
 getMatch();
 
-// 删除已添加标签
-const removeTag = (tag) => {
-    addedTags.value = addedTags.value.filter(t => t.value !== tag.value);
-    addedDictValues.value = addedDictValues.value.filter(value => value !== tag.value);
-    presetTags.value.push(tag);
-};
-
-// 添加标签的点击事件
-const removeTagFromPreset = (tag) => {
-    if (addedDictValues.value.length >= 5) {
-        ElNotification.info("最多5个标签")
-        return
-    }
-    // 当删除预设标签时，将其移到已添加标签
-    if (!addedTags.value.some(t => t.value === tag.value)) {
-        addedTags.value.push(tag);
-        addedDictValues.value.push(tag.value);
-        presetTags.value = presetTags.value.filter(t => t.value !== tag.value);
-    }
-};
 
 const saveBarrage = () => {
-    if (addedDictValues.value.length === 0 || barrage.value === '' || barrage.value === null) {
-        ElNotification.error("请选择标签或输入弹幕");
+    const selectedValues = selectedTags.value.map((t) => t.dictValue);
+    if (selectedValues.length === 0 || !barrage.value) {
+        ElNotification.error('请选择标签或输入弹幕');
     } else {
-        if (addedDictValues.value.length > 5) {
+        if (selectedValues.length > 5) {
             ElNotification.error('最少一个标签，最多五个标签。');
             return;
         }
         const submitData = {
-            tags: addedDictValues.value.join(','),
-            barrage: barrage.value
+            tags: selectedValues.join(','),
+            barrage: barrage.value,
         };
 
         if (isMatchSelected.value && matchData.value) {
             submitData.matchId = matchData.value.id;
         }
 
-        httpInstance.post(API.SUBMIT_MEME, submitData).then(res => {
-            barrage.value = '';
-            isMatchSelected.value = false;
-            if (res.code === 200) {
-                ElNotification.success("投稿成功，待审核(一天内)");
-            } else if (res.code === 500) {
-                ElNotification.error("烂梗已经有了，勿重复提交")
-            } else {
-                ElNotification.error("请求失败");
-            }
-        }).catch(err => {
-            console.error('投稿失败', err);
-            ElNotification.error("请求失败");
-        });
+        httpInstance
+            .post(API.SUBMIT_MEME, submitData)
+            .then((res) => {
+                barrage.value = '';
+                isMatchSelected.value = false;
+                if (res.code === 200) {
+                    ElNotification.success('投稿成功，待审核(一天内)');
+                } else if (res.code === 500) {
+                    ElNotification.error('烂梗已经有了，勿重复提交');
+                } else {
+                    ElNotification.error('请求失败');
+                }
+            })
+            .catch((err) => {
+                console.error('投稿失败', err);
+                ElNotification.error('请求失败');
+            });
     }
 };
 const dialogFormVisible = defineModel();

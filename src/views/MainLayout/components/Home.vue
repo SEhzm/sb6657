@@ -42,36 +42,8 @@
                     </el-button>
                 </span>
 
-                <div class="preset-tags-container">
-                    <div class="preset-tags">
-                        <el-tag round v-for="(tag, index) in presetTags" :key="index" closable @close="removeTagFromPreset(tag)" @click="removeTagFromPreset(tag)" class="preset-tag" type="primary">
-                            <div class="tag-icon-wrapper">
-                                <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
-                                <span class="tag-text">{{ tag.label }}</span>
-                            </div>
-                        </el-tag>
-                    </div>
-                </div>
-
-                <!-- 已添加标签 -->
-                <span>
-                    已选标签
-                    <el-popover :width="250">
-                        <template #reference>
-                            <el-icon size="16">
-                                <Warning />
-                            </el-icon>
-                        </template>
-                        <b>最少一个标签，最多五个标签。</b>
-                    </el-popover>
-                </span>
-
-                <div class="added-tags">
-                    <el-tag round v-for="(tag, index) in addedTags" :key="index" closable @click="removeTag(tag)" @close="removeTag(tag)" class="added-tag" effect="dark">
-                        {{ tag.label }}
-                    </el-tag>
-                </div>
-                <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" placeholder=" 烂梗...."></el-input>
+                <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
+                <el-input v-model="barrage" maxlength="255" autocomplete="off" :autosize="{ minRows: 2, maxRows: 4 }" show-word-limit type="textarea" placeholder="输入你要投稿的烂梗...."></el-input>
 
                 <!-- 新增的关联赛事库部分 -->
                 <div class="match-association-container">
@@ -133,26 +105,17 @@ import { useMemeTagsStore } from '@/stores/memeTags';
 import RandomMeme from '@/components/home/random-meme.vue';
 import HomeIntro from '@/components/home/homeIntro.vue';
 import DidYouKnow from '@/components/home/didYouKnow.vue';
+import tagSelector from '@/components/tag-selector.vue';
 
 const memeTagsStore = useMemeTagsStore();
 
 memeTagsStore.tagsLoaded.then(() => {
-    presetTags.value = memeTagsStore.memeTags.map((item) => ({
-        iconUrl: item.iconUrl,
-        label: item.dictLabel,
-        value: item.dictValue,
-    }));
+    allTags.value = memeTagsStore.memeTags;
 });
 
 const barrage = ref('');
-// 所有预设标签
-const presetTags = ref([]);
-
-// 已添加投稿标签
-const addedTags = ref([]);
-
-// 已添加的投稿标签数组
-const addedDictValues = ref([]);
+const allTags = ref([]);
+const selectedTags = ref([]);
 
 const matchData = ref(null);
 const isMatchSelected = ref(false);
@@ -178,37 +141,17 @@ onMounted(() => {
     getInProgressMatch();
 });
 
-// 删除已添加投稿标签
-const removeTag = (tag) => {
-    addedTags.value = addedTags.value.filter((t) => t.value !== tag.value);
-    addedDictValues.value = addedDictValues.value.filter((value) => value !== tag.value);
-    presetTags.value.push(tag);
-};
-
-// 添加投稿标签的点击事件
-const removeTagFromPreset = (tag) => {
-    if (addedDictValues.value.length >= 5) {
-        ElNotification.info('最多5个标签');
-        return;
-    }
-    // 当删除预设标签时，将其移到已添加标签
-    if (!addedTags.value.some((t) => t.value === tag.value)) {
-        addedTags.value.push(tag);
-        addedDictValues.value.push(tag.value);
-        presetTags.value = presetTags.value.filter((t) => t.value !== tag.value);
-    }
-};
-
 const saveBarrage = () => {
-    if (addedDictValues.value.length === 0 || barrage.value === '' || barrage.value === null) {
+    const selectedValues = selectedTags.value.map((t) => t.dictValue);
+    if (selectedValues.length === 0 || !barrage.value) {
         ElNotification.error('请选择标签或输入弹幕');
     } else {
-        if (addedDictValues.value.length > 5) {
+        if (selectedValues.length > 5) {
             ElNotification.error('最少一个标签，最多五个标签。');
             return;
         }
         const submitData = {
-            tags: addedDictValues.value.join(','),
+            tags: selectedValues.join(','),
             barrage: barrage.value,
         };
 
