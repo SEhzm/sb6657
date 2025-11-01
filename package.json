@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx,vue}\"",
+    "lint:fix": "eslint \"src/**/*.{ts,tsx,js,jsx,vue}\" --fix"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",
@@ -29,11 +31,22 @@
   },
   "devDependencies": {
     "@types/node": "^24.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/tsconfig": "^0.5.1",
+    "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^10.5.1",
+    "prettier": "^3.6.2",
     "typescript": "^5.6.3",
     "vite": "^5.4.9",
     "vite-plugin-checker": "^0.9.3",
     "vite-plugin-compression": "^0.5.1"
+  }
+  ,
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

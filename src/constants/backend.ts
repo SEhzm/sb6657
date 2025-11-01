@@ -1,4 +1,5 @@
-export const SERVER_ADDRESS = 'https://hguofichp.cn:10086';
+// 优先从环境变量读取后端地址，未设置时回退默认值
+export const SERVER_ADDRESS = (import.meta.env.VITE_BASE_URL as string) || 'https://hguofichp.cn:10086';
 
 export const API = {
     INCREASE_COPY_COUNT: '/machine/addCnt',             // 增加复制次数
