@@ -34,7 +34,7 @@ export interface getHotMeme_res {
 }
 
 // 0: 按id排序, 1: 按复制次数排序
-export enum SortType { 
+export enum SortType {
     ID = 0,
     COPY = 1,
 }

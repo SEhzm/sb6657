@@ -33,10 +33,12 @@
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
-                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision" color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
+                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision"
+                    color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
+                empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
@@ -46,21 +48,37 @@
                     <template #default="scope">
                         <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
-                                <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)"
+                                    @touchend="handleTouchEnd(scope.row)">
+                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)" style="color: #e6a23c; flex-shrink: 0;" size="large">
+                                        <WarningFilled />
+                                    </el-icon>
                                     <span class="barrage-text">{{ scope.row.content }}</span>
                                 </div>
                             </template>
                             <template #default>
                                 <div style="display: flex; align-items: center; flex-wrap: wrap">
-                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, allTags)" :key="index" style="margin-right: 8px">
+                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, allTags)" :key="index"
+                                        style="margin-right: 8px">
                                         <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
                                             <div class="tag-icon-wrapper">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl" style="height: 22px; object-fit: cover; vertical-align: middle" />
+                                                <img v-if="item.iconUrl" :src="item.iconUrl"
+                                                    style="height: 22px; object-fit: cover; vertical-align: middle" />
                                                 <span style="vertical-align: middle">{{ item.label }}</span>
                                             </div>
                                         </el-tag>
                                     </div>
-                                    <span style="position: absolute; bottom: 0; right: 0; font-size: 11px; min-width: 170px">投稿时间: {{ easyFormatTime(scope.row.submitTime) }}</span>
+                                    <!-- 屏蔽词提示 - 用小字显示在tag区域 -->
+                                    <span v-if="hasShieldWordInContent(scope.row.content)"
+                                        style="font-size: 14px; color: #e6a23c; margin-left: 4px;">
+                                        <el-icon style="margin-right: 2px; vertical-align: middle;">
+                                            <Warning />
+                                        </el-icon>
+                                        包含屏蔽词
+                                    </span>
+                                    <span
+                                        style="position: absolute; bottom: 0; right: 0; font-size: 11px; min-width: 170px">投稿时间:
+                                        {{ easyFormatTime(scope.row.submitTime) }}</span>
                                 </div>
                             </template>
                         </el-popover>
@@ -81,7 +99,9 @@
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage" :total="total" :pager-count="5" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
+                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"
+                    :total="total" :pager-count="5" :page-size="pageSize"
+                    @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
@@ -91,24 +111,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { MemeCategory } from '@/constants/backend';
 import { getMemeList } from '@/apis/getMeme';
-import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy, limitedLike } from '@/utils/clipboard';
-import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
-import { type getMemeTags as memeTag } from '@/types/meme';
-import { API } from '@/constants/backend';
-import submissionDialog from '@/components/submission-dialog.vue';
-import flipNum from '@/components/flip-num.vue';
-import LikeNum from '@/components/like-num.vue';
 import httpInstance from '@/apis/httpInstance';
-import { easyFormatTime } from '@/utils/time';
-import { getDisplayTags } from '@/utils/tags';
-import { useMemeTagsStore } from '@/stores/memeTags';
+import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
+import flipNum from '@/components/flip-num.vue';
+import submissionDialog from '@/components/submission-dialog.vue';
 import tagSelector from '@/components/tag-selector.vue';
+import { API, MemeCategory } from '@/constants/backend';
+import { useMemeTagsStore } from '@/stores/memeTags';
+import { useShieldWordStore } from '@/stores/shieldWordStore';
+import { type getMemeTags as memeTag } from '@/types/meme';
+import { copySuccess, copyToClipboard, limitedCopy, limitedLike } from '@/utils/clipboard';
+import { getDisplayTags } from '@/utils/tags';
+import { throttle } from '@/utils/throttle';
+import { easyFormatTime } from '@/utils/time';
+import { Warning } from '@element-plus/icons-vue';
+import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 const memeTagsStore = useMemeTagsStore();
+const shieldWordStore = useShieldWordStore();
+
+//初始化屏蔽词数据
+onMounted(async () => {
+    try {
+        //如果屏蔽词数据为空，尝试加载
+        if (shieldWordStore.shieldWords.length === 0) {
+            await shieldWordStore.setShieldWords();
+        }
+    } catch (error) {
+        console.error('加载屏蔽词失败:', error);
+    }
+});
 
 const route = useRoute();
 const router = useRouter();
@@ -253,6 +286,14 @@ function handleTouchEnd(row: any) {
             row.popoverVisible = false;
         }, 1500);
     }
+}
+
+// 检查内容是否包含屏蔽词
+function hasShieldWordInContent(content: string): boolean {
+    if (!content || !shieldWordStore.shieldWords || shieldWordStore.shieldWords.length === 0) {
+        return false;
+    }
+    return shieldWordStore.hasShieldWord(content);
 }
 
 // 回顶部

@@ -19,20 +19,24 @@ export const API = {
     GET_RAND_ONE_MEME: '/machine/getRandOne',           // 随机一条烂梗
     SUBMIT_MEME: '/machine/submission',                 // 烂梗投稿
     GET_MEME_TAGS: '/machine/dictList',                 // 获取烂梗标签
+    GET_SHIELD_WORD: '/machine/getShieldWordDict',      // 获取屏蔽词字典
+    GET_MY_SHIELD_WORD_LIST: '/machine/getMyShieldWordList', // 获取我投稿的屏蔽词列表
 } as const;
 
-import home_icon from '@/assets/icons/home_icon.svg';
-import post_icon from '@/assets/icons/post-bar.svg';
 import all_icon from '@/assets/icons/all_icon.svg';
-import image_icon from '@/assets/icons/image_icon.svg';
-import cs2_icon from '@/assets/icons/cs2_icon.svg';
 import chat_icon from '@/assets/icons/chat_icon.svg';
+import cs2_icon from '@/assets/icons/cs2_icon.svg';
 import deja_vu_niko from '@/assets/icons/deja_vu_niko.svg';
+import home_icon from '@/assets/icons/home_icon.svg';
+import image_icon from '@/assets/icons/image_icon.svg';
+import post_icon from '@/assets/icons/post-bar.svg';
+import shieldWord from '@/assets/icons/shield_word.svg';
 import donk from '@/assets/imgs/donk.png';
 
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
+    { path: '/shieldWord', text: '屏蔽词收集', icon: shieldWord },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
     { path: '/aichat', text: 'AI造梗', icon: chat_icon },
     { path: '/matchPrediction', text: '赛事竞猜', icon: cs2_icon },

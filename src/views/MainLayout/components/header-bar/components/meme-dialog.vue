@@ -15,6 +15,9 @@
                         <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
                                 <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)" style="color: #e6a23c; flex-shrink: 0;" size="large">
+                                        <WarningFilled />&nbsp;
+                                    </el-icon>
                                     <span class="barrage-text">{{ scope.row.content }}</span>
                                 </div>
                             </template>
@@ -26,6 +29,16 @@
                                             <span style="vertical-align: middle">{{ item.label }}</span>
                                         </el-tag>
                                     </div>
+                                    <!-- 屏蔽词提示 - 用小字显示在tag区域 -->
+                                    <span
+                                        v-if="hasShieldWordInContent(scope.row.content)"
+                                        style="font-size: 14px; color: #e6a23c; margin-left: 4px;"
+                                    >
+                                        <el-icon style="margin-right: 2px; vertical-align: middle;">
+                                            <Warning />
+                                        </el-icon>
+                                        包含屏蔽词
+                                    </span>
                                 </div>
                             </template>
                         </el-popover>
@@ -51,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted} from 'vue';
 import { throttle } from '@/utils/throttle';
 import { copyToClipboard, copySuccess, limitedCopy, likeSuccess } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
@@ -59,6 +72,9 @@ import flipNum from '@/components/flip-num.vue';
 import { getDisplayTags } from '@/utils/tags';
 import { useMemeTagsStore } from '@/stores/memeTags';
 const memeTagsStore = useMemeTagsStore();
+import { useShieldWordStore } from '@/stores/shieldWordStore';
+const shieldWordStore = useShieldWordStore();
+
 
 /**
  * 组件输入:
@@ -124,6 +140,25 @@ const handleTouchEnd = (row: any) => {
         }, 1500);
     }
 };
+
+//初始化屏蔽词数据
+onMounted(async () => {
+    try {
+        //如果屏蔽词数据为空，尝试加载
+        if (shieldWordStore.shieldWords.length === 0) {
+            await shieldWordStore.setShieldWords();
+        }
+    } catch (error) {
+        console.error('加载屏蔽词失败:', error);
+    }
+});
+// 检查内容是否包含屏蔽词
+function hasShieldWordInContent(content: string): boolean {
+    if (!content || !shieldWordStore.shieldWords || shieldWordStore.shieldWords.length === 0) {
+        return false;
+    }
+    return shieldWordStore.hasShieldWord(content);
+}
 </script>
 
 <style scoped lang="scss">

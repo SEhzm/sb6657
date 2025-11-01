@@ -10,7 +10,7 @@ const httpInstance = axios.create({
     // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
-export const sbVersion = '25.11.01';
+export const sbVersion = '25.11.02';
 
 interface req<T> {
     url: string;
@@ -69,9 +69,9 @@ export async function get<R = any>(url: string): Promise<res<R>> {
 
 let authStore: ReturnType<typeof useAuthStore> | null = null
 /**
- * 后端使用siteToken来统计UV PV IP日均 
- * @param length 
- * @returns 
+ * 后端使用siteToken来统计UV PV IP日均
+ * @param length
+ * @returns
  */
 // 生成随机的 10 位字符 数字组合
 function generateRandomToken(length: number = 10): string {
@@ -139,7 +139,7 @@ httpInstance.interceptors.request.use(
             if (!isRelogin.value.show) {
                 isRelogin.value.show = true;
             }
-            
+
             // 检查 token 是否即将过期
             if (isTokenExpiringSoon()) {
                 if (!isRefreshing) {
@@ -211,10 +211,10 @@ httpInstance.interceptors.response.use(
       if (code === 401) {
         if (!isRelogin.value.show) {
           isRelogin.value.show = true;
-          ElMessageBox.confirm('请先登录再使用该功能，或您的登录状态已过期，您可以继续留在该页面，或者重新登录', '请您先登录~', { 
-            confirmButtonText: '重新登录', 
-            cancelButtonText: '取消', 
-            type: 'warning' 
+          ElMessageBox.confirm('请先登录再使用该功能，或您的登录状态已过期，您可以继续留在该页面，或者重新登录', '请您先登录~', {
+            confirmButtonText: '重新登录',
+            cancelButtonText: '取消',
+            type: 'warning'
           }).then(() => {
             isRelogin.value.show = false;
             if (authStore) {
@@ -254,7 +254,7 @@ httpInstance.interceptors.response.use(
         });
         return Promise.reject(error);
       }
-      
+
       if (error.response) {
         switch (error.response.status) {
           case 401:
