@@ -44,7 +44,7 @@
                     <br />
                     建议/提交BUG
                 </el-button>
-                <el-tooltip effect="light" content="接程序设计，广告，商务，详情联系邮箱 he20020928@foxmail.com" placement="bottom">
+                <el-tooltip effect="light" v-model:visible="shangwuVisible" content="接计算机类毕设(论文)，程序设计，课设，广告，商务，详情联系邮箱 he20020928@foxmail.com" placement="bottom">
                     <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-container icon-img" />
                 </el-tooltip>
                 <a class="icon-container" href="https://sb6657.cn/#/Tampermonkey">
@@ -145,6 +145,7 @@ const showHotMeme24h = ref(false);
 const hotMeme24h = ref<Meme[]>([]);
 const hotMeme24hLoading = ref(true);
 const supportVisible = ref(true);
+const shangwuVisible = ref(false);
 async function refreshHotMeme24h() {
     const memeArr = await getHotMeme24h();
     if (!memeArr) return;
@@ -234,19 +235,23 @@ onMounted(() => {
     fetchMsgNum();
     setInterval(() => {
         fetchMsgNum();
-    }, 10 * 60 * 1000); // 10min
+    }, 30 * 60 * 1000); // 30min
 
-    //第一次在一小时后弹出
+    //第一次在15min后弹出
     setTimeout(() => {
         supportMeDialog.value = true;
-        // 后续每次在两小时后弹出
+        // 后续每次在15min后弹出
         setInterval(() => {
             supportMeDialog.value = true;
-        }, 2 * 60 * 60 * 1000); // 2h
-    }, 60 * 60 * 1000); // 1h  60 * 60 * 1000
+        }, 15 * 60 * 1000); // 15min
+    }, 15 * 60 * 1000); // 15min  15 * 60 * 1000
     setTimeout(() => {
         supportVisible.value = false;
+        shangwuVisible.value = true;
     }, 5000);
+    setTimeout(() => {
+        shangwuVisible.value = false;
+    }, 60000);
 });
 //上传按钮
 const complaintButton = () => {

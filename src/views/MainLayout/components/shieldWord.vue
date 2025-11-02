@@ -142,7 +142,7 @@ const myShieldWordTotal = ref(0);
 const formRules: FormRules = {
     shieldWord: [
         { required: true, message: '请输入屏蔽词', trigger: 'blur' },
-        { min: 1, max: 50, message: '长度在 1 到 50 个字符', trigger: 'blur' },
+        { min: 1, max: 10, message: '长度在 1 到 10 个字符', trigger: 'blur' },
     ],
 };
 
@@ -256,11 +256,11 @@ const getMyShieldWordList = async () => {
         if (res.code === 200) {
             myShieldWordList.value = res.data.list;
             myShieldWordTotal.value = res.data.total;
-        } else {
-            ElMessage.error(res.msg || '加载失败');
+        } else if (res.code === 401) {
+            ElMessage.error(res.msg || '请先登录');
         }
     } catch (e) {
-        ElMessage.error('请求失败，请检查接口连接');
+        ElMessage.error('请先登录');
     } finally {
         myShieldWordLoading.value = false;
     }

@@ -191,6 +191,7 @@ async function sortMeme(pageNum: number) {
             id: item.id,
             copyCount: +item.cnt,
             tags: item.tags,
+            submitTime: item.submitTime,
         }));
     } catch (err) {
         console.error('排序失败:', err);
