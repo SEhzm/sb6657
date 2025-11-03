@@ -476,7 +476,7 @@ function refreshWordCloud() {
 
             .boom6657 {
                 margin-top: 6px;
-                height: 130px;
+                height: 125px;
             }
         }
 

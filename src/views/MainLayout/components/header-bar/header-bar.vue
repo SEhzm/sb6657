@@ -44,8 +44,12 @@
                     <br />
                     建议/提交BUG
                 </el-button>
-                <el-tooltip effect="light" v-model:visible="shangwuVisible" content="接计算机类毕设(论文)，程序设计，课设，广告，商务，详情联系邮箱 he20020928@foxmail.com" placement="bottom">
+                <el-tooltip effect="light" v-model:visible="shangwuVisible" placement="right-end" popper-style="margin-bottom: 0;">
                     <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-container icon-img" />
+                    <template #content>
+                      接计算机类毕设(论文)，程序设计，<br/>课设，广告，商务，<br/>
+                      联系邮箱:he20020928@foxmail.com
+                    </template>
                 </el-tooltip>
                 <a class="icon-container" href="https://sb6657.cn/#/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
@@ -57,8 +61,11 @@
                     <img src="@/assets/imgs/github.png" alt="github" class="icon-img" />
                 </a>
 
-                <el-tooltip v-model:visible="supportVisible" content="如果你喜欢这个网站，可以点我进行赞赏或GitHub点个star~" placement="bottom" effect="light">
+                <el-tooltip v-model:visible="supportVisible" placement="left" effect="light">
                     <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover" @click="supportMeDialog = true" />
+                    <template #content>
+                       如果你喜欢这个网站<br/>可以点我进行赞赏或GitHub点个star~
+                    </template>
                 </el-tooltip>
                 <el-dropdown trigger="hover">
                     <div class="user-message">
@@ -248,10 +255,10 @@ onMounted(() => {
     setTimeout(() => {
         supportVisible.value = false;
         shangwuVisible.value = true;
-    }, 5000);
+    }, 2000);
     setTimeout(() => {
         shangwuVisible.value = false;
-    }, 60000);
+    }, 5000);
 });
 //上传按钮
 const complaintButton = () => {
