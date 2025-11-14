@@ -26,6 +26,48 @@
                 </div>
             </div>
         </header>
+        <section class="updates-section">
+            <span class="section-title">比赛更新</span>
+            <span class="description"> - 本场对位增量与累计</span>
+            <div class="updates-table-wrapper" v-if="reportData.updates && reportData.updates.length">
+                <table class="updates-table">
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Kills</th>
+                            <th>Deaths</th>
+                            <th class="diff-col">Δ K/D Diff</th>
+                            <th>Team</th>
+                            <th>Maps</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="u in reportData.updates" :key="u.player">
+                            <td>{{ u.player }}</td>
+                            <td class="expr">
+                                <span class="before">{{ u.kill.before }}</span>
+                                <span class="plus">+</span>
+                                <span class="added positive">{{ u.kill.added }}</span>
+                                <span class="equals">=</span>
+                                <span class="after">{{ u.kill.after }}</span>
+                            </td>
+                            <td class="expr">
+                                <span class="before">{{ u.death.before }}</span>
+                                <span class="plus">+</span>
+                                <span class="added negative">{{ u.death.added }}</span>
+                                <span class="equals">=</span>
+                                <span class="after">{{ u.death.after }}</span>
+                            </td>
+                            <td class="diff-col" :class="(u.kill.added - u.death.added) >= 0 ? 'positive' : 'negative'">
+                                {{ (u.kill.added - u.death.added) >= 0 ? '+' : '' }}{{ u.kill.added - u.death.added }}
+                            </td>
+                            <td>{{ u.team }}</td>
+                            <td>{{ u.maps }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
 
         <main class="main-content">
             <section class="ranking-section">
@@ -95,10 +137,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 
-const reportData = ref<any>({
+type KDDetail = { before: number; added: number; after: number };
+type UpdateRow = { player: string; team: string; kill: KDDetail; death: KDDetail; maps: number };
+type RankItem = { rank: number; player: string; team: string; kill: number; death: number; maps: number; k_dDiff: number };
+interface ReportData {
+    match: { title: string; date: string };
+    updates: UpdateRow[];
+    rankings: { warriors: RankItem[]; victims: RankItem[] };
+}
+
+const reportData = ref<ReportData>({
     match: { title: '加载中...', date: '加载中...' },
+    updates: [
+        {
+            player: '加载中...',
+            team: '加载中...',
+            kill: { before: 0, added: 0, after: 0 },
+            death: { before: 0, added: 0, after: 0 },
+            maps: 0,
+        },
+    ],
     rankings: {
         warriors: [],
         victims: [],
@@ -110,7 +170,7 @@ const abortController = new AbortController();
 async function loadReportData() {
     try {
         const res = await fetch(ossUrl, { signal: abortController.signal });
-        const data = await res.json();
+        const data: ReportData = await res.json();
         reportData.value = data;
     } catch (err) {
         console.error('加载15勇士战报数据失败:', err);
@@ -118,7 +178,6 @@ async function loadReportData() {
     }
 }
 loadReportData();
-// 组件卸载时中止请求，防止资源泄露
 onUnmounted(() => {
     abortController.abort();
 });
@@ -366,16 +425,22 @@ onUnmounted(() => {
                     width: 100%;
                     border-collapse: collapse;
                     font-size: 0.95rem;
-                    min-width: 500px;
+                    min-width: 420px;
 
                     @media (max-width: 768px) {
                         font-size: 0.8rem;
-                        min-width: 380px;
+                        min-width: 360px;
                     }
 
                     @media (max-width: 480px) {
                         font-size: 0.75rem;
-                        min-width: 320px;
+                        min-width: 300px;
+                    }
+
+                    @media (max-width: 360px) {
+                        font-size: 0.7rem;
+                        min-width: 260px;
+                        table-layout: fixed;
                     }
 
                     thead {
@@ -392,7 +457,11 @@ onUnmounted(() => {
                             }
 
                             @media (max-width: 480px) {
-                                padding: 0.4rem 0.3rem;
+                                padding: 0.4rem 0.25rem;
+                            }
+
+                            @media (max-width: 360px) {
+                                padding: 0.3rem 0.2rem;
                             }
 
                             &:nth-child(1) {
@@ -424,7 +493,11 @@ onUnmounted(() => {
                                 }
 
                                 @media (max-width: 480px) {
-                                    padding: 0.4rem 0.3rem;
+                                    padding: 0.4rem 0.25rem;
+                                }
+
+                                @media (max-width: 360px) {
+                                    padding: 0.3rem 0.2rem;
                                 }
 
                                 &:nth-child(1) {
@@ -459,6 +532,139 @@ onUnmounted(() => {
 
     &.negative {
         color: #c62828;
+    }
+}
+
+.updates-section {
+    background-color: transparent;
+    padding: 0.1rem 0.4rem;
+    border-left: 4px solid #333;
+    margin: 0.5rem 0 1rem 0;
+
+    .section-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #333;
+        margin-right: 0.5rem;
+    }
+
+    .description {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .updates-table-wrapper {
+        overflow-x: auto;
+
+        .updates-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 440px;
+
+            thead {
+                th {
+                    font-weight: 600;
+                    color: #444;
+                    background-color: #f6f6f6;
+                    padding: 0.5rem 0.4rem;
+                    text-align: left;
+                    border-bottom: 1px solid #e8e8e8;
+
+                    &:nth-child(1) {
+                        text-align: left;
+                    }
+
+                    &.diff-col {
+                        text-align: center;
+                        width: 80px;
+                    }
+                }
+            }
+
+            tbody {
+                tr {
+                    &:nth-child(odd) {
+                        background-color: #f7f7f7;
+                    }
+
+                    &:hover {
+                        background-color: #efefef;
+                    }
+
+                    td {
+                        padding: 0.5rem 0.4rem;
+                        border-bottom: 1px solid #e8e8e8;
+
+                        &.expr {
+                            font-family: ui-monospace, Menlo, Monaco, Consolas, 'Courier New', monospace;
+                            font-size: 0.95em;
+
+                            .before,
+                            .after {
+                                color: #111;
+                                font-weight: 600;
+                            }
+
+                            .plus,
+                            .equals {
+                                color: #888;
+                                margin: 0;
+                                padding: 0;
+                            }
+
+                            .added {
+                                font-weight: 700;
+
+                                &.positive {
+                                    color: #2e7d32;
+                                }
+
+                                &.negative {
+                                    color: #c62828;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .updates-table {
+            font-size: 0.75rem;
+            min-width: 380px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .updates-table {
+            font-size: 0.7rem;
+            min-width: 300px;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .updates-table {
+            font-size: 0.65rem;
+            min-width: 260px;
+            table-layout: fixed;
+        }
+
+        .updates-table thead th {
+            padding: 0.3rem 0.2rem;
+        }
+
+        .updates-table tbody td {
+            padding: 0.3rem 0.2rem;
+            word-break: break-word;
+        }
+
+        .updates-table thead th.diff-col,
+        .updates-table tbody td.diff-col {
+            width: 60px;
+        }
     }
 }
 </style>

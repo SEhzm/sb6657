@@ -12,7 +12,7 @@
 
         <div class="card-list" v-loading="loading">
             <div class="card shield-card" v-for="item in list" :key="item.id">
-            <div v-if="item.isShieldWord === 0" class="not-word-stamp">这不是屏蔽词</div>
+                <div v-if="item.isShieldWord === 0" class="not-word-stamp">这不是屏蔽词</div>
                 <div>屏蔽词：<span class="word">{{ item.shieldWord }}</span> </div>
                 <div class="time">投稿时间：{{ item.submitTime }}</div>
 
@@ -283,7 +283,6 @@ onMounted(() => {
 
 <style scoped lang="scss">
 .main {
-    margin-top: 30px;
     width: 93%;
     flex-wrap: wrap;
 }
@@ -399,22 +398,22 @@ onMounted(() => {
     }
 
     .not-word-stamp {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-20deg);
-    font-size: 22px;
-    font-weight: 800;
-    color: rgba(255, 0, 0, 0.7);
-    border: 3px solid rgba(255, 0, 0, 0.6);
-    border-radius: 10px;
-    padding: 6px 18px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    pointer-events: none;
-    background-color: rgba(255, 255, 255, 0.5);
-    z-index: 10;
-    box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(-20deg);
+        font-size: 22px;
+        font-weight: 800;
+        color: rgba(255, 0, 0, 0.7);
+        border: 3px solid rgba(255, 0, 0, 0.6);
+        border-radius: 10px;
+        padding: 6px 18px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        pointer-events: none;
+        background-color: rgba(255, 255, 255, 0.5);
+        z-index: 10;
+        box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
     }
 
 }
@@ -426,12 +425,20 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
+    .main {
+        width: 100%;
+    }
+
     .shield-card {
         flex: 0 1 calc(50% - 16px);
     }
 }
 
 @media (max-width: 500px) {
+    .main {
+        width: 100%;
+    }
+
     .shield-card {
         flex: 0 1 100%;
     }
