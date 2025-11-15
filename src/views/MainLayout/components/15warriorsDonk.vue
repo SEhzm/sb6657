@@ -28,7 +28,7 @@
         </header>
         <section class="updates-section">
             <span class="section-title">比赛更新</span>
-            <span class="description"> - 本场对位增量与累计</span>
+            <span class="description">- 本场对位donk数据变化</span>
             <div class="updates-table-wrapper" v-if="reportData.updates && reportData.updates.length">
                 <table class="updates-table">
                     <thead>
@@ -36,7 +36,7 @@
                             <th>Player</th>
                             <th>Kills</th>
                             <th>Deaths</th>
-                            <th class="diff-col">Δ K/D Diff</th>
+                            <th class="updates-diff">Δ K/D Diff</th>
                             <th>Team</th>
                             <th>Maps</th>
                         </tr>
@@ -58,8 +58,9 @@
                                 <span class="equals">=</span>
                                 <span class="after">{{ u.death.after }}</span>
                             </td>
-                            <td class="diff-col" :class="(u.kill.added - u.death.added) >= 0 ? 'positive' : 'negative'">
-                                {{ (u.kill.added - u.death.added) >= 0 ? '+' : '' }}{{ u.kill.added - u.death.added }}
+                            <td class="updates-diff"
+                                :class="u.kill.added - u.death.added >= 0 ? 'positive' : 'negative'">
+                                {{ u.kill.added - u.death.added >= 0 ? '+' : '' }}{{ u.kill.added - u.death.added }}
                             </td>
                             <td>{{ u.team }}</td>
                             <td>{{ u.maps }}</td>
@@ -193,10 +194,6 @@ onUnmounted(() => {
     color: #333;
     margin-bottom: 40px;
 
-    @media (max-width: 768px) {
-        padding: 1rem;
-    }
-
     .header {
         margin-bottom: 1rem;
 
@@ -210,31 +207,6 @@ onUnmounted(() => {
                 font-size: 1.2rem;
                 font-weight: 800;
                 color: #666;
-            }
-
-            @media (max-width: 1024px) {
-                font-size: 2rem;
-
-                .version {
-                    font-size: 1rem;
-                }
-            }
-
-            @media (max-width: 768px) {
-                font-size: 1.6rem;
-                line-height: 1.3;
-
-                .version {
-                    font-size: 0.8rem;
-                }
-            }
-
-            @media (max-width: 480px) {
-                font-size: 1.4rem;
-
-                .version {
-                    font-size: 0.6rem;
-                }
             }
         }
 
@@ -254,12 +226,6 @@ onUnmounted(() => {
             margin-bottom: 1rem;
             gap: 1rem;
 
-            @media (max-width: 768px) {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.8rem;
-            }
-
             .match-info {
                 display: flex;
                 flex-direction: column;
@@ -269,14 +235,6 @@ onUnmounted(() => {
                     font-weight: 600;
                     margin: 0;
                     color: #333;
-
-                    @media (max-width: 768px) {
-                        font-size: 1.1rem;
-                    }
-
-                    @media (max-width: 480px) {
-                        font-size: 1rem;
-                    }
                 }
 
                 .match-date {
@@ -290,11 +248,6 @@ onUnmounted(() => {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-end;
-
-                @media (max-width: 768px) {
-                    align-items: flex-start;
-                    width: 100%;
-                }
 
                 .author-label {
                     font-size: 0.9rem;
@@ -326,16 +279,6 @@ onUnmounted(() => {
                 width: 100px;
                 height: 100px;
                 object-fit: cover;
-
-                @media (max-width: 768px) {
-                    width: 80px;
-                    height: 80px;
-                }
-
-                @media (max-width: 480px) {
-                    width: 60px;
-                    height: 60px;
-                }
             }
 
             .text {
@@ -343,14 +286,6 @@ onUnmounted(() => {
                 font-style: italic;
                 color: #555;
                 line-height: 1.6;
-
-                @media (max-width: 768px) {
-                    font-size: 1rem;
-                }
-
-                @media (max-width: 480px) {
-                    font-size: 0.9rem;
-                }
 
                 .attribution {
                     margin-top: 0.5rem;
@@ -368,14 +303,6 @@ onUnmounted(() => {
         gap: 1rem;
         justify-content: center;
 
-        @media (max-width: 1024px) {
-            flex-direction: column;
-        }
-
-        @media (max-width: 768px) {
-            gap: 1.5rem;
-        }
-
         .ranking-section {
             flex: 1;
             min-width: 0;
@@ -383,39 +310,18 @@ onUnmounted(() => {
             padding: 1.5rem;
             border: 1px solid #e0e0e0;
 
-            @media (max-width: 768px) {
-                padding: 1rem;
-            }
-
-            @media (max-width: 480px) {
-                padding: 0.8rem;
-            }
-
             h2 {
                 font-size: 1.5rem;
                 font-weight: 600;
                 border-bottom: 2px solid #ccc;
                 padding-bottom: 0.75rem;
                 margin-bottom: 0.5rem;
-
-                @media (max-width: 768px) {
-                    font-size: 1.3rem;
-                }
-
-                @media (max-width: 480px) {
-                    font-size: 1.2rem;
-                }
             }
 
             .description {
                 color: #666;
                 margin-bottom: 1.5rem;
                 font-size: 0.9rem;
-
-                @media (max-width: 480px) {
-                    font-size: 0.85rem;
-                    margin-bottom: 1rem;
-                }
             }
 
             .table-wrapper {
@@ -427,22 +333,6 @@ onUnmounted(() => {
                     font-size: 0.95rem;
                     min-width: 420px;
 
-                    @media (max-width: 768px) {
-                        font-size: 0.8rem;
-                        min-width: 360px;
-                    }
-
-                    @media (max-width: 480px) {
-                        font-size: 0.75rem;
-                        min-width: 300px;
-                    }
-
-                    @media (max-width: 360px) {
-                        font-size: 0.7rem;
-                        min-width: 260px;
-                        table-layout: fixed;
-                    }
-
                     thead {
                         th {
                             font-weight: 600;
@@ -451,18 +341,6 @@ onUnmounted(() => {
                             padding: 0.8rem 0.6rem;
                             text-align: left;
                             border-bottom: 1px solid #e8e8e8;
-
-                            @media (max-width: 768px) {
-                                padding: 0.6rem 0.4rem;
-                            }
-
-                            @media (max-width: 480px) {
-                                padding: 0.4rem 0.25rem;
-                            }
-
-                            @media (max-width: 360px) {
-                                padding: 0.3rem 0.2rem;
-                            }
 
                             &:nth-child(1) {
                                 text-align: center;
@@ -488,18 +366,6 @@ onUnmounted(() => {
                                 text-align: left;
                                 border-bottom: 1px solid #e8e8e8;
 
-                                @media (max-width: 768px) {
-                                    padding: 0.6rem 0.4rem;
-                                }
-
-                                @media (max-width: 480px) {
-                                    padding: 0.4rem 0.25rem;
-                                }
-
-                                @media (max-width: 360px) {
-                                    padding: 0.3rem 0.2rem;
-                                }
-
                                 &:nth-child(1) {
                                     text-align: center;
                                     width: 40px;
@@ -507,31 +373,23 @@ onUnmounted(() => {
                             }
                         }
                     }
+
+                    .diff-col {
+                        font-weight: 700;
+                        text-align: center;
+                        width: 80px;
+
+                        &.positive {
+                            color: #2e7d32;
+                        }
+
+                        &.negative {
+                            color: #c62828;
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-.diff-col {
-    font-weight: 700;
-    text-align: center;
-    width: 80px;
-
-    @media (max-width: 768px) {
-        width: 60px;
-    }
-
-    @media (max-width: 480px) {
-        width: 50px;
-    }
-
-    &.positive {
-        color: #2e7d32;
-    }
-
-    &.negative {
-        color: #c62828;
     }
 }
 
@@ -559,25 +417,21 @@ onUnmounted(() => {
         .updates-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             min-width: 440px;
+            table-layout: fixed;
 
             thead {
                 th {
                     font-weight: 600;
                     color: #444;
                     background-color: #f6f6f6;
-                    padding: 0.5rem 0.4rem;
+                    padding: 0.6rem 0.5rem;
                     text-align: left;
                     border-bottom: 1px solid #e8e8e8;
 
-                    &:nth-child(1) {
-                        text-align: left;
-                    }
-
-                    &.diff-col {
-                        text-align: center;
-                        width: 80px;
+                    &.updates-diff {
+                        width: auto;
                     }
                 }
             }
@@ -628,42 +482,271 @@ onUnmounted(() => {
                     }
                 }
             }
+
+            .updates-diff {
+                font-weight: 700;
+
+                &.positive {
+                    color: #2e7d32;
+                }
+
+                &.negative {
+                    color: #c62828;
+                }
+            }
         }
     }
+}
 
-    @media (max-width: 768px) {
-        .updates-table {
-            font-size: 0.75rem;
-            min-width: 380px;
+@media (max-width: 1024px) {
+    .container {
+        .main-content {
+            flex-direction: column;
+        }
+
+        .header {
+            h1 {
+                font-size: 2rem;
+
+                .version {
+                    font-size: 1rem;
+                }
+            }
         }
     }
+}
 
-    @media (max-width: 480px) {
-        .updates-table {
-            font-size: 0.7rem;
-            min-width: 300px;
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+
+        .header {
+            h1 {
+                font-size: 1.6rem;
+                line-height: 1.3;
+
+                .version {
+                    font-size: 0.8rem;
+                }
+            }
+
+            .more-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+
+                .author-info {
+                    align-items: flex-start;
+                    width: 100%;
+                }
+            }
+
+            .quote {
+                .image {
+                    width: 80px;
+                    height: 80px;
+                }
+
+                .text {
+                    font-size: 1rem;
+                }
+            }
+
+            .match-info {
+                .match-title {
+                    font-size: 1.1rem;
+                }
+            }
+        }
+
+        .main-content {
+            gap: 1.5rem;
+
+            .ranking-section {
+                padding: 1rem;
+
+                h2 {
+                    font-size: 1.3rem;
+                }
+
+                .table-wrapper {
+                    table {
+                        font-size: 0.8rem;
+
+                        thead th {
+                            padding: 0.6rem 0.4rem;
+                        }
+
+                        tbody td {
+                            padding: 0.6rem 0.4rem;
+                        }
+
+                        .diff-col {
+                            width: 60px;
+                        }
+                    }
+                }
+            }
+        }
+
+        .updates-section {
+            .updates-table-wrapper {
+                .updates-table {
+                    font-size: 0.75rem;
+                    min-width: 380px;
+
+                    thead th,
+                    tbody td {
+                        font-size: 0.75rem;
+                    }
+
+                    tbody td.expr {
+                        font-size: 0.75rem;
+                    }
+
+                    tbody td.updates-diff {
+                        text-align: center;
+                    }
+                }
+            }
         }
     }
+}
 
-    @media (max-width: 360px) {
-        .updates-table {
-            font-size: 0.65rem;
-            min-width: 260px;
-            table-layout: fixed;
+@media (max-width: 480px) {
+    .container {
+        .header {
+            h1 {
+                font-size: 1.4rem;
+
+                .version {
+                    font-size: 0.6rem;
+                }
+            }
+
+            .match-info {
+                .match-title {
+                    font-size: 1rem;
+                }
+            }
+
+            .quote {
+                .image {
+                    width: 60px;
+                    height: 60px;
+                }
+
+                .text {
+                    font-size: 0.9rem;
+                }
+            }
         }
 
-        .updates-table thead th {
-            padding: 0.3rem 0.2rem;
+        .main-content {
+            .ranking-section {
+                padding: 0.8rem;
+
+                h2 {
+                    font-size: 1.2rem;
+                }
+
+                .description {
+                    font-size: 0.85rem;
+                    margin-bottom: 1rem;
+                }
+
+                .table-wrapper {
+                    table {
+                        font-size: 0.75rem;
+
+                        thead th {
+                            padding: 0.4rem 0.25rem;
+                        }
+
+                        tbody td {
+                            padding: 0.4rem 0.25rem;
+                        }
+
+                        .diff-col {
+                            width: 50px;
+                        }
+                    }
+                }
+            }
         }
 
-        .updates-table tbody td {
-            padding: 0.3rem 0.2rem;
-            word-break: break-word;
+        .updates-section {
+            .updates-table-wrapper {
+                .updates-table {
+                    font-size: 0.7rem;
+                    min-width: 300px;
+
+                    thead th,
+                    tbody td {
+                        font-size: 0.7rem;
+                    }
+
+                    tbody td.expr {
+                        font-size: 0.7rem;
+                    }
+
+                    tbody td.updates-diff {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media (max-width: 360px) {
+    .container {
+        .main-content {
+            .ranking-section {
+                .table-wrapper {
+                    table {
+                        font-size: 0.7rem;
+                        min-width: 260px;
+                        table-layout: fixed;
+
+                        thead th {
+                            padding: 0.3rem 0.2rem;
+                        }
+
+                        tbody td {
+                            padding: 0.3rem 0.2rem;
+                        }
+                    }
+                }
+            }
         }
 
-        .updates-table thead th.diff-col,
-        .updates-table tbody td.diff-col {
-            width: 60px;
+        .updates-section {
+            .updates-table-wrapper {
+                .updates-table {
+                    font-size: 0.65rem;
+                    min-width: 260px;
+                    table-layout: fixed;
+
+                    thead th {
+                        padding: 0.3rem 0.2rem;
+                    }
+
+                    tbody td {
+                        padding: 0.3rem 0.2rem;
+                        word-break: break-word;
+                    }
+
+                    thead th.updates-diff,
+                    tbody td.updates-diff {
+                        width: 60px;
+                    }
+
+                    tbody td.updates-diff {
+                        text-align: center;
+                    }
+                }
+            }
         }
     }
 }
