@@ -29,9 +29,12 @@
       </svg>
     </el-button>
   </div>
+    <el-dialog v-model="majorVisible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~，从菜单进入参与" width="610px">
+        <span>sb6657.cnのMajor竞猜开始啦~(非bet),stage1截止至24号</span>
+    </el-dialog>
   <!-- <div v-if="route.path === '/home'"
-    class="draggable annual-hot-list-draggable" 
-    :style="{ left: `${annualX}vw`, top: `${annualY}px` }" 
+    class="draggable annual-hot-list-draggable"
+    :style="{ left: `${annualX}vw`, top: `${annualY}px` }"
     @mousedown="startDrag($event, 'annual')"
     v-show="isHotVisible"
   >
@@ -51,7 +54,7 @@ import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import httpInstance from '@/apis/httpInstance';
-
+const majorVisible = ref(true);
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
 const chatY = ref(110);
