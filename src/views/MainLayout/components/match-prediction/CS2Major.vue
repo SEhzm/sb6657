@@ -53,8 +53,8 @@
                                 </div>
                                 <div class="info-item">
                                     <span class="label">比赛时间：</span>
-                                    <span class="value">{{ formatDateTime(matchInfo?.startTime) }}日 - {{
-                                        formatDateTime(matchInfo?.endTime) }}日</span>
+                                    <span class="value">{{ formatDateTime(matchInfo?.startTime) }} - {{
+                                        formatDateTime(matchInfo?.endTime) }}</span>
                                 </div>
                             </div>
                             <div class="match-footer">
@@ -68,10 +68,10 @@
                                 <div class="button-group">
                                     <el-button type="success"  @click="showCoinViewerfun">
                                         <el-icon><View /></el-icon>
-                                        预览2025奥斯汀Major3D奖章
+                                        预览2025布达佩斯Major3D硬币
                                     </el-button>
                                 </div>
-                                
+
                             </div>
                         </div>
 
@@ -109,7 +109,7 @@
                 </div>
             </template>
             <div v-else class="no-match">
-                <el-empty description="暂无可用赛事" />
+                <el-empty description="Major赛事暂未公布" />
             </div>
         </div>
 
@@ -171,19 +171,29 @@ const hasAvailablePhases = computed(() => {
 
 // 格式化日期时间显示
 const formatDateTime = (dateStr: string) => {
-    const date = new Date(dateStr)
-    return date.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        timeZone: 'Asia/Shanghai'
-    }).replace(/\//g, '年').replace(',', '日')
+    if (!dateStr) return ''
+    try {
+        // 创建Date对象，自动处理时区
+        const date = new Date(dateStr)
+        // 使用toLocaleDateString进行格式化，确保使用正确的时区
+        const formattedDate = date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            timeZone: 'Asia/Shanghai'
+        })
+        // 将YYYY/MM/DD格式转换为YYYY年MM月DD日格式
+        return formattedDate.replace(/(\d{4})\/(\d{2})\/(\d{2})/, '$1年$2月$3日')
+    } catch (error) {
+        console.error('日期格式化错误:', error)
+        return dateStr
+    }
 }
 
 // 格式化时间范围显示（用于预测时间显示）
 const formatTimeRange = (phase: keyof typeof timeLimits.value) => {
     const { start, end } = timeLimits.value[phase]
-    return `${formatDateTime(start.toISOString())}日 ${start.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${formatDateTime(end.toISOString())}日 ${end.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })}`
+    return `${formatDateTime(start.toISOString())} ${start.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })} - ${formatDateTime(end.toISOString())} ${end.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', hour12: false })}`
 }
 
 // 获取赛事信息
@@ -289,7 +299,7 @@ const updateCountdown = () => {
 watch(currentTab, (newTab) => {
     // 更新当前阶段的赛事ID和信息
     updateCurrentPhaseInfo(newTab)
-    
+
     // 切换标签页时重新获取数据
     if (matchId.value) {
         switch (newTab) {
@@ -656,7 +666,7 @@ function showCoinViewerfun() {
         @media screen and (max-width: 768px) {
             flex-direction: column;
             width: 100%;
-            
+
             .el-button {
                 width: 100%;
             }

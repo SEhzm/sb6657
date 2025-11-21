@@ -29,8 +29,9 @@
       </svg>
     </el-button>
   </div>
-    <el-dialog v-model="majorVisible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~，从菜单进入参与" width="610px">
-        <span>sb6657.cnのMajor竞猜开始啦~(非bet),stage1截止至24号</span>
+    <el-dialog v-model="major202511Visible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~" width="610px">
+        <span>sb6657.cnのMajor竞猜开始啦~(非bet)</span>
+        <p>各阶段预测时间详见赛事竞猜页面</p>
     </el-dialog>
   <!-- <div v-if="route.path === '/home'"
     class="draggable annual-hot-list-draggable"
@@ -54,7 +55,7 @@ import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
 import httpInstance from '@/apis/httpInstance';
-const majorVisible = ref(true);
+const major202511Visible = ref(true);
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
 const chatY = ref(110);
@@ -67,11 +68,22 @@ const dialogVisible = ref(false)
 const isDragging = ref(false);
 let currentDraggingComponent = null;
 const diaochaSetTime = ref(true)
-// onMounted(() => {
-//   if (!localStorage.getItem('diaochawenjuan')) {
-//     localStorage.setItem('diaochawenjuan', '2')
-//   }
-// })
+onMounted(() => {
+  // 初始化计数器逻辑
+  let counter = localStorage.getItem('major202511Visible');
+  if (!counter) {
+    // 首次设置为6
+    counter = 6;
+  } else {
+    // 毎次进入-1
+    counter = parseInt(counter) - 1;
+  }
+  // 当为0时，设置major202511Visible=false
+  if (counter <= 0) {
+    major202511Visible.value = false;
+  }
+  localStorage.setItem('major202511Visible', counter.toString());
+})
 
 setTimeout(() => {
   diaochaSetTime.value = false

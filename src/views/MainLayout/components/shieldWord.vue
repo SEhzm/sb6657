@@ -11,7 +11,7 @@
         </div>
 
         <div class="card-list" v-loading="loading">
-            <div class="card shield-card" v-for="item in list" :key="item.id">
+            <div class="card shield-card" v-for="item in list" :key="item.id" :class="{ 'disabled': item.isShieldWord === 0 }">
                 <div v-if="item.isShieldWord === 0" class="not-word-stamp">这不是屏蔽词</div>
                 <div>屏蔽词：<span class="word">{{ item.shieldWord }}</span> </div>
                 <div class="time">投稿时间：{{ item.submitTime }}</div>
@@ -415,6 +415,16 @@ onMounted(() => {
         z-index: 10;
         box-shadow: 0 0 6px rgba(255, 0, 0, 0.3);
     }
+    &.disabled {
+    cursor: not-allowed;
+    .btn-group {
+      pointer-events: none;
+
+      .el-button {
+        cursor: not-allowed;
+      }
+    }
+  }
 
 }
 
