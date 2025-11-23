@@ -29,10 +29,15 @@
       </svg>
     </el-button>
   </div>
-    <el-dialog v-model="major202511Visible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~" width="610px">
+  <!-- el-dialog 的bug，不知道为啥直接在template里放el-dialog它的class就不生效，需要在外面套一层div -->
+  <div>
+    <el-dialog v-model="major202511Visible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~" class="major202511-dialog">
         <span>sb6657.cnのMajor竞猜开始啦~(非bet)</span>
         <p>各阶段预测时间详见赛事竞猜页面</p>
+        <p class="go-match-link" @click="goToMatchPrediction">点击前往赛事竞猜页面</p>
+        <p class="close-hint">（点击其他区域可以关闭弹窗）</p>
     </el-dialog>
+  </div>
   <!-- <div v-if="route.path === '/home'"
     class="draggable annual-hot-list-draggable"
     :style="{ left: `${annualX}vw`, top: `${annualY}px` }"
@@ -53,8 +58,7 @@
 import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
-import { useRoute } from 'vue-router';
-import httpInstance from '@/apis/httpInstance';
+import { useRouter } from 'vue-router';
 const major202511Visible = ref(true);
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
@@ -222,6 +226,12 @@ const closeChat = () => {
 const closeHot = () => {
   isHotVisible.value = false;
 };
+
+const router = useRouter();
+const goToMatchPrediction = () => {
+  major202511Visible.value = false;
+  router.push({ name: 'matchPrediction' });
+};
 </script>
 
 <style scoped>
@@ -330,6 +340,27 @@ const closeHot = () => {
   z-index: 1000;
 }
 
+:deep(.major202511-dialog) {
+  width: 96%;
+  max-width: 610px;
+}
+
+.go-match-link {
+  color: #3fa7ff;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-top: 8px;
+}
+.go-match-link:hover {
+  color: #1d7bd6;
+}
+
+.close-hint {
+  color: #909399;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 @media (max-width: 600px) {
   .draggable {
     margin-top: 50px;
@@ -359,6 +390,10 @@ const closeHot = () => {
     font-size: 11px;
     z-index: 1000;
     padding: 8px 10px;
+  }
+
+  :deep(.major202511-dialog) {
+    width: 96%;
   }
 }
 </style>
