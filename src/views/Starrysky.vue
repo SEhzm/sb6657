@@ -33,7 +33,7 @@
         <span>sb6657.cnのMajor竞猜开始啦~(非bet)</span>
         <p>各阶段预测时间详见赛事竞猜页面</p>
     </el-dialog>
-  <!-- <div v-if="route.path === '/home'"
+  <div v-if="route.path === '/home'"
     class="draggable annual-hot-list-draggable"
     :style="{ left: `${annualX}vw`, top: `${annualY}px` }"
     @mousedown="startDrag($event, 'annual')"
@@ -46,21 +46,24 @@
         <path d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z" fill="#ff0505" p-id="4540"></path>
       </svg>
     </el-button>
-  </div> -->
+  </div>
 </template>
 
 <script setup>
+import { ElNotification } from 'element-plus'
+import { h } from 'vue'
 import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
 import { onMounted, ref, onBeforeUnmount } from 'vue';
 import { useRoute } from 'vue-router';
+import { useRouter } from 'vue-router'
 import httpInstance from '@/apis/httpInstance';
 const major202511Visible = ref(true);
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
 const chatY = ref(110);
-const annualX = ref(8.2);
-const annualY = ref(120);
+const annualX = ref(8.9);
+const annualY = ref(110);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
 const dialogVisible = ref(false)
@@ -68,8 +71,36 @@ const dialogVisible = ref(false)
 const isDragging = ref(false);
 let currentDraggingComponent = null;
 const diaochaSetTime = ref(true)
+const route = useRoute();
+const router = useRouter()
+const tips = () => {
+  ElNotification({
+    title: '2025年度TOP20烂梗评选开始啦',
+    message: h('span', {}, [
+      '请从',
+      h(
+        'a',
+        {
+          style: {
+            color: '#409eff',
+            cursor: 'pointer',
+            textDecoration: 'underline',
+          },
+          onClick: () => {
+            router.push('/home')
+          }
+        },
+        '首页'
+      ),
+      '进行评选，快来提名你心中的烂梗吧！'
+    ]),
+    position: 'bottom-right',
+    duration: 20000,
+  })
+}
 onMounted(() => {
   // 初始化计数器逻辑
+  tips();
   let counter = localStorage.getItem('major202511Visible');
   if (!counter) {
     // 首次设置为6

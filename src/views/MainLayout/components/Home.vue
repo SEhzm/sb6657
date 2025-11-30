@@ -3,6 +3,7 @@
         <div class="boom">
             <img src="https://sb6657oss.wishao.fun/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
+            <AnnualHotList class="AnnualHotList"></AnnualHotList>
         <div class="cards-container">
             <div class="card first-card">
                 <HomeIntro />
@@ -106,7 +107,7 @@ import RandomMeme from '@/components/home/random-meme.vue';
 import HomeIntro from '@/components/home/homeIntro.vue';
 import DidYouKnow from '@/components/home/didYouKnow.vue';
 import tagSelector from '@/components/tag-selector.vue';
-
+import AnnualHotList from '@/components/AnnualHotList.vue';
 const memeTagsStore = useMemeTagsStore();
 
 memeTagsStore.tagsLoaded.then(() => {
@@ -465,7 +466,7 @@ function refreshWordCloud() {
 // 小屏幕样式 (600px及以下)
 @media (max-width: 600px) {
     .AnnualHotList {
-        margin-bottom: 20px;
+        margin-top: 5px;
     }
 
     .home {
