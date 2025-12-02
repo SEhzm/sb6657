@@ -100,7 +100,7 @@ const tips = () => {
       '进行评选，快来提名你心中的烂梗吧！'
     ]),
     position: 'bottom-right',
-    duration: 20000,
+    duration: 10000,
   })
 }
 onMounted(() => {
