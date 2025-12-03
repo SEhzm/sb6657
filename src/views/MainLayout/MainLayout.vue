@@ -34,8 +34,8 @@
         <span class="version">版本: {{ sbVersion }}</span>
     </RouterLink>
     <div class="GuangGaoWei">
-        <!-- <img style="width: 220px;height: 105px;" src="https://pic1.imgdb.cn/item/6872766b58cb8da5c8a581f0.png" alt=""> -->
-        <span style="display: flex;font-size:large;color: white;">广告位招租</span>
+        <img style="width: 220px;height: 200px;" src="https://cdn.hguofichp.cn/%E5%B0%8F%E5%AD%94%E5%B9%BF%E5%91%8A_compressed.png" alt="">
+        <!-- <span style="display: flex;font-size:large;color: white;">广告位招租</span> -->
     </div>
     <div class="GuiBin">当前直播间贵宾数:{{ OniValue }}</div>
 </template>

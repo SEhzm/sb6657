@@ -100,7 +100,7 @@ const tips = () => {
       '进行评选，快来提名你心中的烂梗吧！'
     ]),
     position: 'bottom-right',
-    duration: 10000,
+    duration: 4000,
   })
 }
 onMounted(() => {
@@ -129,7 +129,7 @@ setTimeout(() => {
   //     document.getElementById('diaocha').click();
   //   },30 * 1000);
   // }
-}, 2 * 1000)
+}, 1000)
 
 // 开始拖动的函数
 const startDrag = (event, component) => {

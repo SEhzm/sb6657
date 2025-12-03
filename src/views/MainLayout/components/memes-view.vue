@@ -100,7 +100,7 @@
             </el-table>
             <div class="pagination-wrapper">
                 <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"
-                    :total="total" :pager-count="5" :page-size="pageSize"
+                    :total="total" :pager-count="3" :page-size="pageSize"
                     @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
