@@ -89,9 +89,9 @@
                     <userHome />
                 </div>
 
-                <el-button class="GuangGaoHead" plain @click="openAd">
+                <!-- <el-button class="GuangGaoHead" plain @click="openAd">
                     <span>小孔CSGO陪玩</span>
-                </el-button>
+                </el-button> -->
             </div>
             <el-dialog v-model="AdDialog" title="小孔CSGO陪玩" :width="adWidth" :append-to-body="true">
                 <img style="width: 80vw; " src="https://cdn.hguofichp.cn/%E5%B0%8F%E5%AD%94%E5%B9%BF%E5%91%8A_compressed.png" alt="">
