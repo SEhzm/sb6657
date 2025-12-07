@@ -58,17 +58,19 @@
             <span v-if="stage === 1" @click="isTableVisible = true">
                 <el-button class="loadBtn" type="primary" label="" @click="load">看看提名榜</el-button></span>
         </div>
-        <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData" height="60vh"
+        <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData" height="65vh"
             empty-text="你等了这么久,应该是没有这条烂梗,期待投稿，TOP20评选默认搜索范围是2025年" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{}">
             <!-- 根据不同数据源显示不同的序号列 -->
             <el-table-column v-if="isQuery" width="50" prop="id" label="序号"></el-table-column>
             <el-table-column v-else width="50" prop="barrageId" label="序号"></el-table-column>
-            <el-table-column v-if="isQuery === false" prop="barrage" min-width="90"
+            <el-table-column v-if="isQuery === false && stage===1" prop="barrage" min-width="90"
                 label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;目前的提名榜" />
             <el-table-column v-if="isQuery === true" prop="barrage" min-width="90"
-                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;烂梗" />
+                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;可提名的烂梗" />
+            <el-table-column v-if="isQuery === false && stage !==1" prop="barrage" min-width="90"
+                label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;可提名的烂梗" />
             <el-table-column label="" align="center" width="85">
                 <template #default="scope">
                     <el-button type="primary" label="" @click="pick(scope.row)">提名</el-button>
@@ -155,48 +157,39 @@
                     <li><strong>综合考量所有提名烂梗</strong>：会根据该烂梗的总复制次数与投稿时间做进一步考量该烂梗的名次。</li>
                     <li><strong>最终算法与详细结果均会在公布结果时给出。</strong></li>
                 </ol>
+                <h2>结果算法</h2>
+                <ol>
+                    <li><strong>提名阶段，复选阶段</strong>最终分数计算：提名次数占75%，总复制次数占15%，烂梗投稿时间占10%</li>
+                </ol>
             </div>
         </el-dialog>
         <el-dialog class="custom-dialog" draggable v-model="dialogVisible" :title="dialogTitle">
-            <p v-if="stage === 3" style="font-size: 16px;">🏆给这条烂梗选择一个奖项🏆 <span>⬆️记得评个分⬆️</span></p>
-            <p v-else style="font-size: 16px;">⬆️记得评个分⬆️</p>
+            <p v-if="stage === 3" style="font-size: 16px;">🏆给这条烂梗选择一个奖项🏆</p>
+            <p v-else style="font-size: 16px;">确认提名这条烂梗？</p>
             <br>
             <el-radio-group v-if="stage === 3" ref="ref2" v-model="awards" size="large">
                 <!-- 1不显示 0显示 -->
                 <el-radio class="elr" :disabled="annualMostPromisingDevelopmentPotential" border
-                    value="annualMostPromisingDevelopmentPotential" label="年度最具发展力奖🏆"></el-radio>
+                    value="2025-1" label="年度最具发展力奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostOutstandingStringOfYear" border
-                    value="theMostOutstandingStringOfYear" label="年度最具串子奖🏆"></el-radio>
+                    value="2025-2" label="年度最具串子奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostInfluential" border
-                    value="annualMostInfluential" label="年度最具影响力🏆"></el-radio>
+                    value="2025-3" label="年度最具影响力🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theFunniestOfYear" border
-                    value="theFunniestOfYear" label="年度最幽默奖🏆"></el-radio>
+                    value="2025-4" label="年度最幽默奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostPowerfulFormulaOfYear" border
-                    value="theMostPowerfulFormulaOfYear" label="年度最具公式奖🏆"></el-radio>
+                    value="2025-5" label="年度最具公式奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostPhilosophicalAward" border
-                    value="annualMostPhilosophicalAward" label="年度最具哲学奖🏆"></el-radio>
+                    value="2025-6" label="年度最具哲学奖🏆"></el-radio>
             </el-radio-group>
             <el-divider v-if="stage === 3" />
-            <b ref="ref1" style="font-size: 16px;margin-left: 100px;">记得给这条烂梗评个分</b>
-            <br>
-            <el-rate style="margin-left: 100px;" ref="ref1" allow-half v-model="star" size="large" :max="5" show-score
-                text-color="#ff9900" />
-
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="dialogVisible = false">取 消</el-button>
-                    <el-button type="primary" @click="pickHot">选取</el-button>
+                    <el-button type="primary" @click="pickHot">确认提名</el-button>
                 </span>
             </template>
         </el-dialog>
-        <el-tour mask show-arrow z-index="10000" v-model="open1">
-            <el-tour-step mask :target="ref1?.$el" title="记得评分喔">
-                <div>记得评分喔</div>
-            </el-tour-step>
-            <el-tour-step mask :target="ref2?.$el" title="记得给颁一个奖喔">
-                <div>记得给颁一个奖喔</div>
-            </el-tour-step>
-        </el-tour>
     </div>
 </template>
 
@@ -213,14 +206,13 @@ const isHot = ref(true);
 const pickRule = ref(false);
 const pickSum = ref(0);
 const stage = (() => {
-    //todo
-    // const now = new Date();
-    // const day = now.getDate();
-    // // 12 月份的判断逻辑
-    // if (day >= 1 && day <= 11) return 1;
-    // if (day >= 12 && day <= 21) return 2;
-    // if (day >= 22 && day <= 31) return 3;
-    return 1; // 默认最终 4 展示奖项
+    const now = new Date();
+    const day = now.getDate();
+    // 12 月份的判断逻辑
+    if (day >= 1 && day <= 11) return 1;
+    if (day >= 12 && day <= 21) return 2;
+    if (day >= 22 && day <= 31) return 3;
+    return 4; // 默认最终 4 展示奖项
 })();
 const open1 = ref(false)
 const top20 = ref(false)
@@ -249,23 +241,30 @@ const isFinish = ref(true);
 const Preloader = () => {
     // 阶段3才需要初始化奖项
     if (stage === 3) {
-        if (!localStorage.getItem('annualMostPromisingDevelopmentPotential')) {
-            localStorage.setItem('annualMostPromisingDevelopmentPotential', '0');
+        // 2025年度奖项LocalStorage键名改为带年份的命名方式
+        // 2025-1: 年度最具发展力奖
+        if (!localStorage.getItem('2025-1')) {
+            localStorage.setItem('2025-1', '0');
         }
-        if (!localStorage.getItem('theMostOutstandingStringOfYear')) {
-            localStorage.setItem('theMostOutstandingStringOfYear', '0');
+        // 2025-2: 年度最具串子奖
+        if (!localStorage.getItem('2025-2')) {
+            localStorage.setItem('2025-2', '0');
         }
-        if (!localStorage.getItem('annualMostInfluential')) {
-            localStorage.setItem('annualMostInfluential', '0');
+        // 2025-3: 年度最具影响力奖
+        if (!localStorage.getItem('2025-3')) {
+            localStorage.setItem('2025-3', '0');
         }
-        if (!localStorage.getItem('theFunniestOfYear')) {
-            localStorage.setItem('theFunniestOfYear', '0');
+        // 2025-4: 年度最幽默奖
+        if (!localStorage.getItem('2025-4')) {
+            localStorage.setItem('2025-4', '0');
         }
-        if (!localStorage.getItem('theMostPowerfulFormulaOfYear')) {
-            localStorage.setItem('theMostPowerfulFormulaOfYear', '0');
+        // 2025-5: 年度最具公式奖
+        if (!localStorage.getItem('2025-5')) {
+            localStorage.setItem('2025-5', '0');
         }
-        if (!localStorage.getItem('annualMostPhilosophicalAward')) {
-            localStorage.setItem('annualMostPhilosophicalAward', '0');
+        // 2025-6: 年度最具哲学奖
+        if (!localStorage.getItem('2025-6')) {
+            localStorage.setItem('2025-6', '0');
         }
     }
 
@@ -287,29 +286,28 @@ function openPickDialog() {
 }
 
 // 阶段3才需要奖项状态
-// 年度最具发展力
-const annualMostPromisingDevelopmentPotential = ref(stage === 3 ? localStorage.getItem('annualMostPromisingDevelopmentPotential') === '1' : false);
-// 年度最具串子
-const theMostOutstandingStringOfYear = ref(stage === 3 ? localStorage.getItem('theMostOutstandingStringOfYear') === '1' : false);
-// 年度最具影响力
-const annualMostInfluential = ref(stage === 3 ? localStorage.getItem('annualMostInfluential') === '1' : false);
-// 年度最幽默
-const theFunniestOfYear = ref(stage === 3 ? localStorage.getItem('theFunniestOfYear') === '1' : false);
-// 年度最具公式
-const theMostPowerfulFormulaOfYear = ref(stage === 3 ? localStorage.getItem('theMostPowerfulFormulaOfYear') === '1' : false);
-// 年度最具哲学奖
-const annualMostPhilosophicalAward = ref(stage === 3 ? localStorage.getItem('annualMostPhilosophicalAward') === '1' : false);
+// 年度最具发展力奖 (2025-1)
+const annualMostPromisingDevelopmentPotential = ref(stage === 3 ? localStorage.getItem('2025-1') === '1' : false);
+// 年度最具串子奖 (2025-2)
+const theMostOutstandingStringOfYear = ref(stage === 3 ? localStorage.getItem('2025-2') === '1' : false);
+// 年度最具影响力奖 (2025-3)
+const annualMostInfluential = ref(stage === 3 ? localStorage.getItem('2025-3') === '1' : false);
+// 年度最幽默奖 (2025-4)
+const theFunniestOfYear = ref(stage === 3 ? localStorage.getItem('2025-4') === '1' : false);
+// 年度最具公式奖 (2025-5)
+const theMostPowerfulFormulaOfYear = ref(stage === 3 ? localStorage.getItem('2025-5') === '1' : false);
+// 年度最具哲学奖 (2025-6)
+const annualMostPhilosophicalAward = ref(stage === 3 ? localStorage.getItem('2025-6') === '1' : false);
 
 // 对话框标题
 const dialogTitle = computed(() => {
     if (stage === 3) {
-        return '请为烂梗评分并选择奖项，将作为最后评选的参考部分';
+        return '请为烂梗选择一个奖项';
     }
-    return '请为烂梗评分，将作为最后评选的参考部分';
+    return '确认提名';
 })
 
 
-const star = ref()
 const loading = ref(true)
 
 const data = reactive({
@@ -326,8 +324,8 @@ const selectedRow = ref<any>(null);
 const open = async (row: any) => {
     if (stage === 3 && pickCnt.value <= 1) {
         setTimeout(() => {
-            open1.value = true, 1500
-        })
+
+        }, 1500)
     }
     awards.value = ''
     dialogVisible.value = true
@@ -336,8 +334,25 @@ const open = async (row: any) => {
 
 const pick = (row: any) => {
     selectedRow.value = row;
-    awards.value = ''
-    pickHot();
+    awards.value = '';
+
+    // 第一、二阶段直接提名，第三阶段需要选择奖项
+    if (stage === 3) {
+        //判断第三阶段票数是否用完
+        if (pickCnt.value <= 1) {
+            // 弹窗提示
+            ElMessageBox.alert('你已经投过六次票了!', '期待最终评奖结果吧!', {
+                confirmButtonText: 'OK',
+            });
+            return;
+        }
+        // 打开奖项选择弹窗
+        open(row);
+    } else {
+        // 直接提名
+        selectedRow.value = row;
+        pickHot();
+    }
 }
 
 
@@ -351,13 +366,16 @@ const pickHot = () => {
         dialogVisible.value = false
         return;
     }
-    // 阶段3必须选奖项
+
+    // 第三阶段必须选奖项
     if (stage === 3 && !awards.value) {
-        ElMessageBox.alert('', '请给这条烂梗评一个奖!', {
+        ElMessageBox.alert('', '请给这条烂梗选择一个奖项!', {
             confirmButtonText: 'OK',
         });
+        // 保持弹窗打开，让用户选择奖项
         return;
     }
+
     if (!selectedRow.value) {
         dialogVisible.value = false
         return;
@@ -375,12 +393,35 @@ const pickHot = () => {
         requestData.barrageId = selectedRow.value.barrageId;
     }
 
-    // 阶段3才传awards
+    // 第三阶段才传awards
     if (stage === 3 && awards.value) {
-        requestData.awards = awards.value;
+        // 根据奖项ID映射为具体的奖项名称
+        let awardName = '';
+        switch (awards.value) {
+            case '2025-1':
+                awardName = '年度最具发展力奖';
+                break;
+            case '2025-2':
+                awardName = '年度最具串子奖';
+                break;
+            case '2025-3':
+                awardName = '年度最具影响力奖';
+                break;
+            case '2025-4':
+                awardName = '年度最幽默奖';
+                break;
+            case '2025-5':
+                awardName = '年度最具公式奖';
+                break;
+            case '2025-6':
+                awardName = '年度最具哲学奖';
+                break;
+            default:
+                awardName = awards.value;
+        }
+        requestData.awards = awardName;
     }
 
-    // 使用JSON格式发送请求
     httpInstance.post('/machine/hotTop20/pick', requestData).then((res: any) => {
         if (stage === 3 && awards.value) {
             localStorage.setItem(awards.value, '1');
@@ -388,7 +429,7 @@ const pickHot = () => {
 
         dialogVisible.value = false
         if (res.code == 600) {
-            ElMessageBox.alert('你已经提名过这条烂梗!', '换一条提名吧!', {
+            ElMessageBox.alert(res.msg, res.msg, {
                 confirmButtonText: 'OK',
             });
             return
@@ -403,9 +444,10 @@ const pickHot = () => {
             return
         }
         const voteText = stage === 3 ? '六票' : '十票';
+        // 修改消息文本，在第三阶段不提及评分
         const message = stage === 3
-            ? `你投了一票,一共可以投${voteText}，还剩${pickCnt.value - 1}票，结果会根据评分,票数和奖项选定`
-            : `你投了一票,一共可以投${voteText}，还剩${pickCnt.value - 1}票，结果会根据评分和票数选定`;
+            ? `你投了一票,一共可以投${voteText}，还剩${pickCnt.value - 1}票，结果会根据票数和奖项选定`
+            : `你投了一票,一共可以投${voteText}，还剩${pickCnt.value - 1}票，结果会根据票数选定`;
         if (selectedRow.value) {
             ElMessageBox.alert(selectedRow.value.barrage, message, {
                 confirmButtonText: 'OK',
@@ -414,28 +456,35 @@ const pickHot = () => {
         pickCnt.value -= 1;
         localStorage.setItem(pickCntKey, pickCnt.value.toString());
 
-        // 阶段3才更新奖项状态
+        // 第三阶段才更新奖项状态
         if (stage === 3) {
             switch (awards.value) {
-                case 'annualMostPromisingDevelopmentPotential':
+                case '2025-1':  // 年度最具发展力奖
                     annualMostPromisingDevelopmentPotential.value = true;
                     break;
-                case 'theMostOutstandingStringOfYear':
+                case '2025-2':  // 年度最具串子奖
                     theMostOutstandingStringOfYear.value = true;
                     break;
-                case 'annualMostInfluential':
+                case '2025-3':  // 年度最具影响力奖
                     annualMostInfluential.value = true;
                     break;
-                case 'theFunniestOfYear':
+                case '2025-4':  // 年度最幽默奖
                     theFunniestOfYear.value = true;
                     break;
-                case 'theMostPowerfulFormulaOfYear':
+                case '2025-5':  // 年度最具公式奖
                     theMostPowerfulFormulaOfYear.value = true;
                     break;
-                case 'annualMostPhilosophicalAward':
+                case '2025-6':  // 年度最具哲学奖
                     annualMostPhilosophicalAward.value = true;
                     break;
             }
+        }
+        if (res.code == 200) {
+           ElNotification({
+            title: '提名成功',
+            message: '提名成功',
+            type: 'warning',
+        });
         }
     })
 }
@@ -535,8 +584,8 @@ const handleHotPageChange = (page: number) => {
 const handleOpen = () => {
     // 阶段2和3需要加载top20数据到主表格
     if (stage === 2 || stage === 3) {
-        if (!data.top20Data.length) {
-            loadTop20(1)
+        if (!data.tableData.length) {
+            load(1)
         }
         isTableVisible.value = !isTableVisible.value;
     } else if (stage === 1) {
