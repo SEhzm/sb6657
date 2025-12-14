@@ -80,7 +80,7 @@ const route = useRoute();
 const router = useRouter()
 const tips = () => {
   ElNotification({
-    title: '2025年度TOP20烂梗评选开始啦',
+    title: '2025年度TOP20烂梗评选第二阶段开始啦',
     message: h('span', {}, [
       '请从',
       h(

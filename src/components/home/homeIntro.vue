@@ -16,6 +16,7 @@
         </p>
         <p class="sub-info">开放注册功能，可能会出现收不到邮件的情况。</p>
         <p class="sub-info">目前已支持玩机器直播间开播提醒</p>
+        <p class="sub-info">目前已优化Ai造梗功能，响应时间大幅提升</p>
         <p class="sub-info">
             <RouterLink to="/update">网站更新日志</RouterLink>
         </p>

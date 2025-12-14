@@ -18,7 +18,9 @@
                     <el-step title="公布" description="2026.01.01" simple="false"></el-step>
                 </el-steps>
             </span>
-
+        <el-button class="loadBtn" type="primary" style="margin-left:27% ;"
+            @click="handleOpen">加载第{{ stage-1 }}阶段烂梗(无序)
+        </el-button>
         </div>
         <!-- 阶段2和3显示Top20按钮 -->
         <el-button v-if="(stage === 4) && isTableVisible" class="loadBtn" type="primary"
@@ -61,7 +63,7 @@
         <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData" height="65vh"
             empty-text="你等了这么久,应该是没有这条烂梗,期待投稿，TOP20评选默认搜索范围是2025年" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
-            :cell-style="{}">
+            :cell-style="{}" @row-click="handleRowClick">
             <!-- 根据不同数据源显示不同的序号列 -->
             <el-table-column v-if="isQuery" width="50" prop="id" label="序号"></el-table-column>
             <el-table-column v-else width="50" prop="barrageId" label="序号"></el-table-column>
@@ -598,7 +600,7 @@ const handleOpen = () => {
 
 // 处理表格行点击 - 阶段1从搜索数据提名，阶段2和3从top20数据提名
 const handleRowClick = (row: any, event?: MouseEvent) => {
-    if (stage === 1 || stage === 2 || stage === 3) {
+    if (stage === 3) {
         // 阶段1、2、3点击行打开提名对话框
         open(row);
     } else {
