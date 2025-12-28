@@ -2,9 +2,10 @@
     <div class="card pickHome">
         <div class="step">
             <span @click="handleOpen">
-                <p class="context">2025年度TOP20烂梗评选🏆  <a @click="openPickDialog" class="pickSum" style="color: blue;">规则></a>
+                <p class="context">2025年度TOP20烂梗评选🏆 <a @click="openPickDialog" class="pickSum"
+                        style="color: blue;">规则></a>
                     <br>
-                    <span class="pickSum">总提名数：{{ pickSum }}</span>
+                    <span v-if="stage !== 4" class="pickSum">总提名数：{{ pickSum }}</span>
                     <!-- <el-button link ><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%80%E8%BD%AEtop20%E6%8F%90%E5%90%8D%E7%BB%93%E6%9E%9C.xlsx">下载第一轮数据</a></el-button> -->
                     <!-- <el-button link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%BA%8C%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第二轮</a></el-button> -->
                     <!-- <el-button link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%89%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第三轮</a></el-button> -->
@@ -18,13 +19,12 @@
                     <el-step title="公布" description="2026.01.01" simple="false"></el-step>
                 </el-steps>
             </span>
-        <el-button class="loadBtn" type="primary" style="margin-left:27% ;"
-            @click="handleOpen">加载第{{ stage-1 }}阶段烂梗(无序)
-        </el-button>
+            <el-button v-if="stage !== 4" class="loadBtn" type="primary" style="margin-left:27% ;"
+                @click="handleOpen">加载第{{ stage-1 }}阶段烂梗(无序)
+            </el-button>
+            <el-button v-else class="loadBtn" type="primary" style="margin-left:27% ;" @click="handleOpen">查看最终评选结果
+            </el-button>
         </div>
-        <!-- 阶段2和3显示Top20按钮 -->
-        <el-button v-if="(stage === 4) && isTableVisible" class="loadBtn" type="primary"
-            @click="openTop20">看看Top20烂梗</el-button>
         <!-- <el-table v-if="isTableVisible" v-loading="loading" @row-click="handleRowClick" stripe
             :data="stage === 1 ? data.tableData : data.top20Data" empty-text="你等了这么久,应该是没有这条烂梗,期待投稿" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
@@ -60,18 +60,57 @@
             <span v-if="stage === 1" @click="isTableVisible = true">
                 <el-button class="loadBtn" type="primary" label="" @click="load">看看提名榜</el-button></span>
         </div>
-        <el-table v-if="isTableVisible" v-loading="loading" stripe :data="data.tableData" height="65vh"
+        <!-- 第四阶段显示最终结果 -->
+        <div v-if="stage === 4 && isTableVisible" class="stage4-content">
+            <!-- 奖项列表 -->
+            <div class="awards-section" v-if="data.awardsList && data.awardsList.length > 0">
+                <el-table v-loading="loading" stripe :data="data.awardsList" empty-text="暂无获奖数据" class="eldtable"
+                    :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+                    :cell-style="{}" @row-click="handleRowClick">
+                    <el-table-column prop="awards" label="奖项" align="center">
+                        <template #default="scope">
+                            <el-tag style="font-size: 13px;padding: 3px;" type="success" size="large" effect="plain"
+                                round>
+                                🏆{{ scope.row.awards }}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="barrage" min-width="200" label="获奖烂梗" />
+                </el-table>
+            </div>
+
+            <!-- Top20列表 -->
+            <div class="top20-section" v-if="data.top20List && data.top20List.length > 0" style="margin-top: 30px;">
+                <h3 style="color: #409EFF; margin-bottom: 20px; text-align: center;">Top20</h3>
+                <el-table v-loading="loading" stripe :data="data.top20List" empty-text="暂无数据" class="eldtable"
+                    :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
+                    :cell-style="{}" @row-click="handleRowClick">
+                    <el-table-column prop="top" width="80" label="TOP" align="center">
+                        <template #default="scope">
+                            <el-tag style="font-size: 13px;padding: 3px;" type="success" size="large" effect="plain"
+                                round>
+                                🥇 {{ scope.row.top }}
+                            </el-tag>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="barrage" min-width="200" label="获奖烂梗" />
+                </el-table>
+            </div>
+        </div>
+
+        <!-- 其他阶段显示原有表格 -->
+        <el-table v-if="isTableVisible && stage !== 4" v-loading="loading" stripe :data="data.tableData" height="65vh"
             empty-text="你等了这么久,应该是没有这条烂梗,期待投稿，TOP20评选默认搜索范围是2025年" class="eldtable"
             :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
             :cell-style="{}" @row-click="handleRowClick">
             <!-- 根据不同数据源显示不同的序号列 -->
             <el-table-column v-if="isQuery" width="50" prop="id" label="序号"></el-table-column>
             <el-table-column v-else width="50" prop="barrageId" label="序号"></el-table-column>
-            <el-table-column v-if="isQuery === false && stage===1" prop="barrage" min-width="90"
+            <el-table-column v-if="isQuery === false && stage === 1" prop="barrage" min-width="90"
                 label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;目前的提名榜" />
             <el-table-column v-if="isQuery === true" prop="barrage" min-width="90"
                 label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;可提名的烂梗" />
-            <el-table-column v-if="isQuery === false && stage !==1" prop="barrage" min-width="90"
+            <el-table-column v-if="isQuery === false && stage !== 1" prop="barrage" min-width="90"
                 label="&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;&#12288;可提名的烂梗" />
             <el-table-column label="" align="center" width="85">
                 <template #default="scope">
@@ -82,7 +121,7 @@
             <el-table-column v-if="isQuery && stage === 1" prop="cnt" label="复制次数" width="55" />
             <el-table-column v-else-if="!isQuery && stage === 1" prop="pickCnt" label="提名次数" width="55" />
         </el-table>
-        <div class="pagination-wrapper" v-if="isTableVisible">
+        <div class="pagination-wrapper" v-if="isTableVisible && stage !== 4">
             <!-- 分页 -->
             <div>
                 <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
@@ -101,7 +140,7 @@
             <p style="text-indent: 2em;"> 感谢所有参与烂梗互动和评选的用户，让这场年度评选得以圆满举办。</p>
 
             <h3>完整获奖名单<br></h3>
-            <p style="text-indent: 2em;">请访问我们的官网查看完整榜单，参与讨论并分享属于你的“烂梗之最”!</p>
+            <p style="text-indent: 2em;">请访问我们的官网查看完整榜单，参与讨论并分享属于你的"烂梗之最"!</p>
             <h2><EM style="color: red;">最后的祝福</EM><br><span style="font-size: 18px;color: red;text-indent: 2em;">
                     新的一年，祝你眼里有星河，成就有篇章，生活无忧，万事胜意!</span>
             </h2>
@@ -113,7 +152,6 @@
                 :data="data.top20Data" empty-text="正在加载..." class="eldtable"
                 :header-cell-style="{ color: '#ff0000', fontSize: '13px', whitespace: 'normal !important' }"
                 :cell-style="{}">
-                <!-- <el-table-column width="50" prop="top" label="序号"></el-table-column> -->
                 <el-table-column prop="top" width="55" label="TOP">
                     <template #default="scope">
                         <el-tag style="font-size: 13px;padding: 3px;" type="success" size="large" effect="plain" round>
@@ -135,7 +173,9 @@
             <div style="margin-left: 1%;">
                 <h1>2025年度TOP20烂梗评选规则介绍</h1>
                 <b>欢迎参加2025年度TOP20烂梗评选活动！以下是本次评选的详细规则和流程，请仔细阅读以确保您的参与顺利进行。</b>
-                <h3><li>本活动所有用户均可参与</li></h3>
+                <h3>
+                    <li>本活动所有用户均可参与</li>
+                </h3>
                 <h2>评选阶段</h2>
                 <ol>
                     <li><strong>提名阶段（12月1日 - 12月11日）</strong>：用户可以从2025年发布的烂梗中提名自己喜欢的烂梗，每人有10次提名机会。</li>
@@ -152,7 +192,7 @@
                             <li>终选阶段：6次投票机会</li>
                         </ul>
                     </li>
-                    <li>终选阶段还需为所投烂梗选择一个奖项，奖项包括但不限于“年度最具发展力奖”、“年度最幽默奖”、“年度最具影响力奖”、“年度最具公式奖”、“年度最具串子奖”、“年度最具哲学奖”等。</li>
+                    <li>终选阶段还需为所投烂梗选择一个奖项，奖项包括但不限于"年度最具发展力奖"、"年度最幽默奖"、"年度最具影响力奖"、"年度最具公式奖"、"年度最具串子奖"、"年度最具哲学奖"等。</li>
                 </ul>
                 <h2>提名筛选规则</h2>
                 <ol>
@@ -171,14 +211,14 @@
             <br>
             <el-radio-group v-if="stage === 3" ref="ref2" v-model="awards" size="large">
                 <!-- 1不显示 0显示 -->
-                <el-radio class="elr" :disabled="annualMostPromisingDevelopmentPotential" border
-                    value="2025-1" label="年度最具发展力奖🏆"></el-radio>
+                <el-radio class="elr" :disabled="annualMostPromisingDevelopmentPotential" border value="2025-1"
+                    label="年度最具发展力奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostOutstandingStringOfYear" border
                     value="2025-2" label="年度最具串子奖🏆"></el-radio>
-                <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostInfluential" border
-                    value="2025-3" label="年度最具影响力🏆"></el-radio>
-                <el-radio class="elr" style="margin-top: 10px;" :disabled="theFunniestOfYear" border
-                    value="2025-4" label="年度最幽默奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostInfluential" border value="2025-3"
+                    label="年度最具影响力奖🏆"></el-radio>
+                <el-radio class="elr" style="margin-top: 10px;" :disabled="theFunniestOfYear" border value="2025-4"
+                    label="年度最幽默奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="theMostPowerfulFormulaOfYear" border
                     value="2025-5" label="年度最具公式奖🏆"></el-radio>
                 <el-radio class="elr" style="margin-top: 10px;" :disabled="annualMostPhilosophicalAward" border
@@ -199,8 +239,7 @@
 import httpInstance from "@/apis/httpInstance";
 import { Search } from '@element-plus/icons-vue';
 import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
-import { onMounted } from "vue";
-import { computed, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from "vue";
 
 const isTableVisible = ref(false);
 const isQuery = ref(false);
@@ -315,6 +354,8 @@ const loading = ref(true)
 const data = reactive({
     tableData: [],
     top20Data: [],
+    top20List: [],
+    awardsList: [],
     total: 0,
     pageSize: 10,
     currentPage: 1,
@@ -482,11 +523,11 @@ const pickHot = () => {
             }
         }
         if (res.code == 200) {
-           ElNotification({
-            title: '提名成功',
-            message: '提名成功',
-            type: 'warning',
-        });
+            ElNotification({
+                title: '提名成功',
+                message: '提名成功',
+                type: 'warning',
+            });
         }
     })
 }
@@ -527,17 +568,37 @@ const load = (pageNum: number | MouseEvent = 1) => {
     isHot.value = true;
     isQuery.value = false;  // 设置为提名榜状态
     loading.value = true;
-    httpInstance.get('/machine/hotTop20/loadTop20', {
-        params: {
-            pageNum: page,
-            pageSize: data.pageSize,
-        }
-    }).then(res => {
-        data.total = res.data?.total || 0;
-        data.tableData = res.data?.list || [];
-        data.currentPage = page;
-        loading.value = false;
-    });
+    if (stage === 4) {
+        // 第四阶段加载最终结果
+        httpInstance.get('/machine/hotTop20/loadTop20', {
+            params: {
+                pageNum: page,
+                pageSize: data.pageSize,
+            }
+        }).then(res => {
+            const top20List = res.data?.Top20List || [];
+            const awardsList = res.data?.AwardsList || [];
+            // 为 Top20List 添加排名
+            data.top20List = top20List.map((item: any, index: number) => ({
+                ...item,
+                top: index + 1
+            }));
+            data.awardsList = awardsList;
+            loading.value = false;
+        });
+    } else {
+        httpInstance.get('/machine/hotTop20/loadTop20', {
+            params: {
+                pageNum: page,
+                pageSize: data.pageSize,
+            }
+        }).then(res => {
+            data.total = res.data?.total || 0;
+            data.tableData = res.data?.list || [];
+            data.currentPage = page;
+            loading.value = false;
+        });
+    }
     httpInstance.get('/machine/hotTop20/pickSum').then(res => {
         pickSum.value = res.data;
     });
@@ -546,6 +607,10 @@ onMounted(() => {
     httpInstance.get('/machine/hotTop20/pickSum').then(res => {
         pickSum.value = res.data;
     });
+    // 第四阶段自动加载数据
+    if (stage === 4) {
+        load(1);
+    }
 });
 const loadTop20 = (pageNum: number | MouseEvent = 1) => {
     // 确保pageNum是数字类型
@@ -595,13 +660,21 @@ const handleOpen = () => {
             load(data.currentPage)
         }
         isTableVisible.value = !isTableVisible.value;
+    } else if (stage === 4) {
+        isTableVisible.value = !isTableVisible.value;
+        if (!data.top20List.length && !data.awardsList.length) {
+            load(1);
+        }
     }
 }
 
-// 处理表格行点击 - 阶段1从搜索数据提名，阶段2和3从top20数据提名
+// 处理表格行点击 - 阶段1从搜索数据提名，阶段2和3从top20数据提名，阶段4复制文本
 const handleRowClick = (row: any, event?: MouseEvent) => {
-    if (stage === 3) {
-        // 阶段1、2、3点击行打开提名对话框
+    if (stage === 4) {
+        // 第四阶段点击行复制文本
+        copyText(row, event);
+    } else if (stage === 3) {
+        // 阶段3点击行打开提名对话框
         open(row);
     } else {
         // 其他情况点击行复制文本
@@ -609,9 +682,12 @@ const handleRowClick = (row: any, event?: MouseEvent) => {
     }
 }
 
-// 处理Top20表格行点击 - 阶段2和3从top20数据提名
+// 处理Top20表格行点击 - 阶段2和3从top20数据提名，阶段4复制文本
 const handleTop20RowClick = (row: any, event?: MouseEvent) => {
-    if (stage === 2 || stage === 3) {
+    if (stage === 4) {
+        // 第四阶段点击行复制文本
+        copyText(row, event);
+    } else if (stage === 2 || stage === 3) {
         // 阶段2和3点击行打开提名对话框
         open(row);
     } else {
@@ -724,6 +800,61 @@ const handlePageChange = (page: number) => {
     cursor: pointer;
     max-width: 780px;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.stage4-content {
+    margin: 20px 0;
+    max-height: 60vh;  /* 设置最大高度为视口高度的60% */
+    overflow-y: auto;  /* 启用垂直滚动条 */
+    padding-right: 10px;  /* 预留滚动条空间，防止内容被遮挡 */
+}
+
+.top20-list {
+    margin: 20px 0;
+}
+
+.top-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.top-number {
+    width: 80px;
+    font-weight: bold;
+    font-size: 16px;
+    color: #409EFF;
+}
+
+.barrage-content {
+    flex: 1;
+    padding-left: 15px;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.awards-list {
+    margin: 20px 0;
+}
+
+.award-item {
+    padding: 12px;
+    margin-bottom: 10px;
+    border: 1px solid #ebeef5;
+    border-radius: 4px;
+    background-color: #fafafa;
+}
+
+.award-name {
+    font-weight: bold;
+    color: #e6a23c;
+    margin-bottom: 5px;
+}
+
+.award-barrage {
+    font-size: 15px;
+    line-height: 1.5;
 }
 
 @media(min-width:601px) {

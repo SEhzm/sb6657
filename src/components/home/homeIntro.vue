@@ -9,7 +9,7 @@
         </p>
         <p class="sub-info">
             <b>
-                油猴插件
+                油猴插件(已支持斗鱼新UI)
                 <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击下载</a>
                 可在斗鱼直播间一键发送烂梗
             </b>
