@@ -69,7 +69,7 @@
                     :cell-style="{}" @row-click="handleRowClick">
                     <el-table-column prop="awards" label="奖项" align="center">
                         <template #default="scope">
-                            <el-tag style="font-size: 13px;padding: 3px;" type="success" size="large" effect="plain"
+                            <el-tag style="font-size: 11px;padding: 3px;" type="success" size="large" effect="plain"
                                 round>
                                 🏆{{ scope.row.awards }}
                             </el-tag>
