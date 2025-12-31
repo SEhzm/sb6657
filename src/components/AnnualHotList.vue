@@ -248,12 +248,19 @@ const pickRule = ref(false);
 const pickSum = ref(0);
 const stage = (() => {
     const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth() + 1;
     const day = now.getDate();
-    // 12 月份的判断逻辑
-    if (day >= 1 && day <= 11) return 1;
-    if (day >= 12 && day <= 21) return 2;
-    if (day >= 22 && day <= 31) return 3;
-    return 4; // 默认最终 4 展示奖项
+
+    if (year === 2025 && month === 12) {
+        if (day >= 1 && day <= 11) return 1;
+        if (day >= 12 && day <= 21) return 2;
+        if (day >= 22 && day <= 31) return 3;
+    }
+    if (year === 2026) {
+        return 4;
+    }
+    return 4;
 })();
 const open1 = ref(false)
 const top20 = ref(false)
