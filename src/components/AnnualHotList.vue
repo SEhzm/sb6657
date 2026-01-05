@@ -6,10 +6,9 @@
                         style="color: blue;">规则></a>
                     <br>
                     <span v-if="stage !== 4" class="pickSum">总提名数：{{ pickSum }}</span>
-                    <!-- <el-button link ><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%80%E8%BD%AEtop20%E6%8F%90%E5%90%8D%E7%BB%93%E6%9E%9C.xlsx">下载第一轮数据</a></el-button> -->
-                    <!-- <el-button link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%BA%8C%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第二轮</a></el-button> -->
-                    <!-- <el-button link><a href="https://cdn.dgq63136.icu/%E7%AC%AC%E4%B8%89%E8%BD%AEtop20%E6%8A%95%E7%A5%A8%E7%BB%93%E6%9E%9C.xlsx">下载第三轮</a></el-button> -->
-                    <!-- <el-button @click="openTall" link>作者有话说</el-button> -->
+                    <el-button v-if="stage === 4" link ><a href="https://cdn.hguofichp.cn/sb6657.cn2025TOP20%E7%AC%AC%E4%B8%80%E9%98%B6%E6%AE%B5%E8%AF%84%E9%80%89%E7%BB%93%E6%9E%9C.xlsx">下载第一阶段数据</a></el-button>
+                    <el-button v-if="stage === 4" link><a href="https://cdn.hguofichp.cn/sb6657.cn2025TOP20%E7%AC%AC%E4%BA%8C%E9%98%B6%E6%AE%B5%E8%AF%84%E9%80%89%E7%BB%93%E6%9E%9C.xlsx">下载第二阶段</a></el-button>
+                    <el-button v-if="stage === 4" link><a href="https://cdn.hguofichp.cn/sb6657.cn2025TOP20%E7%AC%AC%E4%B8%89%E9%98%B6%E6%AE%B5%E8%AF%84%E9%80%89%E7%BB%93%E6%9E%9C.xlsx">下载第三阶段</a></el-button>
                 </p>
 
                 <el-steps :active=stage-1 finish-status="success">
@@ -128,24 +127,6 @@
                     :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
-        <el-dialog v-model="tall" title="作者有话说" class="tall">
-            <h2>衷心祝大家2026年身体健康，万事如意，天天开心，平平安安。</h2>
-            <p style="text-indent: 2em;">
-                随着弹幕文化的不断发展，今年的弹幕评选活动涌现了大量优质、幽默、有深度的作品，充分展现了观众的创意与热情。经过广泛的筛选和严格的数据统计，我们最终评选出了各大奖项的获奖弹幕，每条弹幕都从内容、影响力、互动性和娱乐性等多个维度脱颖而出。
-            </p>
-            <p style="text-indent: 2em;">每个奖项仅选出一条作为获奖烂梗。如有同一条弹幕获得多个奖项，则顺延评选，保证公平与独立性。其余TOP烂梗评选
-                <b><u>按照票数参与计算</u></b>，最终评出20条优质、幽默、有深度的烂梗于网站公布。其余数据大家可按需下载浏览。
-            </p>
-            <h3>特别鸣谢<br></h3>
-            <p style="text-indent: 2em;"> 感谢所有参与烂梗互动和评选的用户，让这场年度评选得以圆满举办。</p>
-
-            <h3>完整获奖名单<br></h3>
-            <p style="text-indent: 2em;">请访问我们的官网查看完整榜单，参与讨论并分享属于你的"烂梗之最"!</p>
-            <h2><EM style="color: red;">最后的祝福</EM><br><span style="font-size: 18px;color: red;text-indent: 2em;">
-                    新的一年，祝你眼里有星河，成就有篇章，生活无忧，万事胜意!</span>
-            </h2>
-
-        </el-dialog>
 
         <el-dialog v-show="stage === 3" v-model="top20" draggable title="Top20榜单" class="tall">
             <el-table v-if="isTableVisible" v-loading="loading" @row-click="handleTop20RowClick" stripe
