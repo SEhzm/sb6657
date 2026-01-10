@@ -10,7 +10,7 @@ const httpInstance = axios.create({
     // baseURL: "http://127.0.0.1:10086",
     timeout: 60000, // 默认超时时间
 });
-export const sbVersion = '25.12.28';
+export const sbVersion = '26.01.11';
 
 interface req<T> {
     url: string;
@@ -303,7 +303,6 @@ httpInstance.interceptors.response.use(
                             });
                         });
                     }
-                    break;
                 default:
                     if (message === 'Network Error') {
                         message = '接口连接异常';

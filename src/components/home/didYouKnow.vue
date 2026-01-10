@@ -10,6 +10,9 @@
                 哪只队伍捕虾最专业? 谁是最佳捕虾人? 又是谁在捕虾过程中惨遭反夹?
                 <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
             </li>
+            <li>
+                一年一度的sb6657野榜top20烂梗在这里<RouterLink to="/memeTop20">- 年度TOP20烂梗</RouterLink>
+            </li>
             <el-divider />
             <li class="latest-meme">
                 <div class="line-top">
