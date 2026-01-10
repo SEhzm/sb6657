@@ -1,8 +1,8 @@
 <template>
-  <el-popover placement="left" title="" :width="200" trigger="hover" :visible="!!diaochaSetTime"
+  <el-popover placement="left" title="" :width="200" trigger="hover" :visible="qqGroupHintVisible"
     content="官方交流群🐧:1070269456">
     <template #reference>
-      <el-button id="diaocha" plain @mouseover="diaochaSetTime = 1000"
+      <el-button id="diaocha" plain @mouseenter="qqGroupHintVisible = true" @mouseleave="qqGroupHintVisible = false"
         @click="dialogVisible = 'true'">官方交流群🐧</el-button>
     </template>
   </el-popover>
@@ -30,14 +30,6 @@
     </el-button>
   </div>
   <!-- el-dialog 的bug，不知道为啥直接在template里放el-dialog它的class就不生效，需要在外面套一层div -->
-  <div>
-    <el-dialog v-model="major202511Visible" :draggable="true" title="sb6657.cnのMajor竞猜开始啦~" class="major202511-dialog">
-        <span>sb6657.cnのMajor竞猜开始啦~(非bet)</span>
-        <p>各阶段预测时间详见赛事竞猜页面</p>
-        <p class="go-match-link" @click="goToMatchPrediction">点击前往赛事竞猜页面</p>
-        <p class="close-hint">（点击其他区域可以关闭弹窗）</p>
-    </el-dialog>
-    </div>
   <div v-if="route.path === '/home'"
     class="draggable annual-hot-list-draggable"
     :style="{ left: `${annualX}vw`, top: `${annualY}px` }"
@@ -55,15 +47,10 @@
 </template>
 
 <script setup>
-import { ElNotification } from 'element-plus'
-import { h } from 'vue'
-import ChatRoom from '@/components/ChatRoom.vue';
 import AnnualHotList from '@/components/AnnualHotList.vue';
-import { onMounted, ref, onBeforeUnmount } from 'vue';
+import ChatRoom from '@/components/ChatRoom.vue';
+import { onBeforeUnmount, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
-import { useRouter } from 'vue-router'
-import httpInstance from '@/apis/httpInstance';
-const major202511Visible = ref(true);
 // 用于存储元素X和Y位置的响应性引用
 const chatX = ref(85);
 const chatY = ref(110);
@@ -75,60 +62,11 @@ const dialogVisible = ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
-const diaochaSetTime = ref(true)
+const qqGroupHintVisible = ref(true)
 const route = useRoute();
-const router = useRouter()
-const tips = () => {
-  ElNotification({
-    title: '2025年度TOP20烂梗评选第二阶段开始啦',
-    message: h('span', {}, [
-      '请从',
-      h(
-        'a',
-        {
-          style: {
-            color: '#409eff',
-            cursor: 'pointer',
-            textDecoration: 'underline',
-          },
-          onClick: () => {
-            router.push('/home')
-          }
-        },
-        '首页'
-      ),
-      '进行评选，快来提名你心中的烂梗吧！'
-    ]),
-    position: 'bottom-right',
-    duration: 4000,
-  })
-}
-onMounted(() => {
-  // 初始化计数器逻辑
-  tips();
-  let counter = localStorage.getItem('major202511Visible');
-  if (!counter) {
-    // 首次设置为6
-    counter = 6;
-  } else {
-    // 毎次进入-1
-    counter = parseInt(counter) - 1;
-  }
-  // 当为0时，设置major202511Visible=false
-  if (counter <= 0) {
-    major202511Visible.value = false;
-  }
-  localStorage.setItem('major202511Visible', counter.toString());
-})
 
 setTimeout(() => {
-  diaochaSetTime.value = false
-  // if(localStorage.getItem('diaochawenjuan')>0){
-  //   setTimeout(() => {
-  //     localStorage.setItem('diaochawenjuan',localStorage.getItem('diaochawenjuan')-1)
-  //     document.getElementById('diaocha').click();
-  //   },30 * 1000);
-  // }
+  qqGroupHintVisible.value = false
 }, 1000)
 
 // 开始拖动的函数
@@ -258,11 +196,6 @@ const closeChat = () => {
 const closeHot = () => {
   isHotVisible.value = false;
 };
-
-const goToMatchPrediction = () => {
-  major202511Visible.value = false;
-  router.push({ name: 'matchPrediction' });
-};
 </script>
 
 <style scoped>
@@ -371,27 +304,6 @@ const goToMatchPrediction = () => {
   z-index: 1000;
 }
 
-:deep(.major202511-dialog) {
-  width: 96%;
-  max-width: 610px;
-}
-
-.go-match-link {
-  color: #3fa7ff;
-  cursor: pointer;
-  text-decoration: underline;
-  margin-top: 8px;
-}
-.go-match-link:hover {
-  color: #1d7bd6;
-}
-
-.close-hint {
-  color: #909399;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
 @media (max-width: 600px) {
   .draggable {
     margin-top: 50px;
@@ -421,10 +333,6 @@ const goToMatchPrediction = () => {
     font-size: 11px;
     z-index: 1000;
     padding: 8px 10px;
-  }
-
-  :deep(.major202511-dialog) {
-    width: 96%;
   }
 }
 </style>
