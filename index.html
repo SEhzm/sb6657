@@ -88,19 +88,24 @@
 
 <body>
     <div id="global-loading">
-        <img alt="加载图" class="loading-img">
+        <div id="loading-img-container"></div>
         <div class="loading-text">加载中<span class="dots"></span></div>
     </div>
-    <div id="app"></div>
     <script>
-        const loadingImgDOM = document.querySelector('.loading-img');
-        const loading = ['/wan0.png', '/niko1.gif', '/niko2.gif'];
-        const randomImg = loading[Math.floor(Math.random() * 3)];
-        loadingImgDOM.src = randomImg;
-        if (randomImg === '/wan0.png') {
-            loadingImgDOM.classList.add('loading-spin');
-        }
+        (function () {
+            const loadingImg = [
+                { img: 'wjq0.png', spin: true },
+                { img: 'wjq1.gif', spin: false },
+                { img: 'wjq2.gif', spin: false },
+                { img: 'niko1.gif', spin: false },
+                { img: 'niko2.gif', spin: false },
+            ];
+            const randomImg = loadingImg[Math.floor(Math.random() * loadingImg.length)];
+            const imgHtml = `<img src="/${randomImg.img}" class="loading-img ${randomImg.spin ? 'loading-spin' : ''}" alt="加载图">`;
+            document.getElementById('loading-img-container').innerHTML = imgHtml;
+        })();
     </script>
+    <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
 </body>
 
