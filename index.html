@@ -93,15 +93,16 @@
     </div>
     <script>
         (function () {
+            const ossUrl = 'https://sb6657oss.wishao.fun/load-img/';
             const loadingImg = [
-                { img: 'wjq0.png', spin: true },
-                { img: 'wjq1.gif', spin: false },
-                { img: 'wjq2.gif', spin: false },
-                { img: 'niko1.gif', spin: false },
-                { img: 'niko2.gif', spin: false },
+                { img: `${ossUrl}wjq0.png`, spin: true },
+                { img: `${ossUrl}wjq1.gif`, spin: false },
+                { img: `${ossUrl}wjq2.gif`, spin: false },
+                { img: `${ossUrl}niko1.gif`, spin: false },
+                { img: `${ossUrl}niko2.gif`, spin: false },
             ];
             const randomImg = loadingImg[Math.floor(Math.random() * loadingImg.length)];
-            const imgHtml = `<img src="/${randomImg.img}" class="loading-img ${randomImg.spin ? 'loading-spin' : ''}" alt="加载图">`;
+            const imgHtml = `<img src="${randomImg.img}" class="loading-img ${randomImg.spin ? 'loading-spin' : ''}" alt="loading">`;
             document.getElementById('loading-img-container').innerHTML = imgHtml;
         })();
     </script>
