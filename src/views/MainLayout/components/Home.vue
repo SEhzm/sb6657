@@ -3,7 +3,7 @@
         <div class="boom">
             <img src="https://sb6657oss.wishao.fun/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
-            <AnnualHotList class="AnnualHotList"></AnnualHotList>
+            <!-- <AnnualHotList class="AnnualHotList"></AnnualHotList> -->
         <div class="cards-container">
             <div class="card first-card">
                 <HomeIntro />
