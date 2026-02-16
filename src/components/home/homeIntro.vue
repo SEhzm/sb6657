@@ -7,6 +7,7 @@
             </span>
             尽情欣赏你们的烂梗吧。
         </p>
+        <h2 style="color: red;">sb6657专属支付宝拼手气红包口令：sb6657cn加油 </h2>
         <p class="sub-info">
             <b>
                 油猴插件(已支持斗鱼新UI)
