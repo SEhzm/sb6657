@@ -5,7 +5,7 @@
             <div>
                 <a href="https://ipw.cn/ipv6webcheck/?site=sb6657.cn" title="" target='_blank' style="color: black;">
                     <img style='display:inline-block;vertical-align:middle;width: 150px;' alt="" src="https://static.ipw.cn/icon/ipv6-s5.svg"></a>
-                本站已运行{{ daysSinceLaunch }}天 
+                本站已运行{{ daysSinceLaunch }}天
             </div>
         </div>
     </div>
@@ -15,7 +15,7 @@
 import { ref, computed } from 'vue';
 
 const serverDate = ref(0);
-const txServerDate = new Date('2026-02-16'); // 服务器到期日期
+const txServerDate = new Date('2027-02-12'); // 服务器到期日期
 const currentDate = new Date();
 serverDate.value = Math.ceil((txServerDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
 
@@ -38,7 +38,7 @@ const daysSinceLaunch = computed(() => {
     justify-content: center;
     align-items: center;
     box-sizing: border-box;
-    
+
     .content {
         display: flex;
         flex-direction: column;
