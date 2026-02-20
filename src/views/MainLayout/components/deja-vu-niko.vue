@@ -29,6 +29,7 @@
                         <a style="text-decoration: underline" href="https://www.bilibili.com/opus/1123112580507762704">b站动态</a>
                         😭）
                     </p>
+                    <h3>2026.2.20 本站验证暂未恢复更新，催更请联系原作者🙏</h3>
                 </div>
             </div>
         </section>
@@ -133,7 +134,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onUnmounted } from 'vue';
+import { onUnmounted, ref } from 'vue';
 const dialogVisible = ref(false);
 const dialogTitle = ref('');
 const dialogText = ref('');
@@ -294,6 +295,7 @@ onUnmounted(() => {
         }
     }
 }
+
 // 简报样式
 .briefing {
     background-color: #ffffcc;
@@ -546,10 +548,12 @@ onUnmounted(() => {
     .el-dialog__header {
         font-weight: bold;
     }
+
     .el-dialog__body {
         padding: 15px;
     }
 }
+
 .pause-notice {
     background: linear-gradient(90deg, #fff4e6 0%, #ffe9e6 100%);
     border: 1px solid #ffb48a;
