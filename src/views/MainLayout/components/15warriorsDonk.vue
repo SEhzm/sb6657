@@ -5,7 +5,12 @@
                 布雷德十五勇士榜
                 <span class="version">3.0</span>
             </h1>
-            <div class="rules-brief">计算规则：2025年累计对位KD差 | AWPER不录入 | 仅供娱乐</div>
+            <div class="year-select-container">
+                <el-select v-model="currentYear" placeholder="选择年份" class="year-select" size="small">
+                    <el-option v-for="opt in yearOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
+                </el-select>
+            </div>
+            <div class="rules-brief">计算规则：{{ currentYear }}年累计对位KD差 | AWPER不录入 | 仅供娱乐</div>
             <div class="more-info">
                 <div class="match-info">
                     <h3 class="match-title">{{ reportData.match.title }}</h3>
@@ -26,10 +31,10 @@
                 </div>
             </div>
         </header>
-        <section class="updates-section">
+        <section class="updates-section" v-if="reportData.updates && reportData.updates.length">
             <span class="section-title">比赛更新</span>
             <span class="description">- 本场对位donk数据变化</span>
-            <div class="updates-table-wrapper" v-if="reportData.updates && reportData.updates.length">
+            <div class="updates-table-wrapper">
                 <table class="updates-table">
                     <thead>
                         <tr>
@@ -72,7 +77,7 @@
 
         <main class="main-content">
             <section class="ranking-section">
-                <h2>布雷德十五勇士</h2>
+                <h2>布雷德十五勇士<span class="description" v-if="reportData.rankings.warriors.length < 15 && !reportData.loading">(目前不足15位😱)</span></h2>
                 <p class="description">理论上可以在任何位置轻松击杀donk的选手们</p>
                 <div class="table-wrapper">
                     <table>
@@ -138,7 +143,18 @@
 </template>
 
 <script setup lang="ts">
-import { onUnmounted, ref } from 'vue';
+import { onUnmounted, ref, watch } from 'vue';
+
+interface YearConfig {
+    label: string;
+    value: number;
+    json: string;
+}
+const currentYear = ref<number>(2026);
+const yearOptions = ref<YearConfig[]>([
+    { label: '2026-现在', value: 2026, json: '15warriorsDonk_2026.json' },
+    { label: '2025', value: 2025, json: '15warriorsDonk_2025.json' },
+]);
 
 type KDDetail = { before: number; added: number; after: number };
 type UpdateRow = { player: string; team: string; kill: KDDetail; death: KDDetail; maps: number };
@@ -147,6 +163,7 @@ interface ReportData {
     match: { title: string; date: string };
     updates: UpdateRow[];
     rankings: { warriors: RankItem[]; victims: RankItem[] };
+    loading?: boolean;
 }
 
 const reportData = ref<ReportData>({
@@ -164,13 +181,14 @@ const reportData = ref<ReportData>({
         warriors: [],
         victims: [],
     },
+    loading: true,
 });
 
-const ossUrl = 'https://sb6657oss.wishao.fun/15warriorsDonk.json';
+const ossUrl = 'https://sb6657oss.wishao.fun';
 const abortController = new AbortController();
-async function loadReportData() {
+async function loadReportData(fileName: string) {
     try {
-        const res = await fetch(ossUrl, { signal: abortController.signal });
+        const res = await fetch(`${ossUrl}/${fileName}`, { signal: abortController.signal });
         const data: ReportData = await res.json();
         reportData.value = data;
     } catch (err) {
@@ -178,9 +196,12 @@ async function loadReportData() {
         reportData.value.match.title = '15勇士战报加载失败，请稍后重试。。。';
     }
 }
-loadReportData();
+loadReportData(yearOptions.value.find((opt) => opt.value === 2026)?.json || '15warriorsDonk_2025.json');
 onUnmounted(() => {
     abortController.abort();
+});
+watch(currentYear, (newYear) => {
+    loadReportData(yearOptions.value.find((opt) => opt.value === newYear)?.json || '15warriorsDonk_2025.json');
 });
 </script>
 
@@ -195,18 +216,24 @@ onUnmounted(() => {
     margin-bottom: 40px;
 
     .header {
-        margin-bottom: 1rem;
-
+        margin-bottom: 0.5rem;
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 1rem;
             text-align: center;
 
             .version {
                 font-size: 1.2rem;
                 font-weight: 800;
                 color: #666;
+            }
+        }
+        .year-select-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .year-select {
+                width: 120px;
             }
         }
 
@@ -397,7 +424,7 @@ onUnmounted(() => {
     background-color: transparent;
     padding: 0.1rem 0.4rem;
     border-left: 4px solid #333;
-    margin: 0.5rem 0 1rem 0;
+    margin-bottom: 1rem;
 
     .section-title {
         font-size: 1.2rem;
