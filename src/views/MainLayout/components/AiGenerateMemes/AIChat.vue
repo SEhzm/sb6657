@@ -2,7 +2,7 @@
   <div class="chatgpt-container">
     <div class="chat-window" ref="chatWindow">
       <div class="ai-welcome-message">
-        AI造梗助手Demo（32B模型，算力一般）<span style="font-size: small;">每天50次<span
+        AI造梗助手Demo（235B-a22b大参数模型）<span style="font-size: small;">每天50次<span
             style="font-size: smaller;">(成本不低..)</span></span><b>等待两分钟卡了可以刷新</b>
         <button class="refresh-button" @click="refreshComponent">
           刷新
