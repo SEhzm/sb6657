@@ -56,7 +56,7 @@ export interface searchMemeElement {
 export interface searchMeme_res {
     total: number;
     list: searchMemeElement[];
-    isLastPage: true;
+    isLastPage: boolean;
 }
 
 export interface getMemeList_meme {
