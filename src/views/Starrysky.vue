@@ -1,5 +1,5 @@
 <template>
-  <el-popover placement="left" title="" :width="400" trigger="hover" :visible="qqGroupHintVisible"
+  <el-popover placement="left" title="" :width="300" trigger="hover" :visible="qqGroupHintVisible"
     content="官方交流群🐧:1070269456、812757907">
     <template #reference>
       <el-button id="diaocha" plain @mouseenter="qqGroupHintVisible = true" @mouseleave="qqGroupHintVisible = false"
@@ -7,7 +7,7 @@
     </template>
   </el-popover>
   <el-dialog v-model="dialogVisible" :draggable="true" title="官方交流🐧" width="410px">
-    <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 400px">
+    <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px">
   </el-dialog>
   <div id="bg">
     <div class="body" id="bodyId">
