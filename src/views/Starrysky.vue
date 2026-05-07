@@ -1,6 +1,6 @@
 <template>
   <el-popover placement="left" title="" :width="300" trigger="hover" :visible="qqGroupHintVisible"
-    content="官方交流群🐧:1070269456、812757907">
+    content="官方交流群🐧:1070269456、526042235">
     <template #reference>
       <el-button id="diaocha" plain @mouseenter="qqGroupHintVisible = true" @mouseleave="qqGroupHintVisible = false"
         @click="dialogVisible = 'true'">官方交流群🐧</el-button>
