@@ -118,11 +118,13 @@
         <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth">
             <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
         </el-dialog>
-        
+
         <!-- 首页广告信息弹出框 -->
         <el-dialog v-model="adInfoDialog" title="甲方要求150人注册。 ありがとう米娜桑" :width="lightWidth">
-            <p>感谢甲方爸爸继续支持我们，各位爹注册一下吧，祝你们长生不老永远不死。</p>
-            <img src="https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg" alt="广告图片" style="width: 100%; margin-top: 10px;" />
+            <a href="https://yousheng186.com/activity/login/1?promotionCode=6657" target="_blank">
+                <p>感谢甲方爸爸继续支持我们，各位爹注册一下吧，凑凑人头吧，祝你们长生不老永远不死。</p>
+                <img src="https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg" alt="广告图片" style="width: 100%; margin-top: 10px;" />
+            </a>
         </el-dialog>
     </div>
 </template>
@@ -251,7 +253,7 @@ onMounted(() => {
             supportMeDialog.value = true;
         }, 15 * 60 * 1000); // 15min
     }, 15 * 60 * 1000); // 15min  15 * 60 * 1000
-    
+
     //第一次在10min后弹出广告信息对话框
     setTimeout(() => {
         adInfoDialog.value = true;
@@ -260,7 +262,7 @@ onMounted(() => {
             adInfoDialog.value = true;
         }, 20 * 60 * 1000); // 20min
     }, 10 * 60 * 1000); // 10min
-    
+
     setTimeout(() => {
         supportVisible.value = false;
         shangwuVisible.value = true;

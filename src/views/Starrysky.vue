@@ -6,6 +6,20 @@
         @click="dialogVisible = 'true'">官方交流群🐧</el-button>
     </template>
   </el-popover>
+  <el-popover placement="left" title="" :width="300" trigger="hover" :visible="qqGroupHintVisible"
+    content="为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇">
+    <template #reference>
+      <el-button id="ad" plain @mouseenter="qqGroupHintVisible = true" @mouseleave="qqGroupHintVisible = false"
+        @click="adImageDialogVisible = true">金主要求注册150人</el-button>
+    </template>
+  </el-popover>
+  <!-- 广告图片弹窗 -->
+  <el-dialog v-model="adImageDialogVisible" :draggable="true" title="甲方要求150人注册。ありがとう米娜桑" width="410px">
+    <a href="https://yousheng186.com/activity/login/1?promotionCode=6657" target="_blank">
+      <img src="https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg" alt="广告图片" style="width: 100%; cursor: pointer;">
+    </a>
+    <p style="text-align: center; margin-top: 10px; color: #666;">感谢甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇</p>
+  </el-dialog>
   <el-dialog v-model="dialogVisible" :draggable="true" title="官方交流🐧" width="410px">
     <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px">
   </el-dialog>
@@ -59,6 +73,7 @@ const annualY = ref(110);
 const isChatVisible = ref(true);
 const isHotVisible = ref(true);
 const dialogVisible = ref(false)
+const adImageDialogVisible = ref(false)
 // 是否正在拖动的标志
 const isDragging = ref(false);
 let currentDraggingComponent = null;
@@ -303,6 +318,17 @@ const closeHot = () => {
   width: 30px;
   z-index: 1000;
 }
+#ad {
+  position: fixed;
+  top: 75%;
+  right: 0;
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+  white-space: nowrap;
+  height: 150px;
+  width: 30px;
+  z-index: 1000;
+}
 
 @media (max-width: 600px) {
   .draggable {
@@ -329,6 +355,19 @@ const closeHot = () => {
     text-orientation: upright;
     white-space: nowrap;
     height: 100px;
+    width: 13px;
+    font-size: 11px;
+    z-index: 1000;
+    padding: 8px 10px;
+  }
+  #ad {
+    position: fixed;
+    top: 85%;
+    right: 0;
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    white-space: nowrap;
+    height: 120px;
     width: 13px;
     font-size: 11px;
     z-index: 1000;

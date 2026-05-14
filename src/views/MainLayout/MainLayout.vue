@@ -42,7 +42,7 @@
                 </a>
             </template>
             <div class="popover-content">
-                <p>为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，祝你们长生不老永远不死。🙇<el-button type="primary" size="small" @click="popoverVisible = false">关闭</el-button></p>
+                <p>为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇<el-button type="primary" size="small" @click="popoverVisible = false">关闭</el-button></p>
             </div>
         </el-popover>
     </div>
@@ -57,14 +57,16 @@ import { MemeCategory } from '@/constants/backend';
 import { sbVersion } from '@/apis/httpInstance'
 import { useGuiBinStore } from '@/stores/GuiBinStore';
 import DouyuWebSocket from '@/utils/douyuWebSocket';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { handleDanmu } from '@/utils/douyuWebSocket';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { ElNotification } from 'element-plus';
 import { RouterLink } from 'vue-router'
+import { useIsMobile } from '@/utils/common';
 
 const route = useRoute();
 const router = useRouter();
+const isMobile = useIsMobile();
 
 const guiBinStore = useGuiBinStore();
 const memeTagsStore = useMemeTagsStore();
@@ -72,8 +74,15 @@ memeTagsStore.setMemeTags()
 
 const OniValue = computed(() => guiBinStore.Oni);
 
-// Popover 显示状态 - 默认显示
-const popoverVisible = ref(true);
+// Popover 显示状态 - 默认显示，但移动端为 false
+const popoverVisible = ref(!isMobile.value);
+
+// 监听移动端状态变化
+watch(isMobile, (newVal) => {
+    if (newVal) {
+        popoverVisible.value = false;
+    }
+});
 
 // 关闭 Popover
 const closePopover = () => {
