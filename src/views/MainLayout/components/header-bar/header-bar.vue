@@ -115,8 +115,14 @@
         <!-- 搜索结果框 -->
         <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
         <!-- 支持我弹出框 -->
-        <el-dialog v-model="supportMeDialog" title="谢谢你" :width="lightWidth">
+        <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth">
             <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
+        </el-dialog>
+        
+        <!-- 首页广告信息弹出框 -->
+        <el-dialog v-model="adInfoDialog" title="甲方要求150人注册。 ありがとう米娜桑" :width="lightWidth">
+            <p>感谢甲方爸爸继续支持我们，各位爹注册一下吧，祝你们长生不老永远不死。</p>
+            <img src="https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg" alt="广告图片" style="width: 100%; margin-top: 10px;" />
         </el-dialog>
     </div>
 </template>
@@ -139,6 +145,7 @@ const route = useRoute();
 
 const loadingTips = '我还没有加载完喔~~';
 const supportMeDialog = ref(false);
+const adInfoDialog = ref(false);
 // 24h热门烂梗对话框
 const showHotMeme24h = ref(false);
 const hotMeme24h = ref<Meme[]>([]);
@@ -236,7 +243,7 @@ onMounted(() => {
         fetchMsgNum();
     }, 30 * 60 * 1000); // 30min
 
-    //第一次在15min后弹出
+    //第一次在15min后弹出赞助码对话框
     setTimeout(() => {
         supportMeDialog.value = true;
         // 后续每次在15min后弹出
@@ -244,6 +251,16 @@ onMounted(() => {
             supportMeDialog.value = true;
         }, 15 * 60 * 1000); // 15min
     }, 15 * 60 * 1000); // 15min  15 * 60 * 1000
+    
+    //第一次在10min后弹出广告信息对话框
+    setTimeout(() => {
+        adInfoDialog.value = true;
+        // 后续每次在20min后弹出
+        setInterval(() => {
+            adInfoDialog.value = true;
+        }, 20 * 60 * 1000); // 20min
+    }, 10 * 60 * 1000); // 10min
+    
     setTimeout(() => {
         supportVisible.value = false;
         shangwuVisible.value = true;

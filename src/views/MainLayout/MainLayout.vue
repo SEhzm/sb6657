@@ -33,9 +33,18 @@
     <RouterLink to="/update">
         <span class="version">版本: {{ sbVersion }}</span>
     </RouterLink>
-    <div class="GuangGaoWei">
-        <!-- <img style="width: 220px;height: 200px;" src="https://cdn.hguofichp.cn/%E5%B0%8F%E5%AD%94%E5%B9%BF%E5%91%8A_compressed.png" alt=""> -->
-        <span style="display: flex;font-size:large;color: white;">广告位招租</span>
+   <div class="GuangGaoWei">
+        <el-popover :visible="popoverVisible" placement="top" title="甲方要求150人注册。ありがとう米娜桑" :width="310">
+            <template #reference>
+                <a :href="adLink" target="_blank">
+                    <img :style="adImageStyle" :src="adImage" alt="">
+                    <!-- <span style="display: flex;font-size:large;color: white;">广告位招租</span> -->
+                </a>
+            </template>
+            <div class="popover-content">
+                <p>为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，祝你们长生不老永远不死。🙇<el-button type="primary" size="small" @click="popoverVisible = false">关闭</el-button></p>
+            </div>
+        </el-popover>
     </div>
     <div class="GuiBin">当前直播间贵宾数:{{ OniValue }}</div>
 </template>
@@ -62,6 +71,32 @@ const memeTagsStore = useMemeTagsStore();
 memeTagsStore.setMemeTags()
 
 const OniValue = computed(() => guiBinStore.Oni);
+
+// Popover 显示状态 - 默认显示
+const popoverVisible = ref(true);
+
+// 关闭 Popover
+const closePopover = () => {
+    popoverVisible.value = false;
+};
+
+// 广告位图片和链接根据当前路由动态切换
+const adImage = computed(() => {
+    return route.path === '/' || route.path === '/home'
+        ? 'https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg'
+        : 'https://pic1.imgdb.cn/item/6a05712a57da1d412e138abe.png';
+});
+
+const adLink = computed(() => {
+    return 'https://yousheng186.com/activity/login/1?promotionCode=6657';
+});
+
+// 广告位图片样式根据当前路由动态切换
+const adImageStyle = computed(() => {
+    return route.path === '/' || route.path === '/home'
+        ? 'width: 350px; height: auto;'
+        : 'width: 220px; height: auto;';
+});
 
 const socket = ref();
 onMounted(() => {
@@ -184,7 +219,17 @@ function navigateTo(path: string) {
         position: fixed;
         top: 30%;
         right: 0px;
-        z-index: -1;
+        z-index: 999;
+
+        .popover-content {
+            text-align: center;
+
+            p {
+                margin-bottom: 15px;
+                font-size: 14px;
+                color: #333;
+            }
+        }
     }
 
     .GuiBin {
