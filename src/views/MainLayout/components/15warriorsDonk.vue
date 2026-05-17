@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="container" ref="containerRef">
         <header class="header">
             <h1>
                 布雷德十五勇士榜
@@ -9,6 +9,12 @@
                 <el-select v-model="currentYear" placeholder="选择年份" class="year-select" size="small">
                     <el-option v-for="opt in yearOptions" :key="opt.value" :label="opt.label" :value="opt.value" />
                 </el-select>
+                <button class="download-rank-btn" type="button" @click="downloadRankingImage" :disabled="isDownloading">
+                    <el-icon>
+                        <Download />
+                    </el-icon>
+                    <span>{{ isDownloading ? '下载中...' : '下载榜单' }}</span>
+                </button>
             </div>
             <div class="rules-brief">计算规则：{{ currentYear }}年累计对位KD差 | AWPER不录入 | 仅供娱乐</div>
             <div class="more-info">
@@ -77,7 +83,8 @@
 
         <main class="main-content">
             <section class="ranking-section">
-                <h2>布雷德十五勇士<span class="description" v-if="reportData.rankings.warriors.length < 15 && !reportData.loading">(目前不足15位😱)</span></h2>
+                <h2>布雷德十五勇士<span class="description"
+                        v-if="reportData.rankings.warriors.length < 15 && !reportData.loading">(目前不足15位😱)</span></h2>
                 <p class="description">理论上可以在任何位置轻松击杀donk的选手们</p>
                 <div class="table-wrapper">
                     <table>
@@ -143,6 +150,9 @@
 </template>
 
 <script setup lang="ts">
+import { Download } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
+import html2canvas from 'html2canvas';
 import { onUnmounted, ref, watch } from 'vue';
 
 interface YearConfig {
@@ -183,6 +193,8 @@ const reportData = ref<ReportData>({
     },
     loading: true,
 });
+const containerRef = ref<HTMLElement | null>(null);
+const isDownloading = ref(false);
 
 const ossUrl = 'https://sb6657oss.wishao.fun';
 const abortController = new AbortController();
@@ -203,6 +215,59 @@ onUnmounted(() => {
 watch(currentYear, (newYear) => {
     loadReportData(yearOptions.value.find((opt) => opt.value === newYear)?.json || '15warriorsDonk_2025.json');
 });
+
+const captureScale = 2;
+
+function addSourceBanner(canvas: HTMLCanvasElement) {
+    const bannerHeight = 42 * captureScale;
+    const outputCanvas = document.createElement('canvas');
+    outputCanvas.width = canvas.width;
+    outputCanvas.height = canvas.height + bannerHeight;
+
+    const ctx = outputCanvas.getContext('2d');
+    if (!ctx) return canvas;
+
+    ctx.fillStyle = '#f5f5f7';
+    ctx.fillRect(0, 0, outputCanvas.width, outputCanvas.height);
+    ctx.font = `600 ${13 * captureScale}px -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = '#666';
+    ctx.fillText('sb6657.cn · 数据来源', outputCanvas.width / 2, bannerHeight / 2 + 1 * captureScale);
+    ctx.drawImage(canvas, 0, bannerHeight);
+
+    return outputCanvas;
+}
+
+async function downloadRankingImage() {
+    if (!containerRef.value || isDownloading.value) return;
+
+    try {
+        isDownloading.value = true;
+        const canvas = await html2canvas(containerRef.value, {
+            backgroundColor: '#f5f5f7',
+            scale: captureScale,
+            useCORS: true,
+            allowTaint: false,
+            logging: false,
+            onclone: (documentClone) => {
+                const controls = documentClone.querySelector('.year-select-container') as HTMLElement | null;
+                if (controls) controls.style.display = 'none';
+            },
+        });
+        const outputCanvas = addSourceBanner(canvas);
+        const link = document.createElement('a');
+        link.download = `sb6657.cn_布雷德十五勇士榜_${currentYear.value}.png`;
+        link.href = outputCanvas.toDataURL('image/png');
+        link.click();
+        ElMessage.success('榜单图片已开始下载');
+    } catch (error) {
+        console.error('下载榜单图片失败:', error);
+        ElMessage.error('下载失败，请稍后重试');
+    } finally {
+        isDownloading.value = false;
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -217,6 +282,7 @@ watch(currentYear, (newYear) => {
 
     .header {
         margin-bottom: 0.5rem;
+
         h1 {
             font-size: 2.5rem;
             font-weight: 700;
@@ -228,12 +294,46 @@ watch(currentYear, (newYear) => {
                 color: #666;
             }
         }
-        .year-select-container{
+
+        .year-select-container {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 0.85rem;
+
             .year-select {
                 width: 120px;
+            }
+
+            .download-rank-btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.25rem;
+                padding: 0;
+                border: none;
+                background: transparent;
+                color: #007aff;
+                font-size: 0.9rem;
+                font-weight: 600;
+                line-height: 1;
+                cursor: pointer;
+                transition: color 0.2s ease;
+
+                .el-icon {
+                    font-size: 1rem;
+                }
+
+                &:hover:not(:disabled) {
+                    color: #005ecb;
+                    text-decoration: underline;
+                    text-underline-offset: 3px;
+                }
+
+                &:disabled {
+                    color: #8bbff5;
+                    cursor: not-allowed;
+                    text-decoration: none;
+                }
             }
         }
 
@@ -548,6 +648,10 @@ watch(currentYear, (newYear) => {
         padding: 1rem;
 
         .header {
+            .year-select-container {
+                flex-wrap: wrap;
+            }
+
             h1 {
                 font-size: 1.6rem;
                 line-height: 1.3;
