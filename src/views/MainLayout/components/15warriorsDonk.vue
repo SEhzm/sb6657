@@ -49,7 +49,7 @@
                             <th>Deaths</th>
                             <th class="updates-diff">Δ K/D Diff</th>
                             <th>Team</th>
-                            <th>Maps</th>
+                            <th class="maps">Maps</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -74,7 +74,7 @@
                                 {{ u.kill.added - u.death.added >= 0 ? '+' : '' }}{{ u.kill.added - u.death.added }}
                             </td>
                             <td>{{ u.team }}</td>
-                            <td>{{ u.maps }}</td>
+                            <td class="maps">{{ u.maps }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -152,7 +152,7 @@
 <script setup lang="ts">
 import { Download } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
-import html2canvas from 'html2canvas';
+import { toCanvas } from 'html-to-image';
 import { onUnmounted, ref, watch } from 'vue';
 
 interface YearConfig {
@@ -244,15 +244,27 @@ async function downloadRankingImage() {
 
     try {
         isDownloading.value = true;
-        const canvas = await html2canvas(containerRef.value, {
+        const captureWidth = Math.ceil(containerRef.value.getBoundingClientRect().width);
+        const captureHeight = Math.ceil(containerRef.value.scrollHeight);
+        const canvas = await toCanvas(containerRef.value, {
+            width: captureWidth,
+            height: captureHeight,
             backgroundColor: '#f5f5f7',
-            scale: captureScale,
-            useCORS: true,
-            allowTaint: false,
-            logging: false,
-            onclone: (documentClone) => {
-                const controls = documentClone.querySelector('.year-select-container') as HTMLElement | null;
-                if (controls) controls.style.display = 'none';
+            cacheBust: true,
+            pixelRatio: captureScale,
+            style: {
+                margin: '0',
+                marginLeft: '0',
+                marginRight: '0',
+                maxWidth: 'none',
+                width: `${captureWidth}px`,
+            },
+            fetchRequestInit: {
+                mode: 'cors',
+                cache: 'no-cache',
+            },
+            filter: (node) => {
+                return !node.classList?.contains('year-select-container');
             },
         });
         const outputCanvas = addSourceBanner(canvas);
@@ -560,6 +572,10 @@ async function downloadRankingImage() {
                     &.updates-diff {
                         width: auto;
                     }
+
+                    &.maps {
+                        text-align: center;
+                    }
                 }
             }
 
@@ -620,6 +636,10 @@ async function downloadRankingImage() {
                 &.negative {
                     color: #c62828;
                 }
+            }
+
+            .maps {
+                text-align: center;
             }
         }
     }
