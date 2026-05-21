@@ -1,10 +1,10 @@
 * {
     box-sizing: border-box;
-	margin: 0;
-	padding: 0;
+    margin: 0;
+    padding: 0;
 }
-.el-table .cell{
-    padding: 0 !important; 
+.el-table .cell {
+    padding: 0 !important;
 }
 body {
     margin: 0;
@@ -19,31 +19,33 @@ a {
     background-color: #fff;
     border-radius: 5px;
     padding: 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 .cardTable {
     z-index: 1;
     background-color: #fff;
     border-radius: 5px;
     padding: 0 5px 10px 10px;
-    box-shadow: 0 0 10px rgba(0,0,0,.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .mini-firework {
     overflow: hidden;
     border-radius: 50%;
-    mask-image: radial-gradient(circle at center, 
-        rgba(0,0,0,1) 40%, 
-        rgba(0,0,0,0) 70%
-    );
+    mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
+}
+
+.el-backtop {
+    z-index: 3001 !important;
+}
+
+.site-version {
+    z-index: 3002 !important;
 }
 
 /* 新年限定烟花 */
 .mini-firework {
     overflow: hidden;
     border-radius: 50%;
-    mask-image: radial-gradient(circle at center, 
-        rgba(0,0,0,1) 40%, 
-        rgba(0,0,0,0) 70%
-    );
+    mask-image: radial-gradient(circle at center, rgba(0, 0, 0, 1) 40%, rgba(0, 0, 0, 0) 70%);
 }

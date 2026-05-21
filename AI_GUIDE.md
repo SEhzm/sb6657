@@ -46,25 +46,26 @@ src/
 │   ├── tag-selector.vue     # 标签多选器（v-model 双向绑定）
 │   ├── submission-dialog.vue# 弹幕提交对话框
 │   ├── ChatRoom.vue         # WebSocket 聊天室
-│   ├── wordCloud.vue        # 搜索词词云（echarts-wordcloud）
+│   ├── wordCloud.vue        # 搜索词词云图表（echarts-wordcloud，只负责图表渲染）
 │   ├── CoinPreview.vue      # 赛事竞猜金币展示
 │   ├── flip-num.vue         # 数字翻转动画
 │   └── like-num.vue         # 点赞数展示
 │
 ├── views/                   # 页面级组件（绑定路由）
 │   ├── MainLayout/
-│   │   ├── MainLayout.vue   # 全局布局容器（侧栏 + Header + Footer + WebSocket 连接）
+│   │   ├── MainLayout.vue   # 全局布局容器（左侧导航 + Header + Footer + 右侧浮动栏 + WebSocket 连接）
 │   │   └── components/
-│   │       ├── Home.vue             # 首页（提交表单 + 随机弹幕 + 词云）
+│   │       ├── Home.vue             # 首页主体（提交表单 + 随机弹幕；移动端内联显示词云/聊天室）
 │   │       ├── memes-view.vue       # 弹幕列表页（分类浏览 + 标签筛选 + 排序）
 │   │       ├── memeTop20.vue        # 年度 TOP20 投票
 │   │       ├── shieldWord.vue       # 屏蔽词社区投票
+│   │       ├── right-sidebar/       # 右侧浮动栏（全局浮窗、广告、首页桌面词云）
 │   │       ├── header-bar/          # 顶部导航栏（搜索、热门轮播、通知、用户菜单）
 │   │       ├── post-bar/            # 社区贴吧（帖子、评论、9种表态反应）
 │   │       ├── match-prediction/    # CS2 赛事竞猜（拖拽选队）
 │   │       ├── AiGenerateMemes/     # AI 造梗（SSE 流式对话）
 │   │       └── user/                # 用户中心（个人信息、我的弹幕、改密）
-│   ├── Starrysky.vue        # 星空背景装饰组件
+│   ├── Starrysky.vue        # 全局星空/流星背景组件（不承载业务浮窗）
 │   └── 404.vue              # 404 页面
 │
 ├── assets/
@@ -80,14 +81,14 @@ src/
 
 ### 目录划分原则
 
-| 层级 | 职责边界 | 注意事项 |
-|------|---------|---------|
-| `apis/` | 只做 HTTP 调用和响应解包，不含 UI 逻辑 | 每个文件按业务域聚合，读写分离（get/set） |
-| `stores/` | 跨组件共享的全局状态 | 组件私有状态不放 store，用 `ref`/`reactive` |
-| `utils/` | 纯函数或无状态 class，不依赖 Vue 生命周期 | `douyuWebSocket` 是唯一例外，内部操作了 store |
-| `components/` | 可复用、无路由绑定 | 通过 props/emits/v-model 通信 |
-| `views/` | 页面容器，绑定路由 | 可依赖 store 和 apis，组装 components |
-| `constants/` | 静态常量（API 路径、导航配置） | 是侧栏菜单和路由的"单一真相源" |
+| 层级          | 职责边界                                  | 注意事项                                      |
+| ------------- | ----------------------------------------- | --------------------------------------------- |
+| `apis/`       | 只做 HTTP 调用和响应解包，不含 UI 逻辑    | 每个文件按业务域聚合，读写分离（get/set）     |
+| `stores/`     | 跨组件共享的全局状态                      | 组件私有状态不放 store，用 `ref`/`reactive`   |
+| `utils/`      | 纯函数或无状态 class，不依赖 Vue 生命周期 | `douyuWebSocket` 是唯一例外，内部操作了 store |
+| `components/` | 可复用、无路由绑定                        | 通过 props/emits/v-model 通信                 |
+| `views/`      | 页面容器，绑定路由                        | 可依赖 store 和 apis，组装 components         |
+| `constants/`  | 静态常量（API 路径、导航配置）            | 是侧栏菜单和路由的"单一真相源"                |
 
 ---
 
@@ -97,17 +98,18 @@ src/
 
 ```typescript
 type Meme = {
-  id: string;            // 唯一标识
-  content: string;       // 弹幕正文（max 255 字符）
-  tags?: string;         // 标签 ID（逗号分隔，如 "01,03,06"）
-  category?: string;     // 所属分类（路由参数决定）
-  copyCount: number;     // 被复制次数 —— 核心热度指标
-  likes?: number;        // 点赞数
-  submitTime?: string;   // 提交时间（ISO 格式）
+    id: string; // 唯一标识
+    content: string; // 弹幕正文（max 255 字符）
+    tags?: string; // 标签 ID（逗号分隔，如 "01,03,06"）
+    category?: string; // 所属分类（路由参数决定）
+    copyCount: number; // 被复制次数 —— 核心热度指标
+    likes?: number; // 点赞数
+    submitTime?: string; // 提交时间（ISO 格式）
 };
 ```
 
 **设计要点：**
+
 - `copyCount` 是核心度量指标，24h/7d 热门排行均基于此
 - `tags` 是逗号分隔的字符串（非数组），前端用 `getDisplayTags()` 转换为可展示结构
 - 标签体系由后端 dictList 接口返回，前端缓存在 `memeTagsStore`
@@ -116,15 +118,16 @@ type Meme = {
 
 ```typescript
 type memeTag = {
-  dictCode: string;    // 内部编码
-  dictLabel: string;   // 显示名（如"喷玩机器篇"）
-  dictValue: string;   // 标识符（"00"-"09"）
-  dictType: string;    // 分类
-  iconUrl: string;     // 标签图标 URL
+    dictCode: string; // 内部编码
+    dictLabel: string; // 显示名（如"喷玩机器篇"）
+    dictValue: string; // 标识符（"00"-"09"）
+    dictType: string; // 分类
+    iconUrl: string; // 标签图标 URL
 };
 ```
 
 **标签值对照（当前已知）：**
+
 - `00` 喷玩机器篇、`01` 喷选手篇、`02` 加一篇、`03` QUQU 篇
 - `05` 木柜子篇、`06` 群魔乱舞篇、`09` 直播间互喷篇
 
@@ -141,9 +144,23 @@ Token 存储在 localStorage，siteToken（匿名分析标识）存储在 cookie
 ### Match / Prediction（赛事竞猜）
 
 ```typescript
-interface Team { id, matchesId, teamName, teamImgUrl }
-interface PredictionRecord { id, userId, matchesId, s_l, l_s, advance, createTime }
+interface Team {
+    id;
+    matchesId;
+    teamName;
+    teamImgUrl;
+}
+interface PredictionRecord {
+    id;
+    userId;
+    matchesId;
+    s_l;
+    l_s;
+    advance;
+    createTime;
+}
 ```
+
 - `s_l` / `l_s`：两个分组的预测结果
 - `advance`：晋级队伍（数组序列化为字符串）
 
@@ -232,9 +249,9 @@ MainLayout 挂载时
 2. **统一泛型封装**：`post<T, R>(url, data)` 和 `get<R>(url)` 保证类型安全
 3. **所有后端路径集中在 `constants/backend.ts`**，组件内不出现硬编码 URL
 4. **错误码约定**：
-   - `200` 成功、`401` 未认证、`403` 无权限、`500` 服务端错误
-   - `601` 非致命警告（ElMessage.warning）
-   - `4000` 请求过快（限流）
+    - `200` 成功、`401` 未认证、`403` 无权限、`500` 服务端错误
+    - `601` 非致命警告（ElMessage.warning）
+    - `4000` 请求过快（限流）
 
 ### 状态管理约定
 
@@ -245,22 +262,37 @@ MainLayout 挂载时
 
 ### 命名规则
 
-| 类型 | 约定 | 示例 |
-|------|------|------|
-| 组件文件 | PascalCase 或 kebab-case（项目中两者混用） | `ChatRoom.vue`、`header-bar.vue` |
-| API 函数 | camelCase，get/set 前缀表示读写 | `getHotMeme24h()`、`submitMeme()` |
-| Store 文件 | camelCase 或 use 前缀 | `memeTags.ts`、`useAuthStore.ts` |
-| 类型文件 | 与所描述的实体同名 | `meme.ts`、`shieldWord.ts` |
-| 路由路径 | kebab-case | `/post-bar`、`/match-prediction` |
-| CSS 类名 | kebab-case | `.header-bar`、`.meme-item` |
+| 类型       | 约定                                       | 示例                              |
+| ---------- | ------------------------------------------ | --------------------------------- |
+| 组件文件   | PascalCase 或 kebab-case（项目中两者混用） | `ChatRoom.vue`、`header-bar.vue`  |
+| API 函数   | camelCase，get/set 前缀表示读写            | `getHotMeme24h()`、`submitMeme()` |
+| Store 文件 | camelCase 或 use 前缀                      | `memeTags.ts`、`useAuthStore.ts`  |
+| 类型文件   | 与所描述的实体同名                         | `meme.ts`、`shieldWord.ts`        |
+| 路由路径   | kebab-case                                 | `/post-bar`、`/match-prediction`  |
+| CSS 类名   | kebab-case                                 | `.header-bar`、`.meme-item`       |
 
 ### 响应式设计约定
 
 - **断点**：600px（唯一断点，移动端 vs 桌面端）
 - **检测方式**：`useIsMobile()` Hook（基于 `matchMedia`，响应式 Ref）
 - **布局策略**：
-  - 桌面：侧栏导航 + 主内容区
-  - 移动：顶部横向滚动 Tab + 全宽内容
+    - 桌面：左侧侧栏导航 + 主内容区；首页额外由 `MainLayout` 为右侧浮动栏预留固定宽度
+    - 移动：顶部横向滚动 Tab + 全宽内容；右侧广告/浮动聊天室隐藏，首页词云和聊天室进入内容流
+
+### 首页右侧栏与全局浮窗约定
+
+这块历史上曾经塞在 `Starrysky.vue` 和 `Home.vue` 中，当前边界如下：
+
+- `App.vue` 全局挂载 `Starrysky.vue`，但 `Starrysky.vue` 只负责星空/流星背景，不再放聊天窗、广告、QQ群入口等业务 UI。
+- `MainLayout.vue` 挂载 `right-sidebar/FloatingSidebar.vue`，它负责：
+    - 全站固定浮动聊天室（桌面显示，移动端隐藏）
+    - 右侧竖排“官方交流群”和“金主要求注册150人”按钮
+    - 固定广告位及广告弹窗，固定广告可关闭
+    - 首页桌面端搜索词云面板
+- `Home.vue` 只负责首页主体内容；桌面端不再用 `width: 80%` 留空，而是由 `MainLayout.vue` 的 `.content--with-home-sidebar` 统一预留右栏空间。
+- `HomeWordCloudPanel.vue` 负责“搜索词云 + 刷新按钮”的外壳，点击标题区域才刷新词云。
+- `wordCloud.vue` 只负责 ECharts 词云图表初始化和数据加载，不监听窗口 resize，不因浏览器宽度变化自动刷新。
+- 层级约定：词云面板应低于 `el-backtop` 和版本号；全局兜底样式位于 `assets/css/global.css`（`.el-backtop`、`.site-version`）。
 
 ### 代码风格
 
@@ -294,6 +326,7 @@ MainLayout 挂载时
 ### 2. 斗鱼 WebSocket 二进制协议
 
 `douyuWebSocket.ts` 实现了斗鱼私有的二进制弹幕协议：
+
 - 消息头：12 字节（4 字节长度 + 4 字节长度 + 2 字节 type 689 + 1 字节加密 + 1 字节保留）
 - 编码：自定义 `@=` 分隔的键值对格式
 - 心跳：每 40s 发送 keep-alive 包
@@ -305,7 +338,7 @@ MainLayout 挂载时
 `throttle.ts` 不同于常见的"丢弃"型节流，它接受**两个回调**：
 
 ```typescript
-throttle(mainCallback, throttledCallback, delay)
+throttle(mainCallback, throttledCallback, delay);
 ```
 
 - 正常触发时执行 `mainCallback`（如：复制 + 计数 +1）
@@ -320,10 +353,10 @@ throttle(mainCallback, throttledCallback, delay)
 
 ```typescript
 // store 初始化时
-tagsLoadedPromise = setMemeTags()  // 返回 API 请求的 Promise
+tagsLoadedPromise = setMemeTags(); // 返回 API 请求的 Promise
 
 // 组件中
-await memeTagsStore.tagsLoaded    // 等待加载完成后再渲染
+await memeTagsStore.tagsLoaded; // 等待加载完成后再渲染
 ```
 
 这确保了无论组件挂载顺序如何，标签数据都能正确可用。
@@ -335,12 +368,12 @@ await memeTagsStore.tagsLoaded    // 等待加载完成后再渲染
 
 ### 6. 24 小时自动刷新
 
-`main.ts` 和 `MainLayout.vue` 都设置了 `setInterval(() => location.reload(), 86400000)`，  
-目的是强制用户每 24 小时获取最新前端版本，属于简易的缓存破坏策略。
+`main.ts` 设置了 `setInterval(() => location.reload(), 86400000)`，目的是强制用户每 24 小时获取最新前端版本，属于简易的缓存破坏策略。
 
 ### 7. AI 造梗的流式响应处理
 
 `AIChat.vue` 使用 fetch + ReadableStream 实现 SSE 流式接收：
+
 - 逐 chunk 解码追加到消息内容
 - 实时渲染带光标动画
 - 90s 超时自动断开
@@ -349,6 +382,7 @@ await memeTagsStore.tagsLoaded    // 等待加载完成后再渲染
 ### 8. 构建优化
 
 `vite.config.ts` 中的关键优化：
+
 - **Gzip 压缩**：>10KB 的文件自动生成 `.gz`
 - **按依赖拆包**：`node_modules` 下每个包独立 chunk（利用浏览器缓存）
 - **TypeScript 检查**：构建时通过 `vite-plugin-checker` 执行类型检查
@@ -388,20 +422,24 @@ await memeTagsStore.tagsLoaded    // 等待加载完成后再渲染
 - 组件样式使用 `<style scoped>`
 - Element Plus 主题色覆盖通过 CSS 变量
 - 移动端适配统一使用 `useIsMobile()` + `v-if` 或 CSS `@media (max-width: 600px)`
+- 首页右侧栏相关样式优先改 `right-sidebar/` 下的组件；涉及 `el-backtop`、版本号等跨组件层级时放到 `assets/css/global.css`
 
 ### 常见坑点
 
 1. **后端暂未开源**：所有 API 行为只能从前端代码推断，修改接口需联系后端作者
 2. **标签是字符串**：`tags` 字段是 `"01,03"` 而非数组，操作时注意 split/join
-3. **两处 24h 刷新**：`main.ts` 和 `MainLayout.vue` 各有一个 `setInterval`，修改时两处都要改
+3. **24h 自动刷新**：`main.ts` 中有一个全局 `setInterval`，修改缓存刷新策略时从这里入手
 4. **jsencrypt.js 是 JS 文件**：内含公私钥，未迁移到 TypeScript，修改时注意类型
 5. **ChatRoom 部分功能已注释**：WebSocket 聊天功能 UI 大部分被注释，仅保留在线人数展示
 6. **env 文件中开发和生产 API 地址相同**：目前都指向 `hguofichp.cn:10086`，本地调试时可能需要代理
+7. **Starrysky 只放背景**：不要再把全站浮窗或首页右栏塞回 `Starrysky.vue`，这类 UI 统一放 `right-sidebar/FloatingSidebar.vue`
+8. **词云刷新入口**：不要在 `wordCloud.vue` 增加 resize 刷新逻辑，刷新应只由 `HomeWordCloudPanel.vue` 的点击事件触发
 
 ### 给 AI 助手的特别提示
 
 - 本项目后端不开源，不要尝试修改后端代码或假设后端结构
 - 修改 API 调用时，务必保持与 `constants/backend.ts` 中路径常量的一致性
 - 新增组件优先考虑复用现有的 `components/` 下的组件
+- 涉及首页右侧栏、广告、浮窗、词云位置时，先看 `views/MainLayout/components/right-sidebar/`
 - 提交代码前运行 `npm run lint:fix` 确保代码风格一致
 - 项目使用 4 空格缩进、单引号、200 字符行宽——请严格遵守

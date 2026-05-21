@@ -3,7 +3,6 @@
         <div class="boom">
             <img src="https://sb6657oss.wishao.fun/6657boom.webp" alt="6657boom" class="boom6657" />
         </div>
-            <!-- <AnnualHotList class="AnnualHotList"></AnnualHotList> -->
         <div class="cards-container">
             <div class="card first-card">
                 <HomeIntro />
@@ -76,431 +75,358 @@
             &nbsp;&nbsp;&nbsp;
             <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
         </div>
-        <div class="wordCloudDiv">
-            <span class="word-cloud-title">
-                搜索词云
-                <el-icon size="20" class="word-cloud-refresh-icon" @click="refreshWordCloud()">
-                    <Refresh />
-                </el-icon>
-            </span>
-            <Suspense>
-                <template #default>
-                    <WordCloud ref="wordCloudRef" />
-                </template>
-                <template #fallback>
-                    <div class="word-cloud-loading">词云加载中...</div>
-                </template>
-            </Suspense>
-        </div>
+        <HomeWordCloudPanel v-if="isMobile" class="mobile-word-cloud" />
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineAsyncComponent } from 'vue';
-import httpInstance from '@/apis/httpInstance';
-import { ElNotification } from 'element-plus';
-import { Refresh, Warning, QuestionFilled } from '@element-plus/icons-vue';
-import ChatRoom from '@/components/ChatRoom.vue';
-import { API } from '@/constants/backend';
-import { useMemeTagsStore } from '@/stores/memeTags';
-import RandomMeme from '@/components/home/random-meme.vue';
-import HomeIntro from '@/components/home/homeIntro.vue';
-import DidYouKnow from '@/components/home/didYouKnow.vue';
-import tagSelector from '@/components/tag-selector.vue';
-import AnnualHotList from '@/components/AnnualHotList.vue';
-const memeTagsStore = useMemeTagsStore();
+    import { ref, onMounted } from 'vue';
+    import httpInstance from '@/apis/httpInstance';
+    import { ElNotification } from 'element-plus';
+    import { Warning, QuestionFilled } from '@element-plus/icons-vue';
+    import ChatRoom from '@/components/ChatRoom.vue';
+    import { API } from '@/constants/backend';
+    import { useMemeTagsStore } from '@/stores/memeTags';
+    import RandomMeme from '@/components/home/random-meme.vue';
+    import HomeIntro from '@/components/home/homeIntro.vue';
+    import DidYouKnow from '@/components/home/didYouKnow.vue';
+    import tagSelector from '@/components/tag-selector.vue';
+    import HomeWordCloudPanel from '@/views/MainLayout/components/right-sidebar/HomeWordCloudPanel.vue';
+    import { useIsMobile } from '@/utils/common';
+    const memeTagsStore = useMemeTagsStore();
+    const isMobile = useIsMobile();
 
-memeTagsStore.tagsLoaded.then(() => {
-    allTags.value = memeTagsStore.memeTags;
-});
+    memeTagsStore.tagsLoaded.then(() => {
+        allTags.value = memeTagsStore.memeTags;
+    });
 
-const barrage = ref('');
-const allTags = ref([]);
-const selectedTags = ref([]);
+    const barrage = ref('');
+    const allTags = ref([]);
+    const selectedTags = ref([]);
 
-const matchData = ref(null);
-const isMatchSelected = ref(false);
+    const matchData = ref(null);
+    const isMatchSelected = ref(false);
 
-function getInProgressMatch() {
-    httpInstance
-        .get('/machine/InProgressMatch')
-        .then((res) => {
-            if (res.code === 200 && res.data) {
-                matchData.value = res.data;
-            } else {
-                matchData.value = null;
-            }
-            console.log('Fetched match data:', matchData.value);
-        })
-        .catch((err) => {
-            console.error('Failed to fetch in progress match:', err);
-            matchData.value = null;
-        });
-}
-
-onMounted(() => {
-    getInProgressMatch();
-});
-
-const saveBarrage = () => {
-    const selectedValues = selectedTags.value.map((t) => t.dictValue);
-    if (selectedValues.length === 0 || !barrage.value) {
-        ElNotification.error('请选择标签或输入弹幕');
-    } else {
-        if (selectedValues.length > 5) {
-            ElNotification.error('最少一个标签，最多五个标签。');
-            return;
-        }
-        const submitData = {
-            tags: selectedValues.join(','),
-            barrage: barrage.value,
-        };
-
-        if (isMatchSelected.value && matchData.value) {
-            submitData.matchId = matchData.value.id;
-        }
-
+    function getInProgressMatch() {
         httpInstance
-            .post(API.SUBMIT_MEME, submitData)
+            .get('/machine/InProgressMatch')
             .then((res) => {
-                barrage.value = '';
-                isMatchSelected.value = false; // Reset checkbox after submission
-                if (res.code === 200) {
-                    ElNotification.success('投稿成功，待审核(一天内)');
-                } else if (res.code === 500) {
-                    ElNotification.error('烂梗已经有了，勿重复提交');
+                if (res.code === 200 && res.data) {
+                    matchData.value = res.data;
                 } else {
-                    ElNotification.error('请求失败');
+                    matchData.value = null;
                 }
+                console.log('Fetched match data:', matchData.value);
             })
             .catch((err) => {
-                console.error('投稿失败', err);
-                ElNotification.error('请求失败');
+                console.error('Failed to fetch in progress match:', err);
+                matchData.value = null;
             });
     }
-};
 
-const wordCloudRef = ref(null);
-// 懒加载 wordCloud 组件
-const WordCloud = defineAsyncComponent(() => import('@/components/wordCloud.vue'));
-function refreshWordCloud() {
-    wordCloudRef.value?.getData?.();
-}
+    onMounted(() => {
+        getInProgressMatch();
+    });
+
+    const saveBarrage = () => {
+        const selectedValues = selectedTags.value.map((t) => t.dictValue);
+        if (selectedValues.length === 0 || !barrage.value) {
+            ElNotification.error('请选择标签或输入弹幕');
+        } else {
+            if (selectedValues.length > 5) {
+                ElNotification.error('最少一个标签，最多五个标签。');
+                return;
+            }
+            const submitData = {
+                tags: selectedValues.join(','),
+                barrage: barrage.value,
+            };
+
+            if (isMatchSelected.value && matchData.value) {
+                submitData.matchId = matchData.value.id;
+            }
+
+            httpInstance
+                .post(API.SUBMIT_MEME, submitData)
+                .then((res) => {
+                    barrage.value = '';
+                    isMatchSelected.value = false; // Reset checkbox after submission
+                    if (res.code === 200) {
+                        ElNotification.success('投稿成功，待审核(一天内)');
+                    } else if (res.code === 500) {
+                        ElNotification.error('烂梗已经有了，勿重复提交');
+                    } else {
+                        ElNotification.error('请求失败');
+                    }
+                })
+                .catch((err) => {
+                    console.error('投稿失败', err);
+                    ElNotification.error('请求失败');
+                });
+        }
+    };
 </script>
 
 <style scoped lang="scss">
-// ===== 主容器样式 =====
-.home {
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    // 顶部横幅区域
-    .boom {
-        height: 150px;
-
-        .boom6657 {
-            height: 100%;
-            border-radius: 10px;
-        }
-    }
-
-    // 卡片容器
-    .cards-container {
+    // ===== 主容器样式 =====
+    .home {
         width: 100%;
         display: flex;
-        gap: 8px;
-        margin-top: 10px;
-    }
+        flex-direction: column;
+        align-items: center;
 
-    // 卡片通用样式
-    .card {
-        width: 100%;
-        line-height: 25px;
-
-        &.first-card,
-        &.second-card {
-            flex: 1; // 让两个卡片平分宽度
-            margin-top: 0; // 重置margin，由容器控制间距
-        }
-
-        &.third-card {
-            margin-top: 8px;
-            padding: 12px;
-        }
-
-        &.fifth-card {
-            margin-top: 8px;
-
-            // 投稿标签按钮
-            .submit-tag-button {
-                margin-left: 50%;
-            }
-
-            // 预设标签容器
-            .preset-tags-container {
-                max-height: 75px;
-                overflow-y: auto;
-                margin-top: 10px;
-                margin-bottom: 20px;
-
-                .preset-tags {
-                    display: flex;
-                    flex-wrap: wrap;
-
-                    .el-tag {
-                        position: relative;
-                        margin-right: 10px;
-                        margin-bottom: 10px;
-                    }
-
-                    :deep(.el-tag__close) {
-                        font-size: 30px;
-                        transform: rotate(45deg);
-                    }
-                }
-            }
-
-            // 预设标签样式
-            .preset-tag {
-                padding: 15px;
-                cursor: pointer;
-                font-size: 16px;
-            }
-
-            // 已添加标签容器
-            .added-tags {
-                display: flex;
-                flex-wrap: wrap;
-
-                .el-tag {
-                    margin-right: 10px;
-                    margin-bottom: 10px;
-                }
-            }
-
-            // 已添加标签样式
-            .added-tag {
-                padding: 15px;
-                cursor: pointer;
-                font-size: 16px;
-            }
-
-            // 标签图标包装器
-            .tag-icon-wrapper {
-                .tag-icon {
-                    width: 22px;
-                    height: 22px;
-                    object-fit: cover;
-                    vertical-align: middle;
-                }
-
-                .tag-text {
-                    vertical-align: middle;
-                }
-            }
-
-            // 赛事关联容器
-            .match-association-container {
-                display: flex;
-                align-items: center;
-                width: 100%;
-                background-color: #f5f7fa;
-                padding: 12px;
-                border-radius: 4px;
-                margin-top: 10px;
-                box-sizing: border-box;
-
-                .match-section-home {
-                    display: flex;
-                    align-items: center;
-                    flex: 1;
-                    flex-wrap: wrap;
-                    gap: 10px;
-
-                    .match-checkbox-home {
-                        margin-right: 10px;
-                        white-space: nowrap;
-                    }
-
-                    .match-details-box-home {
-                        display: flex;
-                        flex-direction: column;
-                        background-color: #e6f5f2ff;
-                        padding: 5px 10px;
-                        border-radius: 4px;
-                        flex-shrink: 0;
-                        justify-content: center;
-                        width: 100%;
-                        box-sizing: border-box;
-
-                        .match-info-row-home {
-                            display: flex;
-                            align-items: center;
-
-                            .match-image-home {
-                                width: 30px;
-                                height: 30px;
-                                margin-right: 10px;
-                                object-fit: contain;
-                            }
-
-                            .match-name-home {
-                                font-size: 14px;
-                                color: #303133;
-                                white-space: nowrap;
-                                overflow: hidden;
-                                text-overflow: ellipsis;
-                                max-width: 150px;
-                            }
-                        }
-
-                        .match-time-home {
-                            font-size: 12px;
-                            color: #606266;
-                        }
-                    }
-
-                    .no-match-info-home {
-                        color: #909399;
-                        font-size: 14px;
-                        padding: 5px 10px;
-                        background-color: #f5f7fa;
-                        border-radius: 4px;
-                        flex-shrink: 0;
-                        width: 100%;
-                        box-sizing: border-box;
-                    }
-
-                    .saveBnt {
-                        margin-left: 20%;
-                        width: 100px;
-                        margin-top: 10px;
-                    }
-                }
-            }
-        }
-
-        &.sixth-card {
-            margin-top: 10px;
-        }
-    }
-}
-
-// ===== 聊天室样式 =====
-.ChatRoom {
-    margin: 10px 0;
-}
-
-// ===== 词云相关样式 =====
-.wordCloudDiv {
-    .word-cloud-title {
-        font-size: 24px;
-        font-weight: 600;
-        color: #303133;
-        margin: 0;
-    }
-
-    .word-cloud-refresh-icon {
-        color: #409eff;
-        cursor: pointer;
-        transition: all 0.3s ease;
-
-        &:hover {
-            color: #66b1ff;
-        }
-
-        &.rotating {
-            animation: rotate 0.6s linear;
-        }
-    }
-
-    .word-cloud-loading {
-        text-align: center;
-        padding: 20px;
-        color: #909399;
-    }
-}
-
-// ===== 动画定义 =====
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-// ===== 响应式设计 =====
-// 大屏幕样式 (601px及以上)
-@media (min-width: 601px) {
-    .home {
-        .wordCloudDiv {
-            z-index: 9;
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-        }
-    }
-
-    .ChatRoom {
-        display: none;
-    }
-
-    .AnnualHotList {
-        display: none;
-    }
-}
-
-// 前俩卡片在窄屏下换行展示
-@media (max-width: 768px) {
-    .home {
-        .cards-container {
-            flex-direction: column;
-        }
-    }
-}
-
-// 小屏幕样式 (600px及以下)
-@media (max-width: 600px) {
-    .AnnualHotList {
-        margin-top: 5px;
-    }
-
-    .home {
-        width: 100%;
-
+        // 顶部横幅区域
         .boom {
             height: 150px;
 
             .boom6657 {
-                margin-top: 6px;
-                height: 125px;
+                height: 100%;
+                border-radius: 10px;
             }
         }
 
-        .wordCloudDiv {
-            margin-top: 10px;
+        // 卡片容器
+        .cards-container {
             width: 100%;
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
         }
 
+        // 卡片通用样式
         .card {
+            width: 100%;
+            line-height: 25px;
+
+            &.first-card,
+            &.second-card {
+                flex: 1; // 让两个卡片平分宽度
+                margin-top: 0; // 重置margin，由容器控制间距
+            }
+
+            &.third-card {
+                margin-top: 8px;
+                padding: 12px;
+            }
+
             &.fifth-card {
                 margin-top: 8px;
 
+                // 投稿标签按钮
+                .submit-tag-button {
+                    margin-left: 50%;
+                }
+
+                // 预设标签容器
+                .preset-tags-container {
+                    max-height: 75px;
+                    overflow-y: auto;
+                    margin-top: 10px;
+                    margin-bottom: 20px;
+
+                    .preset-tags {
+                        display: flex;
+                        flex-wrap: wrap;
+
+                        .el-tag {
+                            position: relative;
+                            margin-right: 10px;
+                            margin-bottom: 10px;
+                        }
+
+                        :deep(.el-tag__close) {
+                            font-size: 30px;
+                            transform: rotate(45deg);
+                        }
+                    }
+                }
+
+                // 预设标签样式
+                .preset-tag {
+                    padding: 15px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                // 已添加标签容器
+                .added-tags {
+                    display: flex;
+                    flex-wrap: wrap;
+
+                    .el-tag {
+                        margin-right: 10px;
+                        margin-bottom: 10px;
+                    }
+                }
+
+                // 已添加标签样式
+                .added-tag {
+                    padding: 15px;
+                    cursor: pointer;
+                    font-size: 16px;
+                }
+
+                // 标签图标包装器
+                .tag-icon-wrapper {
+                    .tag-icon {
+                        width: 22px;
+                        height: 22px;
+                        object-fit: cover;
+                        vertical-align: middle;
+                    }
+
+                    .tag-text {
+                        vertical-align: middle;
+                    }
+                }
+
+                // 赛事关联容器
                 .match-association-container {
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    background-color: #f5f7fa;
+                    padding: 12px;
+                    border-radius: 4px;
+                    margin-top: 10px;
+                    box-sizing: border-box;
+
                     .match-section-home {
+                        display: flex;
+                        align-items: center;
+                        flex: 1;
+                        flex-wrap: wrap;
+                        gap: 10px;
+
+                        .match-checkbox-home {
+                            margin-right: 10px;
+                            white-space: nowrap;
+                        }
+
+                        .match-details-box-home {
+                            display: flex;
+                            flex-direction: column;
+                            background-color: #e6f5f2ff;
+                            padding: 5px 10px;
+                            border-radius: 4px;
+                            flex-shrink: 0;
+                            justify-content: center;
+                            width: 100%;
+                            box-sizing: border-box;
+
+                            .match-info-row-home {
+                                display: flex;
+                                align-items: center;
+
+                                .match-image-home {
+                                    width: 30px;
+                                    height: 30px;
+                                    margin-right: 10px;
+                                    object-fit: contain;
+                                }
+
+                                .match-name-home {
+                                    font-size: 14px;
+                                    color: #303133;
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    max-width: 150px;
+                                }
+                            }
+
+                            .match-time-home {
+                                font-size: 12px;
+                                color: #606266;
+                            }
+                        }
+
+                        .no-match-info-home {
+                            color: #909399;
+                            font-size: 14px;
+                            padding: 5px 10px;
+                            background-color: #f5f7fa;
+                            border-radius: 4px;
+                            flex-shrink: 0;
+                            width: 100%;
+                            box-sizing: border-box;
+                        }
+
                         .saveBnt {
-                            margin-left: 35%;
+                            margin-left: 20%;
                             width: 100px;
                             margin-top: 10px;
                         }
                     }
                 }
             }
+
+            &.sixth-card {
+                margin-top: 10px;
+            }
         }
     }
-}
+
+    // ===== 聊天室样式 =====
+    .ChatRoom {
+        margin: 10px 0;
+    }
+
+    // ===== 响应式设计 =====
+    // 大屏幕样式 (601px及以上)
+    @media (min-width: 601px) {
+        .ChatRoom {
+            display: none;
+        }
+
+        .mobile-word-cloud {
+            display: none;
+        }
+    }
+
+    // 前俩卡片在窄屏下换行展示
+    @media (max-width: 768px) {
+        .home {
+            .cards-container {
+                flex-direction: column;
+            }
+        }
+    }
+
+    // 小屏幕样式 (600px及以下)
+    @media (max-width: 600px) {
+        .home {
+            width: 100%;
+
+            .boom {
+                height: 150px;
+
+                .boom6657 {
+                    margin-top: 6px;
+                    height: 125px;
+                }
+            }
+
+            .mobile-word-cloud {
+                margin-top: 10px;
+                width: 100%;
+            }
+
+            .card {
+                &.fifth-card {
+                    margin-top: 8px;
+
+                    .match-association-container {
+                        .match-section-home {
+                            .saveBnt {
+                                margin-left: 35%;
+                                width: 100px;
+                                margin-top: 10px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 </style>
