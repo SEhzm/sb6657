@@ -105,7 +105,7 @@
 
                     <div class="pagination-wrapper">
                         <el-pagination v-if="!barrageLoading" background layout="prev, pager, next, jumper"
-                            :current-page="barrageCurrentPage" :total="barrageTotal" :pager-count="3"
+                            :current-page="barrageCurrentPage" :total="barrageTotal" :pager-count="5"
                             :page-size="barragePageSize" @current-change="handleBarragePageChange" />
                     </div>
                 </div>

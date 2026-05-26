@@ -123,7 +123,7 @@
         <div class="pagination-wrapper" v-if="isTableVisible && stage !== 4">
             <!-- 分页 -->
             <div>
-                <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=4
+                <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count="5"
                     :page-size="data.pageSize" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
@@ -144,7 +144,7 @@
             <div class="pagination-wrapper" v-if="isTableVisible">
                 <!-- 分页 -->
                 <div v-if="isHot">
-                    <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count=3
+                    <el-pagination background layout="prev, pager, next, jumper" :total="data.total" :pager-count="5"
                         :page-size="data.pageSize" @current-change="handleHotPageChange"></el-pagination>
                 </div>
             </div>

@@ -229,10 +229,14 @@ const readFlag = ref(false);
 async function fetchMsgNum() {
     try {
         const res: any = await httpInstance.get('/machine/SysMessage/getMsgNum');
-        if (res.code === 200) {
+        if (res.code === 200 && res.data) {
             likeAndStatementNum.value = res.data.likeAndStatementNum;
             commentNum.value = res.data.commentNum;
             readFlag.value = res.data.readFlag;
+        } else {
+            likeAndStatementNum.value = 0;
+            commentNum.value = 0;
+            readFlag.value = false;
         }
     } catch (error) {
         console.error('获取消息数量失败:', error);

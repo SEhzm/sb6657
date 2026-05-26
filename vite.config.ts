@@ -25,6 +25,13 @@ export default defineConfig(async () => {
                 '@': fileURLToPath(new URL('./src', import.meta.url)),
             },
         },
+        css: {
+            preprocessorOptions: {
+                scss: {
+                    api: 'modern-compiler',
+                },
+            },
+        },
         build: {
             chunkSizeWarningLimit: 1000, // 调整包的大小
             rollupOptions: {
