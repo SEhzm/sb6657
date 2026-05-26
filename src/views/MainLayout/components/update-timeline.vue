@@ -143,22 +143,26 @@ function parseUpdateLog(): VersionInfo[] {
 // 静态解析结果
 const parsedVersions = ref<VersionInfo[]>(parseUpdateLog());
 
+const updateTypeClassMap: Record<string, string> = {
+    新增: 'update-type-add',
+    修复: 'update-type-fix',
+    优化: 'update-type-optimize',
+    删除: 'update-type-delete',
+    删改: 'update-type-delete',
+    重构: 'update-type-refactor',
+    修改: 'update-type-change',
+    调整: 'update-type-adjust',
+    更新: 'update-type-update',
+    调研: 'update-type-research',
+    破费: 'update-type-cost',
+    警告: 'update-type-warning',
+    前端基建: 'update-type-infra',
+    重启: 'update-type-restart',
+};
+
 // 根据更新类型返回对应的CSS类
 function getUpdateTypeClass(type: string): string {
-    switch (type) {
-        case '新增':
-            return 'update-type-add';
-        case '修复':
-            return 'update-type-fix';
-        case '优化':
-            return 'update-type-optimize';
-        case '删除':
-            return 'update-type-delete';
-        case '重构':
-            return 'update-type-refactor';
-        default:
-            return 'update-type-other';
-    }
+    return updateTypeClassMap[type] || 'update-type-other';
 }
 </script>
 
@@ -216,6 +220,30 @@ function getUpdateTypeClass(type: string): string {
     }
     .update-type-refactor strong {
         color: #9b59b6;
+    }
+    .update-type-change strong {
+        color: #e67e22;
+    }
+    .update-type-adjust strong {
+        color: #f1c40f;
+    }
+    .update-type-update strong {
+        color: #00a8c6;
+    }
+    .update-type-research strong {
+        color: #16a085;
+    }
+    .update-type-cost strong {
+        color: #d35400;
+    }
+    .update-type-warning strong {
+        color: #c0392b;
+    }
+    .update-type-infra strong {
+        color: #5c6bc0;
+    }
+    .update-type-restart strong {
+        color: #2ecc71;
     }
     .update-type-other strong {
         color: #95a5a6;
