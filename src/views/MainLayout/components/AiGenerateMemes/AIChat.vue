@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="ai-chat-wrapper" :class="themeClass">
     <!-- ========== 左侧：会话列表 ========== -->
     <aside class="session-sidebar" :class="{ collapsed: sidebarCollapsed }">
@@ -460,31 +460,42 @@ async function sendMessage() {
 }
 
 function handleSseEvent(eventType: string, data: any) {
+  console.log('[SSE] 收到事件:', eventType, data);
+  
   switch (eventType) {
     case 'connected':
+      console.log('[SSE] 连接已建立');
       break;
     case 'thinking':
       streamThinking.value += data.content || '';
+      console.log('[SSE] thinking 更新，当前长度:', streamThinking.value.length);
       scrollToBottom();
       break;
     case 'content':
+    case 'message':
+      // 后端通过 event:message 发送流式内容，data.type 为 "message"
       if (data.content) {
         streamContent.value += data.content;
+        console.log('[SSE] content 更新，当前长度:', streamContent.value.length);
         scrollToBottom();
       }
       break;
     case 'error':
+      console.warn('[SSE] 错误:', data.content);
       ElMessage.warning(data.content || '服务异常');
       streaming.value = false;
       break;
     case 'done':
+      console.log('[SSE] 流式完成');
       break;
     default:
-      if (data.type === 'content' && data.content) {
+      if ((data.type === 'content' || data.type === 'message') && data.content) {
         streamContent.value += data.content;
+        console.log('[SSE] default content 更新，当前长度:', streamContent.value.length);
         scrollToBottom();
       } else if (data.type === 'thinking' && data.content) {
         streamThinking.value += data.content;
+        console.log('[SSE] default thinking 更新，当前长度:', streamThinking.value.length);
         scrollToBottom();
       }
       break;
