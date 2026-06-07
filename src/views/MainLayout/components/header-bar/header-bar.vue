@@ -7,7 +7,8 @@
                     <p class="header-title">斗鱼玩机器烂梗库</p>
                 </a>
                 <div class="elinput-mobile">
-                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable @keyup.enter.native="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable
+                        @keyup.enter.native="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -20,15 +21,19 @@
             </div>
 
             <div class="header-actions">
-                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img" @click="openHotMeme24h" />
+                <img v-if="showHotMeme" src="@/assets/imgs/hot.png" alt="热门" class="hot-barrage-img"
+                    @click="openHotMeme24h" />
                 <div v-if="showHotMeme" @click="openHotMeme24h" class="hot-barrage">
                     <transition name="fade">
-                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content || '' }}</span>
+                        <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content
+                            || ''
+                            }}</span>
                     </transition>
                 </div>
 
                 <div class="elinput">
-                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable @keyup.enter.native="handleSearchMemeOnEnter">
+                    <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable
+                        @keyup.enter.native="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -44,11 +49,12 @@
                     <br />
                     建议/提交BUG
                 </el-button>
-                <el-tooltip effect="light" v-model:visible="shangwuVisible" placement="right-end" popper-style="margin-bottom: 0;">
+                <el-tooltip effect="light" v-model:visible="shangwuVisible" placement="right-end"
+                    popper-style="margin-bottom: 0;">
                     <img src="@/assets/imgs/mail.png" alt="heihei" class="icon-container icon-img" />
                     <template #content>
-                      接计算机类毕设(论文)，程序设计，<br/>课设，广告，商务，<br/>
-                      联系邮箱:he20020928@foxmail.com
+                        接计算机类毕设(论文)，程序设计，<br />课设，广告，商务，<br />
+                        联系邮箱:he20020928@foxmail.com
                     </template>
                 </el-tooltip>
                 <a class="icon-container" href="https://sb6657.cn/#/Tampermonkey">
@@ -62,9 +68,10 @@
                 </a>
 
                 <el-tooltip v-model:visible="supportVisible" placement="left" effect="light">
-                    <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover" @click="supportMeDialog = true" />
+                    <el-image class="icon-container icon-img" :src="lightningUrl" fit="cover"
+                        @click="supportMeDialog = true" />
                     <template #content>
-                       如果你喜欢这个网站<br/>可以点我进行赞赏或GitHub点个star~
+                        如果你喜欢这个网站<br />可以点我进行赞赏或GitHub点个star~
                     </template>
                 </el-tooltip>
                 <el-dropdown trigger="hover">
@@ -94,19 +101,22 @@
                 </el-button> -->
             </div>
             <el-dialog v-model="AdDialog" title="小孔CSGO陪玩" :width="adWidth" :append-to-body="true">
-                <img style="width: 80vw; " src="https://cdn.hguofichp.cn/%E5%B0%8F%E5%AD%94%E5%B9%BF%E5%91%8A_compressed.png" alt="">
+                <img style="width: 80vw; "
+                    src="https://cdn.hguofichp.cn/%E5%B0%8F%E5%AD%94%E5%B9%BF%E5%91%8A_compressed.png" alt="">
             </el-dialog>
         </div>
 
         <!-- 24h热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips" @refresh="refreshHotMeme24h">
+        <memeDialog v-model="showHotMeme24h" :memeArr="hotMeme24h" :loading="hotMeme24hLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme24h">
             <div class="dialog-header">
                 <div>24h热门烂梗</div>
                 <div><el-button @click="openHotMeme7d">查看近七天热门</el-button></div>
             </div>
         </memeDialog>
         <!-- 7天热门弹幕对话框 -->
-        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips" @refresh="refreshHotMeme7d">
+        <memeDialog v-model="showHotMeme7d" :memeArr="hotMeme7d" :loading="hotMeme7dLoading" :emptyText="loadingTips"
+            @refresh="refreshHotMeme7d">
             <div class="dialog-header">
                 <div>七天热门烂梗</div>
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
@@ -123,24 +133,24 @@
         <el-dialog v-model="adInfoDialog" title="甲方要求150人注册。 ありがとう米娜桑" :width="lightWidth">
             <a href="https://yousheng186.com/activity/login/1?promotionCode=6657" target="_blank">
                 <p>感谢甲方爸爸继续支持我们，各位爹注册一下吧，凑凑人头吧，祝你们长生不老永远不死。</p>
-                <img src="https://pic1.imgdb.cn/item/6a05712957da1d412e138abd.jpg" alt="广告图片" style="width: 100%; margin-top: 10px;" />
+                <img src="https://pic1.imgdb.cn/item/6a25768ed71dee7c941a8d6c.jpg" alt="广告图片"
+                    style="width: 100%; margin-top: 10px;" />
             </a>
         </el-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
-import { getHotMeme24h, getHotMeme7d, searchMeme } from '@/apis/getMeme';
-import { Search } from '@element-plus/icons-vue';
-import memeDialog from './components/meme-dialog.vue';
-import searchDialog from '@/components/header-bar/search-dialog.vue';
-import userHome from './components/userHome.vue';
-import { useIsMobile } from '@/utils/common';
-import { useRoute } from 'vue-router';
+import { getHotMeme24h, getHotMeme7d } from '@/apis/getMeme';
 import httpInstance from '@/apis/httpInstance';
-import { isRelogin } from '@/apis/httpInstance';
+import searchDialog from '@/components/header-bar/search-dialog.vue';
+import { useIsMobile } from '@/utils/common';
+import { Search } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
+import { computed, onMounted, ref } from 'vue';
+import { useRoute } from 'vue-router';
+import memeDialog from './components/meme-dialog.vue';
+import userHome from './components/userHome.vue';
 
 const isMobile = useIsMobile();
 const route = useRoute();
@@ -308,7 +318,7 @@ function openAd() {
             align-items: center;
             margin-left: 10px;
 
-            & > a {
+            &>a {
                 display: flex;
             }
 
