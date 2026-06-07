@@ -150,31 +150,20 @@
 </template>
 
 <script setup lang="ts">
+import type { ReportData, YearConfig } from '@/types/15warriorsDonk';
 import { Download } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { toCanvas } from 'html-to-image';
-import { onUnmounted, ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
-interface YearConfig {
-    label: string;
-    value: number;
-    json: string;
-}
+const url = new URL(window.location.href);
+const searchParams = url.searchParams;
+
 const currentYear = ref<number>(2026);
 const yearOptions = ref<YearConfig[]>([
     { label: '2026-现在', value: 2026, json: '15warriorsDonk_2026.json' },
     { label: '2025', value: 2025, json: '15warriorsDonk_2025.json' },
 ]);
-
-type KDDetail = { before: number; added: number; after: number };
-type UpdateRow = { player: string; team: string; kill: KDDetail; death: KDDetail; maps: number };
-type RankItem = { rank: number; player: string; team: string; kill: number; death: number; maps: number; k_dDiff: number };
-interface ReportData {
-    match: { title: string; date: string };
-    updates: UpdateRow[];
-    rankings: { warriors: RankItem[]; victims: RankItem[] };
-    loading?: boolean;
-}
 
 const reportData = ref<ReportData>({
     match: { title: '加载中...', date: '加载中...' },
@@ -199,6 +188,19 @@ const isDownloading = ref(false);
 const ossUrl = 'https://sb6657oss.wishao.fun';
 const abortController = new AbortController();
 async function loadReportData(fileName: string) {
+    // 工具站调试逻辑，从postmessage拿数据
+    if (searchParams.get('preview') === '1') {
+        // 监听父页面发送的数据
+        window.addEventListener('message', (event: MessageEvent) => {
+            const message = event.data;
+            if (message?.type !== 'preview-data') return;
+
+            reportData.value = message.data;
+        });
+        window.parent.postMessage({ type: 'ready-to-preview' }, 'https://wishao.fun');
+        return;
+    }
+    // 正常逻辑，从oss拉数据
     try {
         const res = await fetch(`${ossUrl}/${fileName}`, { signal: abortController.signal });
         const data: ReportData = await res.json();
@@ -209,9 +211,6 @@ async function loadReportData(fileName: string) {
     }
 }
 loadReportData(yearOptions.value.find((opt) => opt.value === 2026)?.json || '15warriorsDonk_2025.json');
-onUnmounted(() => {
-    abortController.abort();
-});
 watch(currentYear, (newYear) => {
     loadReportData(yearOptions.value.find((opt) => opt.value === newYear)?.json || '15warriorsDonk_2025.json');
 });
