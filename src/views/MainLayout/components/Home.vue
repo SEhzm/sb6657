@@ -73,7 +73,7 @@
             友情链接
             <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>
             &nbsp;&nbsp;&nbsp;
-            <a href="https://sb6657.cn/#/Starrysky" target="_blank">星空背景</a>
+            <a href="https://sb6657.cn/Starrysky" target="_blank">星空背景</a>
         </div>
         <HomeWordCloudPanel v-if="isMobile" class="mobile-word-cloud" />
     </div>

@@ -57,7 +57,7 @@
                         联系邮箱:he20020928@foxmail.com
                     </template>
                 </el-tooltip>
-                <a class="icon-container" href="https://sb6657.cn/#/Tampermonkey">
+                <a class="icon-container" href="https://sb6657.cn/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
                 </a>
                 <a class="icon-container" href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
