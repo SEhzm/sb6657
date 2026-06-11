@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Redirecting...</title>
+        <script>
+            /**
+             * GitHub Pages 直连 SPA 子路径时会先进入 404。
+             * 这里保存原始访问路径，再回到根路径，由应用入口恢复到对应路由。
+             */
+            const redirectPath = `${location.pathname}${location.search}${location.hash}`;
+
+            sessionStorage.setItem('spa_redirect', redirectPath);
+            window.location.replace('/');
+        </script>
+    </head>
+    <body></body>
+</html>
