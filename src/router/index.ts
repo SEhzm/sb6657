@@ -1,5 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import NotFoundView from '@/views/404.vue';
+
+const redirect = sessionStorage.getItem('spa_redirect');
+if (redirect) {
+    sessionStorage.removeItem('spa_redirect');
+    window.history.replaceState(null, '', redirect);
+}
+
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [

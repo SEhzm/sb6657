@@ -9,13 +9,6 @@ import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import '@/assets/css/index.scss';
 import '@/assets/css/global.css';
 
-const redirect = sessionStorage.getItem('spa_redirect');
-if (redirect) {
-    sessionStorage.removeItem('spa_redirect');
-
-    window.history.replaceState(null, '', redirect);
-}
-
 const app = createApp(App);
 const pinia = createPinia();
 
