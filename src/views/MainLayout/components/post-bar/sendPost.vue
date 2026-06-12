@@ -110,7 +110,7 @@ const submitPost = async () => {
     word-break: break-all;
   }
 }
-.post-form {
+.post-form:not(:first-child) {
   width: 60%;
   margin: 5px auto;
 }
