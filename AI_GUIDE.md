@@ -38,8 +38,9 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 - `baseURL` 使用 `SERVER_ADDRESS`。
 - 请求头会自动带：
   - `siteToken`：匿名统计用，存 cookie。
-  - `dpahjdoiaw`：固定后端校验头。
+  - `dpahjdoiaw`：Web 前端来源统计标记，用来告诉后端“这次请求来自 sb6657.cn 官网前端”。
   - `Authorization: Bearer ${token}`：登录后带。
+- `dpahjdoiaw` 不是鉴权密钥，也不是反爬安全边界。QQ bot、agent、油猴插件或第三方脚本如果复用网站后端接口，不要复制这个请求头，否则会把外部调用统计到官网前端来源里。
 - 响应拦截器会把 AxiosResponse 解成后端返回体，所以组件里 `await httpInstance.get(...)` 得到的是 `{ code, data, msg }` 这一层，不是 Axios 原始响应。
 - Token 即将过期时会用 `/refresh-token` 刷新，并把刷新期间的请求放进队列。
 - 登录页的“15天内自动登录”控制 token 存储位置：勾选后存 `localStorage`，未勾选只存当前浏览器会话的 `sessionStorage`；业务代码统一通过 `cookieUtils.getToken()` 取登录态。

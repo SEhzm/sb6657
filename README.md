@@ -47,6 +47,12 @@ Vue3 + Vite + axios + elementUIPlus + Typescript
 后端：
 SpringBoot + MyBatis + MySQL + Redis
 
+### 后端接口调用说明
+
+官网前端请求会自动携带 `dpahjdoiaw` 请求头，这个头只用于后端统计“请求来源自 sb6657.cn Web 前端”，不是鉴权密钥。
+
+如果你在 QQ bot、agent、油猴脚本或其他第三方工具中调用网站后端接口，请不要携带这个请求头，避免后端来源统计被算错。
+
 
 ## 声明
 
