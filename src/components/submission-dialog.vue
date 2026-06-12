@@ -1,23 +1,28 @@
 <template>
-    <el-dialog v-model="dialogFormVisible" draggable title="投稿烂梗" width="82%">
+    <el-dialog v-model="dialogFormVisible" class="submission-dialog" draggable title="投稿烂梗" width="82%">
         <!-- 预设标签 -->
-        <h4>可选标签<el-popover :width="300">
+        <h4 class="tags-title">
+            可选标签
+            <el-popover :width="300">
                 <template #reference>
                     <el-icon size="16">
                         <Warning />
                     </el-icon>
                 </template>
-                为解决烂梗分栏不足和分类不清晰问题。<br>
+                为解决烂梗分栏不足和分类不清晰问题。
+                <br />
                 <b>点击标签即可添加</b>
             </el-popover>
-            <el-button link type="success" style="margin-left: 50%">投稿标签
+            <el-button class="submit-tag-button" link type="success">
+                投稿标签
                 <el-popover :width="300">
                     <template #reference>
                         <el-icon size="16">
                             <QuestionFilled />
                         </el-icon>
                     </template>
-                    <b>请在上方(建议/提交)问卷投稿。</b><br>
+                    <b>请在上方(建议/提交)问卷投稿。</b>
+                    <br />
                 </el-popover>
             </el-button>
         </h4>
@@ -30,13 +35,13 @@
                 <div class="match-section">
                     <el-checkbox v-model="isMatchSelected" :disabled="!matchData" class="match-checkbox">
                         关联赛事库
-                        <el-icon color="#3db302ff" size="16">
+                        <el-icon class="match-help-icon" size="16">
                             <QuestionFilled />
                         </el-icon>
                     </el-checkbox>
                     <div v-if="matchData" class="match-details-box">
                         <div class="match-info-row">
-                            <img :src="matchData.matchesImg" class="match-image" :alt="matchData.matchesName">
+                            <img :src="matchData.matchesImg" class="match-image" :alt="matchData.matchesName" />
                             <span class="match-name">{{ matchData.matchesName }}</span>
                         </div>
                         <div class="match-time">
@@ -58,12 +63,12 @@
 </template>
 
 <script setup>
-import { ElMessage, ElNotification } from 'element-plus';
 import httpInstance from '@/apis/httpInstance';
-import { API } from '@/constants/backend';
-import { ref } from 'vue';
-import { useMemeTagsStore } from '@/stores/memeTags';
 import tagSelector from '@/components/tag-selector.vue';
+import { API } from '@/constants/backend';
+import { useMemeTagsStore } from '@/stores/memeTags';
+import { ElNotification } from 'element-plus';
+import { ref } from 'vue';
 const memeTagsStore = useMemeTagsStore();
 
 const barrage = ref('');
@@ -131,175 +136,131 @@ const isMatchSelected = ref(false);
 
 </script>
 
-<style scoped>
-h3 {
-    margin-top: 20px;
-}
-
-/* 预设标签容器 */
-.preset-tags-container {
-    max-height: 100px;
-    overflow-y: auto;
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-/* 预设标签按钮的样式 */
-.preset-tags {
+<style scoped lang="scss">
+.tags-title {
     display: flex;
+    align-items: center;
     flex-wrap: wrap;
-}
-
-.preset-tags .el-tag {
-    position: relative;
-    margin-right: 10px;
+    gap: 4px;
+    margin-top: -10px;
     margin-bottom: 10px;
+
+    .submit-tag-button {
+        margin-left: 40%;
+    }
 }
 
-:deep(.preset-tags .el-tag__close) {
-    font-size: 30px;
-    transform: rotate(45deg);
-}
-
-.added-tags {
-    min-height: 40px;
-    display: flex;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-
-.added-tags .el-tag {
-    margin-right: 10px;
-    margin-bottom: 10px;
-}
-
-/* 底部容器 */
 .footer-container {
-    display: flex;
-    align-items: center;
     width: 100%;
-    background-color: #f5f7fa;
-    padding: 12px;
-    border-radius: 4px;
     margin-top: 10px;
+    border-radius: 4px;
     box-sizing: border-box;
-}
-
-.match-section {
-    display: flex;
-    align-items: center;
-    flex: 1;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-/* Checkbox specific style */
-.match-checkbox {
-    margin-right: 10px;
-    white-space: nowrap;
-}
-
-/* 比赛详情框 (绿色背景部分) */
-.match-details-box {
-    display: flex;
-    flex-direction: column;
-    background-color: #e6f5f2ff;
-    padding: 5px 10px;
-    border-radius: 4px;
-    flex-shrink: 0;
-    justify-content: center;
-}
-
-.match-info-row {
-    display: flex;
-    align-items: center;
-}
-
-/* 比赛图片 */
-.match-image {
-    width: 30px;
-    height: 30px;
-    margin-right: 10px;
-    object-fit: contain;
-}
-
-/* 比赛名称 */
-.match-name {
-    font-size: 14px;
-    color: #303133;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 150px;
-}
-
-/* 比赛时间 */
-.match-time {
-    font-size: 12px;
-    color: #606266;
-    margin-top: 4px;
-}
-
-/* 无赛事提示 */
-.no-match-info {
-    color: #909399;
-    font-size: 14px;
-    padding: 5px 10px;
-    background-color: #f5f7fa;
-    border-radius: 4px;
-    flex-shrink: 0;
-}
-
-/* 按钮组 */
-.button-group {
-    display: flex;
-    gap: 10px;
-    margin-left: 10px;
-}
-
-/* 移动端适配 */
-@media screen and (max-width: 768px) {
-    .footer-container {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-        padding: 8px;
-    }
-
-    .match-time {
-        font-size: 12px;
-        color: #606266;
-        margin-top: 4px;
-    }
 
     .match-section {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 8px;
-    }
+        display: flex;
+        align-items: center;
+        flex: 1;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 12px;
+        background-color: #f5f7fa;
 
-    .match-details-box,
-    .no-match-info {
-        width: 100%;
-        box-sizing: border-box;
+        .match-checkbox {
+            margin-right: 10px;
+            white-space: nowrap;
+
+            .match-help-icon {
+                color: #3db302ff;
+            }
+        }
+
+        .match-details-box {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            justify-content: center;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #e6f5f2ff;
+
+            .match-info-row {
+                display: flex;
+                align-items: center;
+
+                .match-image {
+                    width: 30px;
+                    height: 30px;
+                    margin-right: 10px;
+                    object-fit: contain;
+                }
+
+                .match-name {
+                    max-width: 150px;
+                    overflow: hidden;
+                    color: #303133;
+                    font-size: 14px;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+            }
+
+            .match-time {
+                margin-top: 4px;
+                color: #606266;
+                font-size: 12px;
+            }
+        }
+
+        .no-match-info {
+            flex-shrink: 0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background-color: #f5f7fa;
+            color: #909399;
+            font-size: 14px;
+        }
     }
 
     .button-group {
         width: 100%;
-        margin-left: 0;
-        justify-content: flex-end;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 10px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .tags-title {
+        .submit-tag-button {
+            margin-left: 0;
+        }
     }
 
-    .el-dialog {
+    .footer-container {
+        padding: 8px;
+
+        .match-section {
+            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+
+            .match-details-box,
+            .no-match-info {
+                width: 100%;
+                box-sizing: border-box;
+            }
+        }
+
+        .button-group {
+            justify-content: flex-end;
+        }
+    }
+
+    :deep(.submission-dialog) {
         width: 95% !important;
         margin: 10px auto !important;
     }
-}
-.tag-icon-wrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
 }
 </style>
