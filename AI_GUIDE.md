@@ -42,6 +42,7 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
   - `Authorization: Bearer ${token}`：登录后带。
 - 响应拦截器会把 AxiosResponse 解成后端返回体，所以组件里 `await httpInstance.get(...)` 得到的是 `{ code, data, msg }` 这一层，不是 Axios 原始响应。
 - Token 即将过期时会用 `/refresh-token` 刷新，并把刷新期间的请求放进队列。
+- 登录页的“15天内自动登录”控制 token 存储位置：勾选后存 `localStorage`，未勾选只存当前浏览器会话的 `sessionStorage`；业务代码统一通过 `cookieUtils.getToken()` 取登录态。
 - 401 会弹登录框；500/601/其他错误会走 Element Plus 消息提示。
 
 另外 `httpInstance.ts` 还导出了两个轻封装：
@@ -558,7 +559,7 @@ memeTagsStore.tagsLoaded.then(() => {
 - 很多接口没有统一放在 `API` 常量里，新增接口最好先补 `constants/backend.ts`，但查旧接口要全局搜 `httpInstance`。
 - `tags` 字段是逗号分隔字符串，不是数组。
 - `httpInstance.get/post` 返回的是后端 body，不是 AxiosResponse。
-- AI 流式接口不走 `httpInstance`，要手动拼 `httpInstance.defaults.baseURL` 和 token。
+- AI 流式接口不走 `httpInstance`，要手动拼 `httpInstance.defaults.baseURL`，token 通过 `cookieUtils.getToken()` 读取。
 - 生产环境会屏蔽 `console.log/dir/warn`，只保留 `console.error`。
 - `main.ts` 每 24 小时自动 `location.reload()`。
 - `FloatingSidebar.vue` 还有动态 `:style`，属于拖拽定位必需；不要和普通行内 CSS 一起机械删除。

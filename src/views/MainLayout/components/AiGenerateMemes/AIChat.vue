@@ -164,6 +164,7 @@ import { ref, nextTick, onMounted, onUnmounted, computed } from 'vue';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import httpInstance from '@/apis/httpInstance';
+import { getToken } from '@/utils/cookieUtils';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import aiAvatarUrl from '@/assets/imgs/user-img-0.png';
 import userAvatarUrl from '@/assets/icons/ai_chat_user.svg';
@@ -262,7 +263,7 @@ function autoResize() {
 
 // ========== 加载会话列表 + 自动进入最新 ==========
 async function loadSessions() {
-  const token = localStorage.getItem('Admin-Token');
+  const token = getToken();
   if (!token) return;
   try {
     const res: any = await httpInstance.get('/ai/sessions');
@@ -365,7 +366,7 @@ async function sendMessage() {
   streamThinking.value = '';
   await scrollToBottom();
 
-  const token = localStorage.getItem('Admin-Token');
+  const token = getToken();
   if (!token) {
     ElMessage.warning('请先登录！');
     streaming.value = false;
@@ -504,7 +505,7 @@ function handleSseEvent(eventType: string, data: any) {
 
 // ========== 剩余次数 ==========
 async function loadDailyRemaining() {
-  const token = localStorage.getItem('Admin-Token');
+  const token = getToken();
   if (!token) return;
   try {
     const res: any = await httpInstance.get('/ai/daily-remaining');

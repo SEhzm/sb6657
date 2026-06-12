@@ -191,7 +191,7 @@ const errorCode: Record<string, string> = {
     '404': '访问资源不存在',
     default: '系统未知错误，请反馈给管理员',
 };
-export const isRelogin = ref({ show: false });
+export const isRelogin = ref({ show: Boolean(getToken()) });
 httpInstance.interceptors.response.use(
     (res) => {
         if (!authStore) {
