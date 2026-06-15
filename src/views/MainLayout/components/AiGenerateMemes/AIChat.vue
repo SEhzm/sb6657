@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="ai-chat-wrapper" :class="themeClass">
     <!-- ========== 左侧：会话列表 ========== -->
     <aside class="session-sidebar" :class="{ collapsed: sidebarCollapsed }">
@@ -42,12 +42,12 @@
       <div class="chat-window" ref="chatWindow">
         <div v-if="messages.length === 0 && !streaming" class="welcome-msg">
           <div class="welcome-icon">🎯</div>
-          <h2>AI助手</h2>
-          <p>造梗 / 赛事分析 · 联网搜索最新赛事情况 · 基于站内烂梗素材创作 · 整活</p>
+          <h2>AI造梗搭子</h2>
           <div class="quick-actions">
-            <button @click="quickPrompt('帮我造几个CS2的梗')">🎯 造CS2梗</button>
-            <button @click="quickPrompt('最近A+级CS2赛事赛况如何')">🏆 赛事速报</button>
-            <button @click="quickPrompt('整点CS2的活')">💬 整活</button>
+            <button @click="quickPrompt('围绕最近CS2比赛造一组能投稿的烂梗，帮我挑最佳', 'meme')">🎯 投稿梗</button>
+            <button @click="quickPrompt('最近A+级CS2赛事赛况如何，顺便提炼几个赛况梗', 'chat')">🏆 赛事速报</button>
+            <button @click="quickPrompt('围绕CS2选手名场面整一组弹幕复读梗，要抽象一点', 'meme')">💬 弹幕梗</button>
+            <button @click="quickPrompt('给我一组黑Niko但不低俗的地狱笑话风格烂梗', 'meme')">🔥 狠一点</button>
           </div>
         </div>
 
@@ -87,7 +87,7 @@
           <div class="mode-group">
             <span class="option-label">模式</span>
             <div class="mode-toggle">
-              <button 
+              <button
                 type="button"
                 :class="['mode-btn', chatMode === 'chat' ? 'active' : '']"
                 @click="chatMode = 'chat'"
@@ -96,7 +96,7 @@
                 <span class="mode-icon">💬</span>
                 <span class="mode-text">闲聊</span>
               </button>
-              <button 
+              <button
                 type="button"
                 :class="['mode-btn', chatMode === 'meme' ? 'active' : '']"
                 @click="chatMode = 'meme'"
@@ -110,6 +110,18 @@
 
           <div class="options-divider"></div>
 
+          <div v-if="chatMode === 'meme'" class="meme-count-group">
+            <span class="option-label">数量</span>
+            <select v-model.number="memesNum" :disabled="streaming" class="meme-count-select">
+              <option :value="6">6条</option>
+              <option :value="8">8条</option>
+              <option :value="10">10条</option>
+              <option :value="12">12条</option>
+            </select>
+          </div>
+
+          <div v-if="chatMode === 'meme'" class="options-divider"></div>
+
           <div class="advanced-options">
             <label class="toggle-item">
               <input type="checkbox" v-model="showThinking" :disabled="streaming" />
@@ -118,7 +130,7 @@
                 <span>思考过程</span>
               </span>
             </label>
-            
+
             <label class="toggle-item">
               <input type="checkbox" v-model="enableWebSearch" :disabled="streaming" />
               <span class="toggle-label">
@@ -136,18 +148,25 @@
           </div>
         </div>
 
+        <div v-if="chatMode === 'meme'" class="polish-actions">
+          <button type="button" @click="quickPrompt('基于上一轮，保留最强方向，整体更狠一点', 'meme')" :disabled="streaming">更狠</button>
+          <button type="button" @click="quickPrompt('基于上一轮，改成更像弹幕复读的版本', 'meme')" :disabled="streaming">更弹幕</button>
+          <button type="button" @click="quickPrompt('基于上一轮，换一个对象重新造，但保持同样风格', 'meme')" :disabled="streaming">换对象</button>
+          <button type="button" @click="quickPrompt('从上一轮里挑3条最适合投稿的，再帮我润色标题', 'meme')" :disabled="streaming">挑投稿</button>
+        </div>
+
         <div class="input-row">
           <textarea
             ref="inputRef"
             v-model="prompt"
-            placeholder="输入内容..."
+            :placeholder="inputPlaceholder"
             :disabled="streaming"
             rows="1"
             @keydown.enter.exact.prevent="sendMessage"
             @keydown.shift.enter.prevent="prompt += '\n'"
             @input="autoResize"
           ></textarea>
-          <button type="submit" :disabled="streaming || !prompt.trim()" class="send-btn">
+          <button type="submit" :disabled="streaming || !prompt.trim() || dailyRemaining <= 0" class="send-btn">
             <span v-if="!streaming">发送</span>
             <span v-else class="loading-dots">
               <span></span><span></span><span></span>
@@ -212,7 +231,7 @@ onUnmounted(() => {
 });
 
 // ========== 状态 ==========
-const chatMode = ref<'chat' | 'meme'>('chat');  // 默认闲聊模式
+const chatMode = ref<'chat' | 'meme'>('meme');  // 默认造梗模式
 const chatWindow = ref<HTMLElement | null>(null);
 const inputRef = ref<HTMLTextAreaElement | null>(null);
 const prompt = ref('');
@@ -222,6 +241,7 @@ const streamContent = ref('');
 const streamThinking = ref('');
 const showThinking = ref(false);
 const enableWebSearch = ref(true);  // 默认开启联网搜索
+const memesNum = ref(8);
 const currentSessionId = ref<number | null>(null);
 const currentTitle = ref('');
 const sessions = ref<SessionItem[]>([]);
@@ -229,6 +249,10 @@ const sidebarCollapsed = ref(false);
 const dailyRemaining = ref(50);
 const aiAvatar = aiAvatarUrl;
 const userAvatar = userAvatarUrl;
+
+const inputPlaceholder = computed(() => chatMode.value === 'meme'
+  ? '输入造梗主题，例如：围绕donk名场面造一组弹幕梗，帮我挑最佳...'
+  : '输入内容，例如：最近CS2赛事有什么活...');
 
 // ========== 工具函数 ==========
 function renderMd(text: string): string {
@@ -345,20 +369,27 @@ async function confirmDeleteSession(sessionId: number) {
 }
 
 // ========== 快捷输入 ==========
-function quickPrompt(text: string) {
+function quickPrompt(text: string, mode: 'chat' | 'meme' = 'chat') {
+  chatMode.value = mode;
   prompt.value = text;
+  nextTick(() => inputRef.value?.focus());
 }
 
 // ========== 发送消息（SSE） ==========
 async function sendMessage() {
   if (!prompt.value.trim() || streaming.value) return;
+  if (dailyRemaining.value <= 0) {
+    ElMessage.warning('今日使用次数已用完，明天再来整活吧！');
+    return;
+  }
 
   const userPrompt = prompt.value.trim();
-  messages.value.push({
+  const optimisticUserMessage: Message = {
     role: 'user',
     content: userPrompt,
     createTime: new Date().toLocaleTimeString(),
-  });
+  };
+  messages.value.push(optimisticUserMessage);
   prompt.value = '';
   streaming.value = true;
   streamContent.value = '';
@@ -368,6 +399,8 @@ async function sendMessage() {
   const token = localStorage.getItem('Admin-Token');
   if (!token) {
     ElMessage.warning('请先登录！');
+    messages.value.pop();
+    prompt.value = userPrompt;
     streaming.value = false;
     return;
   }
@@ -384,8 +417,9 @@ async function sendMessage() {
         needReasoning: showThinking.value,
         sessionId: currentSessionId.value,
         enableWebSearch: enableWebSearch.value,
-          skill: chatMode.value === 'meme' ? 'MEME_MAKER' : null,
-          mode: chatMode.value === 'meme' ? 'MEME' : 'CHAT',
+        memesNum: chatMode.value === 'meme' ? memesNum.value : undefined,
+        skill: chatMode.value === 'meme' ? 'MEME_MAKER' : null,
+        mode: chatMode.value === 'meme' ? 'MEME' : 'CHAT',
       }),
     });
 
@@ -399,6 +433,7 @@ async function sendMessage() {
     const decoder = new TextDecoder();
     let buffer = '';
     let finalSessionId: number | null = null;
+    let sseFailed = false;
 
     while (true) {
       const { done, value } = await reader.read();
@@ -418,7 +453,7 @@ async function sendMessage() {
           if (line.startsWith('event:') || line.startsWith('event: ')) {
             eventName = line.replace(/^event:\s*/, '').trim();
           } else if (line.startsWith('data:') || line.startsWith('data: ')) {
-            dataStr += line.replace(/^data:\s*/, '').trim();
+            dataStr += line.replace(/^data:\s?/, '');
           }
         }
 
@@ -427,6 +462,7 @@ async function sendMessage() {
         try {
           const data = JSON.parse(dataStr);
           handleSseEvent(eventName || 'content', data);
+          if ((eventName || data.type) === 'error') sseFailed = true;
           if (data.sessionId) finalSessionId = data.sessionId;
           if (data.title) currentTitle.value = data.title;
         } catch { /* 非JSON忽略 */ }
@@ -447,10 +483,17 @@ async function sendMessage() {
       currentSessionId.value = finalSessionId;
     }
 
+    if (sseFailed && !streamContent.value) {
+      messages.value = messages.value.filter(item => item !== optimisticUserMessage);
+      prompt.value = userPrompt;
+    }
+
     await loadSessions();
     await loadDailyRemaining();
   } catch (e: any) {
     ElMessage.error('请求异常: ' + (e.message || '未知错误'));
+    messages.value = messages.value.filter(item => item !== optimisticUserMessage);
+    prompt.value = userPrompt;
   } finally {
     streaming.value = false;
     streamContent.value = '';
@@ -461,7 +504,7 @@ async function sendMessage() {
 
 function handleSseEvent(eventType: string, data: any) {
   console.log('[SSE] 收到事件:', eventType, data);
-  
+
   switch (eventType) {
     case 'connected':
       console.log('[SSE] 连接已建立');
@@ -848,6 +891,7 @@ async function loadDailyRemaining() {
 .options-bar {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 16px;
   margin-bottom: 12px;
   padding: 8px 12px;
@@ -924,12 +968,65 @@ async function loadDailyRemaining() {
   background: var(--border-color);
 }
 
+.meme-count-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.meme-count-select {
+  height: 30px;
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.meme-count-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.polish-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: -4px 0 12px;
+}
+
+.polish-actions button {
+  padding: 6px 10px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.polish-actions button:hover:not(:disabled) {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: var(--bg-active);
+}
+
+.polish-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* 高级选项 */
 .advanced-options {
   display: flex;
   align-items: center;
   gap: 12px;
   flex: 1;
+  min-width: 180px;
 }
 
 .toggle-item {
@@ -999,10 +1096,10 @@ async function loadDailyRemaining() {
 }
 
 /* 输入框行 */
-.input-row { 
-  display: flex; 
-  gap: 10px; 
-  align-items: flex-end; 
+.input-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
 }
 
 .input-row textarea {
@@ -1022,7 +1119,7 @@ async function loadDailyRemaining() {
   transition: all 0.2s ease;
 }
 
-.input-row textarea:focus { 
+.input-row textarea:focus {
   border-color: var(--border-focus);
   box-shadow: 0 0 0 3px rgba(22, 119, 255, 0.1);
 }
@@ -1048,7 +1145,7 @@ async function loadDailyRemaining() {
   justify-content: center;
 }
 
-.send-btn:hover:not(:disabled) { 
+.send-btn:hover:not(:disabled) {
   background: var(--accent-hover);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1058,8 +1155,8 @@ async function loadDailyRemaining() {
   transform: translateY(0);
 }
 
-.send-btn:disabled { 
-  opacity: 0.5; 
+.send-btn:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }

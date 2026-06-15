@@ -130,13 +130,13 @@
         </el-dialog>
 
         <!-- 首页广告信息弹出框 -->
-        <el-dialog v-model="adInfoDialog" title="甲方要求150人注册。 ありがとう米娜桑" :width="lightWidth">
+        <!-- <el-dialog v-model="adInfoDialog" title="甲方要求150人注册。 ありがとう米娜桑" :width="lightWidth">
             <a href="https://yousheng186.com/activity/login/1?promotionCode=6657" target="_blank">
                 <p>感谢甲方爸爸继续支持我们，各位爹注册一下吧，凑凑人头吧，祝你们长生不老永远不死。</p>
                 <img src="https://pic1.imgdb.cn/item/6a25768ed71dee7c941a8d6c.jpg" alt="广告图片"
                     style="width: 100%; margin-top: 10px;" />
             </a>
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 

@@ -25,7 +25,7 @@
         </template>
     </el-popover>
 
-    <el-popover placement="left" title="" :width="300" trigger="hover" :visible="sponsorHintVisible"
+    <!-- <el-popover placement="left" title="" :width="300" trigger="hover" :visible="sponsorHintVisible"
         content="为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇">
         <template #reference>
             <el-button class="sponsor-button" plain @mouseenter="sponsorHintVisible = true"
@@ -39,13 +39,13 @@
                 style="width: 100%; cursor: pointer" />
         </a>
         <p style="text-align: center; margin-top: 10px; color: #666">感谢甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇</p>
-    </el-dialog>
+    </el-dialog> -->
 
     <el-dialog v-model="qqGroupDialogVisible" :draggable="true" title="官方交流🐧" width="410px">
         <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px" />
     </el-dialog>
 
-    <div v-if="layoutAdVisible" class="layout-ad">
+    <!-- <div v-if="layoutAdVisible" class="layout-ad">
         <el-popover :visible="popoverVisible" placement="top" title="甲方要求150人注册。ありがとう米娜桑" :width="310">
             <template #reference>
                 <div class="layout-ad-content">
@@ -63,7 +63,7 @@
                 </p>
             </div>
         </el-popover>
-    </div>
+    </div> -->
 </template>
 
 <script setup lang="ts">
