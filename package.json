@@ -19,7 +19,6 @@
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "js-cookie": "^3.0.5",
-    "jsencrypt": "^3.3.2",
     "marked": "^15.0.12",
     "pinia": "^3.0.3",
     "sass": "^1.91.0",

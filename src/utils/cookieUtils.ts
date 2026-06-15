@@ -3,28 +3,45 @@ import Cookies from 'js-cookie'
 const TokenKey = 'Admin-Token'
 const RefreshTokenKey = 'Admin-Refresh-Token'
 const TokenExpireKey = 'Admin-Token-Expire'
+const tokenKeys = [TokenKey, RefreshTokenKey, TokenExpireKey]
+
+function getStoredTokenValue(key: string) {
+    return sessionStorage.getItem(key) || localStorage.getItem(key)
+}
+
+function hasPersistentToken() {
+    return tokenKeys.some((key) => localStorage.getItem(key))
+}
+
+function clearTokenStorage(storage: Storage) {
+    tokenKeys.forEach((key) => storage.removeItem(key))
+}
 
 // 获取 token
 export function getToken() {
-    return localStorage.getItem(TokenKey)
+    return getStoredTokenValue(TokenKey)
 }
 
 // 设置 token
-export function setToken(token: string, refreshToken: string, expiresIn: number) {
+export function setToken(token: string, refreshToken: string, expiresIn: number, persistent = hasPersistentToken()) {
     const expireTime = Date.now() + expiresIn * 1000
-    localStorage.setItem(TokenKey, token)
-    localStorage.setItem(RefreshTokenKey, refreshToken)
-    localStorage.setItem(TokenExpireKey, expireTime.toString())
+    const targetStorage = persistent ? localStorage : sessionStorage
+    const unusedStorage = persistent ? sessionStorage : localStorage
+
+    clearTokenStorage(unusedStorage)
+    targetStorage.setItem(TokenKey, token)
+    targetStorage.setItem(RefreshTokenKey, refreshToken)
+    targetStorage.setItem(TokenExpireKey, expireTime.toString())
 }
 
 // 获取刷新 token
 export function getRefreshToken() {
-    return localStorage.getItem(RefreshTokenKey)
+    return getStoredTokenValue(RefreshTokenKey)
 }
 
 // 获取 token 过期时间
 export function getTokenExpireTime() {
-    const expireTime = localStorage.getItem(TokenExpireKey)
+    const expireTime = getStoredTokenValue(TokenExpireKey)
     return expireTime ? parseInt(expireTime) : 0
 }
 
@@ -38,9 +55,8 @@ export function isTokenExpiringSoon() {
 
 // 移除所有 token
 export function removeToken() {
-    localStorage.removeItem(TokenKey)
-    localStorage.removeItem(RefreshTokenKey)
-    localStorage.removeItem(TokenExpireKey)
+    clearTokenStorage(localStorage)
+    clearTokenStorage(sessionStorage)
     
     // 重置登录状态
     try {

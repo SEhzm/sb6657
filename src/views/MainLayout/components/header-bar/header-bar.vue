@@ -27,7 +27,7 @@
                     <transition name="fade">
                         <span :key="rotationIndex" class="hot-barrage-span">热门：{{ hotMeme24h?.[rotationIndex]?.content
                             || ''
-                            }}</span>
+                        }}</span>
                     </transition>
                 </div>
 
@@ -126,7 +126,7 @@
         <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
         <!-- 支持我弹出框 -->
         <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth">
-            <img src="http://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
+            <img src="https://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
         </el-dialog>
 
         <!-- 首页广告信息弹出框 -->

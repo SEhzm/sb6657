@@ -2,7 +2,7 @@
     <div class="memes-view">
         <div class="card-table">
             <div class="card" v-if="route.path === '/memes/AllBarrage'">
-                <h4>
+                <h4 class="tag-card-title">
                     按标签查看烂梗
                     <el-popover :width="300">
                         <template #reference>
@@ -14,7 +14,7 @@
                         <br />
                         <b>点击标签即可添加</b>
                     </el-popover>
-                    <el-button link type="success" style="margin-left: 50%">
+                    <el-button class="tag-submit-btn" link type="success">
                         投稿标签
                         <el-popover :width="300">
                             <template #reference>
@@ -48,47 +48,41 @@
                     <template #default="scope">
                         <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
-                                <div style="cursor: pointer" @touchstart="handleTouchStart(scope.row)"
+                                <div class="meme-content" @touchstart="handleTouchStart(scope.row)"
                                     @touchend="handleTouchEnd(scope.row)">
-                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)" style="color: #e6a23c; flex-shrink: 0;" size="large">
+                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)"
+                                        class="shield-warning-icon" size="large">
                                         <WarningFilled />
                                     </el-icon>
                                     <span class="barrage-text">{{ scope.row.content }}</span>
                                 </div>
                             </template>
                             <template #default>
-                                <div style="display: flex; align-items: center; flex-wrap: wrap">
-                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, allTags)" :key="index"
-                                        style="margin-right: 8px">
-                                        <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                            <div class="tag-icon-wrapper">
-                                                <img v-if="item.iconUrl" :src="item.iconUrl"
-                                                    style="height: 22px; object-fit: cover; vertical-align: middle" />
-                                                <span style="vertical-align: middle">{{ item.label }}</span>
-                                            </div>
-                                        </el-tag>
+                                <div class="meme-popover">
+                                    <div class="tags-container">
+                                        <div v-for="item in getDisplayTags(scope.row.tags, allTags)" :key="item.label"
+                                            class="popover-tag">
+                                            <el-tag round effect="dark" class="tag-item">
+                                                <div class="tag-icon-wrapper">
+                                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                                                    <span class="tag-label">{{ item.label }}</span>
+                                                </div>
+                                            </el-tag>
+                                        </div>
                                     </div>
                                     <!-- 屏蔽词提示 - 用小字显示在tag区域 -->
-                                    <span v-if="hasShieldWordInContent(scope.row.content)"
-                                        style="font-size: 14px; color: #e6a23c; margin-left: 4px;">
-                                        <el-icon style="margin-right: 2px; vertical-align: middle;">
+                                    <span v-if="hasShieldWordInContent(scope.row.content)" class="shield-word-text">
+                                        <el-icon class="shield-word-icon">
                                             <Warning />
                                         </el-icon>
                                         包含屏蔽词
                                     </span>
-                                    <span
-                                        style="position: absolute; bottom: 0; right: 0; font-size: 11px; min-width: 170px">投稿时间:
-                                        {{ easyFormatTime(scope.row.submitTime) }}</span>
+                                    <div class="submit-time">投稿时间:{{ easyFormatTime(scope.row.submitTime) }}</div>
                                 </div>
                             </template>
                         </el-popover>
                     </template>
                 </el-table-column>
-                <!-- <el-table-column align="center" width="40">
-                    <template #default="scope">
-                        <LikeNum :likeCount="scope.row.likes" @click.stop="likeMeme_countPlus1(scope.row)"/>
-                    </template>
-                </el-table-column> -->
                 <el-table-column align="center" width="100">
                     <template #default="scope">
                         <el-button type="primary" class="copy-btn" @click.stop="copyMeme_countPlus1(scope.row)">
@@ -121,11 +115,11 @@ import { API, MemeCategory } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { useShieldWordStore } from '@/stores/shieldWordStore';
 import { type getMemeTags as memeTag } from '@/types/meme';
-import { copySuccess, copyToClipboard, limitedCopy, limitedLike } from '@/utils/clipboard';
+import { copySuccess, copyToClipboard, limitedCopy } from '@/utils/clipboard';
 import { getDisplayTags } from '@/utils/tags';
 import { throttle } from '@/utils/throttle';
 import { easyFormatTime } from '@/utils/time';
-import { Warning } from '@element-plus/icons-vue';
+import { QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 const memeTagsStore = useMemeTagsStore();
@@ -201,7 +195,6 @@ async function sortMeme(pageNum: number) {
 watch(
     () => route.path,
     () => {
-        console.log('当前页面path:', route.path);
         isSort.value = false;
         currentPage.value = 1;
         loading.value = true;
@@ -247,8 +240,6 @@ refreshMeme(1);
 // 复制
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-//like复用copy
-const likeMeme = throttle(copyToClipboard, limitedLike, 2000);
 async function copyMeme_countPlus1(meme: Meme) {
     const memeText = meme.content;
     const res = copyMeme(memeText);
@@ -308,6 +299,42 @@ const scrollToTop = () => {
 </script>
 
 <style scoped lang="scss">
+@keyframes crissCrossLeft {
+    0% {
+        left: -20px;
+    }
+
+    50% {
+        left: 50%;
+        width: 20px;
+        height: 20px;
+    }
+
+    100% {
+        left: 50%;
+        width: 375px;
+        height: 375px;
+    }
+}
+
+@keyframes crissCrossRight {
+    0% {
+        right: -20px;
+    }
+
+    50% {
+        right: 50%;
+        width: 20px;
+        height: 20px;
+    }
+
+    100% {
+        right: 50%;
+        width: 375px;
+        height: 375px;
+    }
+}
+
 .memes-view {
     width: 93%;
     display: flex;
@@ -320,14 +347,26 @@ const scrollToTop = () => {
 
         .card {
             border-radius: 5px 5px 0 0;
+
+            .tag-card-title {
+                display: flex;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 4px;
+
+                .tag-submit-btn {
+                    margin-left: auto;
+                }
+            }
         }
 
         .top {
             display: flex;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
             padding-top: 10px;
             padding-left: 10px;
-            gap: 6px;
             background-color: #fff;
 
             .submit-tips {
@@ -343,42 +382,6 @@ const scrollToTop = () => {
                 background: #027efb;
                 color: #fff;
                 text-align: center;
-            }
-
-            @keyframes crissCrossLeft {
-                0% {
-                    left: -20px;
-                }
-
-                50% {
-                    left: 50%;
-                    width: 20px;
-                    height: 20px;
-                }
-
-                100% {
-                    left: 50%;
-                    width: 375px;
-                    height: 375px;
-                }
-            }
-
-            @keyframes crissCrossRight {
-                0% {
-                    right: -20px;
-                }
-
-                50% {
-                    right: 50%;
-                    width: 20px;
-                    height: 20px;
-                }
-
-                100% {
-                    right: 50%;
-                    width: 375px;
-                    height: 375px;
-                }
             }
 
             .btn-animate__ball-collision {
@@ -424,20 +427,31 @@ const scrollToTop = () => {
             }
         }
 
-        :deep(.dialog-main) {
-            width: 95%;
-        }
+        .main-table {
+            .meme-content {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                cursor: pointer;
 
-        :deep(.hover-pointer) {
-            cursor: pointer;
-        }
+                .shield-warning-icon {
+                    flex-shrink: 0;
+                    color: #e6a23c;
+                }
 
-        .index {
-            font-size: large;
-        }
+                .barrage-text {
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                }
+            }
 
-        .copy-btn {
-            width: 90px;
+            :deep(.hover-pointer) {
+                cursor: pointer;
+            }
+
+            .copy-btn {
+                width: 90px;
+            }
         }
 
         .pagination-wrapper {
@@ -449,26 +463,79 @@ const scrollToTop = () => {
     }
 }
 
+.meme-popover {
+    .tags-container {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .popover-tag {
+            display: flex;
+
+            .tag-item {
+                font-size: 16px;
+                cursor: pointer;
+
+                .tag-icon-wrapper {
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .tag-icon {
+                    height: 22px;
+                    object-fit: cover;
+                    vertical-align: middle;
+                }
+
+                .tag-label {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+
+    .shield-word-text {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 4px;
+        font-size: 14px;
+        color: #e6a23c;
+
+        .shield-word-icon {
+            margin-right: 2px;
+        }
+    }
+
+    .submit-time {
+        font-size: 11px;
+    }
+}
+
 @media (min-width: 600px) {
-    .main-table {
-        font-size: large;
+    .memes-view {
+        .main-table {
+            font-size: large;
+        }
     }
 }
 
 @media (max-width: 601px) {
     .memes-view {
         width: 100%;
-    }
 
-    .main-table {
-        font-size: medium;
-    }
-}
+        .tag-card-title {
+            .tag-submit-btn {
+                margin-left: 0;
+            }
+        }
 
-.tag-icon-wrapper {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
+        .main-table {
+            font-size: medium;
+        }
+    }
 }
 </style>

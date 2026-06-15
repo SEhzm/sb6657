@@ -132,6 +132,7 @@ httpInstance.interceptors.request.use(
             config.headers['siteToken'] = getSiteToken();
         }
 
+        // 用于统计请求来源自sb6657.cn网站前端。如果你要使用网站后端，请移除此请求头，防止我们统计错数据，感谢配合
         config.headers['dpahjdoiaw'] = 'eAR48ZFJwfRTy6SyQPFj';
 
         const token = getToken();
@@ -191,7 +192,7 @@ const errorCode: Record<string, string> = {
     '404': '访问资源不存在',
     default: '系统未知错误，请反馈给管理员',
 };
-export const isRelogin = ref({ show: false });
+export const isRelogin = ref({ show: Boolean(getToken()) });
 httpInstance.interceptors.response.use(
     (res) => {
         if (!authStore) {
