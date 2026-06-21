@@ -71,7 +71,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { announcementAPI, Announcement } from '@/apis/announcement';
+import { announcementAPI, type Announcement } from '@/apis/announcement';
 
 const visible = ref(false);
 const announcements = ref<Announcement[]>([]);
@@ -141,13 +141,6 @@ onMounted(() => {
     .header-left {
         display: flex;
         align-items: center;
-        gap: 10px;
-    }
-
-    .header-icon {
-        width: 22px;
-        height: 22px;
-        color: #4a6cf7;
     }
 
     .announcement-title {
