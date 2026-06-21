@@ -37,7 +37,8 @@
                 </div>
             </div>
         </header>
-        <section class="updates-section" v-if="reportData.updates && reportData.updates.length">
+        <section :class="['updates-section', { 'show-all': collapse }]"
+            v-if="reportData.updates && reportData.updates.length">
             <span class="section-title">比赛更新</span>
             <span class="description">- 本场对位donk数据变化</span>
             <div class="updates-table-wrapper">
@@ -78,6 +79,20 @@
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div v-if="hasCollapseBtn" class="collapse-btn" @click="toggleCollapse">
+                <div v-if="collapse">
+                    <el-icon>
+                        <ArrowUpBold />
+                    </el-icon>
+                    <span>收起折叠</span>
+                </div>
+                <div v-else>
+                    <el-icon>
+                        <ArrowDownBold />
+                    </el-icon>
+                    <span>展开全部</span>
+                </div>
             </div>
         </section>
 
@@ -151,10 +166,11 @@
 
 <script setup lang="ts">
 import type { ReportData, YearConfig } from '@/types/15warriorsDonk';
-import { Download } from '@element-plus/icons-vue';
-import { ElMessage } from 'element-plus';
+import { ArrowDownBold, ArrowUpBold, Download } from '@element-plus/icons-vue';
+import { ElIcon, ElMessage } from 'element-plus';
 import { toCanvas } from 'html-to-image';
-import { ref, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
+
 
 const url = new URL(window.location.href);
 const searchParams = url.searchParams;
@@ -214,6 +230,14 @@ loadReportData(yearOptions.value.find((opt) => opt.value === 2026)?.json || '15w
 watch(currentYear, (newYear) => {
     loadReportData(yearOptions.value.find((opt) => opt.value === newYear)?.json || '15warriorsDonk_2025.json');
 });
+
+// 折叠本场变化
+const hasCollapseBtn = computed(() => reportData.value.updates.length > 4)
+const collapse = ref(false);
+function toggleCollapse() {
+    collapse.value = !collapse.value
+}
+
 
 const captureScale = 2;
 
@@ -536,6 +560,28 @@ async function downloadRankingImage() {
     padding: 0.1rem 0.4rem;
     border-left: 4px solid #333;
     margin-bottom: 1rem;
+    overflow: hidden;
+    max-height: 236px;
+    position: relative;
+
+    &.show-all {
+        height: auto;
+        max-height: none;
+        padding-bottom: 20px;
+    }
+
+    .collapse-btn {
+        cursor: pointer;
+        width: 100%;
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        text-align: center;
+        font-size: small;
+        font-weight: bold;
+        color: #777;
+        background: linear-gradient(rgba(245, 245, 247, 0), #F5F5F7);
+    }
 
     .section-title {
         font-size: 1.2rem;
