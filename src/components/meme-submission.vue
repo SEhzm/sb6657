@@ -301,7 +301,7 @@ function saveBarrage() {
             }
 
             .button-group {
-                justify-content: flex-end;
+                justify-content: center;
             }
         }
     }
