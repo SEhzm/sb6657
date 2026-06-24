@@ -4,64 +4,37 @@
             <div v-if="visible" class="announcement-overlay" @click.self="onClose">
                 <div class="announcement-panel">
                     <div class="announcement-header">
-                        <div class="header-left">
-                            
-                            <span class="announcement-title">{{ currentAnnouncement?.title || '公告' }}</span>
-                        </div>
-                        <div class="header-close" @click="onClose">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                        </div>
+                        <span class="announcement-title">{{ currentAnnouncement?.title || '公告' }}</span>
+                        <el-button class="header-close" :icon="Close" circle text @click="onClose" />
                     </div>
-                    <div class="announcement-content" v-if="currentAnnouncement">
-                        <div class="announcement-img-wrapper">
-                            <div
-                                v-if="announcements.length > 1 && currentIndex > 0"
-                                class="arrow-left"
-                                @click.stop="prev"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="15 18 9 12 15 6" />
-                                </svg>
-                            </div>
-                            <img
-                                v-if="currentAnnouncement.imgUrl"
-                                :src="currentAnnouncement.imgUrl"
-                                alt="公告图片"
-                                class="announcement-img"
-                            />
-                            <div v-if="announcements.length > 1" class="dots-bar">
-                                <span
-                                    v-for="(_, i) in announcements"
-                                    :key="i"
-                                    class="dot"
-                                    :class="{ active: i === currentIndex }"
-                                    @click.stop="currentIndex = i"
+
+                    <div v-if="currentAnnouncement" class="announcement-content">
+                        <el-carousel
+                            class="announcement-carousel"
+                            height="clamp(200px, 39.375vw, 520px)"
+                            :autoplay="false"
+                            :loop="false"
+                            :arrow="announcements.length > 1 ? 'always' : 'never'"
+                            :indicator-position="announcements.length > 1 ? '' : 'none'"
+                            @change="handleCarouselChange"
+                        >
+                            <el-carousel-item v-for="announcement in announcements" :key="announcement.id">
+                                <img
+                                    v-if="announcement.imgUrl"
+                                    :src="announcement.imgUrl"
+                                    :alt="announcement.title || '公告图片'"
+                                    class="announcement-img"
                                 />
-                            </div>
-                            <div
-                                v-if="announcements.length > 1 && currentIndex < announcements.length - 1"
-                                class="arrow-right"
-                                @click.stop="next"
-                            >
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="9 18 15 12 9 6" />
-                                </svg>
-                            </div>
-                        </div>
+                            </el-carousel-item>
+                        </el-carousel>
                         <div v-if="currentAnnouncement.content" class="announcement-text">{{ currentAnnouncement.content }}</div>
                     </div>
+
                     <div class="announcement-footer">
-                        <span v-if="announcements.length > 1" class="announcement-index">{{ currentIndex + 1 }} / {{ announcements.length }}</span>
-                        <button class="announcement-close-btn" @click="onClose">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
+                        <el-text v-if="announcements.length > 1" type="info" size="small">{{ currentIndex + 1 }} / {{ announcements.length }}</el-text>
+                        <el-button class="announcement-close-btn" type="danger" :icon="Close" @click="onClose">
                             关闭
-                        </button>
+                        </el-button>
                     </div>
                 </div>
             </div>
@@ -71,6 +44,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
+import { Close } from '@element-plus/icons-vue';
 import { announcementAPI, type Announcement } from '@/apis/announcement';
 
 const visible = ref(false);
@@ -78,12 +52,8 @@ const announcements = ref<Announcement[]>([]);
 const currentIndex = ref(0);
 const currentAnnouncement = computed(() => announcements.value[currentIndex.value] || null);
 
-function prev() {
-    if (currentIndex.value > 0) currentIndex.value--;
-}
-
-function next() {
-    if (currentIndex.value < announcements.value.length - 1) currentIndex.value++;
+function handleCarouselChange(index: number) {
+    currentIndex.value = index;
 }
 
 function onClose() {
@@ -113,21 +83,21 @@ onMounted(() => {
     position: fixed;
     inset: 0;
     z-index: 9999;
-    background: rgba(0, 0, 0, 0.55);
     display: flex;
     align-items: center;
     justify-content: center;
+    background: rgba(0, 0, 0, 0.55);
     backdrop-filter: blur(4px);
 }
 
 .announcement-panel {
-    background: #fff;
-    border-radius: 16px;
-    overflow: hidden;
     width: 70%;
     max-height: 92vh;
+    overflow: hidden;
     display: flex;
     flex-direction: column;
+    background: #fff;
+    border-radius: 16px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.06);
 }
 
@@ -137,134 +107,73 @@ onMounted(() => {
     justify-content: space-between;
     padding: 16px 24px;
     background: linear-gradient(135deg, #f8f9fc 0%, #eef0f7 100%);
+}
 
-    .header-left {
-        display: flex;
-        align-items: center;
-    }
+.announcement-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+    letter-spacing: 0.3px;
+}
 
-    .announcement-title {
-        font-size: 16px;
+.header-close {
+    color: #999;
+
+    :deep(.el-icon) {
+        font-size: 20px;
         font-weight: 700;
-        color: #1a1a2e;
-        letter-spacing: 0.3px;
     }
 
-    .header-close {
-        width: 34px;
-        height: 34px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        cursor: pointer;
-        color: #999;
-        transition: all 0.2s;
-
-        &:hover {
-            background: rgba(0, 0, 0, 0.06);
-            color: #333;
-        }
-
-        svg {
-            width: 18px;
-            height: 18px;
-        }
+    &:hover {
+        background: rgba(0, 0, 0, 0.06);
+        color: #333;
     }
 }
 
 .announcement-content {
-    .announcement-img-wrapper {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: #000;
+    overflow-y: auto;
+}
 
-        .announcement-img {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            object-fit: contain;
-            display: block;
-        }
+.announcement-carousel {
+    width: 100%;
+    background: #000;
 
-        .arrow-left,
-        .arrow-right {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 44px;
-            height: 44px;
-            color: #fff;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 10;
-            transition: all 0.25s;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+    :deep(.el-carousel__arrow) {
+        width: 44px;
+        height: 44px;
+        color: #fff;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(8px);
+        transition: all 0.25s;
 
-            &:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: translateY(-50%) scale(1.08);
-                box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            }
-
-            svg {
-                width: 24px;
-                height: 24px;
-            }
-        }
-
-        .arrow-left {
-            left: 16px;
-        }
-
-        .arrow-right {
-            right: 16px;
-        }
-
-        .dots-bar {
-            position: absolute;
-            bottom: 14px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-            z-index: 10;
-
-            .dot {
-                width: 8px;
-                height: 8px;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.45);
-                cursor: pointer;
-                transition: all 0.25s;
-
-                &.active {
-                    background: #fff;
-                    box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
-                    transform: scale(1.25);
-                }
-
-                &:hover {
-                    background: rgba(255, 255, 255, 0.75);
-                }
-            }
+        &:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-50%) scale(1.08);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
     }
 
-    .announcement-text {
-        line-height: 1.85;
-        font-size: 15px;
-        color: #444;
-        white-space: pre-wrap;
-        padding: 20px 24px;
-        background: #fafbfd;
+    :deep(.el-carousel__arrow .el-icon) {
+        font-size: 24px;
     }
+}
+
+.announcement-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
+}
+
+.announcement-text {
+    line-height: 1.85;
+    font-size: 15px;
+    color: #444;
+    white-space: pre-wrap;
+    padding: 20px 24px;
+    background: #fafbfd;
 }
 
 .announcement-footer {
@@ -274,42 +183,23 @@ onMounted(() => {
     gap: 16px;
     padding: 14px 24px;
     background: #fff;
+}
 
-    .announcement-index {
-        font-size: 13px;
-        color: #bbb;
-        font-weight: 500;
+.announcement-close-btn {
+    padding: 10px 18px;
+    border: 0;
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+    font-weight: 700;
+    box-shadow: 0 4px 14px rgba(238, 90, 90, 0.35);
+
+    &:hover {
+        background: linear-gradient(135deg, #ee5a5a 0%, #dc3d3d 100%);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(238, 90, 90, 0.45);
     }
 
-    .announcement-close-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 10px 28px;
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        font-size: 14px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.25s;
-        box-shadow: 0 4px 14px rgba(238, 90, 90, 0.35);
-
-        svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        &:hover {
-            background: linear-gradient(135deg, #ee5a5a 0%, #dc3d3d 100%);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 20px rgba(238, 90, 90, 0.45);
-        }
-
-        &:active {
-            transform: translateY(0);
-        }
+    &:active {
+        transform: translateY(0);
     }
 }
 
@@ -340,40 +230,20 @@ onMounted(() => {
 
     .announcement-header {
         padding: 12px 16px;
-
-        .announcement-title {
-            font-size: 14px;
-        }
     }
 
-    .announcement-content .announcement-img-wrapper {
-        .arrow-left,
-        .arrow-right {
+    .announcement-title {
+        font-size: 14px;
+    }
+
+    .announcement-carousel {
+        :deep(.el-carousel__arrow) {
             width: 34px;
             height: 34px;
-
-            svg {
-                width: 18px;
-                height: 18px;
-            }
         }
 
-        .arrow-left {
-            left: 8px;
-        }
-
-        .arrow-right {
-            right: 8px;
-        }
-
-        .dots-bar {
-            bottom: 10px;
-            gap: 6px;
-
-            .dot {
-                width: 6px;
-                height: 6px;
-            }
+        :deep(.el-carousel__arrow .el-icon) {
+            font-size: 18px;
         }
     }
 
