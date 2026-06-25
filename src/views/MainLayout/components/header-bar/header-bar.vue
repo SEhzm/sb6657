@@ -8,7 +8,7 @@
                 </a>
                 <div class="elinput-mobile">
                     <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable
-                        @keyup.enter.native="handleSearchMemeOnEnter">
+                        @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -18,6 +18,7 @@
                         </template>
                     </el-input>
                 </div>
+                <button class="submit-entry submit-entry-mobile" type="button" @click="openSubmissionDialog">投稿</button>
             </div>
 
             <div class="header-actions">
@@ -33,7 +34,7 @@
 
                 <div class="elinput">
                     <el-input v-model="enteringSearchKey" type="search" placeholder="输入以搜索烂梗..." clearable
-                        @keyup.enter.native="handleSearchMemeOnEnter">
+                        @keyup.enter="handleSearchMemeOnEnter">
                         <template #append>
                             <el-button type="primary" @click="handleSearchMeme">
                                 <el-icon>
@@ -43,7 +44,7 @@
                         </template>
                     </el-input>
                 </div>
-
+                <button class="submit-entry submit-entry-desktop" type="button" @click="openSubmissionDialog">投稿</button>
                 <el-button type="primary" @click="complaintButton" class="complaint-button">
                     上传照片
                     <br />
@@ -57,9 +58,9 @@
                         联系邮箱:he20020928@foxmail.com
                     </template>
                 </el-tooltip>
-                <a class="icon-container" href="https://sb6657.cn/Tampermonkey">
+                <!-- <a class="icon-container" href="https://sb6657.cn/Tampermonkey">
                     <img src="https://pic.imgdb.cn/item/6704f830d29ded1a8c738f70.png" alt="油猴" class="icon-img" />
-                </a>
+                </a> -->
                 <a class="icon-container" href="https://yuba.douyu.com/feed/2639094748291342931" target="_blank">
                     <img src="@/assets/imgs/douyu.png" alt="douyu" class="icon-img" />
                 </a>
@@ -124,6 +125,8 @@
         </memeDialog>
         <!-- 搜索结果框 -->
         <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
+        <!-- 投稿弹窗 -->
+        <submission-dialog v-model="submissionDialogVisible" />
         <!-- 支持我弹出框 -->
         <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth">
             <img src="https://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
@@ -144,6 +147,7 @@
 import { getHotMeme24h, getHotMeme7d } from '@/apis/getMeme';
 import httpInstance from '@/apis/httpInstance';
 import searchDialog from '@/components/header-bar/search-dialog.vue';
+import submissionDialog from '@/components/submission-dialog.vue';
 import { useIsMobile } from '@/utils/common';
 import { Search } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
@@ -209,6 +213,7 @@ setInterval(() => {
 const enteringSearchKey = ref('');
 const searchKey = ref('');
 const showSearchDialog = ref(false);
+const submissionDialogVisible = ref(false);
 function handleSearchMeme() {
     if (enteringSearchKey.value.trim() === '') {
         ElMessage.warning('请输入搜索内容');
@@ -223,6 +228,10 @@ function handleSearchMemeOnEnter(event: KeyboardEvent) {
     event.stopPropagation();
     handleSearchMeme();
     (event.target as HTMLInputElement)?.blur();
+}
+
+function openSubmissionDialog() {
+    submissionDialogVisible.value = true;
 }
 
 const lightningUrl = 'https://cdn.hguofichp.cn/power.png';
@@ -340,8 +349,10 @@ function openAd() {
         }
 
         .header-actions {
+            height: 100%;
             display: flex;
             align-items: center;
+            position: relative;
 
             .hot-barrage-img {
                 width: 26px;
@@ -379,6 +390,19 @@ function openAd() {
 
             .complaint-button {
                 margin-right: 10px;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+
+            .submit-entry-desktop {
+                margin-right: 10px;
+                align-self: flex-start;
+                height: 52px;
+                min-width: 70px;
+                border-radius: 0 0 10px 10px;
+                font-size: 18px;
+                font-weight: 700;
+                box-shadow: 0 4px 12px rgba(251, 114, 153, 0.26);
             }
 
             .icon-container {
@@ -432,6 +456,37 @@ function openAd() {
         }
     }
 
+    .submit-entry {
+        height: 38px;
+        min-width: 72px;
+        border: 0;
+        border-radius: 8px;
+        background: #fb7299;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 1;
+        letter-spacing: 1px;
+        box-shadow: 0 2px 8px rgba(251, 114, 153, 0.22);
+        cursor: pointer;
+        transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            background: #ff85ad;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(251, 114, 153, 0.28);
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: 0 1px 5px rgba(251, 114, 153, 0.2);
+        }
+    }
+
+    .submit-entry-mobile {
+        display: none;
+    }
+
     .dialog-header {
         display: flex;
         justify-content: space-between;
@@ -454,9 +509,10 @@ function openAd() {
             .logo-link {
                 height: 100%;
                 display: flex;
-                gap: 20px;
+                gap: 8px;
                 align-items: center;
                 margin-left: 10px;
+                width: calc(100% - 20px);
 
                 .header-title {
                     display: none;
@@ -464,12 +520,23 @@ function openAd() {
 
                 .elinput-mobile {
                     display: block;
-                    width: 280px;
-                    margin-right: 20px;
+                    flex: 1;
+                    min-width: 0;
+                    margin-right: 0;
+                }
+
+                .submit-entry-mobile {
+                    display: block;
+                    flex-shrink: 0;
+                    width: 56px;
+                    min-width: 56px;
+                    height: 32px;
+                    font-size: 14px;
                 }
             }
 
             .header-actions {
+                height: auto;
                 width: 100%;
                 justify-content: space-around;
 
@@ -499,8 +566,11 @@ function openAd() {
                 }
 
                 .complaint-button {
-                    padding: 2px;
                     margin-right: 0;
+                }
+
+                .submit-entry-desktop {
+                    display: none;
                 }
 
                 .icon-container {
