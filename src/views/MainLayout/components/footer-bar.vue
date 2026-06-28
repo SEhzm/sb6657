@@ -8,7 +8,7 @@
             </div>
             <div class="site-runtime">
                 <a class="ipv6-badge" href="https://www.trustssl.cc/ipv6.php?domain=sb6657.cn" title="IPv6网站检测"
-                    target="_blank" rel="noopener noreferrer">本站支持 IPv6</a>
+                    target="_blank" rel="noopener noreferrer">已支持IPv6访问</a>
                 本站已运行{{ daysSinceLaunch }}天
             </div>
         </div>
@@ -63,17 +63,14 @@ const daysSinceLaunch = computed(() => {
         }
 
         .ipv6-badge {
-            display: inline-flex;
-            align-items: center;
-            height: 22px;
-            padding: 0 8px;
+            height: 20px;
+            padding: 0 6px;
+            border: 1px solid #00b34a;
             border-radius: 4px;
-            color: #ffffff;
-            background: linear-gradient(90deg, #25a46a, #1d74d8);
-            font-weight: 700;
-            line-height: 22px;
-            text-decoration: none;
-            vertical-align: middle;
+            color: #00a344;
+            background: transparent;
+            font-size: 12px;
+            line-height: 18px;
         }
     }
 
