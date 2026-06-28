@@ -123,8 +123,6 @@
                 <div><el-button @click="openHotMeme24h">查看近24h热门</el-button></div>
             </div>
         </memeDialog>
-        <!-- 搜索结果框 -->
-        <searchDialog v-model="showSearchDialog" :searchKey="searchKey" />
         <!-- 投稿弹窗 -->
         <submission-dialog v-model="submissionDialogVisible" />
         <!-- 支持我弹出框 -->
@@ -146,18 +144,19 @@
 <script setup lang="ts">
 import { getHotMeme24h, getHotMeme7d } from '@/apis/getMeme';
 import httpInstance from '@/apis/httpInstance';
-import searchDialog from '@/components/header-bar/search-dialog.vue';
 import submissionDialog from '@/components/submission-dialog.vue';
 import { useIsMobile } from '@/utils/common';
 import { Search } from '@element-plus/icons-vue';
 import { ElMessage } from 'element-plus';
 import { computed, onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import memeDialog from './components/meme-dialog.vue';
 import userHome from './components/userHome.vue';
 
 const isMobile = useIsMobile();
 const route = useRoute();
+const router = useRouter();
+const SEARCH_QUERY_KEY = 'search';
 
 const loadingTips = '我还没有加载完喔~~';
 const supportMeDialog = ref(false);
@@ -211,16 +210,21 @@ setInterval(() => {
 
 // 搜索
 const enteringSearchKey = ref('');
-const searchKey = ref('');
-const showSearchDialog = ref(false);
 const submissionDialogVisible = ref(false);
+
 function handleSearchMeme() {
-    if (enteringSearchKey.value.trim() === '') {
+    const nextSearchKey = enteringSearchKey.value.trim();
+    if (nextSearchKey === '') {
         ElMessage.warning('请输入搜索内容');
         return;
     }
-    showSearchDialog.value = true;
-    searchKey.value = enteringSearchKey.value;
+
+    router.push({
+        query: {
+            ...route.query,
+            [SEARCH_QUERY_KEY]: nextSearchKey,
+        },
+    });
 }
 
 function handleSearchMemeOnEnter(event: KeyboardEvent) {

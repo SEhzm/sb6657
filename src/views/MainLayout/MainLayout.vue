@@ -25,6 +25,7 @@
                 <router-view />
             </div>
         </div>
+        <SearchDialogHost />
         <FooterBar></FooterBar>
     </div>
     <RouterLink to="/update">
@@ -37,6 +38,7 @@
 <script setup lang="ts">
     import HeaderBar from '@/views/MainLayout/components/header-bar/header-bar.vue';
     import FooterBar from '@/views/MainLayout/components/footer-bar.vue';
+    import SearchDialogHost from '@/components/search-dialog-host.vue';
     import FloatingSidebar from '@/views/MainLayout/components/right-sidebar/FloatingSidebar.vue';
     import { useRoute, useRouter } from 'vue-router';
     import { MemeCategory } from '@/constants/backend';
