@@ -552,7 +552,7 @@ memeTagsStore.tagsLoaded.then(() => {
 2. 行内 `style` 迁到语义 class。
 3. Element Plus 弹窗、popover、table 内部样式要注意 teleport 和 scoped，必要时用 `:deep()` 或给弹层内容自己的 root class。
 4. 移动端先确认这个组件使用的是 600px 还是 768px，不要硬套一个断点。
-5. 改完跑 `npm run build`。当前 `npm run lint` 因 ESLint 9 缺少 `eslint.config.js` 会直接失败，不是单个文件的问题。
+5. 改完跑 `npm run build`。当前 `npm run lint` 已迁移到 ESLint 9 flat config，可以正常执行；仓库里仍有历史 warning，后续可按模块逐步清理。
 
 ## 常见坑
 

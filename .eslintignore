@@ -1,6 +1,0 @@
-node_modules
-dist
-public
-.vercel
-.vscode
-*.min.js

@@ -2,7 +2,7 @@
     <div class="update-timeline">
         <h2 class="title">
             更新日志
-            <span class="tips">(与源码 更新日志.md 同步)</span>
+            <span class="tips">(与源码 docs/更新日志.md 同步)</span>
         </h2>
         <el-timeline>
             <el-timeline-item v-for="version in parsedVersions" :key="version.version" :timestamp="version.date" placement="top" type="success">
@@ -20,7 +20,7 @@
 
 <script lang="ts" setup>
 import { ref } from 'vue';
-import updateMd from '/更新日志.md?raw';
+import updateMd from '/docs/更新日志.md?raw';
 import { ElTimeline, ElTimelineItem } from 'element-plus';
 
 interface UpdateItem {

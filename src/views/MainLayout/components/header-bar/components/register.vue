@@ -209,14 +209,14 @@ function handleRegister() {
         } else {
           ElMessage.error(res.msg)
           loading.value = false;
-          if (captchaEnabled) {
+          if (captchaEnabled.value) {
             getCode();
           }
         }
 
       }).catch(() => {
         loading.value = false;
-        if (captchaEnabled) {
+        if (captchaEnabled.value) {
           getCode();
         }
       });
