@@ -85,7 +85,7 @@ const shieldWordStore = useShieldWordStore();
  * 5.emptyText，加载中或者为空时候的提示词
  * 6.refresh，刷新函数，其实就是获取此烂梗的函数，这里复制完调用一次，刷新+1结果
  */
-const showDialog = defineModel();
+const showDialog = defineModel({ type: Boolean, default: false });
 const props = defineProps<{
     memeArr: Meme[];
     loading: boolean;

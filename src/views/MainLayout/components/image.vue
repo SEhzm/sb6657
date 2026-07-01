@@ -4,7 +4,7 @@
     <em style="font-size: 14px;">如侵权，请右上角联系删除</em>
   </div>
   <div class="image-list" v-infinite-scroll="loadMoreImages">
-    <div v-for="(image, index) in image.outerImg" :key="index" class="image-block">
+    <div v-for="(image, index) in imageState.outerImg" :key="index" class="image-block">
       <el-image :zoom-rate="1.2" :max-scale="7" :min-scale="0.2" :hide-on-click-modal="true" :src="image.url"
         :preview-src-list="[image.url]" fit="cover" lazy style="width: 250px; height: 300px; ">
       </el-image>
@@ -31,22 +31,22 @@
   <div v-if="hasMore" class="card load-more" style="text-align: center;cursor: pointer;color: orangered;" @click="loadMoreImages()">
       加载更多<el-icon><ArrowDownBold /></el-icon>
   </div>
-  <div v-else-if="image.outerImg.length > 0" class="card no-more" style="text-align: center; color: #999; margin: 20px 0;">
+  <div v-else-if="imageState.outerImg.length > 0" class="card no-more" style="text-align: center; color: #999; margin: 20px 0;">
     没有更多图片了
   </div>
-  <el-dialog v-model="image.dialogFormVisible" draggable title="评论">
-    <el-form :model="image" label-width="100px" :rules="rules" label-position="right">
+  <el-dialog v-model="imageState.dialogFormVisible" draggable title="评论">
+    <el-form :model="imageState" label-width="100px" :rules="rules" label-position="right">
       <!-- <el-form-item label="用户昵称" prop="douyuID">
-        <el-input v-model="image.douyuID" autocomplete="off" />
+        <el-input v-model="imageState.douyuID" autocomplete="off" />
       </el-form-item> -->
       <el-form-item label="评论内容" prop="Commentname">
-        <el-input v-model="image.Commentname" autocomplete="off" />
+        <el-input v-model="imageState.Commentname" autocomplete="off" />
       </el-form-item>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="image.dialogFormVisible = false">关闭</el-button>
-        <el-button type="primary" @click="saveComment(image)">
+        <el-button @click="imageState.dialogFormVisible = false">关闭</el-button>
+        <el-button type="primary" @click="saveComment(imageState)">
           评论并关闭
         </el-button>
       </div>
@@ -72,7 +72,7 @@ const autoexec = () => {
   })
 }
 autoexec()
-const image = reactive({
+const imageState = reactive({
   outerImg: [],
   id: '',
   imageId: '',
@@ -106,9 +106,9 @@ const load = async () => {
     
     // 如果是第一页，直接赋值；否则追加数据
     if (pageNum.value === 1) {
-      image.outerImg = res.data.list || [];
+      imageState.outerImg = res.data.list || [];
     } else {
-      image.outerImg.push(...res.data.list);
+      imageState.outerImg.push(...res.data.list);
     }
     
     pageNum.value++; // 递增页码
@@ -146,15 +146,15 @@ const rules = ({
 
 const addComment = (image2) => {
   // console.log(image2)
-  image.imageId = image2.id
+  imageState.imageId = image2.id
   ElNotification({
     title: '温馨提醒',
     message: '请注意你的行为，不要上传违反法律的内容，后台能监控到你',
     type: 'warning',
   })
-  image.douyuID = ''
-  image.Commentname = ''
-  image.dialogFormVisible = true
+  imageState.douyuID = ''
+  imageState.Commentname = ''
+  imageState.dialogFormVisible = true
 }
 
 const saveComment = async (Obimage) => {
@@ -165,7 +165,7 @@ const saveComment = async (Obimage) => {
     try {
       const res = await httpInstance.post('/machine/addCommentname', {
         id: '',
-        imageId: image.imageId,
+        imageId: imageState.imageId,
         douyuID: Obimage.douyuID,
         createdAt: '',
         commentname: Obimage.Commentname,
@@ -176,7 +176,7 @@ const saveComment = async (Obimage) => {
       hasMore.value = true;
       await load();
       ElNotification.success("评论成功");
-      image.dialogFormVisible = false;
+      imageState.dialogFormVisible = false;
     } catch (err) {
       console.error('加载数据失败:', err);
     }

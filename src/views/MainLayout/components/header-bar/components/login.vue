@@ -105,7 +105,7 @@ function login() {
                     ElMessage.success('登录成功')
                     isRelogin.value.show = true;
                     setToken(res.token, res.refreshToken, 15 * 24 * 60 * 60, loginForm.value.rememberMe)
-                    closeDialog();
+                    closeLoginDialog();
                 } else {
                     loading.value = false;
                     ElMessage.error(res.msg)
@@ -147,7 +147,7 @@ function reg() {
     }
 }
 
-function closeDialog() {
+function closeLoginDialog() {
     props.closeDialog();
 }
 

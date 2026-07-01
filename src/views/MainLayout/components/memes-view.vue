@@ -1,7 +1,7 @@
 <template>
     <div class="memes-view">
         <div class="card-table">
-            <div class="card" v-if="route.path === '/memes/AllBarrage'">
+            <div class="card">
                 <h4 class="tag-card-title">
                     按标签查看烂梗
                     <el-popover :width="300">
@@ -33,7 +33,7 @@
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
-                <el-button v-if="route.path === '/memes/AllBarrage'" class="btn-animate btn-animate__ball-collision"
+                <el-button class="btn-animate btn-animate__ball-collision"
                     color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
@@ -111,7 +111,7 @@ import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import submissionDialog from '@/components/submission-dialog.vue';
 import tagSelector from '@/components/tag-selector.vue';
-import { API, MemeCategory } from '@/constants/backend';
+import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { useShieldWordStore } from '@/stores/shieldWordStore';
 import { type getMemeTags as memeTag } from '@/types/meme';
@@ -121,9 +121,9 @@ import { throttle } from '@/utils/throttle';
 import { easyFormatTime } from '@/utils/time';
 import { QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
 import { computed, onMounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
 const memeTagsStore = useMemeTagsStore();
 const shieldWordStore = useShieldWordStore();
+const memeCategory = 'allbarrage';
 
 //初始化屏蔽词数据
 onMounted(async () => {
@@ -135,18 +135,6 @@ onMounted(async () => {
     } catch (error) {
         console.error('加载屏蔽词失败:', error);
     }
-});
-
-const route = useRoute();
-const router = useRouter();
-/**
- * currentCategory可能为空，代表没匹配到路由对应分类。
- * 不过正常情况路由只有点击tab能改变，这时候都是能匹配到的，出现空只可能是用户自己瞎几把改url。
- * 所以我采取的方法是匹配不到就定位到404页。建议后面用currentCategory的地方都这么处理
- */
-const currentCategory = computed(() => {
-    selectedTags.value = [];
-    return MemeCategory.find((item) => item.path === route.path);
 });
 
 const loading = ref(true);
@@ -192,16 +180,6 @@ async function sortMeme(pageNum: number) {
         memeArr.value = [];
     }
 }
-watch(
-    () => route.path,
-    () => {
-        isSort.value = false;
-        currentPage.value = 1;
-        loading.value = true;
-        refreshMeme(1);
-    }
-);
-
 // 分页
 const pageSize = 50;
 const currentPage = ref(1);
@@ -217,12 +195,7 @@ function handlePageChange(page: number) {
 }
 
 async function refreshMeme(pageNum: number) {
-    const category = currentCategory.value?.category;
-    if (!category) {
-        router.push('/404');
-        return;
-    }
-    const res = await getMemeList(category, pageNum, pageSize, selectedTagsStr.value || undefined);
+    const res = await getMemeList(memeCategory, pageNum, pageSize, selectedTagsStr.value || undefined);
 
     //没有就是没有数据
     if (!res) {
@@ -246,12 +219,12 @@ async function copyMeme_countPlus1(meme: Meme) {
     if (!res || res === 'limitedSuccess') return;
     copySuccess();
     if (isSort.value == true) {
-        if (await copyCountPlus1('allbarrage', meme.id, currentPage.value, pageSize, 'desc')) {
+        if (await copyCountPlus1(memeCategory, meme.id, currentPage.value, pageSize, 'desc')) {
             await sortMeme(currentPage.value);
             return;
         }
     } else {
-        if (await copyCountPlus1(meme.category || 'allbarrage', meme.id, currentPage.value, pageSize)) {
+        if (await copyCountPlus1(meme.category || memeCategory, meme.id, currentPage.value, pageSize)) {
             await refreshMeme(currentPage.value);
             return;
         }

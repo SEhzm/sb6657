@@ -19,7 +19,8 @@ import { ref, getCurrentInstance, watch } from 'vue';
 
 const props = defineProps({
   user: {
-    type: Object
+    type: Object,
+    default: () => ({})
   }
 });
 
