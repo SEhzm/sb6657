@@ -15,8 +15,9 @@ async function getHotMeme(url: string, tips: string) {
                 tags: item.tags,
                 content: item.barrage,
                 id: `${item.barrageId}`,
-                copyCount: item.cnt,
+                copyCount: Number(item.cnt) || 0,
                 submitTime: item.submitTime,
+                hotDateTime: item.hotDateTime || undefined,
             };
         });
         return memeArr;

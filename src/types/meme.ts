@@ -7,6 +7,7 @@ declare global {
         copyCount: number; // 复制次数
         likes?: number; //点赞次数
         submitTime?: string; // 投稿时间
+        hotDateTime?: string; // 热榜时间
     };
 }
 
@@ -19,13 +20,13 @@ export interface getData<T> {
 export interface hotMeme_res {
     tags: string;
     barrage: string;
-    barrageId: number;
-    cnt: number;
-    hotDateTime: null;
-    id: null;
-    tableName: string;
-    likes: number;
-    submitTime: string;
+    barrageId: string | number;
+    cnt: string | number;
+    hotDateTime: string | null;
+    id: string | number | null;
+    tableName?: string;
+    likes?: number;
+    submitTime?: string;
 }
 export interface getHotMeme_res {
     code: number;

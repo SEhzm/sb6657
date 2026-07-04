@@ -1,10 +1,10 @@
 <template>
     <div>
-        <el-dialog draggable v-model="showDialog" class="dialog-main">
+        <el-dialog v-model="showDialog" draggable class="dialog-main">
             <template #header>
                 <slot></slot>
             </template>
-            <el-table :data="memeArr" stripe v-loading="loading" :empty-text="emptyText" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
+            <el-table v-loading="loading" :data="memeArr" stripe :empty-text="emptyText" cell-class-name="hover-pointer" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <el-tag round effect="plain">{{ scope.$index + 1 }}</el-tag>
@@ -22,23 +22,27 @@
                                 </div>
                             </template>
                             <template #default>
-                                <div style="display: flex; align-items: center; flex-wrap: wrap">
-                                    <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index" style="margin-right: 8px">
-                                        <el-tag round effect="dark" :style="{ fontSize: '16px', cursor: 'pointer' }">
-                                            <img v-if="item.iconUrl" :src="item.iconUrl" style="width: 16px; height: 16px; object-fit: cover; vertical-align: middle" />
-                                            <span style="vertical-align: middle">{{ item.label }}</span>
-                                        </el-tag>
+                                <div class="meme-popover">
+                                    <div class="tags-container">
+                                        <div v-for="(item, index) in getDisplayTags(scope.row.tags, dictData)" :key="index" class="popover-tag">
+                                            <el-tag round effect="dark" class="tag-item">
+                                                <div class="tag-icon-wrapper">
+                                                    <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
+                                                    <span class="tag-label">{{ item.label }}</span>
+                                                </div>
+                                            </el-tag>
+                                        </div>
+                                        <span v-if="hasShieldWordInContent(scope.row.content)" class="shield-word-text">
+                                            <el-icon class="shield-word-icon">
+                                                <Warning />
+                                            </el-icon>
+                                            包含屏蔽词
+                                        </span>
                                     </div>
-                                    <!-- 屏蔽词提示 - 用小字显示在tag区域 -->
-                                    <span
-                                        v-if="hasShieldWordInContent(scope.row.content)"
-                                        style="font-size: 14px; color: #e6a23c; margin-left: 4px;"
-                                    >
-                                        <el-icon style="margin-right: 2px; vertical-align: middle;">
-                                            <Warning />
-                                        </el-icon>
-                                        包含屏蔽词
-                                    </span>
+                                    <div class="meme-meta">
+                                        <span class="meta-id">#{{ scope.row.id }}</span>
+                                        <span v-if="scope.row.hotDateTime" class="meta-time">🔥{{ easyFormatTime(scope.row.hotDateTime) }}</span>
+                                    </div>
                                 </div>
                             </template>
                         </el-popover>
@@ -64,15 +68,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted} from 'vue';
-import { throttle } from '@/utils/throttle';
-import { copyToClipboard, copySuccess, limitedCopy, likeSuccess } from '@/utils/clipboard';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
-import { getDisplayTags } from '@/utils/tags';
 import { useMemeTagsStore } from '@/stores/memeTags';
-const memeTagsStore = useMemeTagsStore();
 import { useShieldWordStore } from '@/stores/shieldWordStore';
+import { copySuccess, copyToClipboard, limitedCopy } from '@/utils/clipboard';
+import { getDisplayTags } from '@/utils/tags';
+import { throttle } from '@/utils/throttle';
+import { easyFormatTime } from '@/utils/time';
+import { onMounted, ref } from 'vue';
+
+const memeTagsStore = useMemeTagsStore();
 const shieldWordStore = useShieldWordStore();
 
 
@@ -86,7 +92,7 @@ const shieldWordStore = useShieldWordStore();
  * 6.refresh，刷新函数，其实就是获取此烂梗的函数，这里复制完调用一次，刷新+1结果
  */
 const showDialog = defineModel({ type: Boolean, default: false });
-const props = defineProps<{
+defineProps<{
     memeArr: Meme[];
     loading: boolean;
     emptyText: string;
@@ -97,8 +103,6 @@ const emit = defineEmits<{
 
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
 const copyMeme = throttle(copyToClipboard, limitedCopy, 2000);
-//like复用copy
-const likeMeme = throttle(copyToClipboard, limitedCopy, 2000);
 
 async function copyMeme_countPlus1(meme: Meme) {
     const memeText = meme.content;
@@ -177,5 +181,77 @@ function hasShieldWordInContent(content: string): boolean {
 
 .copy-btn {
     width: 90px;
+}
+
+.meme-popover {
+    min-width: 220px;
+    max-width: min(420px, 80vw);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .tags-container {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+
+        .popover-tag {
+            display: flex;
+
+            .tag-item {
+                font-size: 16px;
+                cursor: pointer;
+
+                .tag-icon-wrapper {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+
+                .tag-icon {
+                    width: 16px;
+                    height: 16px;
+                    object-fit: cover;
+                    vertical-align: middle;
+                }
+
+                .tag-label {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+
+    .meme-meta {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+        color: #909399;
+        font-size: 12px;
+        line-height: 1.5;
+
+        .meta-id {
+            color: #606266;
+            font-weight: 600;
+        }
+
+        .meta-time {
+            white-space: nowrap;
+        }
+    }
+
+    .shield-word-text {
+        display: inline-flex;
+        align-items: center;
+        color: #e6a23c;
+        font-size: 14px;
+
+        .shield-word-icon {
+            margin-right: 2px;
+            vertical-align: middle;
+        }
+    }
 }
 </style>

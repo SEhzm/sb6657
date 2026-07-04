@@ -6,10 +6,12 @@
                 谁目前打出了对位donk最多的击杀? 谁又是对位donk最大的受害者?
                 <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
             </li>
+            <!-- 超级逮虾户作者停更较久，首页推荐入口暂时下线，恢复时取消注释即可。
             <li>
                 哪只队伍捕虾最专业? 谁是最佳捕虾人? 又是谁在捕虾过程中惨遭反夹?
                 <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
             </li>
+            -->
             <li>
                 一年一度的sb6657野榜top20烂梗在这里<RouterLink to="/memeTop20">- 年度TOP20烂梗</RouterLink>
             </li>

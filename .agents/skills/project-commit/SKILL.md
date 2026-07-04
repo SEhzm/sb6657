@@ -1,6 +1,6 @@
 ---
 name: project-commit
-description: Use for this repository when the user asks to commit changes. Before committing, inspect the working tree, resolve ambiguous scope with the user, verify version metadata and changelog sync, run build, optionally run lint for source changes, then stage only intended files and commit with a Conventional Commits message.
+description: Use for this repository when the user asks to commit changes. Before committing, inspect the working tree, resolve ambiguous scope with the user, verify version metadata and changelog sync, run build, optionally run lint for source changes, then stage only intended files and commit with a Conventional Commits message that prefers a concise Chinese subject.
 ---
 
 # Project Commit
@@ -35,7 +35,8 @@ Commit only when the user asks for a commit. If the working tree contains unrela
 6. Choose a Conventional Commits message:
    - Format: `type: subject`.
    - Common types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
-   - Use a concise Chinese or English subject, such as `feat: 添加屏蔽词投稿入口` or `docs: 更新 agent 工作说明`.
+   - Prefer a concise Chinese subject for this Chinese project; use English only when a technical term or ecosystem convention is clearer.
+   - Examples: `feat: 添加屏蔽词投稿入口`, `fix: 修复移动端搜索弹窗溢出`, `docs: 更新 agent 工作说明`.
    - Use `type!:` or a `BREAKING CHANGE:` body only for breaking changes.
 7. Stage only intended files.
 8. Run `git status --short` again to confirm staged scope.

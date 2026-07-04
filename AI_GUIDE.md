@@ -232,7 +232,7 @@ App.vue
 | `/matchPrediction` | `CS2Major.vue` | Major 赛事竞猜 |
 | `/matchLib` | `matchLib.vue` | 赛事烂梗库 |
 | `/image` | `image.vue` | 主播相册和评论 |
-| `/dejaVuNiko` | `deja-vu-niko.vue` | 超级逮虾户战报 |
+| `/dejaVuNiko` | `deja-vu-niko.vue` | 超级逮虾户战报，作者停更较久，首页推荐入口已暂时注释，路由和侧边栏入口保留 |
 | `/15warriorsDonk` | `15warriorsDonk.vue` | 布雷德十五勇士榜 |
 | `/memeTop20` | `memeTop20.vue` | 年度 TOP20 展示 |
 | `/update` | `update-timeline.vue` | 更新日志 |
@@ -240,6 +240,7 @@ App.vue
 | `/ChatRoom` | `ChatRoom.vue` | 聊天室独立路由 |
 
 `MemeCategory` 在 `src/constants/backend.ts` 同时控制侧边栏和移动端 Tab 的主要菜单项。
+超级逮虾户战报当前因作者停更较久仅在首页 `didYouKnow.vue` 中注释推荐入口，`MemeCategory` 侧边栏/移动端菜单和 `/dejaVuNiko` 路由仍保留。
 
 ## 核心页面和组件说明
 
@@ -429,7 +430,7 @@ AIChat
 | `image.vue` | `/machine/showImage`、`/machine/addCommentname` | 图片瀑布/列表、图片预览、评论弹窗 |
 | `memeTop20.vue` | OSS JSON | 年度 TOP20 静态榜单，年份下拉切换 |
 | `AnnualHotList.vue` | `/machine/hotTop20/**` | 年度 TOP20 评选活动页 |
-| `deja-vu-niko.vue` | OSS JSON | 战报式表格页面 |
+| `deja-vu-niko.vue` | OSS JSON | 战报式表格页面，首页推荐入口暂时隐藏，路由和菜单入口保留 |
 | `15warriorsDonk.vue` | OSS JSON | 榜单页面，可导出图片 |
 
 ## 桌面端和移动端布局
