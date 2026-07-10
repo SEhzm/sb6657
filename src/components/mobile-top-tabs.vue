@@ -1,0 +1,113 @@
+<template>
+    <div ref="tabBarRef" class="tab">
+        <div class="tab-container">
+            <div v-for="item in MemeCategory" :key="item.path" :class="['tab1', { selected: item.path === route.path }]" @click="navigateTo(item.path)">
+                {{ item.text }}
+            </div>
+        </div>
+    </div>
+</template>
+
+<script setup lang="ts">
+import { MemeCategory } from '@/constants/backend';
+import { nextTick, ref, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+
+const props = defineProps<{
+    isMobile: boolean;
+}>();
+
+const route = useRoute();
+const router = useRouter();
+const tabBarRef = ref<HTMLElement | null>(null);
+
+async function scrollSelectedTabIntoView() {
+    await nextTick();
+
+    const tabBar = tabBarRef.value;
+    const selectedTab = tabBar?.querySelector<HTMLElement>('.tab1.selected');
+    if (!tabBar || !selectedTab) return;
+
+    const tabBarRect = tabBar.getBoundingClientRect();
+    const selectedTabRect = selectedTab.getBoundingClientRect();
+    const isOutsideViewport = selectedTabRect.left < tabBarRect.left || selectedTabRect.right > tabBarRect.right;
+    if (!isOutsideViewport) return;
+
+    const targetLeft = tabBar.scrollLeft + selectedTabRect.left - tabBarRect.left;
+    tabBar.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+}
+
+watch(
+    [() => route.path, () => props.isMobile],
+    ([, isMobile]) => {
+        if (isMobile) void scrollSelectedTabIntoView();
+    },
+    { immediate: true, flush: 'post' }
+);
+
+async function navigateTo(path: string) {
+    if (path === route.path) {
+        await scrollSelectedTabIntoView();
+        return;
+    }
+
+    await router.push(path);
+}
+</script>
+
+<style lang="scss" scoped>
+@media (min-width: 601px) {
+    .tab {
+        display: none;
+    }
+}
+
+@media (max-width: 600px) {
+    .tab {
+        display: flex;
+        overflow-x: scroll;
+        white-space: nowrap;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-x;
+        background-color: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: darkgrey solid 1px;
+
+        .tab-container {
+            display: flex;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 16px;
+            padding: 4px 12px;
+        }
+
+        .tab1 {
+            font-size: large;
+            color: dimgray;
+            position: relative;
+        }
+
+        .selected {
+            font-size: larger;
+            color: #000;
+            font-weight: bold;
+            padding: 0 2px;
+        }
+
+        .selected::after {
+            content: '';
+            width: 100%;
+            height: 8px;
+            background-color: #89cff0;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: -1;
+        }
+    }
+}
+</style>

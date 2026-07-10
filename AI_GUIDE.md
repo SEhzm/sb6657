@@ -194,8 +194,8 @@ App.vue
 │     │  ├─ 消息入口
 │     │  ├─ 用户入口 -> userHome.vue -> login/register/resetPassword
 │     │  └─ 赞助/广告弹窗
-│     ├─ 移动端横向 Tab 导航
-│     ├─ 桌面端左侧 Sidebar 菜单
+│     ├─ MobileTopTabs（移动端横向 Tab 导航）
+│     ├─ DesktopSidebar（桌面端左侧菜单）
 │     ├─ RouterView 页面内容
 │     ├─ FooterBar
 │     ├─ FloatingSidebar
@@ -451,10 +451,10 @@ AIChat
 
 ### 桌面端
 
-`MainLayout.vue`：
+`MainLayout.vue` + `DesktopSidebar`：
 
 - Header sticky 在顶部。
-- 左侧 `el-menu` 侧栏显示。
+- `DesktopSidebar` 显示左侧 `el-menu` 侧栏。
 - `.main-content` 是横向 flex。
 - `.content` 占剩余空间。
 - 首页额外加 `.content--with-home-sidebar`，右侧预留 360px 给词云/广告。
@@ -462,10 +462,11 @@ AIChat
 
 ### 移动端
 
-`MainLayout.vue`：
+`MainLayout.vue` + `MobileTopTabs`：
 
-- 左侧 sidebar 隐藏。
-- 顶部出现吸顶 Tab，外层负责 sticky，内层负责横向滚动。
+- `DesktopSidebar` 隐藏。
+- `MobileTopTabs` 显示吸顶 Tab，外层负责 sticky，内层负责横向滚动。
+- `MobileTopTabs` 的选中项在路由切换后若超出横向可视区，会自动平滑滚动并贴齐选择栏左侧。
 - 内容区全宽。
 - Header 不 sticky，内部换行。
 - `FloatingSidebar` 隐藏可拖拽聊天室和固定广告，只保留变窄的竖排入口。
@@ -490,6 +491,8 @@ src/
 │  ├─ useAuthStore.ts        登录弹窗和 userId
 │  └─ GuiBinStore.ts         斗鱼贵宾数
 ├─ components/
+│  ├─ desktop-sidebar.vue   桌面端左侧菜单
+│  ├─ mobile-top-tabs.vue   移动端顶部 Tab 和自动滚动
 │  ├─ tag-selector.vue
 │  ├─ submission-dialog.vue
 │  ├─ ChatRoom.vue

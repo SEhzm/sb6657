@@ -69,8 +69,8 @@
 - `src/constants/backend.ts`：后端地址、API 常量、侧边栏和移动端菜单 `MemeCategory`。
 - `src/apis/httpInstance.ts`：Axios 实例、`siteToken`、`dpahjdoiaw`、token 刷新、错误处理，以及轻封装 `get`/`post`。
 - `src/stores/`：Pinia store，包括标签、屏蔽词、登录弹窗/userId、斗鱼贵宾数。
-- `src/views/MainLayout/`：全局布局、Header、侧边栏、移动端 Tab、右侧浮窗和主要页面。
-- `src/components/`：可复用组件，如标签选择器、投稿弹窗、搜索、聊天室、硬币预览、词云和首页组件。
+- `src/views/MainLayout/`：全局布局、Header、右侧浮窗和主要页面。
+- `src/components/`：可复用组件，如桌面侧边栏、移动端顶部 Tab、标签选择器、投稿弹窗、搜索、聊天室、硬币预览、词云和首页组件。
 - `src/assets/css/index.scss`：Element Plus 主题变量。
 - `src/assets/css/global.css`：全局 reset 和共享样式。
 
@@ -92,7 +92,7 @@
 - 本项目桌面端和移动端布局差异明显，不要只按桌面端修 UI。
 - 现有常见断点包括 `600px`、`601px`、`768px`、`1200px`、`375px`、`360px`。
 - `src/utils/common.ts` 的 `useIsMobile()` 使用 `(max-width: 600px)`，它不一定等于组件 CSS 中的 `768px` 断点。
-- `MainLayout.vue` 负责全局壳：桌面侧边栏、移动端横向 Tab、内容区、Footer、右侧浮窗和斗鱼 WebSocket 启动。
+- `MainLayout.vue` 负责全局壳和组件编排；桌面侧边栏、移动端横向 Tab 分别由 `src/components/desktop-sidebar.vue`、`src/components/mobile-top-tabs.vue` 负责。
 - `FloatingSidebar.vue` 里有拖拽定位必需的动态 `:style`，不要在普通样式清理中删除。
 - 修改 Element Plus 的弹窗、popover、table 或 teleport 内容时，优先给弹层内容加明确 root class；scoped 样式打不到时使用 `:deep()`。
 - 清理历史行内样式时，一次只处理一个组件，迁移到语义 class，避免顺手大重构。
