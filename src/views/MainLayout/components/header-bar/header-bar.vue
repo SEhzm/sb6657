@@ -502,7 +502,7 @@ function openAd() {
     .header {
         background-color: #fff;
         position: relative;
-        z-index: 1;
+        z-index: 1000;
 
         .header-content {
             padding-top: 6px;
