@@ -11,10 +11,10 @@
   "editor.wordWrap": "off",
   "editor.rulers": [100],
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.fixAll": "explicit",
-    "source.fixAll.eslint": "explicit"
-},
+    "source.organizeImports": "never",
+    "source.fixAll": "never",
+    "source.fixAll.eslint": "never"
+  },
 
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -25,9 +25,14 @@
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[vue]": {
-    "editor.defaultFormatter": "Vue.volar"
+  "[html]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  "vetur.format.enable": false,
 
   // 启用 ESLint 对以下文件类型的校验
   "eslint.validate": [

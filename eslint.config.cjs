@@ -27,6 +27,7 @@ module.exports = [
     {
         files: ['src/**/*.{ts,tsx,js,jsx,vue}'],
         rules: {
+            'vue/first-attribute-linebreak': 'off',
             'vue/max-attributes-per-line': 'off',
             'vue/multi-word-component-names': 'off',
             '@typescript-eslint/no-explicit-any': 'off',

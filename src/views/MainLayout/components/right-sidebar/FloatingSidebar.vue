@@ -2,31 +2,28 @@
     <div class="floating-sidebar">
         <HomeWordCloudPanel v-if="showHomeWordCloud" class="home-right-word-cloud" />
 
-    <div class="draggable chat-room-draggable" :style="{ left: `${chatX}vw`, top: `${chatY}px` }" @mousedown="startDrag"
-        v-show="isChatVisible">
-        <ChatRoom />
-        <el-button class="close-button" @click="closeChat" type="primary">
-            <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
-                p-id="4538" width="16" height="16">
-                <path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path>
-                <path
-                    d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
-                    fill="#ff0505" p-id="4540"></path>
-            </svg>
-        </el-button>
-    </div>
-
-    <el-popover placement="left" title="" :width="300" trigger="hover" :visible="qqGroupHintVisible"
-        content="官方交流群🐧:1070269456、526042235">
-        <template #reference>
-            <el-button class="official-group-button" plain @mouseenter="qqGroupHintVisible = true"
-                @mouseleave="qqGroupHintVisible = false" @click="qqGroupDialogVisible = true">
-                官方交流群🐧
+        <div class="draggable chat-room-draggable" :style="{ left: `${chatX}vw`, top: `${chatY}px` }" @mousedown="startDrag" v-show="isChatVisible">
+            <ChatRoom />
+            <el-button class="close-button" @click="closeChat" type="primary">
+                <svg t="1725098483582" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4538" width="16" height="16">
+                    <path d="M0 0h1024v1024H0z" fill="#ff0505" fill-opacity="0" p-id="4539"></path>
+                    <path
+                        d="M240.448 168l2.346667 2.154667 289.92 289.941333 279.253333-279.253333a42.666667 42.666667 0 0 1 62.506667 58.026666l-2.133334 2.346667-279.296 279.210667 279.274667 279.253333a42.666667 42.666667 0 0 1-58.005333 62.528l-2.346667-2.176-279.253333-279.253333-289.92 289.962666a42.666667 42.666667 0 0 1-62.506667-58.005333l2.154667-2.346667 289.941333-289.962666-289.92-289.92a42.666667 42.666667 0 0 1 57.984-62.506667z"
+                        fill="#ff0505"
+                        p-id="4540"></path>
+                </svg>
             </el-button>
-        </template>
-    </el-popover>
+        </div>
 
-    <!-- <el-popover placement="left" title="" :width="300" trigger="hover" :visible="sponsorHintVisible"
+        <el-popover placement="left" title="" :width="300" trigger="hover" :visible="qqGroupHintVisible" content="官方交流群🐧:1070269456、526042235">
+            <template #reference>
+                <el-button class="official-group-button" plain @mouseenter="qqGroupHintVisible = true" @mouseleave="qqGroupHintVisible = false" @click="qqGroupDialogVisible = true">
+                    官方交流群🐧
+                </el-button>
+            </template>
+        </el-popover>
+
+        <!-- <el-popover placement="left" title="" :width="300" trigger="hover" :visible="sponsorHintVisible"
         content="为了甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇">
         <template #reference>
             <el-button class="sponsor-button" plain @mouseenter="sponsorHintVisible = true"
@@ -42,9 +39,9 @@
         <p style="text-align: center; margin-top: 10px; color: #666">感谢甲方爸爸继续支持我们，各位爹注册一下吧🙏，凑凑人头吧，祝你们长生不老永远不死。🙇</p>
     </el-dialog> -->
 
-    <el-dialog v-model="qqGroupDialogVisible" :draggable="true" title="官方交流🐧" width="410px">
-        <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px" />
-    </el-dialog>
+        <el-dialog v-model="qqGroupDialogVisible" :draggable="true" title="官方交流🐧" width="410px">
+            <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px" />
+        </el-dialog>
 
         <!-- <div v-if="layoutAdVisible" class="layout-ad">
         <el-popover :visible="popoverVisible" placement="top" title="甲方要求150人注册。ありがとう米娜桑" :width="310">
@@ -192,6 +189,7 @@ onBeforeUnmount(() => {
     width: 0;
     height: 0;
     overflow: visible;
+    z-index: 100;
 }
 
 .home-right-word-cloud {

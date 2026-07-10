@@ -33,12 +33,10 @@
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
                 <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
-                <el-button class="btn-animate btn-animate__ball-collision"
-                    color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
+                <el-button class="btn-animate btn-animate__ball-collision" color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer"
-                empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
+            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
@@ -48,10 +46,8 @@
                     <template #default="scope">
                         <el-popover placement="top" :width="'auto'" trigger="hover" :visible="scope.row.popoverVisible">
                             <template #reference>
-                                <div class="meme-content" @touchstart="handleTouchStart(scope.row)"
-                                    @touchend="handleTouchEnd(scope.row)">
-                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)"
-                                        class="shield-warning-icon" size="large">
+                                <div class="meme-content" @touchstart="handleTouchStart(scope.row)" @touchend="handleTouchEnd(scope.row)">
+                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)" class="shield-warning-icon" size="large">
                                         <WarningFilled />
                                     </el-icon>
                                     <span class="barrage-text">{{ scope.row.content }}</span>
@@ -60,8 +56,7 @@
                             <template #default>
                                 <div class="meme-popover">
                                     <div class="tags-container">
-                                        <div v-for="item in getDisplayTags(scope.row.tags, allTags)" :key="item.label"
-                                            class="popover-tag">
+                                        <div v-for="item in getDisplayTags(scope.row.tags, allTags)" :key="item.label" class="popover-tag">
                                             <el-tag round effect="dark" class="tag-item">
                                                 <div class="tag-icon-wrapper">
                                                     <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
@@ -93,8 +88,15 @@
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :current-page="currentPage"
-                    :total="total" :pager-count="5" :page-size="pageSize"
+                <el-pagination
+                    v-if="!loading"
+                    background
+                    layout="prev, pager, next, jumper"
+                    :size="isMobile ? 'small' : ''"
+                    :current-page="currentPage"
+                    :total="total"
+                    :pager-count="isMobile ? 4 : 5"
+                    :page-size="pageSize"
                     @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
@@ -121,9 +123,12 @@ import { throttle } from '@/utils/throttle';
 import { easyFormatTime } from '@/utils/time';
 import { QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useIsMobile } from '@/utils/common';
+
 const memeTagsStore = useMemeTagsStore();
 const shieldWordStore = useShieldWordStore();
 const memeCategory = 'allbarrage';
+const isMobile = useIsMobile();
 
 //初始化屏蔽词数据
 onMounted(async () => {

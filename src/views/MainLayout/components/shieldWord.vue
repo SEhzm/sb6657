@@ -5,7 +5,7 @@
                 <el-button style="margin-left: 10px;" type="primary" @click="dialogVisible = true">
                     屏蔽词投稿
                 </el-button>
-                <h6>将会在您复制烂梗时提示是否包含屏蔽词(包含屏蔽词烂梗可能不能在直播间发送)</h6>
+                <span class="shield-word-description">将会在您复制烂梗时提示是否包含屏蔽词(包含屏蔽词烂梗可能不能在直播间发送)</span>
             </h2>
             <el-button @click="showMyShieldWordsDialog = true">我投稿的屏蔽词</el-button>
         </div>
@@ -28,9 +28,16 @@
         </div>
 
         <div class="pagination">
-            <el-pagination v-model:current-page="pageNum" v-model:page-size="pageSize" :page-sizes="[10, 20, 50, 100]"
-                background layout="prev, pager, next, sizes, total" :total="total" @current-change="getList"
-                @size-change="getList" />
+            <el-pagination 
+                v-model:current-page="pageNum" 
+                v-model:page-size="pageSize"
+                :size="isMobile ? 'small' : ''"
+                :page-sizes="[10, 20, 50, 100]"
+                background layout="prev, pager, next, sizes, total"
+                :total="total"
+                @current-change="getList"
+                @size-change="getList"
+            />
         </div>
     </div>
     <el-backtop :right="50" :bottom="50">UP</el-backtop>
@@ -69,9 +76,17 @@
             </el-table-column>
         </el-table>
         <div class="pagination" style="margin-top: 20px;">
-            <el-pagination v-model:current-page="myShieldWordPageNum" v-model:page-size="myShieldWordPageSize"
-                :page-sizes="[10, 20, 50, 100]" background layout="prev, pager, next, sizes, total"
-                :total="myShieldWordTotal" @current-change="getMyShieldWordList" @size-change="getMyShieldWordList" />
+            <el-pagination
+                v-model:current-page="myShieldWordPageNum"
+                v-model:page-size="myShieldWordPageSize"
+                :size="isMobile ? 'small' : ''"
+                :page-sizes="[10, 20, 50, 100]"
+                background
+                layout="prev, pager, next, sizes, total"
+                :total="myShieldWordTotal"
+                @current-change="getMyShieldWordList"
+                @size-change="getMyShieldWordList"
+            />
         </div>
         <template #footer>
             <div class="dialog-footer">
@@ -83,9 +98,12 @@
 
 <script setup lang="ts">
 import httpInstance from '@/apis/httpInstance';
+import { useIsMobile } from '@/utils/common';
 import type { FormInstance, FormRules } from 'element-plus';
 import { ElMessage } from 'element-plus';
 import { onMounted, ref, watch } from 'vue';
+
+const isMobile = useIsMobile()
 
 interface ShieldItem {
     id: number;
@@ -304,6 +322,13 @@ onMounted(() => {
         margin-top: 8px;
         font-size: 14px;
         color: #666;
+    }
+
+    .shield-word-description {
+        margin: 2.33em 0;
+        font-size: 0.67em;
+        font-weight: bold;
+        color: inherit;
     }
 }
 
