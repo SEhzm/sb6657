@@ -501,8 +501,7 @@ function openAd() {
 @media (max-width: 600px) {
     .header {
         background-color: #fff;
-        border-bottom: 1px solid #ddd;
-        position: static;
+        position: relative;
 
         .header-content {
             padding-top: 6px;
@@ -546,7 +545,7 @@ function openAd() {
 
                 .hot-barrage-img {
                     position: absolute;
-                    top: 260px;
+                    top: 200px;
                     left: 4px;
                     width: 24px;
                     height: 24px;
@@ -560,7 +559,7 @@ function openAd() {
                     text-overflow: ellipsis;
                     white-space: nowrap;
                     position: absolute;
-                    top: 260px;
+                    top: 200px;
                     left: 30px;
                     z-index: 1;
                 }

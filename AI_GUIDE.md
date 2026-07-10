@@ -465,7 +465,7 @@ AIChat
 `MainLayout.vue`：
 
 - 左侧 sidebar 隐藏。
-- 顶部出现横向滚动 Tab。
+- 顶部出现吸顶 Tab，外层负责 sticky，内层负责横向滚动。
 - 内容区全宽。
 - Header 不 sticky，内部换行。
 - `FloatingSidebar` 隐藏可拖拽聊天室和固定广告，只保留变窄的竖排入口。

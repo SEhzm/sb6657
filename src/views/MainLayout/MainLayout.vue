@@ -4,7 +4,7 @@
         <div class="tab">
             <!-- 移动端 -->
             <div class="tab-container">
-                <div v-for="(item, index) in MemeCategory" :class="`tab1 ${item.path === route.path ? 'selected' : 'none'}`" :key="item.path" @click="navigateTo(item.path)">
+                <div v-for="item in MemeCategory" :key="item.path" :class="['tab1', { selected: item.path === route.path }]" @click="navigateTo(item.path)">
                     {{ item.text }}
                 </div>
             </div>
@@ -209,69 +209,44 @@
             -ms-overflow-style: none; // IE 和 Edge
             -webkit-overflow-scrolling: touch; // 启用原生滚动效果
             touch-action: pan-x; // 允许水平滚动，阻止其他触摸行为
-        }
-
-        .tab-container {
-            display: flex;
-            flex-wrap: nowrap;
-            width: 100%;
-        }
-
-        .tab1 {
-            position: relative;
-            white-space: nowrap;
-            padding: 10px 5px;
-            margin-right: 10px;
-            border-radius: 15px 15px 0 0;
-            transition: all 0.3s ease;
-            font-size: 14px;
-            color: #000000;
             background-color: #fff;
-            flex-shrink: 0; // 防止缩小
-            touch-action: pan-x;
-        }
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: darkgrey solid 1px;
 
-        .tab1::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            width: 100%;
-            background-color: transparent;
-            transition: all 0.3s ease;
-        }
-
-        .none {
-            background-color: #93a2b9;
-            padding: 10px;
-        }
-
-        .tab1:hover,
-        .selected {
-            color: #fff;
-            background-color: #007bff;
-
-            &::before {
-                background-color: #007bff;
+            .tab-container {
+                display: flex;
+                align-items: center;
+                flex-wrap: nowrap;
+                gap: 16px;
+                padding: 4px 12px;
             }
 
-            padding-left: 15px;
-            padding-right: 15px;
-        }
+            .tab1 {
+                font-size: large;
+                color: dimgray;
+                position: relative;
+            }
 
-        .tab::-webkit-scrollbar {
-            /* Webkit browsers (Chrome, Safari) */
-            height: 8px;
-        }
+            .selected {
+                font-size: larger;
+                color: #000;
+                font-weight: bold;
+                padding: 0 2px;
+            }
 
-        .tab::-webkit-scrollbar-track {
-            background: transparent;
+            .selected::after {
+                content: '';
+                width: 100%;
+                height: 8px;
+                background-color: #89CFF0;
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                z-index: -1;
+            }
         }
-
-        .tab::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
         .version {
             color: black;
             position: fixed;
