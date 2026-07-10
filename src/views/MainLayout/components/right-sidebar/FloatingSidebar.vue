@@ -1,5 +1,6 @@
 <template>
-    <HomeWordCloudPanel v-if="showHomeWordCloud" class="home-right-word-cloud" />
+    <div class="floating-sidebar">
+        <HomeWordCloudPanel v-if="showHomeWordCloud" class="home-right-word-cloud" />
 
     <div class="draggable chat-room-draggable" :style="{ left: `${chatX}vw`, top: `${chatY}px` }" @mousedown="startDrag"
         v-show="isChatVisible">
@@ -45,7 +46,7 @@
         <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="" style="width: 385px" />
     </el-dialog>
 
-    <!-- <div v-if="layoutAdVisible" class="layout-ad">
+        <!-- <div v-if="layoutAdVisible" class="layout-ad">
         <el-popover :visible="popoverVisible" placement="top" title="甲方要求150人注册。ありがとう米娜桑" :width="310">
             <template #reference>
                 <div class="layout-ad-content">
@@ -63,7 +64,8 @@
                 </p>
             </div>
         </el-popover>
-    </div> -->
+        </div> -->
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -183,6 +185,15 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped lang="scss">
+.floating-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    overflow: visible;
+}
+
 .home-right-word-cloud {
     z-index: 5;
     position: fixed;

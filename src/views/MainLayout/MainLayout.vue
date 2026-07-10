@@ -13,7 +13,7 @@
         <div class="main-content">
             <div class="sidebar">
                 <el-menu router class="sidebar-el-menu" :default-active="$route.path">
-                    <el-menu-item v-for="(category, index) in MemeCategory" v-bind:key="category.path" :index="category.path">
+                    <el-menu-item v-for="(category, index) in MemeCategory" :key="category.path" :index="category.path">
                         <div class="sidebar-icon">
                             <img :src="category.icon" alt="" />
                         </div>
@@ -196,6 +196,13 @@
     }
 
     @media (max-width: 600px) {
+        .main-content,
+        .content {
+            width: 100%;
+            max-width: 100%;
+            min-width: 0;
+        }
+
         .sidebar {
             display: none;
         }
@@ -212,7 +219,7 @@
             background-color: #fff;
             position: sticky;
             top: 0;
-            z-index: 1000;
+            z-index: 100;
             border-bottom: darkgrey solid 1px;
 
             .tab-container {
