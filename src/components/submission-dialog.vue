@@ -1,5 +1,5 @@
 <template>
-    <el-dialog v-model="dialogFormVisible" draggable title="投稿烂梗" :width="dialogWidth">
+    <el-dialog v-model="dialogFormVisible" draggable append-to-body title="投稿烂梗" :width="dialogWidth">
         <MemeSubmission :active="dialogFormVisible" />
     </el-dialog>
 </template>

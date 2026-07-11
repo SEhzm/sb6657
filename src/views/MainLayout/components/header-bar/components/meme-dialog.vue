@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog v-model="showDialog" draggable class="dialog-main">
+        <el-dialog v-model="showDialog" draggable append-to-body width="min(96%, 1200px)">
             <template #header>
                 <slot></slot>
             </template>
@@ -166,11 +166,6 @@ function hasShieldWordInContent(content: string): boolean {
 </script>
 
 <style scoped lang="scss">
-// 坑：element-plus表格类样式，在开启scoped的style里，要用deep才能生效
-:deep(.dialog-main) {
-    width: 95%;
-}
-
 :deep(.hover-pointer) {
     cursor: pointer;
 }

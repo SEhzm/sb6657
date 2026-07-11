@@ -126,7 +126,7 @@
         <!-- 投稿弹窗 -->
         <submission-dialog v-model="submissionDialogVisible" />
         <!-- 支持我弹出框 -->
-        <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth">
+        <el-dialog v-model="supportMeDialog" title="谢谢老板~" :width="lightWidth" append-to-body>
             <img src="https://cdn.hguofichp.cn/zfb.jpg" alt="" width="100%" />
         </el-dialog>
 
@@ -502,7 +502,7 @@ function openAd() {
     .header {
         background-color: #fff;
         position: relative;
-        z-index: 1000;
+        z-index: 1;
 
         .header-content {
             padding-top: 6px;
