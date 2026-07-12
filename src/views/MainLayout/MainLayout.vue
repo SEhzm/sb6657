@@ -1,10 +1,10 @@
 <template>
     <div>
-        <HeaderBar></HeaderBar>
-        <MobileTopTabs :is-mobile="isMobile" />
+        <HeaderBar :class="{ 'layout-header--sticky': !isMobile }" />
+        <MobileTopTabs v-if="isMobile" />
 
         <div class="main-content">
-            <DesktopSidebar />
+            <DesktopSidebar v-if="!isMobile" />
             <div class="content" :class="{ 'content--with-home-sidebar': isHomeRoute && !isMobile }">
                 <router-view />
             </div>
@@ -67,11 +67,9 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @media (min-width: 601px) {
-    .header {
-        height: 55px;
-        display: flex;
-        align-items: center;
-        width: 100%;
+    .layout-header--sticky {
+        position: sticky;
+        top: 0;
         z-index: 1000;
     }
 

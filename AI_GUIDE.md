@@ -17,13 +17,13 @@
 
 技术栈：
 
-| 类别 | 使用 |
-| --- | --- |
-| 框架 | Vue 3、Vue Router、Pinia |
-| UI | Element Plus、Element Plus Icons |
-| 样式 | SCSS、组件内 scoped 样式、少量全局 CSS |
+| 类别      | 使用                                                    |
+| --------- | ------------------------------------------------------- |
+| 框架      | Vue 3、Vue Router、Pinia                                |
+| UI        | Element Plus、Element Plus Icons                        |
+| 样式      | SCSS、组件内 scoped 样式、少量全局 CSS                  |
 | 图表/生成 | ECharts wordcloud、Three.js、html2canvas、html-to-image |
-| 请求 | Axios 封装在 `src/apis/httpInstance.ts` |
+| 请求      | Axios 封装在 `src/apis/httpInstance.ts`                 |
 
 ## 请求层和后端地址
 
@@ -37,9 +37,9 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 
 - `baseURL` 使用 `SERVER_ADDRESS`。
 - 请求头会自动带：
-  - `siteToken`：匿名统计用，存 cookie。
-  - `dpahjdoiaw`：Web 前端来源统计标记，用来告诉后端“这次请求来自 sb6657.cn 官网前端”。
-  - `Authorization: Bearer ${token}`：登录后带。
+    - `siteToken`：匿名统计用，存 cookie。
+    - `dpahjdoiaw`：Web 前端来源统计标记，用来告诉后端“这次请求来自 sb6657.cn 官网前端”。
+    - `Authorization: Bearer ${token}`：登录后带。
 - `dpahjdoiaw` 不是鉴权密钥，也不是反爬安全边界。QQ bot、agent、油猴插件或第三方脚本如果复用网站后端接口，不要复制这个请求头，否则会把外部调用统计到官网前端来源里。
 - 响应拦截器会把 AxiosResponse 解成后端返回体，所以组件里 `await httpInstance.get(...)` 得到的是 `{ code, data, msg }` 这一层，不是 Axios 原始响应。
 - Token 即将过期时会用 `/refresh-token` 刷新，并把刷新期间的请求放进队列。
@@ -48,9 +48,9 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 
 另外 `httpInstance.ts` 还导出了两个轻封装：
 
-| 函数 | 返回 |
-| --- | --- |
-| `get<R>(url)` | `{ _failure, flatData }` |
+| 函数                        | 返回                     |
+| --------------------------- | ------------------------ |
+| `get<R>(url)`               | `{ _failure, flatData }` |
 | `post<T, R>({ url, data })` | `{ _failure, flatData }` |
 
 目前只有部分 API 使用这两个封装，很多组件还是直接 `httpInstance.get/post`。
@@ -61,126 +61,126 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 
 ### 登录、注册、用户
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/captchaImage` | `login.vue`、`register.vue` | 获取图片验证码和 uuid |
-| POST | `/login` | `login.vue` | 登录，返回 token / refreshToken |
-| POST | `/refresh-token` | `httpInstance.ts` | 刷新登录 token |
-| GET | `/login/getMailCode` | `register.vue`、`resetPassword.vue` | 发送邮箱验证码 |
-| POST | `/register` | `register.vue` | 注册 |
-| POST | `/resetPassword` | `resetPassword.vue` | 未登录时重置密码 |
-| GET | `/system/user/profile` | `user/components/index.vue` | 获取当前用户资料 |
-| PUT | `/system/user/profile/updatePwd` | `user/components/resetPwd.vue` | 已登录用户修改密码 |
+| 方法 | 路径                             | 调用位置                            | 用途                            |
+| ---- | -------------------------------- | ----------------------------------- | ------------------------------- |
+| GET  | `/captchaImage`                  | `login.vue`、`register.vue`         | 获取图片验证码和 uuid           |
+| POST | `/login`                         | `login.vue`                         | 登录，返回 token / refreshToken |
+| POST | `/refresh-token`                 | `httpInstance.ts`                   | 刷新登录 token                  |
+| GET  | `/login/getMailCode`             | `register.vue`、`resetPassword.vue` | 发送邮箱验证码                  |
+| POST | `/register`                      | `register.vue`                      | 注册                            |
+| POST | `/resetPassword`                 | `resetPassword.vue`                 | 未登录时重置密码                |
+| GET  | `/system/user/profile`           | `user/components/index.vue`         | 获取当前用户资料                |
+| PUT  | `/system/user/profile/updatePwd` | `user/components/resetPwd.vue`      | 已登录用户修改密码              |
 
 ### 烂梗、标签、投稿、搜索
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/machine/dictList` | `memeTags` store | 获取烂梗标签字典 |
-| GET | `/machine/Page?` | `getMemeList()`、`memes-view.vue`、`didYouKnow.vue` | 分页获取烂梗，常带 `tags/pageNum/pageSize` |
-| GET | `/machine/sortAllBarrage` | `memes-view.vue` | 全部烂梗按复制数排序 |
-| POST | `/machine/pageSearch` | `search-dialog.vue`、`sendPost.vue` | 搜索烂梗，支持关键词、标签、时间、排序 |
-| GET | `/machine/hotBarrageOf24H` | `header-bar.vue` | 24 小时热门 |
-| GET | `/machine/hotBarrageOf7Day` | `header-bar.vue` | 7 天热门 |
-| GET | `/machine/getRandOne` | `random-meme.vue` | 首页随机一条烂梗 |
-| POST | `/machine/submission` | `Home.vue`、`submission-dialog.vue`、`setMeme.ts` | 投稿烂梗，可带 `tags/barrage/matchId` |
-| GET | `/machine/addCnt/{memeId}` | 多处复制按钮 | 复制次数 +1 |
-| GET | `/machine/getBarrageInfo/{barrageId}` | 帖子列表 | 根据烂梗 ID 获取烂梗内容 |
-| GET | `/machine/MeMemesPageList` | `Me-memes.vue` | 我的烂梗投稿 |
-| GET | `/machine/InProgressMatch` | `Home.vue`、`submission-dialog.vue` | 获取当前进行中的大型赛事，用于投稿关联赛事 |
-| GET | `/machine/WordCloud` | `wordCloud.vue` | 搜索词云数据 |
+| 方法 | 路径                                  | 调用位置                                            | 用途                                       |
+| ---- | ------------------------------------- | --------------------------------------------------- | ------------------------------------------ |
+| GET  | `/machine/dictList`                   | `memeTags` store                                    | 获取烂梗标签字典                           |
+| GET  | `/machine/Page?`                      | `getMemeList()`、`memes-view.vue`、`didYouKnow.vue` | 分页获取烂梗，常带 `tags/pageNum/pageSize` |
+| GET  | `/machine/sortAllBarrage`             | `memes-view.vue`                                    | 全部烂梗按复制数排序                       |
+| POST | `/machine/pageSearch`                 | `search-dialog.vue`、`sendPost.vue`                 | 搜索烂梗，支持关键词、标签、时间、排序     |
+| GET  | `/machine/hotBarrageOf24H`            | `hot-meme-dialogs.vue`                              | 24 小时热门                                |
+| GET  | `/machine/hotBarrageOf7Day`           | `hot-meme-dialogs.vue`                              | 7 天热门                                   |
+| GET  | `/machine/getRandOne`                 | `random-meme.vue`                                   | 首页随机一条烂梗                           |
+| POST | `/machine/submission`                 | `Home.vue`、`submission-dialog.vue`、`setMeme.ts`   | 投稿烂梗，可带 `tags/barrage/matchId`      |
+| GET  | `/machine/addCnt/{memeId}`            | 多处复制按钮                                        | 复制次数 +1                                |
+| GET  | `/machine/getBarrageInfo/{barrageId}` | 帖子列表                                            | 根据烂梗 ID 获取烂梗内容                   |
+| GET  | `/machine/MeMemesPageList`            | `Me-memes.vue`                                      | 我的烂梗投稿                               |
+| GET  | `/machine/InProgressMatch`            | `Home.vue`、`submission-dialog.vue`                 | 获取当前进行中的大型赛事，用于投稿关联赛事 |
+| GET  | `/machine/WordCloud`                  | `wordCloud.vue`                                     | 搜索词云数据                               |
 
 `API` 常量里还保留了若干分类路径，例如 `GET_FK_WJQ_MEME`、`GET_QUQU_MEME`，现在主要靠 `/machine/Page?` 加 `tags` 参数实现分类。
 
 ### 屏蔽词
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/machine/getShieldWordDict` | `shieldWordStore` | 获取已生效屏蔽词字典，列表页用来标记烂梗 |
-| GET | `/machine/getShieldWordList` | `shieldWord.vue` | 屏蔽词投票列表 |
-| GET | `/machine/addIsShieldWord` | `shieldWord.vue` | 投票“这是屏蔽词”，参数 `id` |
-| GET | `/machine/addNotShieldWord` | `shieldWord.vue` | 投票“这不是屏蔽词”，参数 `id` |
-| GET | `/machine/addShieldWord` | `shieldWord.vue` | 投稿屏蔽词，参数 `shieldWord` |
-| GET | `/machine/getMyShieldWordList` | `shieldWord.vue` | 我投稿的屏蔽词列表 |
+| 方法 | 路径                           | 调用位置          | 用途                                     |
+| ---- | ------------------------------ | ----------------- | ---------------------------------------- |
+| GET  | `/machine/getShieldWordDict`   | `shieldWordStore` | 获取已生效屏蔽词字典，列表页用来标记烂梗 |
+| GET  | `/machine/getShieldWordList`   | `shieldWord.vue`  | 屏蔽词投票列表                           |
+| GET  | `/machine/addIsShieldWord`     | `shieldWord.vue`  | 投票“这是屏蔽词”，参数 `id`              |
+| GET  | `/machine/addNotShieldWord`    | `shieldWord.vue`  | 投票“这不是屏蔽词”，参数 `id`            |
+| GET  | `/machine/addShieldWord`       | `shieldWord.vue`  | 投稿屏蔽词，参数 `shieldWord`            |
+| GET  | `/machine/getMyShieldWordList` | `shieldWord.vue`  | 我投稿的屏蔽词列表                       |
 
 ### 帖子、评论、消息
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/machine/Post/list` | `post-bar-main.vue` | 社区帖子列表 |
-| GET | `/machine/Post/selectIsMePageList` | `Me-Post.vue` | 我的帖子列表 |
-| POST | `/machine/Post/ReviewPost/submit` | `sendPost.vue` | 发帖投稿，进入审核 |
-| POST | `/machine/Post/like/{postId}` | `post-bar-main.vue`、`Me-Post.vue` | 点赞帖子 |
-| POST | `/machine/Post/Statement` | `post-bar-main.vue`、`Me-Post.vue` | 给帖子发表态，`statementNum` 0-8 |
-| GET | `/machine/Post/Comment/getComment/{postId}` | `CommentList.vue`、帖子列表 | 获取帖子评论 |
-| POST | `/machine/Post/Comment/add` | `CommentList.vue` | 新增评论 |
-| POST | `/machine/Post/Comment/like/{commentId}` | `CommentList.vue`、`CommentItem.vue` | 点赞评论 |
-| POST | `/machine/Post/Comment/reply` | `CommentList.vue`、`CommentItem.vue` | 回复评论 |
-| GET | `/machine/SysMessage/getMsgNum` | `header-bar.vue` | 顶部消息未读数 |
-| GET | `/machine/SysMessage/getLikeMsgList` | `Post-Message.vue` | 我的消息列表 |
+| 方法 | 路径                                        | 调用位置                             | 用途                             |
+| ---- | ------------------------------------------- | ------------------------------------ | -------------------------------- |
+| GET  | `/machine/Post/list`                        | `post-bar-main.vue`                  | 社区帖子列表                     |
+| GET  | `/machine/Post/selectIsMePageList`          | `Me-Post.vue`                        | 我的帖子列表                     |
+| POST | `/machine/Post/ReviewPost/submit`           | `sendPost.vue`                       | 发帖投稿，进入审核               |
+| POST | `/machine/Post/like/{postId}`               | `post-bar-main.vue`、`Me-Post.vue`   | 点赞帖子                         |
+| POST | `/machine/Post/Statement`                   | `post-bar-main.vue`、`Me-Post.vue`   | 给帖子发表态，`statementNum` 0-8 |
+| GET  | `/machine/Post/Comment/getComment/{postId}` | `CommentList.vue`、帖子列表          | 获取帖子评论                     |
+| POST | `/machine/Post/Comment/add`                 | `CommentList.vue`                    | 新增评论                         |
+| POST | `/machine/Post/Comment/like/{commentId}`    | `CommentList.vue`、`CommentItem.vue` | 点赞评论                         |
+| POST | `/machine/Post/Comment/reply`               | `CommentList.vue`、`CommentItem.vue` | 回复评论                         |
+| GET  | `/machine/SysMessage/getMsgNum`             | `header-message-entry.vue`           | 顶部消息未读数                   |
+| GET  | `/machine/SysMessage/getLikeMsgList`        | `Post-Message.vue`                   | 我的消息列表                     |
 
 ### 赛事竞猜、赛事烂梗库
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/machine/matches` | `CS2Major.vue` | 当前 Major 赛事和阶段配置 |
-| GET | `/machine/matches/{matchId}/teams` | `match.ts`、`MajorPhase.vue`、`MajorChampion.vue` | 获取某赛事某阶段队伍，参数 `phase` |
-| POST | `/machine/prediction/submit` | `match.ts` | 保存预测 |
-| GET | `/machine/prediction/records` | `match.ts` | 获取当前用户预测记录，参数 `matchId/phase` |
-| GET | `/machine/shareMatch` | `CS2Major.vue` | 分享截图后统计 |
-| GET | `/machine/matchCoin` | `CS2Major.vue` | 预览 3D 硬币后统计 |
-| GET | `/machine/getMatchList` | `matchLib.vue` | 赛事库列表 |
-| GET | `/machine/matchPageList` | `matchLib.vue` | 某赛事关联烂梗列表，参数 `matchId/pageNum/pageSize` |
+| 方法 | 路径                               | 调用位置                                          | 用途                                                |
+| ---- | ---------------------------------- | ------------------------------------------------- | --------------------------------------------------- |
+| GET  | `/machine/matches`                 | `CS2Major.vue`                                    | 当前 Major 赛事和阶段配置                           |
+| GET  | `/machine/matches/{matchId}/teams` | `match.ts`、`MajorPhase.vue`、`MajorChampion.vue` | 获取某赛事某阶段队伍，参数 `phase`                  |
+| POST | `/machine/prediction/submit`       | `match.ts`                                        | 保存预测                                            |
+| GET  | `/machine/prediction/records`      | `match.ts`                                        | 获取当前用户预测记录，参数 `matchId/phase`          |
+| GET  | `/machine/shareMatch`              | `CS2Major.vue`                                    | 分享截图后统计                                      |
+| GET  | `/machine/matchCoin`               | `CS2Major.vue`                                    | 预览 3D 硬币后统计                                  |
+| GET  | `/machine/getMatchList`            | `matchLib.vue`                                    | 赛事库列表                                          |
+| GET  | `/machine/matchPageList`           | `matchLib.vue`                                    | 某赛事关联烂梗列表，参数 `matchId/pageNum/pageSize` |
 
 ### 年度 TOP20
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| POST | `/machine/hotTop20/pick` | `AnnualHotList.vue` | TOP20 提名/投票 |
-| POST | `/machine/hotTop20/Query` | `AnnualHotList.vue` | TOP20 活动内搜索候选烂梗 |
-| GET | `/machine/hotTop20/loadTop20` | `AnnualHotList.vue` | 加载提名榜、阶段榜或最终结果 |
-| GET | `/machine/hotTop20/pickSum` | `AnnualHotList.vue` | 总提名数 |
+| 方法 | 路径                          | 调用位置            | 用途                         |
+| ---- | ----------------------------- | ------------------- | ---------------------------- |
+| POST | `/machine/hotTop20/pick`      | `AnnualHotList.vue` | TOP20 提名/投票              |
+| POST | `/machine/hotTop20/Query`     | `AnnualHotList.vue` | TOP20 活动内搜索候选烂梗     |
+| GET  | `/machine/hotTop20/loadTop20` | `AnnualHotList.vue` | 加载提名榜、阶段榜或最终结果 |
+| GET  | `/machine/hotTop20/pickSum`   | `AnnualHotList.vue` | 总提名数                     |
 
 另一个展示页 `memeTop20.vue` 不走后端，直接读 OSS JSON：
 
-| 方法 | URL | 用途 |
-| --- | --- | --- |
-| GET | `https://sb6657oss.wishao.fun/memeTop20_2025.json` | 2025 TOP20 展示 |
-| GET | `https://sb6657oss.wishao.fun/memeTop20_2024.json` | 2024 TOP20 展示 |
+| 方法 | URL                                                | 用途            |
+| ---- | -------------------------------------------------- | --------------- |
+| GET  | `https://sb6657oss.wishao.fun/memeTop20_2025.json` | 2025 TOP20 展示 |
+| GET  | `https://sb6657oss.wishao.fun/memeTop20_2024.json` | 2024 TOP20 展示 |
 
 ### AI 造梗
 
-| 方法 | 路径 | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/ai/sessions` | `AIChat.vue` | 会话列表 |
-| GET | `/ai/sessions/{sessionId}/messages` | `AIChat.vue` | 某会话消息 |
-| DELETE | `/ai/sessions/{sessionId}` | `AIChat.vue` | 删除会话 |
-| POST | `/ai/chat/stream` | `AIChat.vue` | SSE 流式聊天/造梗 |
-| GET | `/ai/daily-remaining` | `AIChat.vue` | 今日剩余次数 |
+| 方法   | 路径                                | 调用位置     | 用途              |
+| ------ | ----------------------------------- | ------------ | ----------------- |
+| GET    | `/ai/sessions`                      | `AIChat.vue` | 会话列表          |
+| GET    | `/ai/sessions/{sessionId}/messages` | `AIChat.vue` | 某会话消息        |
+| DELETE | `/ai/sessions/{sessionId}`          | `AIChat.vue` | 删除会话          |
+| POST   | `/ai/chat/stream`                   | `AIChat.vue` | SSE 流式聊天/造梗 |
+| GET    | `/ai/daily-remaining`               | `AIChat.vue` | 今日剩余次数      |
 
 `/ai/chat/stream` 使用原生 `fetch`，不是 `httpInstance`，手动带 `Authorization`。请求体大致是：
 
 ```json
 {
-  "prompt": "用户输入",
-  "needReasoning": true,
-  "sessionId": 123,
-  "enableWebSearch": true,
-  "skill": "MEME_MAKER",
-  "mode": "MEME"
+    "prompt": "用户输入",
+    "needReasoning": true,
+    "sessionId": 123,
+    "enableWebSearch": true,
+    "skill": "MEME_MAKER",
+    "mode": "MEME"
 }
 ```
 
 ### 相册、外部数据和其他接口
 
-| 方法 | 路径 / URL | 调用位置 | 用途 |
-| --- | --- | --- | --- |
-| GET | `/machine/showImage` | `image.vue` | 主播相册分页 |
-| POST | `/machine/addCommentname` | `image.vue` | 图片评论 |
-| GET | `https://sb6657oss.wishao.fun/dejaVuNiko.json` | `deja-vu-niko.vue` | 超级逮虾户战报数据 |
-| GET | `https://sb6657oss.wishao.fun/15warriorsDonk_2025.json` | `15warriorsDonk.vue` | 2025 布雷德十五勇士榜 |
-| GET | `https://sb6657oss.wishao.fun/15warriorsDonk_2026.json` | `15warriorsDonk.vue` | 2026 布雷德十五勇士榜 |
-| POST | `https://easycomment.ai/api/xhs/v1/detect-sensitive-words` | `ChatRoom.vue` | 敏感词检测实验接口 |
+| 方法 | 路径 / URL                                                 | 调用位置             | 用途                  |
+| ---- | ---------------------------------------------------------- | -------------------- | --------------------- |
+| GET  | `/machine/showImage`                                       | `image.vue`          | 主播相册分页          |
+| POST | `/machine/addCommentname`                                  | `image.vue`          | 图片评论              |
+| GET  | `https://sb6657oss.wishao.fun/dejaVuNiko.json`             | `deja-vu-niko.vue`   | 超级逮虾户战报数据    |
+| GET  | `https://sb6657oss.wishao.fun/15warriorsDonk_2025.json`    | `15warriorsDonk.vue` | 2025 布雷德十五勇士榜 |
+| GET  | `https://sb6657oss.wishao.fun/15warriorsDonk_2026.json`    | `15warriorsDonk.vue` | 2026 布雷德十五勇士榜 |
+| POST | `https://easycomment.ai/api/xhs/v1/detect-sensitive-words` | `ChatRoom.vue`       | 敏感词检测实验接口    |
 
 ## 全局组件树
 
@@ -188,12 +188,14 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 App.vue
 ├─ RouterView
 │  └─ MainLayout.vue
-│     ├─ HeaderBar
-│     │  ├─ 热门烂梗入口
-│     │  ├─ 搜索框 -> search-dialog.vue
-│     │  ├─ 消息入口
-│     │  ├─ 用户入口 -> userHome.vue -> login/register/resetPassword
-│     │  └─ 赞助/广告弹窗
+│     ├─ HeaderBar（仅负责双端切换）
+│     │  ├─ DesktopHeader / MobileHeader
+│     │  ├─ HeaderSearch -> 路由 search 查询 -> SearchDialogHost/search-dialog.vue
+│     │  ├─ HotMemeDialogs -> meme-dialog.vue
+│     │  ├─ HeaderSubmissionEntry -> submission-dialog.vue
+│     │  ├─ HeaderMessageEntry
+│     │  ├─ HeaderSupportEntry / HeaderBusinessEntry
+│     │  └─ 用户入口 -> userHome.vue -> login/register/resetPassword
 │     ├─ MobileTopTabs（移动端横向 Tab 导航）
 │     ├─ DesktopSidebar（桌面端左侧菜单）
 │     ├─ RouterView 页面内容
@@ -218,26 +220,26 @@ App.vue
 
 所有主页面都挂在 `MainLayout` children 下，路由在 `src/router/index.ts`。
 
-| 路径 | 页面组件 | 主要用途 |
-| --- | --- | --- |
-| `/home` | `Home.vue` | 首页、介绍、随机烂梗、烂梗投稿 |
-| `/memes/:category` | `memes-view.vue` | 烂梗列表页，目前主要 `/memes/AllBarrage` |
-| `/shieldWord` | `shieldWord.vue` | 屏蔽词列表、投票、投稿 |
-| `/post-bar` | `post-bar-main.vue` | 社区帖子流 |
-| `/me-post` | `Me-Post.vue` | 我的帖子 |
-| `/me-msg` | `Post-Message.vue` | 我的消息 |
-| `/me-memes` | `Me-memes.vue` | 我的烂梗投稿 |
-| `/UserInfo` | `user/components/index.vue` | 用户资料和修改密码 |
-| `/aichat` | `AIChat.vue` | AI 闲聊/造梗 |
-| `/matchPrediction` | `CS2Major.vue` | Major 赛事竞猜 |
-| `/matchLib` | `matchLib.vue` | 赛事烂梗库 |
-| `/image` | `image.vue` | 主播相册和评论 |
-| `/dejaVuNiko` | `deja-vu-niko.vue` | 超级逮虾户战报，作者停更较久，首页推荐入口已暂时注释，路由和侧边栏入口保留 |
-| `/15warriorsDonk` | `15warriorsDonk.vue` | 布雷德十五勇士榜 |
-| `/memeTop20` | `memeTop20.vue` | 年度 TOP20 展示 |
-| `/update` | `update-timeline.vue` | 更新日志 |
-| `/Tampermonkey` | `Tampermonkey.vue` | 油猴脚本说明 |
-| `/ChatRoom` | `ChatRoom.vue` | 聊天室独立路由 |
+| 路径               | 页面组件                    | 主要用途                                                                   |
+| ------------------ | --------------------------- | -------------------------------------------------------------------------- |
+| `/home`            | `Home.vue`                  | 首页、介绍、随机烂梗、烂梗投稿                                             |
+| `/memes/:category` | `memes-view.vue`            | 烂梗列表页，目前主要 `/memes/AllBarrage`                                   |
+| `/shieldWord`      | `shieldWord.vue`            | 屏蔽词列表、投票、投稿                                                     |
+| `/post-bar`        | `post-bar-main.vue`         | 社区帖子流                                                                 |
+| `/me-post`         | `Me-Post.vue`               | 我的帖子                                                                   |
+| `/me-msg`          | `Post-Message.vue`          | 我的消息                                                                   |
+| `/me-memes`        | `Me-memes.vue`              | 我的烂梗投稿                                                               |
+| `/UserInfo`        | `user/components/index.vue` | 用户资料和修改密码                                                         |
+| `/aichat`          | `AIChat.vue`                | AI 闲聊/造梗                                                               |
+| `/matchPrediction` | `CS2Major.vue`              | Major 赛事竞猜                                                             |
+| `/matchLib`        | `matchLib.vue`              | 赛事烂梗库                                                                 |
+| `/image`           | `image.vue`                 | 主播相册和评论                                                             |
+| `/dejaVuNiko`      | `deja-vu-niko.vue`          | 超级逮虾户战报，作者停更较久，首页推荐入口已暂时注释，路由和侧边栏入口保留 |
+| `/15warriorsDonk`  | `15warriorsDonk.vue`        | 布雷德十五勇士榜                                                           |
+| `/memeTop20`       | `memeTop20.vue`             | 年度 TOP20 展示                                                            |
+| `/update`          | `update-timeline.vue`       | 更新日志                                                                   |
+| `/Tampermonkey`    | `Tampermonkey.vue`          | 油猴脚本说明                                                               |
+| `/ChatRoom`        | `ChatRoom.vue`              | 聊天室独立路由                                                             |
 
 `MemeCategory` 在 `src/constants/backend.ts` 同时控制侧边栏和移动端 Tab 的主要菜单项。
 超级逮虾户战报当前因作者停更较久仅在首页 `didYouKnow.vue` 中注释推荐入口，`MemeCategory` 侧边栏/移动端菜单和 `/dejaVuNiko` 路由仍保留。
@@ -274,9 +276,9 @@ Home
 - `/memes/AllBarrage` 时顶部显示标签筛选卡片。
 - 顶部有“投稿”和“按复制次数排序”。
 - 主体是 `el-table`：
-  - id 列
-  - 内容列，hover 弹出标签和投稿时间
-  - 复制按钮列，复制后调用 `/machine/addCnt/{id}`
+    - id 列
+    - 内容列，hover 弹出标签和投稿时间
+    - 复制按钮列，复制后调用 `/machine/addCnt/{id}`
 - 含屏蔽词的内容会用警告图标标记。
 - 内部挂了 `submission-dialog.vue` 用于投稿弹窗。
 
@@ -295,10 +297,10 @@ Home
 
 输入输出：
 
-| 属性 | 说明 |
-| --- | --- |
-| `:tags` | 全部标签，从 `memeTagsStore.memeTags` 来 |
-| `v-model:selectedTags` | 当前已选标签 |
+| 属性                   | 说明                                     |
+| ---------------------- | ---------------------------------------- |
+| `:tags`                | 全部标签，从 `memeTagsStore.memeTags` 来 |
+| `v-model:selectedTags` | 当前已选标签                             |
 
 UI：
 
@@ -308,22 +310,26 @@ UI：
 
 ### 顶部栏 `header-bar.vue`
 
-桌面端显示：
+`header-bar.vue` 只通过 `useIsMobile()` 在 `DesktopHeader` 和 `MobileHeader` 之间切换，不再承载具体 UI、弹窗和业务状态。双端组件没有用于互相显隐的媒体查询，各自维护独立模板和样式；桌面端吸顶定位由 `MainLayout.vue` 负责，Header 子组件只维护自身尺寸和内部排版。
+
+桌面端 `desktop-header.vue` 显示：
 
 - logo 和标题
 - 24h 热门轮播入口
 - 搜索框
 - 上传照片/建议/BUG 按钮
-- 商务/油猴/斗鱼/ GitHub /赞赏入口
+- 商务/斗鱼/GitHub/赞赏入口
 - 消息入口
 - 用户入口
 
-移动端变化：
+移动端 `mobile-header.vue` 显示：
 
-- 标题隐藏，只保留 logo。
-- 搜索框移到 logo 区域内的 `.elinput-mobile`。
+- 只渲染 logo，不渲染桌面标题。
+- 搜索框和投稿按钮位于 logo 行。
 - 操作按钮压缩成一行。
 - 24h 热门条在移动端以绝对定位显示，并且非首页时隐藏。
+
+共享职责继续拆分为 `header-search.vue`、`hot-meme-dialogs.vue`、`header-submission-entry.vue`、`header-message-entry.vue`、`header-support-entry.vue` 和 `header-business-entry.vue`。这些组件负责各自的请求、弹窗状态和定时器清理，双端 Header 只决定排列方式。
 
 ### 搜索弹窗 `search-dialog.vue`
 
@@ -425,13 +431,13 @@ AIChat
 
 ### 图片和榜单页面
 
-| 页面 | 数据来源 | UI 说明 |
-| --- | --- | --- |
-| `image.vue` | `/machine/showImage`、`/machine/addCommentname` | 图片瀑布/列表、图片预览、评论弹窗 |
-| `memeTop20.vue` | OSS JSON | 年度 TOP20 静态榜单，年份下拉切换 |
-| `AnnualHotList.vue` | `/machine/hotTop20/**` | 年度 TOP20 评选活动页 |
-| `deja-vu-niko.vue` | OSS JSON | 战报式表格页面，首页推荐入口暂时隐藏，路由和菜单入口保留 |
-| `15warriorsDonk.vue` | OSS JSON | 榜单页面，可导出图片 |
+| 页面                 | 数据来源                                        | UI 说明                                                  |
+| -------------------- | ----------------------------------------------- | -------------------------------------------------------- |
+| `image.vue`          | `/machine/showImage`、`/machine/addCommentname` | 图片瀑布/列表、图片预览、评论弹窗                        |
+| `memeTop20.vue`      | OSS JSON                                        | 年度 TOP20 静态榜单，年份下拉切换                        |
+| `AnnualHotList.vue`  | `/machine/hotTop20/**`                          | 年度 TOP20 评选活动页                                    |
+| `deja-vu-niko.vue`   | OSS JSON                                        | 战报式表格页面，首页推荐入口暂时隐藏，路由和菜单入口保留 |
+| `15warriorsDonk.vue` | OSS JSON                                        | 榜单页面，可导出图片                                     |
 
 ## 桌面端和移动端布局
 
@@ -439,13 +445,13 @@ AIChat
 
 项目主要断点是：
 
-| 断点 | 使用 |
-| --- | --- |
-| `600px` | 全局移动端判断，`useIsMobile()` 也是 `(max-width: 600px)` |
-| `601px` | 桌面端样式起点 |
-| `768px` | 部分复杂页面，如首页卡片、赛事、投稿弹窗、随机烂梗 |
-| `1200px` | 赛事竞猜和屏蔽词卡片的中等屏适配 |
-| `375px/360px` | 赛事拖拽卡片和榜单超窄屏 |
+| 断点          | 使用                                                      |
+| ------------- | --------------------------------------------------------- |
+| `600px`       | 全局移动端判断，`useIsMobile()` 也是 `(max-width: 600px)` |
+| `601px`       | 桌面端样式起点                                            |
+| `768px`       | 部分复杂页面，如首页卡片、赛事、投稿弹窗、随机烂梗        |
+| `1200px`      | 赛事竞猜和屏蔽词卡片的中等屏适配                          |
+| `375px/360px` | 赛事拖拽卡片和榜单超窄屏                                  |
 
 `src/utils/common.ts` 的 `useIsMobile()` 只认 600px，因此用它控制显隐的组件和 CSS 里的 768px 断点可能不完全一致。
 
@@ -453,8 +459,8 @@ AIChat
 
 `MainLayout.vue` + `DesktopSidebar`：
 
-- Header sticky 在顶部。
-- `DesktopSidebar` 显示左侧 `el-menu` 侧栏。
+- `MainLayout` 为 `DesktopHeader` 设置 sticky 吸顶，Header 自身只维护尺寸和内部排版。
+- `DesktopSidebar` 仅在桌面端挂载，左侧 `el-menu` 使用与 55px Header 一致的 sticky 偏移，从页面开始滚动时便保持固定。
 - `.main-content` 是横向 flex。
 - `.content` 占剩余空间。
 - 首页额外加 `.content--with-home-sidebar`，右侧预留 360px 给词云/广告。
@@ -464,11 +470,11 @@ AIChat
 
 `MainLayout.vue` + `MobileTopTabs`：
 
-- `DesktopSidebar` 隐藏。
-- `MobileTopTabs` 显示吸顶 Tab，外层负责 sticky，内层负责横向滚动。
+- `DesktopSidebar` 不挂载。
+- `MobileTopTabs` 仅在移动端挂载；根选择栏同时负责 sticky 和横向滚动，内层容器负责排列 Tab 项。
 - `MobileTopTabs` 的选中项在路由切换后若超出横向可视区，会自动平滑滚动并贴齐选择栏左侧。
 - 内容区全宽。
-- Header 不 sticky，内部换行。
+- `MobileHeader` 不 sticky，内部换行。
 - `FloatingSidebar` 隐藏可拖拽聊天室和固定广告，只保留变窄的竖排入口。
 - `Home.vue` 里显示移动端 `HomeWordCloudPanel`，聊天室进入内容流。
 - 许多页面表格仍然存在横向压力，后续如果优化移动端，优先看表格列宽和弹窗宽度。
@@ -497,7 +503,8 @@ src/
 │  ├─ submission-dialog.vue
 │  ├─ ChatRoom.vue
 │  ├─ wordCloud.vue
-│  ├─ header-bar/search-dialog.vue
+│  ├─ search-dialog-host.vue
+│  ├─ search-dialog.vue
 │  └─ home/*
 └─ views/
    ├─ MainLayout/
@@ -506,6 +513,8 @@ src/
    │     ├─ Home.vue
    │     ├─ memes-view.vue
    │     ├─ header-bar/
+   │     │  ├─ header-bar.vue       双端 Header 调度层
+   │     │  └─ components/          双端 Header 与共享业务组件
    │     ├─ right-sidebar/
    │     ├─ post-bar/
    │     ├─ match-prediction/
@@ -517,18 +526,18 @@ src/
 
 ## 状态和数据缓存
 
-| Store | 内容 | 使用场景 |
-| --- | --- | --- |
-| `memeTags` | 烂梗标签字典 | 标签选择器、烂梗 popover、投稿表单 |
-| `shieldWordStore` | 屏蔽词字典 | 烂梗列表和搜索结果标记风险内容 |
-| `useAuthStore` | 登录弹窗可见性、userId | 401 后弹登录，赛事预测读取 userId |
-| `GuiBinStore` | 斗鱼直播间贵宾数 | MainLayout 底部显示 |
+| Store             | 内容                   | 使用场景                           |
+| ----------------- | ---------------------- | ---------------------------------- |
+| `memeTags`        | 烂梗标签字典           | 标签选择器、烂梗 popover、投稿表单 |
+| `shieldWordStore` | 屏蔽词字典             | 烂梗列表和搜索结果标记风险内容     |
+| `useAuthStore`    | 登录弹窗可见性、userId | 401 后弹登录，赛事预测读取 userId  |
+| `GuiBinStore`     | 斗鱼直播间贵宾数       | MainLayout 底部显示                |
 
 `memeTags` 和 `shieldWordStore` 都用了 Promise loaded 模式：
 
 ```ts
 memeTagsStore.tagsLoaded.then(() => {
-  allTags.value = memeTagsStore.memeTags;
+    allTags.value = memeTagsStore.memeTags;
 });
 ```
 
@@ -546,9 +555,9 @@ memeTagsStore.tagsLoaded.then(() => {
 - 大多数是 `<style scoped lang="scss">`。
 - 历史代码里还有不少行内样式，尤其是搜索弹窗、热门弹窗、帖子模块、相册、榜单页。
 - 最近整理过：
-  - `src/views/MainLayout/components/memes-view.vue`
-  - `src/views/MainLayout/components/Home.vue`
-  - `src/components/submission-dialog.vue`
+    - `src/views/MainLayout/components/memes-view.vue`
+    - `src/views/MainLayout/components/Home.vue`
+    - `src/components/submission-dialog.vue`
 
 继续清样式时建议：
 
