@@ -1,15 +1,9 @@
 <template>
-    <slot :open="openSubmissionDialog" />
-    <SubmissionDialog v-model="submissionDialogVisible" />
+    <slot :open="submissionDialogStore.open" />
 </template>
 
 <script setup lang="ts">
-import SubmissionDialog from '@/components/submission-dialog.vue';
-import { ref } from 'vue';
+import { useSubmissionDialogStore } from '@/stores/useSubmissionDialogStore';
 
-const submissionDialogVisible = ref(false);
-
-function openSubmissionDialog() {
-    submissionDialogVisible.value = true;
-}
+const submissionDialogStore = useSubmissionDialogStore();
 </script>

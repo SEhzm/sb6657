@@ -83,11 +83,11 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 | GET  | `/machine/hotBarrageOf24H`            | `hot-meme-dialogs.vue`                              | 24 小时热门                                |
 | GET  | `/machine/hotBarrageOf7Day`           | `hot-meme-dialogs.vue`                              | 7 天热门                                   |
 | GET  | `/machine/getRandOne`                 | `random-meme.vue`                                   | 首页随机一条烂梗                           |
-| POST | `/machine/submission`                 | `Home.vue`、`submission-dialog.vue`、`setMeme.ts`   | 投稿烂梗，可带 `tags/barrage/matchId`      |
+| POST | `/machine/submission`                 | `meme-submission.vue`、`setMeme.ts`                 | 投稿烂梗，可带 `tags/barrage/matchId`      |
 | GET  | `/machine/addCnt/{memeId}`            | 多处复制按钮                                        | 复制次数 +1                                |
 | GET  | `/machine/getBarrageInfo/{barrageId}` | 帖子列表                                            | 根据烂梗 ID 获取烂梗内容                   |
 | GET  | `/machine/MeMemesPageList`            | `Me-memes.vue`                                      | 我的烂梗投稿                               |
-| GET  | `/machine/InProgressMatch`            | `Home.vue`、`submission-dialog.vue`                 | 获取当前进行中的大型赛事，用于投稿关联赛事 |
+| GET  | `/machine/InProgressMatch`            | `meme-submission.vue`                               | 获取当前进行中的大型赛事，用于投稿关联赛事 |
 | GET  | `/machine/WordCloud`                  | `wordCloud.vue`                                     | 搜索词云数据                               |
 
 `API` 常量里还保留了若干分类路径，例如 `GET_FK_WJQ_MEME`、`GET_QUQU_MEME`，现在主要靠 `/machine/Page?` 加 `tags` 参数实现分类。
@@ -190,15 +190,18 @@ App.vue
 │  └─ MainLayout.vue
 │     ├─ HeaderBar（仅负责双端切换）
 │     │  ├─ DesktopHeader / MobileHeader
-│     │  ├─ HeaderSearch -> 路由 search 查询 -> SearchDialogHost/search-dialog.vue
+│     │  ├─ HeaderSearch -> 路由 search 查询
 │     │  ├─ HotMemeDialogs -> meme-dialog.vue
-│     │  ├─ HeaderSubmissionEntry -> submission-dialog.vue
+│     │  ├─ HeaderSubmissionEntry -> useSubmissionDialogStore
 │     │  ├─ HeaderMessageEntry
 │     │  ├─ HeaderSupportEntry / HeaderBusinessEntry
 │     │  └─ 用户入口 -> userHome.vue -> login/register/resetPassword
 │     ├─ MobileTopTabs（移动端横向 Tab 导航）
 │     ├─ DesktopSidebar（桌面端左侧菜单）
 │     ├─ RouterView 页面内容
+│     ├─ GlobalDialogHost（全局单例弹窗宿主）
+│     │  ├─ SearchDialogHost -> search-dialog.vue
+│     │  └─ submission-dialog.vue -> meme-submission.vue
 │     ├─ FooterBar
 │     ├─ FloatingSidebar
 │     │  ├─ 首页桌面端词云 HomeWordCloudPanel -> wordCloud.vue
@@ -280,18 +283,18 @@ Home
     - 内容列，hover 弹出标签和投稿时间
     - 复制按钮列，复制后调用 `/machine/addCnt/{id}`
 - 含屏蔽词的内容会用警告图标标记。
-- 内部挂了 `submission-dialog.vue` 用于投稿弹窗。
+- 顶部投稿按钮通过 `useSubmissionDialogStore` 打开全局投稿弹窗，不再在列表内部创建弹窗实例。
 
 ### 投稿弹窗 `submission-dialog.vue`
 
-复用在烂梗列表页：
+`submission-dialog.vue` 只保留受控弹窗外壳，唯一实例挂载在 `global-dialog-host.vue`，由 `useSubmissionDialogStore` 管理显示状态。Header、烂梗列表和搜索无结果入口都调用同一个 store，不再各自创建弹窗。
 
 - 标签选择：`tag-selector`
 - 输入弹幕：`el-input textarea`
 - 底部：可关联当前进行中的赛事 `/machine/InProgressMatch`
 - 提交：`/machine/submission`
 
-`Home.vue` 里有一份相似的内联投稿表单，两者逻辑重复较多，后续可以考虑抽一个投稿表单组件。
+实际表单由 `meme-submission.vue` 负责。`Home.vue` 继续直接内嵌这份表单，它不属于弹窗单例。
 
 ### 标签选择器 `tag-selector.vue`
 
@@ -329,7 +332,7 @@ UI：
 - 操作按钮压缩成一行。
 - 24h 热门条在移动端以绝对定位显示，并且非首页时隐藏。
 
-共享职责继续拆分为 `header-search.vue`、`hot-meme-dialogs.vue`、`header-submission-entry.vue`、`header-message-entry.vue`、`header-support-entry.vue` 和 `header-business-entry.vue`。这些组件负责各自的请求、弹窗状态和定时器清理，双端 Header 只决定排列方式。
+共享职责继续拆分为 `header-search.vue`、`hot-meme-dialogs.vue`、`header-submission-entry.vue`、`header-message-entry.vue`、`header-support-entry.vue` 和 `header-business-entry.vue`。其中投稿入口只调用全局投稿弹窗 store，其余组件负责各自的请求、弹窗状态和定时器清理，双端 Header 只决定排列方式。
 
 ### 搜索弹窗 `search-dialog.vue`
 
@@ -338,6 +341,7 @@ UI：
 - 顶部高级筛选区域可折叠。
 - 支持时间范围、标签筛选、按时间/id 或复制次数排序。
 - 表格展示搜索结果，关键词高亮。
+- 无搜索结果时显示克制的蓝色“投稿”入口；点击后先关闭搜索弹窗，再打开全局投稿弹窗，避免两个弹层叠加。
 - 每页 20 条。
 - 移动端分页简化为 `prev, pager, next`，按钮文案变短。
 
@@ -495,12 +499,15 @@ src/
 │  ├─ memeTags.ts            标签字典缓存
 │  ├─ shieldWordStore.ts     屏蔽词缓存和检测
 │  ├─ useAuthStore.ts        登录弹窗和 userId
+│  ├─ useSubmissionDialogStore.ts  全局投稿弹窗开关
 │  └─ GuiBinStore.ts         斗鱼贵宾数
 ├─ components/
 │  ├─ desktop-sidebar.vue   桌面端左侧菜单
 │  ├─ mobile-top-tabs.vue   移动端顶部 Tab 和自动滚动
 │  ├─ tag-selector.vue
+│  ├─ global-dialog-host.vue  全局单例弹窗宿主
 │  ├─ submission-dialog.vue
+│  ├─ meme-submission.vue
 │  ├─ ChatRoom.vue
 │  ├─ wordCloud.vue
 │  ├─ search-dialog-host.vue
@@ -526,12 +533,13 @@ src/
 
 ## 状态和数据缓存
 
-| Store             | 内容                   | 使用场景                           |
-| ----------------- | ---------------------- | ---------------------------------- |
-| `memeTags`        | 烂梗标签字典           | 标签选择器、烂梗 popover、投稿表单 |
-| `shieldWordStore` | 屏蔽词字典             | 烂梗列表和搜索结果标记风险内容     |
-| `useAuthStore`    | 登录弹窗可见性、userId | 401 后弹登录，赛事预测读取 userId  |
-| `GuiBinStore`     | 斗鱼直播间贵宾数       | MainLayout 底部显示                |
+| Store                      | 内容                   | 使用场景                           |
+| -------------------------- | ---------------------- | ---------------------------------- |
+| `memeTags`                 | 烂梗标签字典           | 标签选择器、烂梗 popover、投稿表单 |
+| `shieldWordStore`          | 屏蔽词字典             | 烂梗列表和搜索结果标记风险内容     |
+| `useAuthStore`             | 登录弹窗可见性、userId | 401 后弹登录，赛事预测读取 userId  |
+| `useSubmissionDialogStore` | 全局投稿弹窗可见性     | Header、烂梗列表和搜索无结果入口   |
+| `GuiBinStore`              | 斗鱼直播间贵宾数       | MainLayout 底部显示                |
 
 `memeTags` 和 `shieldWordStore` 都用了 Promise loaded 模式：
 

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-dialog draggable v-model="showDialog" class="dialog-main">
+        <el-dialog v-model="showDialog" draggable class="dialog-main" @closed="handleDialogClosed">
             <!-- Header -->
             <template #header>
                 <span class="search-tips">烂梗搜索结果:</span>
@@ -11,18 +11,16 @@
                 <div class="title">
                     <div class="title-left">
                         <span class="title-text">高级筛选</span>
-                        <el-button text @click="toggleAdvancedSearch" class="collapse-btn">
+                        <el-button text class="collapse-btn" @click="toggleAdvancedSearch">
                             <span class="collapse-text">{{ isAdvancedSearchCollapsed ? '展开' : '收起' }}</span>
                             <el-icon>
                                 <component :is="isAdvancedSearchCollapsed ? 'ArrowDown' : 'ArrowUp'" />
                             </el-icon>
                         </el-button>
-                        <el-button v-if="sortType === SortType.ID" text type="info"
-                            @click="changeSortType(SortType.COPY)" :size="isMobile ? 'small' : 'default'">
+                        <el-button v-if="sortType === SortType.ID" text type="info" :size="isMobile ? 'small' : 'default'" @click="changeSortType(SortType.COPY)">
                             {{ isMobile ? '复制数排序' : '点击按复制次数排序' }}
                         </el-button>
-                        <el-button v-else-if="sortType === SortType.COPY" text type="info"
-                            @click="changeSortType(SortType.ID)" :size="isMobile ? 'small' : 'default'">
+                        <el-button v-else-if="sortType === SortType.COPY" text type="info" :size="isMobile ? 'small' : 'default'" @click="changeSortType(SortType.ID)">
                             {{ isMobile ? '时间排序' : '点击按id(时间)排序' }}
                         </el-button>
                     </div>
@@ -33,9 +31,7 @@
                 <transition name="collapse">
                     <div v-show="!isAdvancedSearchCollapsed" class="collapsible-content">
                         <div class="time-container">
-                            <el-date-picker class="time-picker" v-model="submitTime" type="daterange"
-                                range-separator="到" value-format="YYYY-MM-DD" start-placeholder="起始"
-                                end-placeholder="结束" :disabled-date="disabledDate" />
+                            <el-date-picker v-model="submitTime" class="time-picker" type="daterange" range-separator="到" value-format="YYYY-MM-DD" start-placeholder="起始" end-placeholder="结束" :disabled-date="disabledDate" />
                         </div>
                         <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
                     </div>
@@ -47,16 +43,20 @@
                 <!-- 自定义空状态插槽 -->
                 <template #empty>
                     <div class="empty-state">
-                        <el-icon v-if="emptyText !== '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！'" class="loading-icon">
+                        <el-icon v-if="!hasNoSearchResults" class="loading-icon">
                             <Loading />
                         </el-icon>
-                        <span>{{ emptyText }}</span>
+                        <span v-if="hasNoSearchResults" class="no-results-message">
+                            <span>没有找到搜索结果。想要补充更多烂梗？欢迎</span>
+                            <button type="button" class="submission-link" @click="openSubmissionFromSearch">投稿</button>
+                        </span>
+                        <span v-else>{{ emptyText }}</span>
                     </div>
                 </template>
                 <!-- 序号列 -->
                 <el-table-column align="center" width="70">
                     <template #default="scope">
-                        <div class="row-number" v-memo="[scope.$index]">{{ scope.row.id }}</div>
+                        <div v-memo="[scope.$index]" class="row-number">{{ scope.row.id }}</div>
                     </template>
                 </el-table-column>
 
@@ -65,9 +65,8 @@
                     <template #default="scope">
                         <el-popover placement="top" width="auto" trigger="hover">
                             <template #reference>
-                                <div class="barrage-text" style="display: flex; align-items: center; gap: 4px;">
-                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)"
-                                        style="color: #e6a23c; flex-shrink: 0;" size="large">
+                                <div class="barrage-text" style="display: flex; align-items: center; gap: 4px">
+                                    <el-icon v-if="hasShieldWordInContent(scope.row.content)" style="color: #e6a23c; flex-shrink: 0" size="large">
                                         <WarningFilled />
                                     </el-icon>
                                     <span v-html="scope.row.highlightedContent || scope.row.content"></span>
@@ -85,9 +84,8 @@
                                             </el-tag>
                                         </div>
                                         <!-- 屏蔽词提示 - 用小字显示在tag区域 -->
-                                        <span class="shield-word-text" v-if="hasShieldWordInContent(scope.row.content)"
-                                            style="font-size: 14px; color: #e6a23c; margin-left: 4px;">
-                                            <el-icon style="margin-right: 2px; vertical-align: middle;">
+                                        <span v-if="hasShieldWordInContent(scope.row.content)" class="shield-word-text" style="font-size: 14px; color: #e6a23c; margin-left: 4px">
+                                            <el-icon style="margin-right: 2px; vertical-align: middle">
                                                 <Warning />
                                             </el-icon>
                                             包含屏蔽词
@@ -115,10 +113,8 @@
             </el-table>
 
             <!-- 分页组件 -->
-            <div class="pagination-container" v-if="total > 0">
-                <el-pagination v-model:current-page="currentPage" :page-size="PAGE_SIZE" :total="total"
-                    :layout="isMobile ? 'prev, pager, next' : 'total, prev, pager, next, jumper'" size="small"
-                    background />
+            <div v-if="total > 0" class="pagination-container">
+                <el-pagination v-model:current-page="currentPage" :page-size="PAGE_SIZE" :total="total" :layout="isMobile ? 'prev, pager, next' : 'total, prev, pager, next, jumper'" size="small" background />
             </div>
         </el-dialog>
     </div>
@@ -132,6 +128,7 @@ import flipNum from '@/components/flip-num.vue';
 import tagSelector from '@/components/tag-selector.vue';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { useShieldWordStore } from '@/stores/shieldWordStore';
+import { useSubmissionDialogStore } from '@/stores/useSubmissionDialogStore';
 import { type getMemeTags as memeTag, SortType } from '@/types/meme';
 import { copySuccess, copyToClipboard, limitedCopy } from '@/utils/clipboard';
 import { useIsMobile } from '@/utils/common';
@@ -142,7 +139,7 @@ import { Loading, Warning } from '@element-plus/icons-vue';
 import { storeToRefs } from 'pinia';
 import { computed, onMounted, ref, watch } from 'vue';
 const shieldWordStore = useShieldWordStore();
-
+const submissionDialogStore = useSubmissionDialogStore();
 
 // ==================== 类型定义 ====================
 interface LocalMeme extends Omit<Meme, 'category' | 'likes'> {
@@ -170,6 +167,8 @@ const emptyText = ref(DEFAULT_EMPTY_TEXT);
 const sortType = ref<SortType>(SortType.ID);
 const currentPage = ref(1);
 const total = ref(0);
+const openSubmissionAfterClose = ref(false);
+const hasNoSearchResults = ref(false);
 
 //初始化屏蔽词数据
 onMounted(async () => {
@@ -196,6 +195,7 @@ function resetSearchState() {
     currentPage.value = 1;
     total.value = 0;
     emptyText.value = DEFAULT_EMPTY_TEXT;
+    hasNoSearchResults.value = false;
 }
 
 // 搜索核心逻辑
@@ -215,10 +215,11 @@ async function performSearch(searchKey: string, sortType: SortType = SortType.ID
         memeArr.value = [];
         total.value = 0;
         currentPage.value = 1;
-        emptyText.value = '没有找到搜索结果。想要补充更多烂梗？请去首页投稿！';
+        hasNoSearchResults.value = true;
         return;
     }
 
+    hasNoSearchResults.value = false;
     total.value = flatData.total;
     currentPage.value = pageNum;
     memeArr.value = flatData.list.map((item) => ({
@@ -246,10 +247,22 @@ function changeSortType(type: SortType) {
     sortType.value = type;
 }
 
+function openSubmissionFromSearch() {
+    openSubmissionAfterClose.value = true;
+    showDialog.value = false;
+}
+
+function handleDialogClosed() {
+    if (!openSubmissionAfterClose.value) return;
+
+    openSubmissionAfterClose.value = false;
+    submissionDialogStore.open();
+}
+
 // ==================== 高级搜索功能 ====================
 const isAdvancedSearchCollapsed = ref(true);
 const allTags = ref<memeTag[]>([]);
-memeTagsStore.tagsLoaded.then((tags) => {
+memeTagsStore.tagsLoaded.then(() => {
     allTags.value = memeTags.value;
 });
 const selectedTags = ref<memeTag[]>([]);
@@ -469,6 +482,22 @@ watch(
             .loading-icon {
                 font-size: 24px;
                 animation: rotate 1s linear infinite;
+            }
+
+            .no-results-message {
+                display: inline-flex;
+                align-items: baseline;
+            }
+
+            .submission-link {
+                appearance: none;
+                padding: 0;
+                border: 0;
+                background: transparent;
+                color: var(--el-color-primary);
+                font: inherit;
+                line-height: inherit;
+                cursor: pointer;
             }
 
             @keyframes rotate {

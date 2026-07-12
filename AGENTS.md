@@ -100,6 +100,7 @@
 - `src/utils/common.ts` 的 `useIsMobile()` 使用 `(max-width: 600px)`，它不一定等于组件 CSS 中的 `768px` 断点。
 - `MainLayout.vue` 负责全局壳和组件编排，并通过 `v-if` 挂载桌面侧边栏或移动端横向 Tab；`desktop-sidebar.vue`、`mobile-top-tabs.vue` 不再自行判断设备。
 - `header-bar.vue` 只负责根据 `useIsMobile()` 挂载桌面或移动 Header；双端模板和样式分别维护在 `desktop-header.vue`、`mobile-header.vue`，共享业务继续下沉到 Header 子组件，桌面 Header 的吸顶定位由 `MainLayout.vue` 负责。
+- `MainLayout.vue` 只挂载一个 `global-dialog-host.vue` 作为全局单例弹窗宿主；新增跨页面弹窗时集中挂到该宿主，并为各业务弹窗使用独立 Pinia store 管理开关，不要在多个入口重复创建弹窗实例。
 - `FloatingSidebar.vue` 里有拖拽定位必需的动态 `:style`，不要在普通样式清理中删除。
 - 修改 Element Plus 的弹窗、popover、table 或 teleport 内容时，优先给弹层内容加明确 root class；scoped 样式打不到时使用 `:deep()`。
 - 清理历史行内样式时，一次只处理一个组件，迁移到语义 class，避免顺手大重构。

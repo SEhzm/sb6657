@@ -32,7 +32,7 @@
             </div>
             <div class="top">
                 <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
-                <el-button type="primary" @click="handleSubmit">烂梗投稿</el-button>
+                <el-button type="primary" @click="submissionDialogStore.open">烂梗投稿</el-button>
                 <el-button class="btn-animate btn-animate__ball-collision" color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
             </div>
 
@@ -88,20 +88,10 @@
                 </el-table-column>
             </el-table>
             <div class="pagination-wrapper">
-                <el-pagination
-                    v-if="!loading"
-                    background
-                    layout="prev, pager, next, jumper"
-                    :size="isMobile ? 'small' : ''"
-                    :current-page="currentPage"
-                    :total="total"
-                    :pager-count="isMobile ? 4 : 5"
-                    :page-size="pageSize"
-                    @current-change="handlePageChange"></el-pagination>
+                <el-pagination v-if="!loading" background layout="prev, pager, next, jumper" :size="isMobile ? 'small' : ''" :current-page="currentPage" :total="total" :pager-count="isMobile ? 4 : 5" :page-size="pageSize" @current-change="handlePageChange"></el-pagination>
             </div>
         </div>
 
-        <submission-dialog v-model="dialogFormVisible"></submission-dialog>
         <el-backtop :right="50" :bottom="50">UP</el-backtop>
     </div>
 </template>
@@ -111,11 +101,11 @@ import { getMemeList } from '@/apis/getMeme';
 import httpInstance from '@/apis/httpInstance';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
-import submissionDialog from '@/components/submission-dialog.vue';
 import tagSelector from '@/components/tag-selector.vue';
 import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { useShieldWordStore } from '@/stores/shieldWordStore';
+import { useSubmissionDialogStore } from '@/stores/useSubmissionDialogStore';
 import { type getMemeTags as memeTag } from '@/types/meme';
 import { copySuccess, copyToClipboard, limitedCopy } from '@/utils/clipboard';
 import { getDisplayTags } from '@/utils/tags';
@@ -127,6 +117,7 @@ import { useIsMobile } from '@/utils/common';
 
 const memeTagsStore = useMemeTagsStore();
 const shieldWordStore = useShieldWordStore();
+const submissionDialogStore = useSubmissionDialogStore();
 const memeCategory = 'allbarrage';
 const isMobile = useIsMobile();
 
@@ -235,12 +226,6 @@ async function copyMeme_countPlus1(meme: Meme) {
         }
     }
     plus1Error();
-}
-
-// 弹出投稿弹窗按钮
-const dialogFormVisible = ref(false);
-function handleSubmit() {
-    dialogFormVisible.value = true;
 }
 
 //移动端的触摸展示
