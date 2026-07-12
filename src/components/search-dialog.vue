@@ -48,7 +48,7 @@
                         </el-icon>
                         <span v-if="hasNoSearchResults" class="no-results-message">
                             <span>没有找到搜索结果。想要补充更多烂梗？欢迎</span>
-                            <button type="button" class="submission-link" @click="openSubmissionFromSearch">投稿</button>
+                            <button type="button" class="submission-link" @click="openSubmissionFromSearch">点击投稿</button>
                         </span>
                         <span v-else>{{ emptyText }}</span>
                     </div>
@@ -485,8 +485,8 @@ watch(
             }
 
             .no-results-message {
-                display: inline-flex;
                 align-items: baseline;
+                line-height: normal;
             }
 
             .submission-link {
