@@ -15,28 +15,29 @@ Use best judgment only when the ambiguity is low risk and the existing code/docs
 
 1. Read `AGENTS.md` first.
 2. Read task-relevant docs:
-   - `AI_GUIDE.md` for non-trivial feature, API, layout, or store changes.
-   - `README.md` for project positioning or backend usage.
-   - `docs/更新日志.md` when the change is user-visible or version-related.
+    - `AI_GUIDE.md` for non-trivial feature, API, layout, or store changes.
+    - `README.md` for project positioning or backend usage.
+    - `docs/更新日志.md` when the change is user-visible or version-related.
 3. Inspect the nearest relevant source files before deciding an approach.
 4. Check for ambiguity:
-   - Ask the user before coding if multiple valid behaviors exist.
-   - Ask before changing production backend URLs, routing mode, deployment workflow, dependencies, auth/token behavior, or public API assumptions.
-   - Ask before choosing a large refactor when a smaller scoped fix could work.
+    - Ask the user before coding if multiple valid behaviors exist.
+    - Ask before changing production backend URLs, routing mode, deployment workflow, dependencies, auth/token behavior, or public API assumptions.
+    - Ask before choosing a large refactor when a smaller scoped fix could work.
 5. Implement narrowly, following existing Vue, Element Plus, Pinia, SCSS, and request-layer patterns.
 6. For code changes, synchronize release metadata:
-   - Read the current local date.
-   - Use version format `YY.MM.DD`.
-   - Update `docs/更新日志.md`.
-   - Update `package.json` field `"version"`.
-   - Update `src/apis/httpInstance.ts` export `sbVersion`.
-   - If today's `docs/更新日志.md` heading already exists, append an item under it instead of duplicating the heading.
+    - Read the current local date.
+    - Use version format `YY.MM.DD`.
+    - Update `docs/更新日志.md`.
+    - Update `package.json` field `"version"`.
+    - Update `src/apis/httpInstance.ts` export `sbVersion`.
+    - If today's `docs/更新日志.md` heading already exists, append an item under it instead of duplicating the heading.
 7. Verify:
-   - Run `npm run build` unless the change is docs-only or a blocker is clear.
-   - Run `npm run lint` for source changes when practical.
-   - For UI changes, consider desktop and mobile breakpoints used by the touched component.
+    - Run `npm run build` unless the change is docs-only or a blocker is clear.
+    - Run `npm run lint` for source changes when practical.
+    - For UI changes, review desktop and mobile breakpoints statically and leave actual visual acceptance to the user.
+    - Unless the user explicitly requests it in the current task, do not run `npm run dev`, `npm run preview`, or another project server; do not open or control a browser; and do not use screenshots, recordings, or pixel comparison for visual verification.
 8. Review the final diff for unrelated edits, generated files, secrets, and version/log consistency.
-9. Final response should summarize what changed, verification results, and any remaining risk or skipped checks.
+9. Final response should summarize what changed, verification results, note that no browser preview was performed for UI work, and report any remaining risk or skipped checks.
 
 ## Project-Specific Guardrails
 

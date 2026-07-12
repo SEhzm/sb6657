@@ -33,6 +33,12 @@
 - 修改 `src/**/*.{ts,tsx,js,jsx,vue}` 后尽量运行 `npm run lint`。当前 lint 已迁移到 ESLint 9 flat config，可正常执行；历史代码仍可能输出 warning。
 - 涉及 UI 的改动要同时考虑桌面端和移动端，并沿用被修改组件已有的断点。
 
+运行与视觉验收边界：
+
+- UI 实际运行和视觉效果由用户人工验收。除非用户在当前任务中明确要求，否则 AI 禁止运行 `npm run dev`、`npm run preview` 或其他用于启动项目和预览页面的命令。
+- 除非用户在当前任务中明确要求，否则 AI 禁止自动打开或控制浏览器访问项目，禁止通过浏览器截图、录屏、像素对比等方式进行视觉验收。
+- UI 改动默认使用代码审查、`npm run build`、`npm run lint` 等非交互方式验证；最终回复应说明未进行浏览器预览，并将实际页面效果留给用户人工确认。
+
 ## Repo Skills
 
 - `.agents/skills/project-feature-flow`：实现功能、修 bug、重构、优化或 UI 改动时使用。它强调先读上下文、遇到模棱两可的问题先问用户，再进入实现、版本同步和验证。
@@ -45,9 +51,9 @@
 - 先读取当前本地日期，不要凭记忆或上下文猜日期。
 - 版本号格式使用 `YY.MM.DD`，例如 2026 年 7 月 1 日写成 `26.07.01`。
 - 同步更新这三个位置，三者必须完全一致：
-  - `docs/更新日志.md`：追加或更新对应日期的 `## 版本【YY.MM.DD】` 条目。
-  - `package.json`：更新根字段 `"version"`。
-  - `src/apis/httpInstance.ts`：更新 `export const sbVersion = 'YY.MM.DD';`。
+    - `docs/更新日志.md`：追加或更新对应日期的 `## 版本【YY.MM.DD】` 条目。
+    - `package.json`：更新根字段 `"version"`。
+    - `src/apis/httpInstance.ts`：更新 `export const sbVersion = 'YY.MM.DD';`。
 - 如果 `docs/更新日志.md` 已经有今天的版本标题，就在该标题下追加本次改动内容，不要重复创建同一天标题。
 - 更新日志条目保持简短，沿用现有格式，如 `1、【新增】...`、`2、【优化】...`、`3、【修复】...`、`4、【修改】...`、`5、【重构】...`。
 - 纯文档改动不强制更新版本号，除非用户明确要求或文档改动会影响用户可见发布内容。
@@ -80,9 +86,9 @@
 - `httpInstance.get/post` 返回的是后端 body，即 `{ code, data, msg }`，不是原始 AxiosResponse。
 - `httpInstance.ts` 导出的轻封装 `get`/`post` 返回 `{ _failure, flatData }`。
 - 请求拦截器会加：
-  - `siteToken`：匿名站点统计。
-  - `dpahjdoiaw`：官网 Web 前端来源统计。
-  - `Authorization: Bearer ...`：登录 token。
+    - `siteToken`：匿名站点统计。
+    - `dpahjdoiaw`：官网 Web 前端来源统计。
+    - `Authorization: Bearer ...`：登录 token。
 - `dpahjdoiaw` 不是鉴权密钥。不要把它复制到 QQ bot、agent、油猴脚本、第三方客户端、文档示例或任何非官网 Web 前端调用里。
 - AI 流式聊天使用原生 `fetch`，不是 `httpInstance`；除非明确改 AI 会话逻辑，否则保留它手动拼 base URL 和 token 的方式。
 - 很多旧接口没有集中在 `API` 常量里，而是直接写在组件中。判断接口是否使用前要全局搜索。
@@ -122,16 +128,16 @@
 
 - 如果用户要求提交代码，commit message 使用 Conventional Commits 风格：`type: subject`。
 - 常用 `type`：
-  - `feat`：新增功能。
-  - `fix`：修复 bug。
-  - `docs`：文档变更。
-  - `style`：格式、样式或不影响逻辑的调整。
-  - `refactor`：重构，不新增功能也不修 bug。
-  - `perf`：性能优化。
-  - `test`：测试相关。
-  - `build`：构建、依赖或打包配置。
-  - `ci`：CI/CD 配置。
-  - `chore`：杂项维护。
+    - `feat`：新增功能。
+    - `fix`：修复 bug。
+    - `docs`：文档变更。
+    - `style`：格式、样式或不影响逻辑的调整。
+    - `refactor`：重构，不新增功能也不修 bug。
+    - `perf`：性能优化。
+    - `test`：测试相关。
+    - `build`：构建、依赖或打包配置。
+    - `ci`：CI/CD 配置。
+    - `chore`：杂项维护。
 - `subject` 优先使用简短中文说明本次变更；只有技术术语或生态约定用英文更清晰时才使用英文。优先一句话说清结果，例如 `feat: 添加屏蔽词投稿入口`、`fix: 修复移动端搜索弹窗溢出`、`docs: 更新 agent 工作说明`。
 - 每次提交尽量只包含一个主题；提交前检查 `git status` 和 diff，不要把无关改动混进同一个 commit。
 - 如有破坏性变更，使用 `type!:` 或在提交正文写 `BREAKING CHANGE:`，并在最终回复里明确提醒。
@@ -143,4 +149,4 @@
 - 代码改动后，`docs/更新日志.md`、`package.json` 的 `version` 和 `src/apis/httpInstance.ts` 的 `sbVersion` 已按今天日期同步；纯文档改动除外。
 - `npm run build` 已通过，或已说明未运行/未通过的原因。
 - 修改源码时尽量让 `npm run lint` 通过；如果仍有 warning，区分本次改动引入的问题和历史技术债。
-- UI 改动已考虑桌面端和移动端，剩余风险要说清楚。
+- UI 改动已从代码层面考虑桌面端和移动端，实际运行和视觉效果留给用户人工验收，剩余风险要说清楚。
