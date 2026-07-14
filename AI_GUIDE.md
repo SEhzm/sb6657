@@ -266,11 +266,12 @@ Home
 │  ├─ 当前赛事关联区
 │  └─ 投稿按钮
 ├─ ChatRoom（移动端内容流里显示，桌面端 CSS 隐藏）
-├─ 友情链接
 └─ HomeWordCloudPanel（移动端显示）
 ```
 
 桌面首页右侧词云不是 `Home.vue` 直接放的，而是 `MainLayout` 给 `.content--with-home-sidebar` 预留右侧空间，`FloatingSidebar` 固定显示 `HomeWordCloudPanel`。
+
+全局 `FooterBar` 将入口分为 `sb6657` 和 `友情链接` 两组。`sb6657` 按当前顺序展示 GitHub、官方交流群、建议/提交 BUG、油猴脚本、星空背景、更新日志和赞赏支持，其中交流群与赞赏使用 Footer 内的二维码弹窗；`友情链接` 展示玩机器直播间、合作站点及友情推广。两组链接使用可换行 Flex 布局，下方分割线后按原有两行排版展示服务器到期时间，以及 IPv6 状态、网站运行天数和 2024 年运营起始标记。
 
 ### 烂梗列表 `memes-view.vue`
 

@@ -20,11 +20,6 @@
         </div>
         <el-backtop :right="50" :bottom="50" />
         <ChatRoom class="ChatRoom card"></ChatRoom>
-        <div class="card sixth-card">
-            <span>友情链接</span>
-            <a href="https://dgq63136.cn" target="_blank">dgq63136.cn</a>
-            <a href="https://sb6657.cn/Starrysky" target="_blank">星空背景</a>
-        </div>
         <HomeWordCloudPanel v-if="isMobile" class="mobile-word-cloud" />
     </div>
 </template>
@@ -90,14 +85,6 @@ const isMobile = useIsMobile();
             .submit-title {
                 margin-bottom: 4px;
             }
-        }
-
-        &.sixth-card {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-top: 10px;
         }
     }
 }

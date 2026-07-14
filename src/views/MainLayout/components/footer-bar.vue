@@ -1,24 +1,63 @@
 <template>
-    <div class="footer">
-        <div class="content">
-            <div class="date-font">
-                距服务器到期还有
-                <span>{{ serverDate }}</span>
-                天
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-links" aria-label="页脚导航">
+                <section class="footer-section">
+                    <h2>sb6657</h2>
+                    <nav class="link-list" aria-label="sb6657 站点入口">
+                        <a href="https://github.com/SEhzm/sb6657/" target="_blank" rel="noopener noreferrer">GitHub</a>
+                        <button class="link-button" type="button" @click="qqGroupDialogVisible = true">官方交流群</button>
+                        <a href="https://www.wjx.cn/vm/rQUgnS0.aspx#" target="_blank" rel="noopener noreferrer">建议/提交 BUG</a>
+                        <RouterLink to="/Tampermonkey">油猴脚本</RouterLink>
+                        <RouterLink to="/Starrysky" target="_blank">星空背景</RouterLink>
+                        <RouterLink to="/update">更新日志</RouterLink>
+                        <button class="link-button" type="button" @click="supportDialogVisible = true">赞赏支持</button>
+                    </nav>
+                </section>
+                <section class="footer-section">
+                    <h2>友情链接</h2>
+                    <nav class="link-list" aria-label="友情链接">
+                        <a href="https://www.douyu.com/6657" target="_blank" rel="noopener noreferrer">玩机器直播间</a>
+                        <a href="https://dgq63136.cn/" target="_blank" rel="noopener noreferrer">dgq63136.cn</a>
+                        <a href="https://www.bilibili.com/video/BV1WWEj6iE7A" target="_blank" rel="noopener noreferrer">一个人玩游戏ai弹幕</a>
+                        <a href="https://www.bilibili.com/video/BV1NLLz68EDs" target="_blank" rel="noopener noreferrer">6657烂梗复制器</a>
+                    </nav>
+                </section>
             </div>
-            <div class="site-runtime">
-                <a class="ipv6-badge" href="https://www.trustssl.cc/ipv6.php?domain=sb6657.cn" title="IPv6网站检测"
-                    target="_blank" rel="noopener noreferrer">已支持IPv6访问</a>
-                本站已运行{{ daysSinceLaunch }}天
+
+            <div class="footer-divider"></div>
+
+            <div class="footer-status">
+                <div class="date-font">
+                    距服务器到期还有
+                    <span>{{ serverDate }}</span>
+                    天
+                </div>
+                <div class="site-runtime">
+                    <a class="ipv6-badge" href="https://www.trustssl.cc/ipv6.php?domain=sb6657.cn" title="IPv6网站检测" target="_blank" rel="noopener noreferrer">已支持IPv6访问</a>
+                    <span>本站已运行{{ daysSinceLaunch }}天 · Since 2024</span>
+                </div>
             </div>
         </div>
-    </div>
+
+        <el-dialog v-model="qqGroupDialogVisible" append-to-body title="官方交流群" width="min(420px, 92vw)">
+            <img src="https://static.wishao.site/sb6657/img/qqgroup.webp" alt="sb6657 官方交流群二维码" style="display: block; width: 100%; max-width: 100%; height: auto; object-fit: contain" />
+            <p style="margin-top: 10px; color: #606266; font-size: 13px; text-align: center">QQ群：1070269456、526042235</p>
+        </el-dialog>
+
+        <el-dialog v-model="supportDialogVisible" append-to-body title="谢谢老板~" width="min(420px, 92vw)">
+            <img src="https://cdn.hguofichp.cn/zfb.jpg" alt="支付宝赞赏码" style="display: block; width: 100%; max-width: 100%; height: auto; object-fit: contain" />
+        </el-dialog>
+    </footer>
 </template>
 
 <script setup lang="ts">
 import { computed, ref } from 'vue';
+import { RouterLink } from 'vue-router';
 
 const serverDate = ref(0);
+const qqGroupDialogVisible = ref(false);
+const supportDialogVisible = ref(false);
 const txServerDate = new Date('2027-02-12'); // 服务器到期日期
 const currentDate = new Date();
 serverDate.value = Math.ceil((txServerDate.getTime() - currentDate.getTime()) / (1000 * 3600 * 24));
@@ -36,17 +75,76 @@ const daysSinceLaunch = computed(() => {
 <style scoped lang="scss">
 .footer {
     width: 100%;
-    font-family: Arial;
-    font-size: 12px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 24px;
+    padding: 32px clamp(16px, 5vw, 64px) 24px;
+    color: #61666d;
+    font-family: Arial, sans-serif;
     box-sizing: border-box;
 
-    .content {
+    .footer-inner {
+        width: min(1100px, 100%);
+        margin: 0 auto;
+    }
+
+    .footer-links {
+        display: flex;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        gap: 32px clamp(40px, 8vw, 96px);
+    }
+
+    .footer-section {
+        min-width: 0;
+        flex: 1 1 240px;
+
+        h2 {
+            margin: 0 0 14px;
+            color: #303133;
+            font-size: 16px;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+    }
+
+    .link-list {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 6px 12px;
+
+        a,
+        .link-button {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            color: #18191c;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.6;
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+
+            &:hover {
+                color: #409eff;
+            }
+        }
+    }
+
+    .footer-divider {
+        width: 100%;
+        height: 1px;
+        margin: 28px 0 20px;
+        background-color: rgba(48, 49, 51, 0.18);
+    }
+
+    .footer-status {
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
+        gap: 0;
+        font-size: 12px;
 
         .date-font {
             font-weight: bold;
@@ -74,15 +172,20 @@ const daysSinceLaunch = computed(() => {
         }
     }
 
-    @media (min-width: 601px) {
-        .content {
-            margin-top: -50px;
-        }
-    }
-
     @media (max-width: 600px) {
-        .content {
-            margin-top: 45px;
+        margin-top: 16px;
+        padding-top: 24px;
+
+        .footer-links {
+            gap: 24px 32px;
+        }
+
+        .footer-section {
+            flex-basis: 200px;
+        }
+
+        .footer-divider {
+            margin: 24px 0 18px;
         }
     }
 }
