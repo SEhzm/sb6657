@@ -15,6 +15,7 @@
             <RandomMeme />
         </div>
         <div class="card fifth-card">
+            <h2 class="submit-title">烂梗投稿</h2>
             <MemeSubmission />
         </div>
         <el-backtop :right="50" :bottom="50" />
@@ -85,6 +86,10 @@ const isMobile = useIsMobile();
             margin-top: 8px;
             padding: 12px;
             box-sizing: border-box;
+
+            .submit-title {
+                margin-bottom: 4px;
+            }
         }
 
         &.sixth-card {
