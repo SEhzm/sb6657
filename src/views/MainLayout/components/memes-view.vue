@@ -28,15 +28,17 @@
                         </el-popover>
                     </el-button>
                 </h4>
-                <tag-selector v-model:selectedTags="selectedTags" :tags="allTags" />
+                <tag-selector v-model:selected-tags="selectedTags" :tags="allTags" />
             </div>
             <div class="top">
-                <div class="submit-tips">想要补充更多烂梗？点击这里投稿→</div>
-                <el-button type="primary" @click="submissionDialogStore.open">烂梗投稿</el-button>
-                <el-button class="btn-animate btn-animate__ball-collision" color="#66CCFF" @click="sortMeme(1)">按复制次数排序</el-button>
+                <el-button class="meme-submit-btn" :icon="EditPen" @click="submissionDialogStore.open">烂梗投稿</el-button>
+                <div class="sort-switch" role="group" aria-label="列表排序方式">
+                    <button type="button" :class="['sort-option', { 'is-active': sortMode === 'time' }]" :aria-pressed="sortMode === 'time'" @click="changeSortMode('time')">最新投稿</button>
+                    <button type="button" :class="['sort-option', { 'is-active': sortMode === 'copyCount' }]" :aria-pressed="sortMode === 'copyCount'" @click="changeSortMode('copyCount')">复制最多</button>
+                </div>
             </div>
 
-            <el-table class="main-table" :data="memeArr" stripe v-loading="loading" cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
+            <el-table v-loading="loading" class="main-table" :data="memeArr" :show-header="false" stripe cell-class-name="hover-pointer" empty-text="该标签组合为空，期待投稿！" @row-click="copyMeme_countPlus1">
                 <el-table-column align="center" width="60">
                     <template #default="scope">
                         <el-tag round effect="plain">{{ scope.row.id }}</el-tag>
@@ -97,12 +99,10 @@
 </template>
 
 <script setup lang="ts">
-import { getMemeList } from '@/apis/getMeme';
-import httpInstance from '@/apis/httpInstance';
+import { getMemeList, getMemeListByCopyCount } from '@/apis/getMeme';
 import { copyCountPlus1, plus1Error } from '@/apis/setMeme';
 import flipNum from '@/components/flip-num.vue';
 import tagSelector from '@/components/tag-selector.vue';
-import { API } from '@/constants/backend';
 import { useMemeTagsStore } from '@/stores/memeTags';
 import { useShieldWordStore } from '@/stores/shieldWordStore';
 import { useSubmissionDialogStore } from '@/stores/useSubmissionDialogStore';
@@ -111,7 +111,7 @@ import { copySuccess, copyToClipboard, limitedCopy } from '@/utils/clipboard';
 import { getDisplayTags } from '@/utils/tags';
 import { throttle } from '@/utils/throttle';
 import { easyFormatTime } from '@/utils/time';
-import { QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
+import { EditPen, QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
 import { computed, onMounted, ref, watch } from 'vue';
 import { useIsMobile } from '@/utils/common';
 
@@ -142,69 +142,50 @@ memeTagsStore.tagsLoaded.then(() => {
 });
 const selectedTags = ref<memeTag[]>([]);
 const selectedTagsStr = computed(() => selectedTags.value.map((t) => t.dictValue).join(','));
-watch(
-    () => selectedTagsStr.value,
-    () => {
-        refreshMeme(1);
-    }
-);
 
-/**
- * 排序功能
- */
-const isSort = ref(false);
-async function sortMeme(pageNum: number) {
-    try {
-        const res = await httpInstance.get(API.GET_SORTED_ALL_MEME, {
-            params: {
-                pageNum: pageNum,
-                pageSize: pageSize,
-                tags: selectedTagsStr.value,
-            },
-        });
-        isSort.value = true;
-        memeArr.value = res.data.list.map((item: any) => ({
-            total: item.total,
-            content: item.barrage,
-            id: item.id,
-            copyCount: +item.cnt,
-            tags: item.tags,
-            submitTime: item.submitTime,
-        }));
-    } catch (err) {
-        console.error('排序失败:', err);
-        memeArr.value = [];
-    }
-}
-// 分页
+type SortMode = 'time' | 'copyCount';
+
+const sortMode = ref<SortMode>('time');
 const pageSize = 50;
 const currentPage = ref(1);
 const total = ref(0);
-function handlePageChange(page: number) {
-    currentPage.value = page;
-    scrollToTop();
-    if (isSort.value == false) {
-        refreshMeme(page);
-    } else {
-        sortMeme(page);
-    }
-}
+let latestRequestId = 0;
 
-async function refreshMeme(pageNum: number) {
-    const res = await getMemeList(memeCategory, pageNum, pageSize, selectedTagsStr.value || undefined);
+async function loadMemes(pageNum: number) {
+    const requestId = ++latestRequestId;
+    currentPage.value = pageNum;
+    loading.value = true;
+    const res = sortMode.value === 'copyCount' ? await getMemeListByCopyCount(pageNum, pageSize, selectedTagsStr.value) : await getMemeList(memeCategory, pageNum, pageSize, selectedTagsStr.value || undefined);
 
-    //没有就是没有数据
+    if (requestId !== latestRequestId) return;
     if (!res) {
         memeArr.value = [];
+        total.value = 0;
+        loading.value = false;
         return;
     }
 
     memeArr.value = res.memeArr;
-
     total.value = res.total;
     loading.value = false;
 }
-refreshMeme(1);
+
+function changeSortMode(nextMode: SortMode) {
+    if (sortMode.value === nextMode) return;
+    sortMode.value = nextMode;
+    void loadMemes(1);
+}
+
+function handlePageChange(page: number) {
+    scrollToTop();
+    void loadMemes(page);
+}
+
+watch(selectedTagsStr, () => {
+    void loadMemes(1);
+});
+
+void loadMemes(1);
 
 // 复制
 // 2s节流。节流期间触发了就调第二个回调。表示2s内多次点击复制只取其中一次发请求给后台
@@ -214,16 +195,9 @@ async function copyMeme_countPlus1(meme: Meme) {
     const res = copyMeme(memeText);
     if (!res || res === 'limitedSuccess') return;
     copySuccess();
-    if (isSort.value == true) {
-        if (await copyCountPlus1(memeCategory, meme.id, currentPage.value, pageSize, 'desc')) {
-            await sortMeme(currentPage.value);
-            return;
-        }
-    } else {
-        if (await copyCountPlus1(meme.category || memeCategory, meme.id, currentPage.value, pageSize)) {
-            await refreshMeme(currentPage.value);
-            return;
-        }
+    if (await copyCountPlus1(meme.category || memeCategory, meme.id)) {
+        await loadMemes(currentPage.value);
+        return;
     }
     plus1Error();
 }
@@ -262,42 +236,6 @@ const scrollToTop = () => {
 </script>
 
 <style scoped lang="scss">
-@keyframes crissCrossLeft {
-    0% {
-        left: -20px;
-    }
-
-    50% {
-        left: 50%;
-        width: 20px;
-        height: 20px;
-    }
-
-    100% {
-        left: 50%;
-        width: 375px;
-        height: 375px;
-    }
-}
-
-@keyframes crissCrossRight {
-    0% {
-        right: -20px;
-    }
-
-    50% {
-        right: 50%;
-        width: 20px;
-        height: 20px;
-    }
-
-    100% {
-        right: 50%;
-        width: 375px;
-        height: 375px;
-    }
-}
-
 .memes-view {
     width: 93%;
     display: flex;
@@ -328,64 +266,70 @@ const scrollToTop = () => {
             align-items: center;
             flex-wrap: wrap;
             gap: 6px;
-            padding-top: 10px;
-            padding-left: 10px;
+            padding: 10px;
             background-color: #fff;
 
-            .submit-tips {
-                font-size: small;
-                font-weight: bold;
+            .meme-submit-btn {
+                --el-button-text-color: #d95783;
+                --el-button-bg-color: #fff5f8;
+                --el-button-border-color: #f5bfd0;
+                --el-button-hover-text-color: #c93e6c;
+                --el-button-hover-bg-color: #ffeaf1;
+                --el-button-hover-border-color: #fb7299;
+                --el-button-active-text-color: #b93461;
+                --el-button-active-bg-color: #ffdde8;
+                --el-button-active-border-color: #e95a88;
+                --el-button-outline-color: rgba(251, 114, 153, 0.35);
+                height: 36px;
+                flex-shrink: 0;
+                padding: 0 12px;
+                border-radius: 8px;
+                font-weight: 600;
             }
 
-            .btn-animate {
-                margin: 0;
-                font-size: 16px;
-                border: none;
-                border-radius: 5px;
-                background: #027efb;
-                color: #fff;
-                text-align: center;
+            .sort-switch {
+                display: inline-flex;
+                align-items: center;
+                gap: 2px;
+                margin-left: auto;
+                padding: 3px;
+                border-radius: 6px;
+                background: var(--el-fill-color-light);
+                white-space: nowrap;
             }
 
-            .btn-animate__ball-collision {
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
+            .sort-option {
+                appearance: none;
+                min-height: 30px;
+                padding: 0 10px;
+                border: 0;
+                border-radius: 4px;
+                background: transparent;
+                color: var(--el-text-color-regular);
+                font: inherit;
+                font-weight: 400;
+                line-height: 1.2;
+                cursor: pointer;
+                transition:
+                    color 0.2s,
+                    background-color 0.2s,
+                    box-shadow 0.2s;
 
-                &::before,
-                &::after {
-                    content: '';
-                    position: absolute;
-                    top: 50%;
-                    width: 20px;
-                    height: 20px;
-                    background-color: #90cf5b;
-                    border-radius: 50%;
-                    opacity: 0.5;
-                    transition: all 0.6s;
-                    z-index: -1;
+                &:hover,
+                &:focus-visible {
+                    color: var(--el-color-primary);
                 }
 
-                &::before {
-                    left: -20px;
-                    transform: translate(-50%, -50%);
+                &:focus-visible {
+                    outline: 2px solid var(--el-color-primary-light-5);
+                    outline-offset: 2px;
                 }
 
-                &::after {
-                    right: -20px;
-                    transform: translate(50%, -50%);
-                }
-
-                &:hover {
-                    &::before {
-                        opacity: 1;
-                        animation: crissCrossLeft 0.8s both;
-                    }
-
-                    &::after {
-                        opacity: 1;
-                        animation: crissCrossRight 0.8s both;
-                    }
+                &.is-active {
+                    background: #fff;
+                    color: var(--el-color-primary);
+                    font-weight: 600;
+                    box-shadow: 0 1px 4px rgba(31, 45, 61, 0.12);
                 }
             }
         }
@@ -493,6 +437,15 @@ const scrollToTop = () => {
         .tag-card-title {
             .tag-submit-btn {
                 margin-left: 0;
+            }
+        }
+
+        .top {
+            padding: 8px;
+
+            .sort-option {
+                padding: 0 8px;
+                font-size: 12px;
             }
         }
 

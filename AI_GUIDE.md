@@ -78,7 +78,7 @@ export const SERVER_ADDRESS = import.meta.env.VITE_BASE_URL || 'https://hguofich
 | ---- | ------------------------------------- | --------------------------------------------------- | ------------------------------------------ |
 | GET  | `/machine/dictList`                   | `memeTags` store                                    | 获取烂梗标签字典                           |
 | GET  | `/machine/Page?`                      | `getMemeList()`、`memes-view.vue`、`didYouKnow.vue` | 分页获取烂梗，常带 `tags/pageNum/pageSize` |
-| GET  | `/machine/sortAllBarrage`             | `memes-view.vue`                                    | 全部烂梗按复制数排序                       |
+| GET  | `/machine/sortAllBarrage`             | `getMemeListByCopyCount()`、`memes-view.vue`        | 全部烂梗按复制次数从高到低排序             |
 | POST | `/machine/pageSearch`                 | `search-dialog.vue`、`sendPost.vue`                 | 搜索烂梗，支持关键词、标签、时间、排序     |
 | GET  | `/machine/hotBarrageOf24H`            | `hot-meme-dialogs.vue`                              | 24 小时热门                                |
 | GET  | `/machine/hotBarrageOf7Day`           | `hot-meme-dialogs.vue`                              | 7 天热门                                   |
@@ -277,7 +277,8 @@ Home
 用于分类/全部烂梗展示：
 
 - `/memes/AllBarrage` 时顶部显示标签筛选卡片。
-- 顶部有“投稿”和“按复制次数排序”。
+- 顶部保留投稿入口，并提供简洁的“最新投稿 / 复制最多”切换控件；两种模式分别使用后端固定的时间倒序和复制次数倒序，列表本身不显示冗余表头。
+- 切换排序、切换标签时会回到第一页；翻页和复制后刷新会保持当前排序模式。
 - 主体是 `el-table`：
     - id 列
     - 内容列，hover 弹出标签和投稿时间
@@ -489,7 +490,7 @@ AIChat
 src/
 ├─ apis/
 │  ├─ httpInstance.ts        请求实例、token 刷新、错误处理
-│  ├─ getMeme.ts             烂梗读取、搜索、标签、随机
+│  ├─ getMeme.ts             烂梗读取、时间/复制次数列表、搜索、标签、随机
 │  ├─ setMeme.ts             复制计数、老投稿函数
 │  ├─ getShieldWordDict.ts   屏蔽词字典
 │  └─ match.ts               赛事竞猜接口封装

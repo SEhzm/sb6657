@@ -1,4 +1,4 @@
-import httpInstance, { type res, post, get} from '@/apis/httpInstance';
+import httpInstance, { type res, post, get } from '@/apis/httpInstance';
 import { API } from '@/constants/backend';
 import { MemeCategory } from '@/constants/backend';
 import type { getHotMeme_res, getMemeList_res, getData, getMemeTags, searchMeme_req, searchMeme_res, getMemeList_meme } from '@/types/meme';
@@ -77,6 +77,40 @@ export async function getMemeList(category: string, pageIndex: number, pageSize:
         };
     } catch (err: any) {
         console.error('请求烂梗列表失败', err);
+        return false;
+    }
+}
+
+export async function getMemeListByCopyCount(pageIndex: number, pageSize: number, tags: string) {
+    console.log(`按复制次数请求烂梗列表, 页数: ${pageIndex}, 每页烂梗数: ${pageSize}`);
+    try {
+        const res: getMemeList_res = await httpInstance.get(API.GET_SORTED_ALL_MEME, {
+            params: {
+                tags,
+                pageNum: pageIndex,
+                pageSize,
+            },
+        });
+        if (res.data?.list?.length <= 0) {
+            throw new Error('请求到的烂梗列表为空');
+        }
+        const memeArr: Meme[] = res.data.list.map((item) => {
+            return {
+                tags: item.tags,
+                content: item.barrage,
+                id: item.id,
+                category: 'allbarrage',
+                copyCount: +item.cnt,
+                likes: +item.likes,
+                submitTime: item.submitTime,
+            };
+        });
+        return {
+            memeArr,
+            total: res.data.total,
+        };
+    } catch (err: any) {
+        console.error('按复制次数请求烂梗列表失败', err);
         return false;
     }
 }
