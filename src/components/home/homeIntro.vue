@@ -9,14 +9,14 @@
         </p>
         <p class="sub-info">
             <b>
-                <RouterLink to="/Tampermonkey">油猴插件</RouterLink>(已支持斗鱼新UI)
-                <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js"
-                    target="_blank">点击下载</a>
+                <RouterLink to="/Tampermonkey">油猴插件</RouterLink>
+                (已支持斗鱼新UI)
+                <a href="https://cdn.hguofichp.cn/sb6657.cn%E6%96%97%E9%B1%BC%E7%8E%A9%E6%9C%BA%E5%99%A8%E7%83%82%E6%A2%97%E6%94%B6%E9%9B%86.user.js" target="_blank">点击下载</a>
                 可在斗鱼直播间一键发送烂梗
             </b>
         </p>
         <p class="sub-info">开放注册功能，可能会出现收不到邮件的情况。</p>
-        <p class="sub-info">目前已支持玩机器直播间开播提醒</p>
+        <p class="sub-info">目前已支持玩机器直播间开播提醒。加入右侧qq交流群可获取开播q群@提示</p>
         <p class="sub-info">目前已优化Ai造梗功能，响应时间大幅提升</p>
         <p class="sub-info">
             <RouterLink to="/update">网站更新日志</RouterLink>
@@ -75,6 +75,5 @@ import { RouterLink } from 'vue-router';
         font-weight: 600;
         color: #303133;
     }
-
 }
 </style>
