@@ -12,6 +12,8 @@
                         <RouterLink to="/Starrysky" target="_blank">星空背景</RouterLink>
                         <RouterLink to="/update">更新日志</RouterLink>
                         <button class="link-button" type="button" @click="supportDialogVisible = true">赞赏支持</button>
+                        <a href="https://wishao.fun/v1.sb6657.cn/" target="_blank" rel="noopener noreferrer">sb6657旧版v1</a>
+                        <a href="https://wishao.fun/v2.sb6657.cn/" target="_blank" rel="noopener noreferrer">sb6657旧版v2</a>
                     </nav>
                 </section>
                 <section class="footer-section">

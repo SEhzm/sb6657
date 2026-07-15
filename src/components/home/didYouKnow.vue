@@ -1,22 +1,40 @@
 <template>
-    <div class="did-you-know">
-        <h3>🤔 你知道吗？</h3>
-        <ul class="knowledge-list">
-            <li>
-                谁目前打出了对位donk最多的击杀? 谁又是对位donk最大的受害者?
-                <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
-            </li>
-            <!-- 超级逮虾户作者停更较久，首页推荐入口暂时下线，恢复时取消注释即可。
-            <li>
-                哪只队伍捕虾最专业? 谁是最佳捕虾人? 又是谁在捕虾过程中惨遭反夹?
-                <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
-            </li>
-            -->
-            <li>
-                一年一度的sb6657野榜top20烂梗在这里<RouterLink to="/memeTop20">- 年度TOP20烂梗</RouterLink>
-            </li>
-            <el-divider />
-            <li class="latest-meme">
+    <div class="home-info-modules">
+        <section class="info-module" aria-labelledby="knowledge-title">
+            <h3 id="knowledge-title">🤔 你知道吗？</h3>
+            <ul class="module-list">
+                <li>
+                    谁目前打出了对位donk最多的击杀? 谁又是对位donk最大的受害者?
+                    <RouterLink to="/15warriorsDonk">- 布雷德15勇士</RouterLink>
+                </li>
+                <!-- 超级逮虾户作者停更较久，首页推荐入口暂时下线，恢复时取消注释即可。
+                <li>
+                    哪只队伍捕虾最专业? 谁是最佳捕虾人? 又是谁在捕虾过程中惨遭反夹?
+                    <RouterLink to="/dejaVuNiko">- 超级逮虾户战报</RouterLink>
+                </li>
+                -->
+                <li>
+                    一年一度的sb6657野榜top20烂梗在这里
+                    <RouterLink to="/memeTop20">- 年度TOP20烂梗</RouterLink>
+                </li>
+            </ul>
+        </section>
+
+        <el-divider class="module-divider" />
+
+        <section class="info-module" aria-labelledby="time-machine-title">
+            <h3 id="time-machine-title">sb6657时光机</h3>
+            <p>万恶之源，我们的来时路。旧版 sb6657.cn 考古专项</p>
+            <nav class="module-links" aria-label="sb6657 历史版本">
+                <a href="https://wishao.fun/v1.sb6657.cn/" target="_blank" rel="noopener noreferrer">sb6657.cn v1</a>
+                <a href="https://wishao.fun/v2.sb6657.cn/" target="_blank" rel="noopener noreferrer">sb6657.cn v2</a>
+            </nav>
+        </section>
+
+        <el-divider class="module-divider" />
+
+        <section class="info-module">
+            <div class="latest-meme">
                 <div class="line-top">
                     <span class="total">
                         共有
@@ -31,7 +49,7 @@
                     <ElTooltip :trigger="isMobile ? 'click' : 'hover'" placement="top" effect="light">
                         <template #content>
                             <div class="tooltip-content">
-                                <div class="tags-container" v-if="lastMeme.tags && lastMeme.tags.length">
+                                <div v-if="lastMeme.tags && lastMeme.tags.length" class="tags-container">
                                     <div v-for="(item, index) in lastMeme.tags" :key="index" class="modern-tag">
                                         <img v-if="item.iconUrl" :src="item.iconUrl" class="tag-icon" />
                                         <span class="tag-label">{{ item.label }}</span>
@@ -43,8 +61,8 @@
                         <span class="meme-text" :class="{ clicked: isClicked }" @click="handleCopyLatestMeme">{{ lastMeme.meme }}</span>
                     </ElTooltip>
                 </div>
-            </li>
-        </ul>
+            </div>
+        </section>
     </div>
 </template>
 
@@ -101,41 +119,55 @@ function handleCopyLatestMeme() {
 </script>
 
 <style scoped lang="scss">
-.did-you-know {
-    h3 {
-        margin: 0 0 12px 0;
-        font-size: 18px;
-        color: #303133;
-        font-weight: 600;
+.home-info-modules {
+    .info-module {
+        color: #606266;
+        font-size: 14px;
+        line-height: 1.6;
+
+        h3 {
+            margin: 0 0 12px;
+            color: #303133;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        a {
+            color: #409eff;
+            font-weight: 500;
+            text-decoration: none;
+            text-wrap: nowrap;
+
+            &:hover {
+                color: #66b1ff;
+                text-decoration: underline;
+            }
+        }
     }
 
-    .knowledge-list {
+    .module-list {
         list-style: none;
-        padding: 0;
         margin: 0;
+        padding: 0;
 
         li {
             margin-bottom: 8px;
-            font-size: 14px;
-            line-height: 1.6;
-            color: #606266;
 
             &:last-child {
                 margin-bottom: 0;
             }
-
-            a {
-                color: #409eff;
-                text-decoration: none;
-                font-weight: 500;
-                text-wrap: nowrap;
-
-                &:hover {
-                    text-decoration: underline;
-                    color: #66b1ff;
-                }
-            }
         }
+    }
+
+    .module-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 16px;
+        margin-top: 4px;
+    }
+
+    :deep(.module-divider) {
+        margin: 8px 0;
     }
 }
 .latest-meme {
