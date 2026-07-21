@@ -5,14 +5,16 @@
             <span class="tips">(与源码 docs/更新日志.md 同步)</span>
         </h2>
         <el-timeline>
-            <el-timeline-item v-for="version in parsedVersions" :key="version.version" :timestamp="version.date" placement="top" type="success">
-                <h3>{{ version.version }}</h3>
-                <ul>
-                    <li v-for="(item, index) in version.updates" :key="index" :class="getUpdateTypeClass(item.type)" class="update-content">
-                        <strong>【{{ item.type }}】</strong>
-                        <span class="content-text">{{ item.content }}</span>
-                    </li>
-                </ul>
+            <el-timeline-item v-for="group in parsedVersionGroups" :key="group.date" :timestamp="group.date" placement="top" type="success">
+                <section v-for="version in group.versions" :key="version.version" class="version-block">
+                    <h3>{{ version.version }}</h3>
+                    <ul>
+                        <li v-for="(item, index) in version.updates" :key="index" :class="getUpdateTypeClass(item.type)" class="update-content">
+                            <strong>【{{ item.type }}】</strong>
+                            <span class="content-text">{{ item.content }}</span>
+                        </li>
+                    </ul>
+                </section>
             </el-timeline-item>
         </el-timeline>
     </div>
@@ -32,6 +34,11 @@ interface VersionInfo {
     version: string;
     date: string;
     updates: UpdateItem[];
+}
+
+interface VersionGroup {
+    date: string;
+    versions: VersionInfo[];
 }
 
 // 将新旧版本号中的日期转换为时间线日期
@@ -152,8 +159,23 @@ function parseUpdateLog(): VersionInfo[] {
     return versions.reverse();
 }
 
+function groupVersionsByDate(versions: VersionInfo[]): VersionGroup[] {
+    const groups = new Map<string, VersionInfo[]>();
+
+    versions.forEach((version) => {
+        const sameDayVersions = groups.get(version.date) ?? [];
+        sameDayVersions.push(version);
+        groups.set(version.date, sameDayVersions);
+    });
+
+    return Array.from(groups, ([date, groupedVersions]) => ({
+        date,
+        versions: groupedVersions,
+    }));
+}
+
 // 静态解析结果
-const parsedVersions = ref<VersionInfo[]>(parseUpdateLog());
+const parsedVersionGroups = ref<VersionGroup[]>(groupVersionsByDate(parseUpdateLog()));
 
 const updateTypeClassMap: Record<string, string> = {
     新增: 'update-type-add',
@@ -215,6 +237,12 @@ function getUpdateTypeClass(type: string): string {
             white-space: pre-line;
             line-height: 1.6;
         }
+    }
+
+    .version-block + .version-block {
+        margin-top: 16px;
+        padding-top: 16px;
+        border-top: 1px solid #ebeef5;
     }
 
     // 不同类型的颜色标识
