@@ -13,7 +13,7 @@
         <FooterBar></FooterBar>
     </div>
     <RouterLink to="/update">
-        <span class="version site-version">版本: {{ sbVersion }}</span>
+        <span class="version site-version">{{ sbVersion }}</span>
     </RouterLink>
     <FloatingSidebar :is-home-route="isHomeRoute" />
     <div class="GuiBin">当前直播间贵宾数:{{ OniValue }}</div>

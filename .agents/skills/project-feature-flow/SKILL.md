@@ -18,6 +18,7 @@ Use best judgment only when the ambiguity is low risk and the existing code/docs
     - `AI_GUIDE.md` for non-trivial feature, API, layout, or store changes.
     - `README.md` for project positioning or backend usage.
     - `docs/更新日志.md` when the change is user-visible or version-related.
+    - `docs/版本策略.md` before any code or release metadata change.
 3. Inspect the nearest relevant source files before deciding an approach.
 4. Check for ambiguity:
     - Ask the user before coding if multiple valid behaviors exist.
@@ -26,11 +27,11 @@ Use best judgment only when the ambiguity is low risk and the existing code/docs
 5. Implement narrowly, following existing Vue, Element Plus, Pinia, SCSS, and request-layer patterns.
 6. For code changes, synchronize release metadata:
     - Read the current local date.
-    - Use version format `YY.MM.DD`.
-    - Update `docs/更新日志.md`.
-    - Update `package.json` field `"version"`.
-    - Update `src/apis/httpInstance.ts` export `sbVersion`.
-    - If today's `docs/更新日志.md` heading already exists, append an item under it instead of duplicating the heading.
+    - Read `docs/版本策略.md`, then decide whether the release increments major, minor, or patch. Do not infer minor from `feat` alone.
+    - Use public format `Vmajor.minor.patch.yyyymmdd` in `docs/更新日志.md` and `src/apis/httpInstance.ts` export `sbVersion`.
+    - Use npm-compatible `major.minor.patch+yyyymmdd` in `package.json` and the root versions in `package-lock.json`.
+    - Treat one task/release batch as one bump. Append to an existing heading only when it is the same unreleased version, not merely the same date.
+    - Preserve legacy `YY.MM.DD` changelog headings instead of rewriting history.
 7. Verify:
     - Run `npm run build` unless the change is docs-only or a blocker is clear.
     - Run `npm run lint` for source changes when practical.

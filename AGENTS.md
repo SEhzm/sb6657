@@ -7,6 +7,7 @@
 - 非简单改动前先读 `AI_GUIDE.md`。它是当前最完整的项目地图，包含接口、页面结构、响应式布局、状态管理和常见坑。
 - 读 `README.md` 了解项目定位、官网地址、后端说明和版权声明。
 - 改动已有功能、版本展示或用户可见能力时，参考 `docs/更新日志.md`。
+- 修改代码或版本信息前读 `docs/版本策略.md`。它定义新版本格式、major/minor/patch 升级口径和第三版网站的历史版本溯源。
 - 只有涉及油猴脚本说明页或第三方脚本文案时，才需要读 `docs/油猴脚本.md`。
 - 文档与代码不一致时，以离改动最近的源码为最终依据。
 
@@ -49,12 +50,14 @@
 每次修改代码后，都要同步更新版本信息和更新日志。这是本项目的固定流程，不要等用户额外提醒。
 
 - 先读取当前本地日期，不要凭记忆或上下文猜日期。
-- 版本号格式使用 `YY.MM.DD`，例如 2026 年 7 月 1 日写成 `26.07.01`。
-- 同步更新这三个位置，三者必须完全一致：
-    - `docs/更新日志.md`：追加或更新对应日期的 `## 版本【YY.MM.DD】` 条目。
-    - `package.json`：更新根字段 `"version"`。
-    - `src/apis/httpInstance.ts`：更新 `export const sbVersion = 'YY.MM.DD';`。
-- 如果 `docs/更新日志.md` 已经有今天的版本标题，就在该标题下追加本次改动内容，不要重复创建同一天标题。
+- 自 `V3.13.11.20260721` 起使用 `Vmajor.minor.patch.yyyymmdd`，完整规则和历史升级依据见 `docs/版本策略.md`；旧 `YY.MM.DD` 更新日志标题原样保留。
+- 先按版本策略判断升级 major、minor 或 patch，再用实际发布日期填写 8 位 `yyyymmdd`。不要只因 commit message 使用 `feat` 就自动升级 minor。
+- 同步更新四个位置，其 major、minor、patch 和日期必须一致：
+    - `docs/更新日志.md`：新增 `## 版本【Vmajor.minor.patch.yyyymmdd】` 条目。
+    - `package.json`：根字段 `"version"` 使用 npm 合法格式 `major.minor.patch+yyyymmdd`。
+    - `package-lock.json`：同步文件顶部和根包的版本为 `major.minor.patch+yyyymmdd`。
+    - `src/apis/httpInstance.ts`：`sbVersion` 使用完整展示格式 `Vmajor.minor.patch.yyyymmdd`。
+- 一次任务或发布批次只升级一次；如果继续补充同一未发布批次，就在已有版本标题下追加内容。一天内发布多个独立批次时继续递增 patch，日期可以相同。
 - 更新日志条目保持简短，沿用现有格式，如 `1、【新增】...`、`2、【优化】...`、`3、【修复】...`、`4、【修改】...`、`5、【重构】...`。
 - 纯文档改动不强制更新版本号，除非用户明确要求或文档改动会影响用户可见发布内容。
 
@@ -123,7 +126,7 @@
 - 不要修改生成物或依赖目录，例如 `dist/`、`.pnpm-store/`、`node_modules/`、`tsconfig.node.tsbuildinfo`。
 - 如果改动影响已记录的接口、路由或重要功能行为，同时更新 `AI_GUIDE.md` 或相关用户文档。
 - 如果本文件中的约定已经不符合项目现状，要在同一次改动中更新 `AGENTS.md`；如果不确定该怎么改，要在最终回复中提醒用户这份文件可能需要演进。
-- 代码改动必须遵守“版本和更新日志”流程，同步 `docs/更新日志.md`、`package.json` 和 `src/apis/httpInstance.ts` 里的 `sbVersion`。
+- 代码改动必须遵守“版本和更新日志”流程，同步 `docs/更新日志.md`、`package.json`、`package-lock.json` 和 `src/apis/httpInstance.ts` 里的 `sbVersion`。
 
 ## Git 提交规范
 
@@ -147,7 +150,7 @@
 
 - 实现符合用户请求和当前项目约定。
 - 行为或项目知识变化时，相关文档已更新。
-- 代码改动后，`docs/更新日志.md`、`package.json` 的 `version` 和 `src/apis/httpInstance.ts` 的 `sbVersion` 已按今天日期同步；纯文档改动除外。
+- 代码改动后，更新日志、npm/lockfile 版本和 `sbVersion` 已按 `docs/版本策略.md` 与当天日期同步；纯内部文档改动除外。
 - `npm run build` 已通过，或已说明未运行/未通过的原因。
 - 修改源码时尽量让 `npm run lint` 通过；如果仍有 warning，区分本次改动引入的问题和历史技术债。
 - UI 改动已从代码层面考虑桌面端和移动端，实际运行和视觉效果留给用户人工验收，剩余风险要说清楚。

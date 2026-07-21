@@ -34,18 +34,30 @@ interface VersionInfo {
     updates: UpdateItem[];
 }
 
-// 将版本号转换为日期格式
+// 将新旧版本号中的日期转换为时间线日期
 function convertVersionToDate(versionStr: string): string {
-    // 提取版本号中的日期部分，如 "25.7.07" -> "2025-07-07"
-    const match = versionStr.match(/(\d{2})\.(\d{1,2})\.(\d{1,2})/);
-    if (match) {
-        const [, year, month, day] = match;
+    const currentMatch = versionStr.match(/[.+](\d{4})(\d{2})(\d{2})$/);
+    if (currentMatch) {
+        const [, year, month, day] = currentMatch;
+        return `${year}-${month}-${day}`;
+    }
+
+    const legacyMatch = versionStr.match(/^(\d{2})\.(\d{1,2})\.(\d{1,2})$/);
+    if (legacyMatch) {
+        const [, year, month, day] = legacyMatch;
         const fullYear = `20${year}`;
         const paddedMonth = month.padStart(2, '0');
         const paddedDay = day.padStart(2, '0');
         return `${fullYear}-${paddedMonth}-${paddedDay}`;
     }
-    return versionStr; // 如果无法解析，返回原始字符串
+
+    return versionStr;
+}
+
+function formatVersionTitle(versionStr: string): string {
+    const currentMatch = versionStr.match(/^(V\d+\.\d+\.\d+)[.+]\d{8}$/);
+    const displayVersion = currentMatch ? currentMatch[1] : versionStr;
+    return `版本【${displayVersion}】`;
 }
 
 // 解析更新日志 Markdown 字符串
@@ -64,7 +76,7 @@ function parseUpdateLog(): VersionInfo[] {
         if (!versionMatch) return;
 
         const versionNumber = versionMatch[1];
-        const version = `版本【${versionNumber}】`;
+        const version = formatVersionTitle(versionNumber);
         const date = convertVersionToDate(versionNumber);
         const updates: UpdateItem[] = [];
 

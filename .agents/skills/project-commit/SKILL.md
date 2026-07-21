@@ -22,11 +22,11 @@ Commit only when the user asks for a commit. If the working tree contains unrela
     - Ask before committing when verification fails or cannot be run.
 4. Check release metadata for code changes:
     - Read the current local date.
-    - Expected version format is `YY.MM.DD`.
-    - Ensure these match exactly:
-        - `package.json` field `"version"`.
-        - `src/apis/httpInstance.ts` export `sbVersion`.
-        - Today's heading in `docs/更新日志.md`: `## 版本【YY.MM.DD】`.
+    - Read `docs/版本策略.md` and confirm the major/minor/patch decision follows its historical and upgrade rules.
+    - Ensure these describe the same major, minor, patch, and release date:
+        - `package.json` and root `package-lock.json` versions: `major.minor.patch+yyyymmdd`.
+        - `src/apis/httpInstance.ts` export `sbVersion`: `Vmajor.minor.patch.yyyymmdd`.
+        - Release heading in `docs/更新日志.md`: `## 版本【Vmajor.minor.patch.yyyymmdd】`.
     - If code changed and metadata is missing or inconsistent, update it before committing.
     - Pure documentation-only changes do not require version updates unless the user requests them or the docs are user-visible release content.
 5. Verify before commit:

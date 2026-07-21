@@ -25,6 +25,16 @@
 | 图表/生成 | ECharts wordcloud、Three.js、html2canvas、html-to-image |
 | 请求      | Axios 封装在 `src/apis/httpInstance.ts`                 |
 
+## 版本策略
+
+项目自 `V3.13.11.20260721` 起采用 `Vmajor.minor.patch.yyyymmdd` 展示版本，第三版网站的历史 minor 溯源、升级边界和发布同步清单统一维护在 `docs/版本策略.md`。
+
+- 页面右下角、源码更新日志标题和 `sbVersion` 使用完整格式，例如 `V3.13.11.20260721`。
+- `package.json` 与 `package-lock.json` 受 npm SemVer 约束，使用等价的 `3.13.11+20260721`。
+- 旧的 `YY.MM.DD` 更新日志标题仅作历史记录，不批量改写。
+- 页面右下角直接显示完整版本；C 端更新日志时间线将日期放在顶部，新版本标题只显示 `版本【Vmajor.minor.patch】`，避免重复日期。
+- 后续代码改动不能只按日期覆盖版本，也不能只看 `feat` 判断 minor；必须先按版本策略确定 major、minor 或 patch。
+
 ## 请求层和后端地址
 
 后端地址定义在 `src/constants/backend.ts`：
