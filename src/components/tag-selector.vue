@@ -2,8 +2,8 @@
     <div class="tags-container">
         <div class="selected-tags">
             <div class="tags-title">已选标签:</div>
-            <div class="tags" v-if="selectedTags.length > 0">
-                <el-tag class="tag1" v-for="tag in selectedTags" :key="tag.dictValue" round @click="removeTag(tag)">
+            <div v-if="selectedTags.length > 0" class="tags">
+                <el-tag v-for="tag in selectedTags" :key="tag.dictValue" class="tag1" round @click="removeTag(tag)">
                     <div class="tag-icon-wrapper">
                         <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
                         <span class="tag-label">{{ tag.dictLabel }}</span>
@@ -18,7 +18,7 @@
         <div class="all-tags">
             <div class="tags-title">所有标签:</div>
             <div class="tags">
-                <el-tag class="tag1" v-for="tag in allTags" :key="tag.dictValue" round @click="addTag(tag)">
+                <el-tag v-for="tag in availableTags" :key="tag.dictValue" class="tag1" round @click="addTag(tag)">
                     <div class="tag-icon-wrapper">
                         <img v-if="tag.iconUrl" :src="tag.iconUrl" class="tag-icon" />
                         <span class="tag-label">{{ tag.dictLabel }}</span>
@@ -35,9 +35,9 @@
 /**
  * 标签选择器组件，点击标签可以添加或移除已选标签。两个参数，v-model:selectedTags是已选标签列表，:tags是所有标签
  * @props {memeTag[]} tags - 所有标签列表，从这里面选
- * @model {memeTag[]} selectedTags - 已选标签列表，可以视为组件输出
+ * @model {memeTag[]} selectedTags - 已选标签列表，可以视为组件输出。双向绑定的，可能被父组件改
  */
-import { ref, watch } from 'vue';
+import { computed } from 'vue';
 import { type getMemeTags as memeTag } from '@/types/meme';
 import { Plus, Close } from '@element-plus/icons-vue';
 
@@ -45,31 +45,17 @@ const { tags } = defineProps<{
     tags: memeTag[];
 }>();
 const selectedTags = defineModel<memeTag[]>('selectedTags', { required: true });
-
-const allTags = ref<memeTag[]>(tags);
-let tagLoaded = false;
-watch(
-    () => tags,
-    (newVal) => {
-        if (tagLoaded || !newVal || newVal.length === 0) return;
-        tagLoaded = true;
-        allTags.value = tags;
-    }
-);
+const availableTags = computed(() => tags.filter((t) => !selectedTags.value.some((selected) => selected.dictValue === t.dictValue)));
 
 // 添加标签
 function addTag(tag: memeTag) {
-    if (selectedTags.value.find((t) => t.dictValue === tag.dictValue)) return;
-    selectedTags.value.push(tag);
-    allTags.value = allTags.value.filter((t) => t.dictValue !== tag.dictValue);
+    if (selectedTags.value.some((item) => item.dictValue === tag.dictValue)) return;
+    selectedTags.value = [...selectedTags.value, tag];
 }
 
 // 移除标签
 function removeTag(tag: memeTag) {
     selectedTags.value = selectedTags.value.filter((t) => t.dictValue !== tag.dictValue);
-    if (!allTags.value.find((t) => t.dictValue === tag.dictValue)) {
-        allTags.value.push(tag);
-    }
 }
 </script>
 <style lang="scss" scoped>

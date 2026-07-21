@@ -113,11 +113,13 @@ import { throttle } from '@/utils/throttle';
 import { easyFormatTime } from '@/utils/time';
 import { EditPen, QuestionFilled, Warning, WarningFilled } from '@element-plus/icons-vue';
 import { computed, onMounted, ref, watch } from 'vue';
+import { useRoute } from 'vue-router';
 import { useIsMobile } from '@/utils/common';
 
 const memeTagsStore = useMemeTagsStore();
 const shieldWordStore = useShieldWordStore();
 const submissionDialogStore = useSubmissionDialogStore();
+const route = useRoute();
 const memeCategory = 'allbarrage';
 const isMobile = useIsMobile();
 
@@ -136,12 +138,25 @@ onMounted(async () => {
 const loading = ref(true);
 const memeArr = ref<Meme[]>([]);
 
+function getRouteTagValue() {
+    const rawTag = route.query.tag;
+    // 这里tag在url的格式是'01,02,03'，目前只取第一个
+    if (typeof rawTag !== 'string') return '';
+    return rawTag.split(',')[0];
+}
+
 const allTags = ref<memeTag[]>([]);
+const pendingRouteTag = ref(getRouteTagValue());
+const selectedTags = ref<memeTag[]>([]);
 memeTagsStore.tagsLoaded.then(() => {
     allTags.value = memeTagsStore.memeTags;
+    if (!pendingRouteTag.value) return;
+
+    const routeTag = allTags.value.find((tag) => tag.dictValue === pendingRouteTag.value);
+    if (routeTag) selectedTags.value.push(routeTag);
+    pendingRouteTag.value = '';
 });
-const selectedTags = ref<memeTag[]>([]);
-const selectedTagsStr = computed(() => selectedTags.value.map((t) => t.dictValue).join(','));
+const selectedTagsStr = computed(() => selectedTags.value.map((tag) => tag.dictValue).join(',') || pendingRouteTag.value);
 
 type SortMode = 'time' | 'copyCount';
 
