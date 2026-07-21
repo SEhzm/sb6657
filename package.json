@@ -1,6 +1,6 @@
 {
   "name": "sb6657.cn",
-  "version": "3.13.11+20260721",
+  "version": "3.13.12+20260721",
   "private": true,
   "scripts": {
     "dev": "vite --host 0.0.0.0",

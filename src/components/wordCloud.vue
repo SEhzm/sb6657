@@ -4,14 +4,29 @@
 
 <script setup>
     import { nextTick, onBeforeUnmount, onMounted, ref, shallowRef } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
     import * as echarts from 'echarts';
     import 'echarts-wordcloud';
     import httpInstance from '@/apis/httpInstance';
 
+    const route = useRoute();
+    const router = useRouter();
     const wordCloud = ref(null);
     const chart = shallowRef(null);
     const list = ref([]);
     const colors = ['#0d3555', '#58D5FF', '#0093c4', '#0d3555', '#0093c4', '#0d3555', '#73DDFF', '#58D5FF', '#ff0000', '#00ff00', '#ff0000', '#00ff00', '#1a721a', '#1a721a', '#1a721a'];
+
+    function handleWordClick(params) {
+        const searchKey = typeof params?.name === 'string' ? params.name.trim() : '';
+        if (!searchKey) return;
+
+        void router.push({
+            query: {
+                ...route.query,
+                search: searchKey,
+            },
+        });
+    }
 
     function normalizeWordCloudData(res) {
         if (Array.isArray(res)) {
@@ -32,6 +47,7 @@
 
         if (!chart.value) {
             chart.value = echarts.init(wordCloud.value, 'macarons');
+            chart.value.on('click', handleWordClick);
         }
 
         return chart.value;
@@ -61,6 +77,7 @@
                 series: [
                     {
                         type: 'wordCloud',
+                        cursor: 'pointer',
                         shape: 'pentagon',
                         left: 'center',
                         top: 'center',

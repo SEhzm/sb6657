@@ -12,10 +12,12 @@
                 </el-icon>
             </div>
         </div>
-        <div v-if="randomMeme" class="modern-barrage-card" @click="handleCopyMeme(randomMeme)">
+        <div v-if="randomMeme" class="modern-barrage-card">
             <div class="barrage-main-content">
                 <div class="barrage-text-wrapper">
-                    <span class="barrage-text">{{ randomMeme.barrage }}</span>
+                    <span class="barrage-text" role="button" tabindex="0" @click="handleCopyMeme(randomMeme)" @keydown.enter.prevent="handleCopyMeme(randomMeme)" @keydown.space.prevent="handleCopyMeme(randomMeme)">
+                        {{ randomMeme.barrage }}
+                    </span>
                 </div>
 
                 <div class="barrage-meta-info">
@@ -181,14 +183,6 @@ async function handleCopyMeme(meme: getMemeList_meme) {
 
         .barrage-main-content {
             flex: 1;
-            cursor: pointer;
-            transition: all 0.3s ease;
-
-            &:hover {
-                .barrage-text {
-                    color: #11a983;
-                }
-            }
         }
 
         .barrage-text-wrapper {
@@ -202,6 +196,13 @@ async function handleCopyMeme(meme: getMemeList_meme) {
             line-height: 1.6;
             word-break: break-all;
             transition: color 0.3s ease;
+            cursor: pointer;
+
+            &:hover,
+            &:focus-visible {
+                color: #11a983;
+                outline: none;
+            }
         }
 
         .barrage-meta-info {

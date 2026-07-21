@@ -6,7 +6,7 @@
         </h2>
         <el-timeline>
             <el-timeline-item v-for="group in parsedVersionGroups" :key="group.date" :timestamp="group.date" placement="top" type="success">
-                <section v-for="version in group.versions" :key="version.version" class="version-block">
+                <section v-for="version in group.versions" :key="version.version">
                     <h3>{{ version.version }}</h3>
                     <ul>
                         <li v-for="(item, index) in version.updates" :key="index" :class="getUpdateTypeClass(item.type)" class="update-content">
@@ -237,12 +237,6 @@ function getUpdateTypeClass(type: string): string {
             white-space: pre-line;
             line-height: 1.6;
         }
-    }
-
-    .version-block + .version-block {
-        margin-top: 16px;
-        padding-top: 16px;
-        border-top: 1px solid #ebeef5;
     }
 
     // 不同类型的颜色标识
