@@ -36,12 +36,12 @@ import donk from '@/assets/imgs/donk.png';
 export const MemeCategory = [
     { path: '/home', text: '首页', icon: home_icon },
     { path: '/memes/AllBarrage', text: '全部烂梗', icon: all_icon, api: API.GET_ALL_MEME, category: 'allbarrage' },
-    { path: '/shieldWord', text: '屏蔽词收集', icon: shieldWord },
+    { path: '/image', text: '时光相册', icon: image_icon },
     { path: '/post-bar', text: '社区贴吧', icon: post_icon },
     { path: '/aichat', text: 'AI造梗', icon: chat_icon },
-    { path: '/matchPrediction', text: '赛事竞猜', icon: cs2_icon },
-    { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
-    { path: '/image', text: '时光相册', icon: image_icon },
-    { path: '/dejaVuNiko', text: '超级逮虾户战报', icon: deja_vu_niko },
+    { path: '/shieldWord', text: '屏蔽词收集', icon: shieldWord },
     { path: '/15warriorsDonk', text: '布雷德15勇士', icon: donk },
+    { path: '/matchLib', text: '赛事烂梗库', icon: cs2_icon },
+    { path: '/matchPrediction', text: '赛事竞猜', icon: cs2_icon },
+    { path: '/dejaVuNiko', text: '超级逮虾户战报', icon: deja_vu_niko },
 ];
